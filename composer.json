@@ -1,0 +1,12 @@
+{
+    "name": "develodesign/product_designer",
+    "description": "Magento 2 Design products frontent, backend",
+    "authors": [
+        {
+            "name": "Yaroslav Trokhlibov",
+            "email": "yaro.tr@gmail.com"
+        }
+    ],
+    "minimum-stability": "beta",
+    "require": {}
+}
