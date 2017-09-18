@@ -32420,7 +32420,6 @@ $.fn.dd_productdesigner = function (options) {
     if(this.options.debug) {
         new DD_Debug(this);
     }
-    alert('I AM OVER');
     return this;
 };
 })(jQuery);

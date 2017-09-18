@@ -1,6 +1,6 @@
 <?php if ($block->showCustomizeButton()): ?>
     <div class="product-designer-button-container">
-        <button type="button" class="action primary product-designer-button product-designer-customize">
+        <button onclick="document.location.href='<?php echo $block->getCustomizeUrl();  ?>'" type="button" class="action primary product-designer-button product-designer-customize">
             <span>
                 <span><?php echo __('Customize It') ?></span>
             </span>
