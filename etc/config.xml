@@ -1,0 +1,18 @@
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Store:etc/config.xsd">
+    <default>
+        <develo_productdesigner>
+            <general>
+                <enable>1</enable>
+                <product_designer_route>
+                    <![CDATA[develodesigner]]>
+                </product_designer_route>
+            </general>
+            <frontend>
+                <enable_all>1</enable_all>
+                <layer_position>center_center</layer_position>
+                <layer_width>20</layer_width>
+            </frontend>
+        </develo_productdesigner>
+    </default>
+</config>
+
