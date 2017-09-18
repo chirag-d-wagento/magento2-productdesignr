@@ -1,6 +1,6 @@
 Parent folder
 
-app/code/Develo/designer
+app/code/Develo/Designer
 
 Development
 
