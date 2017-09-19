@@ -10,6 +10,7 @@ var DD_Window = DD_object.extend({
         this._super(this.id);
         this.createContentElement();
         var self = this;
+        
         this.modal = new jBox('Modal', {
             title: '-',
             draggable: 'title',
@@ -23,16 +24,16 @@ var DD_Window = DD_object.extend({
             repositionOnContent: true,
             target: $('.canvas-container'),
             onOpen: function () {
-                self._evnt().doCall('window_showed');
+                self._evnt().doCall('window-showed');
             },
             onClose: function () {
-                self._evnt().doCall('window_closed');
+                self._evnt().doCall('window-closed');
             }
         });
 
 
-        this._evnt().register('window_showed', this.modal);
-        this._evnt().register('window_closed', this.modal, true);
+        this._evnt().register('window-showed', this.modal);
+        this._evnt().register('window-closed', this.modal, true);
         this.setGlobal();
 
         this.registerCloseWinEventCall();
@@ -56,13 +57,13 @@ var DD_Window = DD_object.extend({
             'id': this.CONST_WIN_CONTENT_EL
         }).css({
             'display': 'none'
-        }).html('<p>I AM ELEMENT</p>');
+        }).html('<p>&nbsp;</p>');
 
         $('body').append(this.contentElement);
     },
     
     registerCloseWinEventCall: function() {
-        this._evnt().registerCallback('window_closed', function(window) {
+        this._evnt().registerCallback('window-closed', function(window) {
             window.isClosed = true;
         }, 'no-reposition');
     }

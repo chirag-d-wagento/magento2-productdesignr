@@ -24,7 +24,14 @@ var jsFiles = [
         'js/src/layers/*.js',
         'js/src/view/*.js',
         'js/src/view/windows/*.js',
-        'js/src/dd_productdesigner.js'
+        'js/src/dd_productdesigner.js',
+        
+        'js/src/view/windows/*.js',
+        
+        'js/src/admin/models/*.js',
+        'js/src/admin/view/*.js',
+        'js/src/admin/dd_productdesigner_admin.js'
+        
     ],
         jsDest = 'js/dist',
         jsBase = 'js/src/base/*.js';

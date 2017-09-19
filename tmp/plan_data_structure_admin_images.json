@@ -1,0 +1,20 @@
+[
+    {
+        "group_id": "{int db_id}",
+        "order": "{int db_order}",
+        "name": "{text db_name}",
+        "children": [
+
+            {
+                "image_id": "{int db_id}",
+                "image_src": "{dynamic image madia src}",
+                "order": "{int db_order}"
+            },
+            {
+                "image_id": "{int db_id}",
+                "image_src": "{dynamic image madia src}",
+                "order": "{int db_order}"
+            }
+        ] 
+    }
+]

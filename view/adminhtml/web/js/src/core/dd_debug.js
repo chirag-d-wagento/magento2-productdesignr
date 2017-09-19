@@ -13,11 +13,11 @@ var DD_Debug = DD_object.extend({
             self.consoleInner.html('');
             self.title.html('All registrated Events');
             var eventsHtml = '';
-            console.log( events );
+            console.log(events);
             $.each(events, function (index, event) {
                 if (event.get) {
                     var el = event.get();
-                    eventsHtml += '<a href="javascript:void(0)" class="debugger-event" style="color:#fff;">' + index+ '</a>'
+                    eventsHtml += '<a href="javascript:void(0)" class="debugger-event" style="color:#fff;">' + index + '</a>'
                             + ' <a href="javascript:void(0)" class="debugger-event-element">(#' + el.attr('id') + ' .' + el.get(0).className + ')</a>'
                             + (self._evnt().isBase(index) ? ' - BASE ' : '') + '<br>';
                 } else {
@@ -27,20 +27,23 @@ var DD_Debug = DD_object.extend({
             });
             self.consoleInner.html(eventsHtml);
         });
-        this.listLayers.on('click', function () {
-            var layers = self._l().layers;
-            self.consoleInner.html('');
-            self.title.html('All added Layers');
-            var layersHtml = '';
-            $.each(layers, function (index, layer) {
-                layersHtml += '<a href="javascript:void(0)" class="debugger-layer" style="color:#fff;">' + index + '. '
-                        + layer.type + '<br>' +
-                        JSON.stringify(layer.data) +
-                        '</a>'
-                        + '<br><br>';
+        if (typeof (this._l()) != 'undefined') {
+
+            this.listLayers.on('click', function () {
+                var layers = self._l().layers;
+                self.consoleInner.html('');
+                self.title.html('All added Layers');
+                var layersHtml = '';
+                $.each(layers, function (index, layer) {
+                    layersHtml += '<a href="javascript:void(0)" class="debugger-layer" style="color:#fff;">' + index + '. '
+                            + layer.type + '<br>' +
+                            JSON.stringify(layer.data) +
+                            '</a>'
+                            + '<br><br>';
+                });
+                self.consoleInner.html(layersHtml);
             });
-            self.consoleInner.html(layersHtml);
-        });
+        }
     },
     addDebug: function () {
         console.log('Debug started!');
@@ -64,12 +67,14 @@ var DD_Debug = DD_object.extend({
             text: 'List Events'
         });
         this.controlsContainer.append(this.listEventsBtn);
-        this.listLayers = $('<button/>', {
-            id: 'dd-debugger-controls-list-btn',
-            class: 'debugger-controls button',
-            text: 'List Layers'
-        });
-        this.controlsContainer.append(this.listLayers);
+        if (typeof (this._l()) != 'undefined') {
+            this.listLayers = $('<button/>', {
+                id: 'dd-debugger-controls-list-btn',
+                class: 'debugger-controls button',
+                text: 'List Layers'
+            });
+            this.controlsContainer.append(this.listLayers);
+        }
     },
     addConsole: function () {
         this.console = $('<div/>', {

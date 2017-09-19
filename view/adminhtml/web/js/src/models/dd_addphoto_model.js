@@ -36,7 +36,6 @@ var DD_AddPhoto_Model = DD_ModelBase.extend({
                     }
                 });
                 this.on("success", function (file, responseText) {
-                    console.log(responseText);
                     self.previousFile = $(file.previewElement);
                     var obj = jQuery.parseJSON(responseText);
 

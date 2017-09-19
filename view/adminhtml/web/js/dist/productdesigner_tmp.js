@@ -27206,7 +27206,6 @@ var DD_Event = DD_object.extend({
             console.log('doCall real DELETE: ' +  ' - ' + eventName);
             delete this.listEventsCallbacks[eventName];
         }
-        console.log('doCall real: ' + eventName);
     },
     
     getListEvents: function() {
@@ -27266,6 +27265,7 @@ var DD_Window = DD_object.extend({
         this._super(this.id);
         this.createContentElement();
         var self = this;
+        
         this.modal = new jBox('Modal', {
             title: '-',
             draggable: 'title',
@@ -27279,16 +27279,16 @@ var DD_Window = DD_object.extend({
             repositionOnContent: true,
             target: $('.canvas-container'),
             onOpen: function () {
-                self._evnt().doCall('window_showed');
+                self._evnt().doCall('window-showed');
             },
             onClose: function () {
-                self._evnt().doCall('window_closed');
+                self._evnt().doCall('window-closed');
             }
         });
 
 
-        this._evnt().register('window_showed', this.modal);
-        this._evnt().register('window_closed', this.modal, true);
+        this._evnt().register('window-showed', this.modal);
+        this._evnt().register('window-closed', this.modal, true);
         this.setGlobal();
 
         this.registerCloseWinEventCall();
@@ -27312,13 +27312,13 @@ var DD_Window = DD_object.extend({
             'id': this.CONST_WIN_CONTENT_EL
         }).css({
             'display': 'none'
-        }).html('<p>I AM ELEMENT</p>');
+        }).html('<p>&nbsp;</p>');
 
         $('body').append(this.contentElement);
     },
     
     registerCloseWinEventCall: function() {
-        this._evnt().registerCallback('window_closed', function(window) {
+        this._evnt().registerCallback('window-closed', function(window) {
             window.isClosed = true;
         }, 'no-reposition');
     }
@@ -27410,11 +27410,11 @@ var DD_Debug = DD_object.extend({
             self.consoleInner.html('');
             self.title.html('All registrated Events');
             var eventsHtml = '';
-            console.log( events );
+            console.log(events);
             $.each(events, function (index, event) {
                 if (event.get) {
                     var el = event.get();
-                    eventsHtml += '<a href="javascript:void(0)" class="debugger-event" style="color:#fff;">' + index+ '</a>'
+                    eventsHtml += '<a href="javascript:void(0)" class="debugger-event" style="color:#fff;">' + index + '</a>'
                             + ' <a href="javascript:void(0)" class="debugger-event-element">(#' + el.attr('id') + ' .' + el.get(0).className + ')</a>'
                             + (self._evnt().isBase(index) ? ' - BASE ' : '') + '<br>';
                 } else {
@@ -27424,20 +27424,23 @@ var DD_Debug = DD_object.extend({
             });
             self.consoleInner.html(eventsHtml);
         });
-        this.listLayers.on('click', function () {
-            var layers = self._l().layers;
-            self.consoleInner.html('');
-            self.title.html('All added Layers');
-            var layersHtml = '';
-            $.each(layers, function (index, layer) {
-                layersHtml += '<a href="javascript:void(0)" class="debugger-layer" style="color:#fff;">' + index + '. '
-                        + layer.type + '<br>' +
-                        JSON.stringify(layer.data) +
-                        '</a>'
-                        + '<br><br>';
+        if (typeof (this._l()) != 'undefined') {
+
+            this.listLayers.on('click', function () {
+                var layers = self._l().layers;
+                self.consoleInner.html('');
+                self.title.html('All added Layers');
+                var layersHtml = '';
+                $.each(layers, function (index, layer) {
+                    layersHtml += '<a href="javascript:void(0)" class="debugger-layer" style="color:#fff;">' + index + '. '
+                            + layer.type + '<br>' +
+                            JSON.stringify(layer.data) +
+                            '</a>'
+                            + '<br><br>';
+                });
+                self.consoleInner.html(layersHtml);
             });
-            self.consoleInner.html(layersHtml);
-        });
+        }
     },
     addDebug: function () {
         console.log('Debug started!');
@@ -27461,12 +27464,14 @@ var DD_Debug = DD_object.extend({
             text: 'List Events'
         });
         this.controlsContainer.append(this.listEventsBtn);
-        this.listLayers = $('<button/>', {
-            id: 'dd-debugger-controls-list-btn',
-            class: 'debugger-controls button',
-            text: 'List Layers'
-        });
-        this.controlsContainer.append(this.listLayers);
+        if (typeof (this._l()) != 'undefined') {
+            this.listLayers = $('<button/>', {
+                id: 'dd-debugger-controls-list-btn',
+                class: 'debugger-controls button',
+                text: 'List Layers'
+            });
+            this.controlsContainer.append(this.listLayers);
+        }
     },
     addConsole: function () {
         this.console = $('<div/>', {
@@ -27487,17 +27492,27 @@ var DD_Debug = DD_object.extend({
 });
 
 var DD_ModelBase = DD_object.extend({
-     init: function() {
+     
+        init: function() {
          if(this.eventBase) {
              this._evnt().register(this.eventBase, this.obj, this.base);
          }
+         if(this.registerEvents) {
+            this.registerEvents();
+         }
+         if(this.registerCalls) {
+            this.registerCalls();
+         }
      },
+     
      clickEventName: function() {
          return this.eventClick;
      },
+     
      setWindow: function(window) {
          this.window = window;
      },
+     
      closeWindow: function() {
          if(this.window) {
              this.window.close();
@@ -27594,7 +27609,7 @@ var DD_ImageLinkAdd = DD_Uibase.extend({
 var DD_panel = DD_Uibase.extend({
     mainClass: 'panel',
     init: function (options) {
-        this.options = options ? options : {};
+        this.options = $.extend(( options ? options : {} ) , this.options);
         this._super(this.options.id);
         this.selfBase();
     },
@@ -27736,7 +27751,6 @@ var DD_AddPhoto_Model = DD_ModelBase.extend({
                     }
                 });
                 this.on("success", function (file, responseText) {
-                    console.log(responseText);
                     self.previousFile = $(file.previewElement);
                     var obj = jQuery.parseJSON(responseText);
 
@@ -27866,7 +27880,7 @@ var DD_Main_Model = DD_ModelBase.extend({
     init: function (obj) {
         this.obj = obj;
         this._super();
-        this.registerEvents();
+        //this.registerEvents();
         this.initLayers();
     },
 
@@ -28449,5 +28463,208 @@ $.fn.dd_productdesigner = function (options) {
         new DD_Debug(this);
     }
     return this;
+};
+
+var DD_Admin_ImagesLoader_Model = DD_ModelBase.extend({
+    
+    eventShow: 'show-admin-loader',
+    eventHide: 'hide-admin-loader',
+    
+    init: function (obj) {
+        this.obj = obj;
+        this._super();
+    },
+    
+    registerEvents: function () {
+        this._evnt().register(this.eventShow, this.obj);
+        this._evnt().register(this.eventHide, this.obj);
+    },
+    
+    registerCalls: function(){
+        var self = this;
+        this._evnt().registerCallback(this.eventShow, function(window) {
+            self.obj
+                .get(0)
+                .show();
+        });
+        this._evnt().registerCallback(this.eventHide, function(window) {
+            self.obj
+                .get(0)
+                .hide();
+        });
+    }
+    
+});
+
+var DD_Admin_ImagesSelected_Model = DD_ModelBase.extend({
+
+    init: function (obj) {
+        this.obj = obj;
+        this._super();
+        this.loadImages();
+    },
+
+    registerEvents: function () {
+
+    },
+
+    loadImages: function () {
+        var self = this;
+        this._evnt().doCall('show-admin-loader');
+        $.ajax({
+            url: this.obj.options.urlImages
+                + '?form_key=' + window.FORM_KEY,
+            data: {
+                'product_sku': this.obj.options.psku
+            }, 
+            success: function (data) {
+                self.obj.processGroups(data);
+            },
+            error: function () {
+                alert("Something went wrong!");
+            },
+            complete: function () {
+                self._evnt().doCall('hide-admin-loader');
+            },
+            cache: false
+        }, 'json');
+    }
+
+
+});
+
+var DD_admin_loader_images = DD_panel.extend({
+    
+    class_name: 'dd-admin-designer-container',
+    model: 'DD_Admin_ImagesLoader_Model',
+    
+    init: function (parent) {
+        var self = this;
+        this.parent = parent;
+        this._super({
+            'class': this.class_name,
+            'parent': parent
+        });
+        this.add();
+    }
+     
+});
+
+var DD_admin_main = DD_panel.extend({
+    
+    object_id: 'dd-admin-main-panel',
+    class_name: 'dd-admin-main-container',
+    
+    init: function (parent, options) {
+        var self = this;
+        this.options = options;
+        this.parent = parent;
+        this._super({
+            'id': this.object_id,
+            'class': this.class_name,
+            'parent': parent
+        });
+        this.add();
+    },
+    
+    _addElements: function() {
+        this.addLoader();
+        this.addImagesSelectedPanel();
+        this.addSelectImagesPanel();
+    },
+    
+    addImagesSelectedPanel: function() {
+        this.options.parent = this.self;
+        new DD_admin_selected_images({
+            'parent': this.self,
+            'urlImages': this.options.urlImages,
+            'product_sku': this.options.psku
+        });
+    },
+    
+    addSelectImagesPanel: function() {
+        
+    },
+    
+    addLoader: function() {
+        new DD_admin_loader_images(this.self);
+    }
+    
+})
+
+var DD_admin_selected_images = DD_panel.extend({
+    
+    class_name: 'dd-admin-designer-selected',
+    model: 'DD_Admin_ImagesSelected_Model',
+    class_no_image_selected: 'dd-admin-no-selected',
+    class_button_customize: 'dd-admin-images-customize',
+    
+    init: function (options) {
+        var self = this;
+        this.options  = options;
+        this.parent = options.parent;
+        this._super({
+            'class': this.class_name,
+            'parent': this.parent
+        });
+        this.add();
+    },
+    
+    processGroups: function(data) {
+        console.log(data);
+        if(data.error) {
+            alert(data.errorMessage);
+        }
+        if(data.success) {
+            return this.drawGroups(data.data);
+        }
+    },
+    
+    drawGroups: function(dataGroups){
+        if(dataGroups.length == 0) {
+            this.drawNoImagesSelected()
+        }
+    },
+    
+    drawNoImagesSelected: function() {
+        var p = $('<p />', {
+            id: this.getId(),
+            class: this.class_no_image_selected,
+            text: this._('default_main_image')
+        });
+        this.self.append(p);
+        var panelCustomize = new DD_panel({
+            'parent': this.self
+        });
+        panelCustomize.add();
+        var buttonCustomize = new DD_button({
+            'class': this.class_button_customize,
+            'text': this._('configure_images'),
+            'parent': panelCustomize.get()
+        });
+    }
+    
+});
+
+$.fn.dd_productdesigner_admin = function (options) {
+    this.options = $.extend({
+        'urlImages': '',
+        'psku': '',
+        'translator': {
+            'default_main_image': 'By default shows main product image',
+            'configure_images': 'Configure Images'
+        }
+    }, options);
+    
+    new DD_Translator(this.options.translator);
+    new DD_Event();
+    new DD_admin_main(this, this.options);
+    
+    if(this.options.debug) {
+        new DD_Debug(this);
+    }
+    return this;
+    
+    
 };
 })(jQuery);

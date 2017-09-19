@@ -54,7 +54,6 @@ var DD_Event = DD_object.extend({
             console.log('doCall real DELETE: ' +  ' - ' + eventName);
             delete this.listEventsCallbacks[eventName];
         }
-        console.log('doCall real: ' + eventName);
     },
     
     getListEvents: function() {

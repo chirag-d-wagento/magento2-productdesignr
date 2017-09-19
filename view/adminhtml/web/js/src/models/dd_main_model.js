@@ -5,7 +5,7 @@ var DD_Main_Model = DD_ModelBase.extend({
     init: function (obj) {
         this.obj = obj;
         this._super();
-        this.registerEvents();
+        //this.registerEvents();
         this.initLayers();
     },
 

@@ -604,4 +604,30 @@ ul.tabs li.current {
 .dd-designer-container .canvas-container {
   display: inline-block;
 }
+.dd-admin-main-container {
+  position: relative;
+  border: 1px solid silver;
+  width: 100%;
+  min-height: 100px;
+}
+.dd-admin-main-container .dd-admin-no-selected {
+  padding: 10px;
+  text-align: center;
+  font-weight: bold;
+}
+.dd-admin-main-container .dd-admin-images-customize {
+  display: block;
+  padding: 10px;
+  margin: 0 auto;
+}
+.dd-admin-designer-container {
+  position: absolute;
+  top: 4px;
+  width: 40px;
+  height: 40px;
+  display: none;
+  border: 1px solid silver;
+  right: 4px;
+  background: url(../images/loading.gif) no-repeat center center;
+}
 /*# sourceMappingURL=dd_productdesigner.css.map */
