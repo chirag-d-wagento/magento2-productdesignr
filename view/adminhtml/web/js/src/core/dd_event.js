@@ -39,7 +39,7 @@ var DD_Event = DD_object.extend({
         this.listEventsCallbacks[eventName][id] = func;
     },
     
-    doCall: function(eventName) {
+    doCall: function(eventName, data) {
         var self = this;
         console.log('should doCall: ' + eventName);
         if(!this.listEvents[eventName] || !this.listEventsCallbacks[eventName]) {
@@ -47,8 +47,9 @@ var DD_Event = DD_object.extend({
         }
         console.log( this.listEventsCallbacks[eventName] );
         $.each(this.listEventsCallbacks[eventName], function (i, eventCall) {
-            eventCall.call(self, self.listEvents[eventName], eventName);
+            eventCall.call(self, self.listEvents[eventName], eventName, data);
             console.log('doCall real: ' + i + ' - ' + eventName);
+            console.log(data);
         });
         if(this.listEventsBase[eventName]) {
             console.log('doCall real DELETE: ' +  ' - ' + eventName);

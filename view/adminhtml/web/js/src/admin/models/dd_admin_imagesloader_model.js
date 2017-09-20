@@ -15,12 +15,12 @@ var DD_Admin_ImagesLoader_Model = DD_ModelBase.extend({
     
     registerCalls: function(){
         var self = this;
-        this._evnt().registerCallback(this.eventShow, function(window) {
+        this._evnt().registerCallback(this.eventShow, function() {
             self.obj
                 .get(0)
                 .show();
         });
-        this._evnt().registerCallback(this.eventHide, function(window) {
+        this._evnt().registerCallback(this.eventHide, function() {
             self.obj
                 .get(0)
                 .hide();

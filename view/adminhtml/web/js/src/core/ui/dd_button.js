@@ -1,7 +1,7 @@
 var DD_button = DD_Uibase.extend({
     mainClass: 'button',
     init: function (options) {
-        this.options = options ? options : {};
+        this.options = $.extend(( options ? options : {} ) , this.options);
         this._super(this.options.id);
         this.self = $('<button />', {
             id: this.getId(),

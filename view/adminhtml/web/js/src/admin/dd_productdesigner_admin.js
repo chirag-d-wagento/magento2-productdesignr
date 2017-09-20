@@ -4,7 +4,13 @@ $.fn.dd_productdesigner_admin = function (options) {
         'psku': '',
         'translator': {
             'default_main_image': 'By default shows main product image',
-            'configure_images': 'Configure Images'
+            'configure_images': 'Configure Images',
+            'add_group': 'Add Group',
+            'clear_all': 'Clear All',
+            'cancel': 'Cancel',
+            'save': 'Save',
+            'remove': 'Remove',
+            'image': 'Image'
         }
     }, options);
     

@@ -27191,7 +27191,7 @@ var DD_Event = DD_object.extend({
         this.listEventsCallbacks[eventName][id] = func;
     },
     
-    doCall: function(eventName) {
+    doCall: function(eventName, data) {
         var self = this;
         console.log('should doCall: ' + eventName);
         if(!this.listEvents[eventName] || !this.listEventsCallbacks[eventName]) {
@@ -27199,8 +27199,9 @@ var DD_Event = DD_object.extend({
         }
         console.log( this.listEventsCallbacks[eventName] );
         $.each(this.listEventsCallbacks[eventName], function (i, eventCall) {
-            eventCall.call(self, self.listEvents[eventName], eventName);
+            eventCall.call(self, self.listEvents[eventName], eventName, data);
             console.log('doCall real: ' + i + ' - ' + eventName);
+            console.log(data);
         });
         if(this.listEventsBase[eventName]) {
             console.log('doCall real DELETE: ' +  ' - ' + eventName);
@@ -27556,7 +27557,7 @@ var DD_Layer = DD_object.extend({
 var DD_button = DD_Uibase.extend({
     mainClass: 'button',
     init: function (options) {
-        this.options = options ? options : {};
+        this.options = $.extend(( options ? options : {} ) , this.options);
         this._super(this.options.id);
         this.self = $('<button />', {
             id: this.getId(),
@@ -28482,12 +28483,12 @@ var DD_Admin_ImagesLoader_Model = DD_ModelBase.extend({
     
     registerCalls: function(){
         var self = this;
-        this._evnt().registerCallback(this.eventShow, function(window) {
+        this._evnt().registerCallback(this.eventShow, function() {
             self.obj
                 .get(0)
                 .show();
         });
-        this._evnt().registerCallback(this.eventHide, function(window) {
+        this._evnt().registerCallback(this.eventHide, function() {
             self.obj
                 .get(0)
                 .hide();
@@ -28498,25 +28499,86 @@ var DD_Admin_ImagesLoader_Model = DD_ModelBase.extend({
 
 var DD_Admin_ImagesSelected_Model = DD_ModelBase.extend({
 
+    groupChangedEvent: 'image-group-changed',
+    groupSetEvent: 'image-group-setdata',
+    groupCancelEvent: 'image-group-cancel',
+    addGroupEvent: 'image-group-add',
+    removeGroupEvent: 'image-group-remove',
+    
     init: function (obj) {
         this.obj = obj;
         this._super();
-        this.loadImages();
+        //this.loadGroups();
     },
-
-    registerEvents: function () {
-
+    _registerEvents: function () {
+        this._evnt().register(this.groupChangedEvent, this.obj);
+        this._evnt().register(this.groupSetEvent, this.obj);
+        this._evnt().register(this.addGroupEvent, this.obj);
+        this._evnt().register(this.groupCancelEvent, this.obj);
+        this._evnt().register(this.removeGroupEvent, this.obj);
     },
-
-    loadImages: function () {
+    _registerCalls: function () {
+        var self = this;
+        this._evnt().registerCallback(this.groupChangedEvent, function (obj) {
+            obj.groupContainer.empty();
+            var c = 0;
+            obj.groups.each(function(group){
+                new DD_admin_group({
+                    data: group, 
+                    parent:obj.groupContainer,
+                    index: c
+                });
+                c++;
+            });
+        });
+        this._evnt().registerCallback(this.groupSetEvent, function (obj, eventName, data) {
+            obj.groups = data;
+        });
+        
+        this._evnt().registerCallback(this.removeGroupEvent, function (obj, eventName, index) {
+            console.log(index);
+            var tmpGroups = obj.groups;
+            tmpGroups.splice(index, 1);
+            
+            obj.groups = tmpGroups;
+            
+            console.log(obj.groups);
+        });
+        
+        this._evnt().registerCallback(this.addGroupEvent, function (obj, eventName, data) {
+            obj.groups.push(data);
+            console.log(obj.groups);
+        });
+        
+        this._evnt().registerCallback(this.groupCancelEvent, function (obj, eventName, data) {
+            obj.drawNoImagesSelected();
+        });
+    },
+    cancelGroups: function() {
+        this._evnt().doCall(this.groupSetEvent, []);
+        this._evnt().doCall(this.groupCancelEvent);
+    },
+    updateGroups: function (groups) {
+        this._evnt().doCall(this.groupSetEvent, groups);
+        this._evnt().doCall(this.groupChangedEvent);
+    },
+    removeGroup: function(index) {
+        this._evnt().doCall(this.removeGroupEvent, index);
+        this._evnt().doCall(this.groupChangedEvent);
+    },
+    addGroup: function (data) {
+        this._evnt().doCall(this.addGroupEvent, data);
+        this._evnt().doCall(this.groupChangedEvent);
+    },
+    loadGroups: function () {
         var self = this;
         this._evnt().doCall('show-admin-loader');
         $.ajax({
             url: this.obj.options.urlImages
-                + '?form_key=' + window.FORM_KEY,
+                    + '?form_key=' + window.FORM_KEY,
             data: {
                 'product_sku': this.obj.options.psku
-            }, 
+            },
             success: function (data) {
                 self.obj.processGroups(data);
             },
@@ -28528,10 +28590,225 @@ var DD_Admin_ImagesSelected_Model = DD_ModelBase.extend({
             },
             cache: false
         }, 'json');
+    },
+    attachCustomizeButtonEvents: function (button, parent) {
+        var self = this;
+        button.on('click', function () {
+            self.obj.p_noimages.remove();
+            self.obj.panelCustomize.get().remove();
+            self.obj.drawCustomizePanel();
+        });
+    },
+    clearClickEvents: function (obj) {
+        var self = this;
+        obj.on('click', function () {
+            self.updateGroups([]);
+        });
+    },
+    
+    addGroupClick: function(obj) {
+        var self = this;
+        obj.on('click', function () {
+            self.addGroup({'unique_id': self.createUUID() });
+        });
+    },
+    
+    removeGroupClick: function(obj) {
+        var self = this;
+        obj.on('click', function () {
+            var remove = obj.attr('data-remove');
+            self.removeGroup(remove);
+        });
+    },
+    
+    addGroupCancelClick: function(obj) {
+        var self = this;
+        obj.on('click', function () {
+            self.cancelGroups();
+        });
+    },
+    
+    addGroupSaveClick: function(obj) {
+        var self = this;
+        obj.on('click', function () {
+            console.log('save');
+        });
+    },
+    
+    selectImgClick: function(obj) {
+        var self = this;
+        obj.on('click', function () {
+            alert('select img');
+        });
+        
     }
 
+});
+
+var DD_admin_groups_panel = DD_panel.extend({
+    
+    class_name: 'dd-admin-groups-panel',
+    model: 'DD_Admin_ImagesSelected_Model',
+    
+    init: function (options) {
+        var self = this;
+        this.options  = options;
+        this._super({
+            'class': this.class_name
+        });
+        this.add();
+    },
+    
+    _addElements: function() {
+        this.addGroupButton();
+        this.addClearButton();
+        this.addCancelButton();
+        this.addSaveButton();
+    },
+    
+    addGroupButton: function(){
+        new DD_admin_group_button(
+            this.self
+        );
+    },
+    
+    addSaveButton: function(){
+        new DD_admin_groupsave_button(
+            this.self
+        );
+    },
+    
+    addClearButton: function() {
+        new DD_admin_clear_button(
+            this.self
+        );
+    },
+    
+    addCancelButton: function() {
+        new DD_admin_groupcancel_button(
+            this.self
+        );
+    }
 
 });
+
+var DD_admin_clear_button = DD_button.extend({
+    class_name: 'dd-admin-clear-button',
+    model: 'DD_Admin_ImagesSelected_Model',
+
+    init: function (parent) {
+        var options = {
+            parent: parent,
+            class: this.class_name,
+            text: this._('clear_all'),
+        }
+        this._super(options);
+        this.model.clearClickEvents(this.self);
+    }
+
+});
+
+var DD_admin_group = DD_panel.extend({  
+    class_name: 'dd-admin-group',
+    class_name_remove: 'dd-admin-group-remove',
+    class_name_select_img: 'dd-admin-select-img',
+    
+    model: 'DD_Admin_ImagesSelected_Model',
+    
+    init: function (options) {
+        var self = this;
+        this.data = options.data;
+        this.options  = options;
+        console.log( this.options );
+        this._super({
+            'class': this.class_name
+        });
+        this.add();
+        this.addElements();
+    },
+    
+    addElements: function() {
+        this.addRemove();
+        this.addSelectImage();
+    },
+    
+    addRemove: function() {
+        var remove = new DD_button({
+            'class': this.class_name_remove,
+            'text': this._('remove'),
+            'parent': this.self
+        });
+        remove.get(0).attr({
+            'data-remove': this.options.index
+        });
+        this.model.removeGroupClick(remove.get(0));
+    },
+    
+    addSelectImage: function() {
+        var selectImg = new DD_button({
+            'class': this.class_name_select_img,
+            'text': this._('image'),
+            'parent': this.self
+        });
+        selectImg.get(0).attr({
+            'data-remove': this.options.index
+        });
+        this.model.selectImgClick(selectImg.get(0));
+    }
+});
+
+var DD_admin_group_button= DD_button.extend({
+    class_name: 'dd-admin-group-button',
+    model: 'DD_Admin_ImagesSelected_Model',
+
+    init: function (parent) {
+        var options = {
+            parent: parent,
+            class: this.class_name,
+            text: this._('add_group'),
+        }
+        this._super(options);
+        this.model.addGroupClick(this.self);
+    }
+
+});
+
+
+var DD_admin_groupcancel_button= DD_button.extend({
+    class_name: 'dd-admin-groupcancel-button',
+    model: 'DD_Admin_ImagesSelected_Model',
+
+    init: function (parent) {
+        var options = {
+            parent: parent,
+            class: this.class_name,
+            text: this._('cancel'),
+        }
+        this._super(options);
+        this.model.addGroupCancelClick(this.self);
+        
+    }
+
+});
+
+
+var DD_admin_groupsave_button= DD_button.extend({
+    class_name: 'dd-admin-groupsave-button',
+    model: 'DD_Admin_ImagesSelected_Model',
+
+    init: function (parent) {
+        var options = {
+            parent: parent,
+            class: this.class_name,
+            text: this._('save'),
+        }
+        this._super(options);
+        this.model.addGroupSaveClick(this.self);
+        
+    }
+
+});
+
 
 var DD_admin_loader_images = DD_panel.extend({
     
@@ -28570,7 +28847,6 @@ var DD_admin_main = DD_panel.extend({
     _addElements: function() {
         this.addLoader();
         this.addImagesSelectedPanel();
-        this.addSelectImagesPanel();
     },
     
     addImagesSelectedPanel: function() {
@@ -28580,10 +28856,6 @@ var DD_admin_main = DD_panel.extend({
             'urlImages': this.options.urlImages,
             'product_sku': this.options.psku
         });
-    },
-    
-    addSelectImagesPanel: function() {
-        
     },
     
     addLoader: function() {
@@ -28598,16 +28870,20 @@ var DD_admin_selected_images = DD_panel.extend({
     model: 'DD_Admin_ImagesSelected_Model',
     class_no_image_selected: 'dd-admin-no-selected',
     class_button_customize: 'dd-admin-images-customize',
+    class_group_container: 'dd-admin-group-container',
+    groups: [],
     
     init: function (options) {
         var self = this;
         this.options  = options;
-        this.parent = options.parent;
         this._super({
-            'class': this.class_name,
-            'parent': this.parent
+            'class': this.class_name
         });
         this.add();
+        this.model._registerEvents();
+        this.model._registerCalls();
+        this.model.loadGroups();
+        
     },
     
     processGroups: function(data) {
@@ -28621,27 +28897,47 @@ var DD_admin_selected_images = DD_panel.extend({
     },
     
     drawGroups: function(dataGroups){
+        this.model.groups = dataGroups;
         if(dataGroups.length == 0) {
             this.drawNoImagesSelected()
         }
     },
     
     drawNoImagesSelected: function() {
-        var p = $('<p />', {
+        if(this.groupsPanel) {
+           this.groupsPanel.remove(); 
+        }
+        if(this.groupContainer){
+            this.groupContainer.remove();
+        }
+        this.p_noimages = $('<p />', {
             id: this.getId(),
             class: this.class_no_image_selected,
             text: this._('default_main_image')
         });
-        this.self.append(p);
-        var panelCustomize = new DD_panel({
+        this.self.append(this.p_noimages);
+        this.panelCustomize = new DD_panel({
             'parent': this.self
         });
-        panelCustomize.add();
+        this.panelCustomize.add();
         var buttonCustomize = new DD_button({
             'class': this.class_button_customize,
-            'text': this._('configure_images'),
-            'parent': panelCustomize.get()
+            'text': this._('configure_images'), 
+            'parent': this.panelCustomize.get()
         });
+        this.model.attachCustomizeButtonEvents(buttonCustomize.get(), this.self);
+    },
+    
+    drawCustomizePanel: function() {
+        var groupsPanel = new DD_admin_groups_panel({parent: this.self});
+        this.groupsPanel = groupsPanel.get();
+        
+        var groupContainer = new DD_panel({
+            'parent': this.self,
+            'class': this.class_group_container
+        });
+        groupContainer.add();
+        this.groupContainer = groupContainer.get();
     }
     
 });
@@ -28652,7 +28948,13 @@ $.fn.dd_productdesigner_admin = function (options) {
         'psku': '',
         'translator': {
             'default_main_image': 'By default shows main product image',
-            'configure_images': 'Configure Images'
+            'configure_images': 'Configure Images',
+            'add_group': 'Add Group',
+            'clear_all': 'Clear All',
+            'cancel': 'Cancel',
+            'save': 'Save',
+            'remove': 'Remove',
+            'image': 'Image'
         }
     }, options);
     

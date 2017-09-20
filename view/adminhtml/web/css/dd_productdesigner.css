@@ -620,6 +620,15 @@ ul.tabs li.current {
   padding: 10px;
   margin: 0 auto;
 }
+.dd-admin-main-container .dd-admin-groups-panel {
+  display: blodk;
+  border-bottom: 1px solid silver;
+  padding: 7px;
+  margin: 5px;
+}
+.dd-admin-main-container .dd-admin-groups-panel .button {
+  margin: 3px;
+}
 .dd-admin-designer-container {
   position: absolute;
   top: 4px;
@@ -629,5 +638,26 @@ ul.tabs li.current {
   border: 1px solid silver;
   right: 4px;
   background: url(../images/loading.gif) no-repeat center center;
+}
+.dd-admin-group-container {
+  position: relative;
+}
+.dd-admin-group-container .dd-admin-group {
+  min-width: 300px;
+  min-height: 150px;
+  border: 1px solid #cdcdcd;
+  display: inline-block;
+  margin: 15px;
+  position: relative;
+}
+.dd-admin-group-container .dd-admin-group .dd-admin-group-remove {
+  position: absolute;
+  bottom: 0px;
+  right: 0px;
+}
+.dd-admin-group-container .dd-admin-group .dd-admin-select-img {
+  position: absolute;
+  bottom: 0px;
+  left: 0px;
 }
 /*# sourceMappingURL=dd_productdesigner.css.map */
