@@ -7,13 +7,15 @@ define([
         defaults: {
             template: 'designer/designer',
             links: {
-                psku: '${ $.provider }:data.product.sku'
+                psku: '${ $.provider }:data.product.sku',
+                product_id: '${ $.provider }:data.product.current_product_id'
             }
         },
 
         initObservable: function () {
             this._super().observe([
-                'psku'
+                'psku',
+                'product_id'
             ]);
             return this;
         },
@@ -29,7 +31,11 @@ define([
             $('#dd_designer_admin').dd_productdesigner_admin({
                 'debug': true,
                 'urlImages': data.urlImages,
-                'psku': data.psku()
+                'settings': {
+                    'psku': data.psku(),
+                    'product_id': data.product_id(),
+                    'urlLoadImages': data.urlLoadImages
+                }
             });
             /*
              $('#dd_designer').dd_productdesigner({

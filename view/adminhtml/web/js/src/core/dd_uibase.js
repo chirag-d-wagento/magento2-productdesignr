@@ -44,15 +44,21 @@ var DD_Uibase = DD_object.extend({
         }
         if (this.options.windowOpener && model) {
             this.self.on('click', function () {
-                var window = me.modal.getWindow();
+                if(!me.options.windowPreview) {
+                    var window = me.modal.getWindow();
+                }else{
+                    var window = me.modal.getPreview();
+                }
                 var contentElement = me.modal.getContentElement();
                 contentElement.empty();
+                me.model.opener = me;
                 me.model.setWindowContent( contentElement );
                 me.model.setWindow(window);
+                
                 window.setTitle( me.model.getWindowTitle() )
                 window.open({});
                 
-                if(!window.isClosed) {
+                if(!window.isClosed && !me.options.windowPreview) {
                     window.position({target: $('.canvas-container')});
                 }
             });

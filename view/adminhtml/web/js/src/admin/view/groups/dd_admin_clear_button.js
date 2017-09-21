@@ -7,6 +7,7 @@ var DD_admin_clear_button = DD_button.extend({
             parent: parent,
             class: this.class_name,
             text: this._('clear_all'),
+            fa_addon: ' fa fa-times '
         }
         this._super(options);
         this.model.clearClickEvents(this.self);

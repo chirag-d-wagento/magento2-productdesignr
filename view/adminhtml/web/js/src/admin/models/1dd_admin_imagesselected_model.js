@@ -37,24 +37,24 @@ var DD_Admin_ImagesSelected_Model = DD_ModelBase.extend({
         });
         
         this._evnt().registerCallback(this.removeGroupEvent, function (obj, eventName, index) {
-            console.log(index);
             var tmpGroups = obj.groups;
             tmpGroups.splice(index, 1);
-            
             obj.groups = tmpGroups;
-            
-            console.log(obj.groups);
         });
         
         this._evnt().registerCallback(this.addGroupEvent, function (obj, eventName, data) {
-            obj.groups.push(data);
-            console.log(obj.groups);
+            obj.groups[obj.groups.length] = data;
         });
         
         this._evnt().registerCallback(this.groupCancelEvent, function (obj, eventName, data) {
             obj.drawNoImagesSelected();
         });
     },
+    
+    getGroups: function() {
+        return this._evnt().getEventObject(this.groupSetEvent).groups;
+    },
+    
     cancelGroups: function() {
         this._evnt().doCall(this.groupSetEvent, []);
         this._evnt().doCall(this.groupCancelEvent);
@@ -69,6 +69,17 @@ var DD_Admin_ImagesSelected_Model = DD_ModelBase.extend({
     },
     addGroup: function (data) {
         this._evnt().doCall(this.addGroupEvent, data);
+        this._evnt().doCall(this.groupChangedEvent);
+    },
+    
+    addImage: function(group_index, media_id, img) {
+        this.groups = this.getGroups();
+        this.groups[parseInt(group_index)][media_id] =  img;
+        this._evnt().doCall(this.groupChangedEvent);
+    },
+    
+    removeImage: function(group_index, media_id) {
+        delete this.groups[parseInt(group_index)][media_id];
         this._evnt().doCall(this.groupChangedEvent);
     },
     loadGroups: function () {
@@ -100,6 +111,7 @@ var DD_Admin_ImagesSelected_Model = DD_ModelBase.extend({
             self.obj.drawCustomizePanel();
         });
     },
+    
     clearClickEvents: function (obj) {
         var self = this;
         obj.on('click', function () {
@@ -110,7 +122,7 @@ var DD_Admin_ImagesSelected_Model = DD_ModelBase.extend({
     addGroupClick: function(obj) {
         var self = this;
         obj.on('click', function () {
-            self.addGroup({'unique_id': self.createUUID() });
+            self.addGroup({});
         });
     },
     
@@ -134,14 +146,6 @@ var DD_Admin_ImagesSelected_Model = DD_ModelBase.extend({
         obj.on('click', function () {
             console.log('save');
         });
-    },
-    
-    selectImgClick: function(obj) {
-        var self = this;
-        obj.on('click', function () {
-            alert('select img');
-        });
-        
     }
 
 });

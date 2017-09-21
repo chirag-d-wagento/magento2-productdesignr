@@ -7,6 +7,7 @@ var DD_admin_groupcancel_button= DD_button.extend({
             parent: parent,
             class: this.class_name,
             text: this._('cancel'),
+            fa_addon: 'fa fa-minus-circle'
         }
         this._super(options);
         this.model.addGroupCancelClick(this.self);

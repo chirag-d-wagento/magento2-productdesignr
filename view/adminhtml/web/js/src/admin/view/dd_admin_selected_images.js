@@ -57,7 +57,8 @@ var DD_admin_selected_images = DD_panel.extend({
         var buttonCustomize = new DD_button({
             'class': this.class_button_customize,
             'text': this._('configure_images'), 
-            'parent': this.panelCustomize.get()
+            'parent': this.panelCustomize.get(),
+            'fa_addon': 'fa fa-cogs'
         });
         this.model.attachCustomizeButtonEvents(buttonCustomize.get(), this.self);
     },

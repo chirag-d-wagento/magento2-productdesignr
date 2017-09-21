@@ -32687,6 +32687,42 @@ var DD_Window = DD_object.extend({
         }
         this._super(this.id);
         this.createContentElement();
+        this.registerModal();
+        this.registerPreview();
+        this.setGlobal();
+        
+        return this.modal;
+    },
+    
+    registerPreview: function() {
+        var self = this;
+        
+        this.preview = new jBox('Modal', {
+            title: '-',
+            draggable: false,
+            overlay: false,
+            close: true,
+            content: $('#' + this.CONST_WIN_CONTENT_EL),
+            width: $(window).width(),
+            fixed: false,
+            height: $(window).width(),
+            repositionOnOpen: false,
+            repositionOnContent: true,
+            fixed: true,
+            onOpen: function () {
+                self._evnt().doCall('preview-showed');
+            },
+            onClose: function () {
+                self._evnt().doCall('preview-closed');
+            }
+        });
+
+
+        this._evnt().register('preview-showed', this.modal);
+        this._evnt().register('preview-closed', this.modal, true);
+    },
+    
+    registerModal: function() {
         var self = this;
         
         this.modal = new jBox('Modal', {
@@ -32712,14 +32748,15 @@ var DD_Window = DD_object.extend({
 
         this._evnt().register('window-showed', this.modal);
         this._evnt().register('window-closed', this.modal, true);
-        this.setGlobal();
-
         this.registerCloseWinEventCall();
-        return this.modal;
     },
 
     getWindow: function () {
         return this.getGlobal(this.id).modal;
+    },
+
+    getPreview: function () {
+        return this.getGlobal(this.id).preview;
     },
 
     getContentElement: function () {
@@ -32794,15 +32831,21 @@ var DD_Uibase = DD_object.extend({
         }
         if (this.options.windowOpener && model) {
             this.self.on('click', function () {
-                var window = me.modal.getWindow();
+                if(!me.options.windowPreview) {
+                    var window = me.modal.getWindow();
+                }else{
+                    var window = me.modal.getPreview();
+                }
                 var contentElement = me.modal.getContentElement();
                 contentElement.empty();
+                me.model.opener = me;
                 me.model.setWindowContent( contentElement );
                 me.model.setWindow(window);
+                
                 window.setTitle( me.model.getWindowTitle() )
                 window.open({});
                 
-                if(!window.isClosed) {
+                if(!window.isClosed && !me.options.windowPreview) {
                     window.position({target: $('.canvas-container')});
                 }
             });
@@ -32980,13 +33023,25 @@ var DD_button = DD_Uibase.extend({
     mainClass: 'button',
     init: function (options) {
         this.options = $.extend(( options ? options : {} ) , this.options);
+        if(this.options.model) {
+           this.model = this.options.model; 
+        }
         this._super(this.options.id);
         this.self = $('<button />', {
             id: this.getId(),
             class: this.mainClass + ' ' + (this.options.class ? this.options.class : ''),
-            text: (this.options.text ? this.options.text : '')
+            text: (this.options.text && !this.options.fa && !this.options.fa_addon  ? this.options.text : '')
         });
         this.add();
+        if(this.options.fa_addon){
+            var fa = $('<span />', {
+                class: this.options.fa_addon + ' extra-fa fa-lg'
+            });
+            this.self.append(fa);
+            if(this.options.text) {
+                this.self.append(this.options.text);
+            }
+        }
     },
     
     add: function() {
@@ -33888,37 +33943,6 @@ $.fn.dd_productdesigner = function (options) {
     return this;
 };
 
-var DD_Admin_ImagesLoader_Model = DD_ModelBase.extend({
-    
-    eventShow: 'show-admin-loader',
-    eventHide: 'hide-admin-loader',
-    
-    init: function (obj) {
-        this.obj = obj;
-        this._super();
-    },
-    
-    registerEvents: function () {
-        this._evnt().register(this.eventShow, this.obj);
-        this._evnt().register(this.eventHide, this.obj);
-    },
-    
-    registerCalls: function(){
-        var self = this;
-        this._evnt().registerCallback(this.eventShow, function() {
-            self.obj
-                .get(0)
-                .show();
-        });
-        this._evnt().registerCallback(this.eventHide, function() {
-            self.obj
-                .get(0)
-                .hide();
-        });
-    }
-    
-});
-
 var DD_Admin_ImagesSelected_Model = DD_ModelBase.extend({
 
     groupChangedEvent: 'image-group-changed',
@@ -33958,24 +33982,24 @@ var DD_Admin_ImagesSelected_Model = DD_ModelBase.extend({
         });
         
         this._evnt().registerCallback(this.removeGroupEvent, function (obj, eventName, index) {
-            console.log(index);
             var tmpGroups = obj.groups;
             tmpGroups.splice(index, 1);
-            
             obj.groups = tmpGroups;
-            
-            console.log(obj.groups);
         });
         
         this._evnt().registerCallback(this.addGroupEvent, function (obj, eventName, data) {
-            obj.groups.push(data);
-            console.log(obj.groups);
+            obj.groups[obj.groups.length] = data;
         });
         
         this._evnt().registerCallback(this.groupCancelEvent, function (obj, eventName, data) {
             obj.drawNoImagesSelected();
         });
     },
+    
+    getGroups: function() {
+        return this._evnt().getEventObject(this.groupSetEvent).groups;
+    },
+    
     cancelGroups: function() {
         this._evnt().doCall(this.groupSetEvent, []);
         this._evnt().doCall(this.groupCancelEvent);
@@ -33990,6 +34014,17 @@ var DD_Admin_ImagesSelected_Model = DD_ModelBase.extend({
     },
     addGroup: function (data) {
         this._evnt().doCall(this.addGroupEvent, data);
+        this._evnt().doCall(this.groupChangedEvent);
+    },
+    
+    addImage: function(group_index, media_id, img) {
+        this.groups = this.getGroups();
+        this.groups[parseInt(group_index)][media_id] =  img;
+        this._evnt().doCall(this.groupChangedEvent);
+    },
+    
+    removeImage: function(group_index, media_id) {
+        delete this.groups[parseInt(group_index)][media_id];
         this._evnt().doCall(this.groupChangedEvent);
     },
     loadGroups: function () {
@@ -34021,6 +34056,7 @@ var DD_Admin_ImagesSelected_Model = DD_ModelBase.extend({
             self.obj.drawCustomizePanel();
         });
     },
+    
     clearClickEvents: function (obj) {
         var self = this;
         obj.on('click', function () {
@@ -34031,7 +34067,7 @@ var DD_Admin_ImagesSelected_Model = DD_ModelBase.extend({
     addGroupClick: function(obj) {
         var self = this;
         obj.on('click', function () {
-            self.addGroup({'unique_id': self.createUUID() });
+            self.addGroup({});
         });
     },
     
@@ -34055,93 +34091,173 @@ var DD_Admin_ImagesSelected_Model = DD_ModelBase.extend({
         obj.on('click', function () {
             console.log('save');
         });
+    }
+
+});
+
+var DD_Admin_Image_Model = DD_Admin_ImagesSelected_Model.extend({
+    
+    class_selected: 'selected',
+    
+    registerImage: function(imgCnt, data) {
+        this.data = data;
+        if(this.findImage()) {
+            this.selectImage(imgCnt);
+        }
+        this.registerClickEvent(imgCnt);
     },
     
-    selectImgClick: function(obj) {
+    registerClickEvent: function(imgCnt) {
         var self = this;
-        obj.on('click', function () {
-            alert('select img');
+        imgCnt.on('click', function() {
+            self.selectImage(imgCnt);
+        });
+    },
+    
+    selectImage: function(imgCnt) {
+        if(imgCnt.hasClass('selected')) {
+            imgCnt.removeClass('selected');
+            this.removeImage(this.data.group_index, this.data.media_id);
+        }else{
+            imgCnt.addClass('selected');
+            this.addImage(this.data.group_index, this.data.media_id, this.data);
+        }
+    },
+    
+    getGroupImages: function() {
+        this.groups = this.getGroups();
+        return this.groups[parseInt(this.data.group_index)]; 
+    },
+    
+    findImage: function() {
+        var self = this;
+        var images = this.getGroupImages();
+        var media_id = false;
+        $.each(images, function(i, image) {
+            if(image.media_id == self.data.media_id) {
+                media_id = image.media_id;
+            }
         });
         
+        return media_id;
     }
-
 });
 
-var DD_admin_groups_panel = DD_panel.extend({
+var DD_Admin_ImagesLoader_Model = DD_ModelBase.extend({
     
-    class_name: 'dd-admin-groups-panel',
-    model: 'DD_Admin_ImagesSelected_Model',
+    eventShow: 'show-admin-loader',
+    eventHide: 'hide-admin-loader',
     
-    init: function (options) {
+    init: function (obj) {
+        this.obj = obj;
+        this._super();
+    },
+    
+    registerEvents: function () {
+        this._evnt().register(this.eventShow, this.obj);
+        this._evnt().register(this.eventHide, this.obj);
+    },
+    
+    registerCalls: function(){
         var self = this;
-        this.options  = options;
-        this._super({
-            'class': this.class_name
+        this._evnt().registerCallback(this.eventShow, function() {
+            self.obj
+                .get(0)
+                .show();
         });
-        this.add();
-    },
-    
-    _addElements: function() {
-        this.addGroupButton();
-        this.addClearButton();
-        this.addCancelButton();
-        this.addSaveButton();
-    },
-    
-    addGroupButton: function(){
-        new DD_admin_group_button(
-            this.self
-        );
-    },
-    
-    addSaveButton: function(){
-        new DD_admin_groupsave_button(
-            this.self
-        );
-    },
-    
-    addClearButton: function() {
-        new DD_admin_clear_button(
-            this.self
-        );
-    },
-    
-    addCancelButton: function() {
-        new DD_admin_groupcancel_button(
-            this.self
-        );
+        this._evnt().registerCallback(this.eventHide, function() {
+            self.obj
+                .get(0)
+                .hide();
+        });
     }
-
+    
 });
 
-var DD_admin_clear_button = DD_button.extend({
-    class_name: 'dd-admin-clear-button',
-    model: 'DD_Admin_ImagesSelected_Model',
+var DD_Admin_loadimages_model = DD_Admin_ImagesSelected_Model.extend({
 
-    init: function (parent) {
-        var options = {
-            parent: parent,
-            class: this.class_name,
-            text: this._('clear_all'),
-        }
-        this._super(options);
-        this.model.clearClickEvents(this.self);
+    class_container: 'dd-admin-loadimages-container',
+    class_loading: 'dd-admin-loadimages-loading',
+
+    getWindowTitle: function () {
+        return this._('select_images');
+    },
+
+    setWindowContent: function (parent) {
+        this.parent = parent;
+        var container = new DD_panel({
+            'class': this.class_container,
+            'parent': parent
+        });
+        container.add();
+
+        this.container = container.get();
+        parent.append(this.container);
+        this.loadImages();
+    },
+
+    loadImages: function () {
+        this.showLoading();
+        var self = this;
+        $.ajax({
+            url: this._s('urlLoadImages')
+                    + '?form_key=' + window.FORM_KEY,
+            data: {
+                'product_sku': this._s('psku'),
+                'product_id': this._s('product_id'),
+                'group_index': this.opener.get().attr('data-group')
+            },
+            success: function (data) {
+                if(data.error) {
+                    alert(data.errorMessage);
+                    return;
+                }
+                self.container.append($('<h3 />').html(data.extra.product_name + '(' + data.extra.psku + ')'));
+                if(typeof(data.data) == 'undefined' || data.data.length == 0) {
+                    self.container.append($('<div />').html(data.extra.no_images_text));
+                }
+                
+                $.each(data.data, function(i, img) {
+                    new DD_admin_image(self.container, img);
+                });
+            },
+            error: function () {
+                alert("Something went wrong!");
+            },
+            complete: function () {
+                self.hideLoading();
+            },
+            cache: false
+        }, 'json');
+    },
+    
+    hideLoading: function() {
+        this.loading.remove();
+    },
+
+    showLoading: function () {
+        var loading = new DD_panel({
+            'class': this.class_loading,
+            'parent': this.container
+        });
+        loading.add();
+
+        this.loading = loading.get();
     }
-
 });
+
 
 var DD_admin_group = DD_panel.extend({  
     class_name: 'dd-admin-group',
-    class_name_remove: 'dd-admin-group-remove',
-    class_name_select_img: 'dd-admin-select-img',
+    class_name_remove: 'dd-admin-group-remove fa fa-trash-o',
+    class_name_select_img: 'dd-admin-select-img fa fa-picture-o',
     
     model: 'DD_Admin_ImagesSelected_Model',
+    modelLoadImages: 'DD_Admin_loadimages_model',
     
     init: function (options) {
         var self = this;
-        this.data = options.data;
         this.options  = options;
-        console.log( this.options );
         this._super({
             'class': this.class_name
         });
@@ -34152,13 +34268,21 @@ var DD_admin_group = DD_panel.extend({
     addElements: function() {
         this.addRemove();
         this.addSelectImage();
+        this.addImages();
+    },
+    
+    addImages: function(){
+        console.log('addImages');
+        console.log(this.options.data);
+        
     },
     
     addRemove: function() {
         var remove = new DD_button({
             'class': this.class_name_remove,
             'text': this._('remove'),
-            'parent': this.self
+            'parent': this.self,
+            'fa': true
         });
         remove.get(0).attr({
             'data-remove': this.options.index
@@ -34170,67 +34294,18 @@ var DD_admin_group = DD_panel.extend({
         var selectImg = new DD_button({
             'class': this.class_name_select_img,
             'text': this._('image'),
-            'parent': this.self
+            'parent': this.self,
+            'fa': true,
+            'windowOpener': true,
+            'windowPreview': true,
+            'model': this.modelLoadImages
+            
         });
         selectImg.get(0).attr({
-            'data-remove': this.options.index
+            'data-group': this.options.index
         });
-        this.model.selectImgClick(selectImg.get(0));
     }
 });
-
-var DD_admin_group_button= DD_button.extend({
-    class_name: 'dd-admin-group-button',
-    model: 'DD_Admin_ImagesSelected_Model',
-
-    init: function (parent) {
-        var options = {
-            parent: parent,
-            class: this.class_name,
-            text: this._('add_group'),
-        }
-        this._super(options);
-        this.model.addGroupClick(this.self);
-    }
-
-});
-
-
-var DD_admin_groupcancel_button= DD_button.extend({
-    class_name: 'dd-admin-groupcancel-button',
-    model: 'DD_Admin_ImagesSelected_Model',
-
-    init: function (parent) {
-        var options = {
-            parent: parent,
-            class: this.class_name,
-            text: this._('cancel'),
-        }
-        this._super(options);
-        this.model.addGroupCancelClick(this.self);
-        
-    }
-
-});
-
-
-var DD_admin_groupsave_button= DD_button.extend({
-    class_name: 'dd-admin-groupsave-button',
-    model: 'DD_Admin_ImagesSelected_Model',
-
-    init: function (parent) {
-        var options = {
-            parent: parent,
-            class: this.class_name,
-            text: this._('save'),
-        }
-        this._super(options);
-        this.model.addGroupSaveClick(this.self);
-        
-    }
-
-});
-
 
 var DD_admin_loader_images = DD_panel.extend({
     
@@ -34345,7 +34420,8 @@ var DD_admin_selected_images = DD_panel.extend({
         var buttonCustomize = new DD_button({
             'class': this.class_button_customize,
             'text': this._('configure_images'), 
-            'parent': this.panelCustomize.get()
+            'parent': this.panelCustomize.get(),
+            'fa_addon': 'fa fa-cogs'
         });
         this.model.attachCustomizeButtonEvents(buttonCustomize.get(), this.self);
     },
@@ -34364,10 +34440,164 @@ var DD_admin_selected_images = DD_panel.extend({
     
 });
 
+var DD_admin_groups_panel = DD_panel.extend({
+    
+    class_name: 'dd-admin-groups-panel',
+    model: 'DD_Admin_ImagesSelected_Model',
+    
+    init: function (options) {
+        this.options  = options;
+        this._super({
+            'class': this.class_name
+        });
+        this.add();
+    },
+    
+    _addElements: function() {
+        this.addGroupButton();
+        this.addClearButton();
+        this.addCancelButton();
+        this.addSaveButton();
+    },
+    
+    addGroupButton: function(){
+        new DD_admin_group_button(
+            this.self
+        );
+    },
+    
+    addSaveButton: function(){
+        new DD_admin_groupsave_button(
+            this.self
+        );
+    },
+    
+    addClearButton: function() {
+        new DD_admin_clear_button(
+            this.self
+        );
+    },
+    
+    addCancelButton: function() {
+        new DD_admin_groupcancel_button(
+            this.self
+        );
+    }
+
+});
+
+var DD_admin_clear_button = DD_button.extend({
+    class_name: 'dd-admin-clear-button',
+    model: 'DD_Admin_ImagesSelected_Model',
+
+    init: function (parent) {
+        var options = {
+            parent: parent,
+            class: this.class_name,
+            text: this._('clear_all'),
+            fa_addon: ' fa fa-times '
+        }
+        this._super(options);
+        this.model.clearClickEvents(this.self);
+    }
+
+});
+
+var DD_admin_group_button= DD_button.extend({
+    class_name: 'dd-admin-group-button',
+    model: 'DD_Admin_ImagesSelected_Model',
+
+    init: function (parent) {
+        var options = {
+            parent: parent,
+            class: this.class_name,
+            text: this._('add_group'),
+            fa_addon: 'fa fa-folder-open-o'
+        }
+        this._super(options);
+        this.model.addGroupClick(this.self);
+    }
+
+});
+
+
+var DD_admin_group_image = DD_panel.extend({
+    
+    class_name: 'dd-admin-group-image',
+
+});
+
+var DD_admin_groupcancel_button= DD_button.extend({
+    class_name: 'dd-admin-groupcancel-button',
+    model: 'DD_Admin_ImagesSelected_Model',
+
+    init: function (parent) {
+        var options = {
+            parent: parent,
+            class: this.class_name,
+            text: this._('cancel'),
+            fa_addon: 'fa fa-minus-circle'
+        }
+        this._super(options);
+        this.model.addGroupCancelClick(this.self);
+        
+    }
+
+});
+
+
+var DD_admin_groupsave_button= DD_button.extend({
+    class_name: 'dd-admin-groupsave-button',
+    model: 'DD_Admin_ImagesSelected_Model',
+
+    init: function (parent) {
+        var options = {
+            parent: parent,
+            class: this.class_name,
+            text: this._('save'),
+            fa_addon: 'fa fa-floppy-o'
+        }
+        this._super(options);
+        this.model.addGroupSaveClick(this.self);
+        
+    }
+
+});
+
+
+var DD_admin_image = DD_panel.extend({  
+    class_name: 'dd-admin-product-image',
+    class_selected: 'fa fa-check-square-o',
+    class_unselected: 'fa fa-square-o',
+    model: 'DD_Admin_Image_Model',
+    
+    init: function (parent, imgOptions) {
+        this.imgOptions  = imgOptions;
+        
+        this._super({
+            'class': this.class_name,
+            'parent': parent
+        });
+        this.add();
+        this.addImage();
+    },
+    
+    addImage: function(){
+        this.img = $('<img />').attr('src', this.imgOptions.src);
+        this.self.append(this.img);
+        this.model.registerImage(this.self, this.imgOptions);
+        this.addSelectedIcons();
+    },
+    
+    
+    addSelectedIcons: function() {
+        this.self.append($('<span />').addClass(this.class_selected));
+        this.self.append($('<span />').addClass(this.class_unselected));
+    }
+});
 $.fn.dd_productdesigner_admin = function (options) {
     this.options = $.extend({
         'urlImages': '',
-        'psku': '',
         'translator': {
             'default_main_image': 'By default shows main product image',
             'configure_images': 'Configure Images',
@@ -34376,13 +34606,21 @@ $.fn.dd_productdesigner_admin = function (options) {
             'cancel': 'Cancel',
             'save': 'Save',
             'remove': 'Remove',
-            'image': 'Image'
+            'image': 'Image',
+            'select_images': 'Select Images'
+        },
+        
+        'settings': {
+            'psku': '',
+            'urlLoadImages': '',
+            'product_id': ''
         }
     }, options);
     
     new DD_Translator(this.options.translator);
     new DD_Event();
     new DD_admin_main(this, this.options);
+    new DD_Settings(this.options.settings);
     
     if(this.options.debug) {
         new DD_Debug(this);

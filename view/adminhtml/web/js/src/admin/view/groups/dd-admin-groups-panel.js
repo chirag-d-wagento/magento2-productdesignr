@@ -4,7 +4,6 @@ var DD_admin_groups_panel = DD_panel.extend({
     model: 'DD_Admin_ImagesSelected_Model',
     
     init: function (options) {
-        var self = this;
         this.options  = options;
         this._super({
             'class': this.class_name

@@ -58,7 +58,8 @@ class Designer extends AbstractModifier {
                                 'label' => __('Default'),
                                 'saveUrl' => $this->urlBuilder->getUrl('dd_productdesigner/save'),
                                 'cssUrl' => $this->_assetRepo->getUrl("Develo_Designer::css/dd_productdesigner.css"),
-                                'urlImages' => $this->urlBuilder->getUrl('dd_productdesigner/product/images')
+                                'urlImages' => $this->urlBuilder->getUrl('dd_productdesigner/product/images'),
+                                'urlLoadImages' => $this->urlBuilder->getUrl('dd_productdesigner/product/loadimages')
                             ],
                         ],
                     ],

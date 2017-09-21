@@ -1,16 +1,16 @@
-var DD_admin_groupsave_button= DD_button.extend({
-    class_name: 'dd-admin-groupsave-button',
+var DD_admin_group_button= DD_button.extend({
+    class_name: 'dd-admin-group-button',
     model: 'DD_Admin_ImagesSelected_Model',
 
     init: function (parent) {
         var options = {
             parent: parent,
             class: this.class_name,
-            text: this._('save'),
+            text: this._('add_group'),
+            fa_addon: 'fa fa-folder-open-o'
         }
         this._super(options);
-        this.model.addGroupSaveClick(this.self);
-        
+        this.model.addGroupClick(this.self);
     }
 
 });

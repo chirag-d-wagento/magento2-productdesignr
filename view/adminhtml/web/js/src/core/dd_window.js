@@ -9,6 +9,42 @@ var DD_Window = DD_object.extend({
         }
         this._super(this.id);
         this.createContentElement();
+        this.registerModal();
+        this.registerPreview();
+        this.setGlobal();
+        
+        return this.modal;
+    },
+    
+    registerPreview: function() {
+        var self = this;
+        
+        this.preview = new jBox('Modal', {
+            title: '-',
+            draggable: false,
+            overlay: false,
+            close: true,
+            content: $('#' + this.CONST_WIN_CONTENT_EL),
+            width: $(window).width(),
+            fixed: false,
+            height: $(window).width(),
+            repositionOnOpen: false,
+            repositionOnContent: true,
+            fixed: true,
+            onOpen: function () {
+                self._evnt().doCall('preview-showed');
+            },
+            onClose: function () {
+                self._evnt().doCall('preview-closed');
+            }
+        });
+
+
+        this._evnt().register('preview-showed', this.modal);
+        this._evnt().register('preview-closed', this.modal, true);
+    },
+    
+    registerModal: function() {
         var self = this;
         
         this.modal = new jBox('Modal', {
@@ -34,14 +70,15 @@ var DD_Window = DD_object.extend({
 
         this._evnt().register('window-showed', this.modal);
         this._evnt().register('window-closed', this.modal, true);
-        this.setGlobal();
-
         this.registerCloseWinEventCall();
-        return this.modal;
     },
 
     getWindow: function () {
         return this.getGlobal(this.id).modal;
+    },
+
+    getPreview: function () {
+        return this.getGlobal(this.id).preview;
     },
 
     getContentElement: function () {

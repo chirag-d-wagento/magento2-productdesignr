@@ -30,6 +30,8 @@ var jsFiles = [
         
         'js/src/admin/models/*.js',
         'js/src/admin/view/*.js',
+        'js/src/admin/view/groups/*.js',
+        'js/src/admin/view/windows/*.js',
         'js/src/admin/dd_productdesigner_admin.js'
         
     ],
