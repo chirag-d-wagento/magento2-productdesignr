@@ -10,7 +10,8 @@ $.fn.dd_productdesigner_admin = function (options) {
             'save': 'Save',
             'remove': 'Remove',
             'image': 'Image',
-            'select_images': 'Select Images'
+            'select_images': 'Select Images',
+            'edit': 'Edit'
         },
         
         'settings': {

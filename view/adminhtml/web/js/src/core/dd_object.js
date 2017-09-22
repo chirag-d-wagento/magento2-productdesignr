@@ -35,6 +35,12 @@ var DD_object = Class.extend({
         return uuid;
     },
     
+    sortArray: function(_array, new_index, old_index) {
+        var record = _array.splice(old_index, 1);
+        _array.splice(new_index, 0, record[0]);
+        return _array;
+    },
+    
     //translation
     _: function(key) {
         var translateObject = this.getGlobal(this.idTranslateObject); 

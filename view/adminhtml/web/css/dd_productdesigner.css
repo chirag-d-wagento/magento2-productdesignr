@@ -2982,13 +2982,32 @@ ul.tabs li.current {
 .dd-admin-group-container {
   position: relative;
 }
+.dd-admin-group-container:after {
+  clear: both;
+  display: block;
+  width: 100%;
+  content: ' ';
+  float: none;
+  height: 1px;
+}
+.dd-admin-group-container:before {
+  clear: both;
+  display: block;
+  width: 100%;
+  content: ' ';
+  float: none;
+  height: 1px;
+}
 .dd-admin-group-container .dd-admin-group {
   min-width: 300px;
+  max-width: 325px;
   min-height: 150px;
   border: 1px solid #cdcdcd;
   display: inline-block;
   margin: 15px;
   position: relative;
+  padding-bottom: 42px;
+  float: left;
 }
 .dd-admin-group-container .dd-admin-group .dd-admin-group-remove {
   position: absolute;
@@ -2999,6 +3018,36 @@ ul.tabs li.current {
   position: absolute;
   bottom: 0px;
   left: 0px;
+}
+.dd-admin-group-container .dd-admin-group .dd-admin-group-img-container .dd-admin-group-image {
+  border: 3px solid transparent;
+  max-width: 76px;
+  margin: 14px;
+  display: inline-grid;
+  cursor: pointer;
+}
+.dd-admin-group-container .dd-admin-group .dd-admin-group-img-container .dd-admin-group-image:hover {
+  border: 3px solid #ccc;
+}
+.dd-admin-group-container .dd-admin-group .dd-admin-group-img-container .dd-admin-group-image .dd-admin-image-edit {
+  cursor: pointer;
+}
+.dd-admin-group-container .dd-admin-group .dd-admin-group-img-container .dd-admin-group-image .dd-admin-image-remove {
+  cursor: pointer;
+}
+.dd-admin-group-container .dd-admin-group .dd-admin-group-img-container .dd-admin-group-image:nth-child(3n+4) {
+  clear: left;
+}
+.dd-admin-group-container .dd-admin-group .dd-admin-group-sorting-container {
+  width: 100%;
+  padding: 3px;
+  cursor: pointer;
+  border-bottom: 1px solid #ccc;
+  margin-bottom: 10px;
+  text-align: right;
+}
+.dd-admin-group-container .dd-admin-group .dd-admin-group-sorting-container .dd-admin-group-sorting-icon {
+  display: inline-block;
 }
 .dd-admin-loadimages-container .dd-admin-loadimages-loading {
   width: 100%;

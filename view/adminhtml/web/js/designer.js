@@ -29,7 +29,6 @@ define([
 
         initDesigner: function (elems, data) {
             $('#dd_designer_admin').dd_productdesigner_admin({
-                'debug': true,
                 'urlImages': data.urlImages,
                 'settings': {
                     'psku': data.psku(),

@@ -3,9 +3,9 @@ var DD_main = DD_panel.extend({
     class_name: 'dd-designer-container',
     model: 'DD_Main_Model',
 
-    init: function (parent) {
+    init: function (parent, options) {
         var self = this;
-        this.parent = parent;
+        this.options = options;
         this._super({
             'id': this.object_id,
             'class': this.class_name,

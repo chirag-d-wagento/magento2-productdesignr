@@ -16,20 +16,23 @@ var DD_Main_Model = DD_ModelBase.extend({
     initLayers: function () {
         var self = this;
         this.layersObj = new DD_Layer();
+        var idCanvas = 'canvas-' + this.createUUID;
         this.canvas = $('<canvas/>', {
-            id: 'canvas'
+            id: idCanvas
         });
         this.width = parseInt(this.obj.parent.data('width'));
         this.height = parseInt(this.obj.parent.data('height'));
         this.canvas.attr('width', this.width);
         this.canvas.attr('height', this.height);
         this.obj.self.append(this.canvas);
-        this.layersObj.canvas = new fabric.Canvas('canvas');
+        this.layersObj.canvas = new fabric.Canvas(idCanvas);
 
+        console.log('this.obj.options.src');
+        console.log(this.obj.options.src);
         new DD_Layer_Main({
             width: this.obj.parent.data('width'),
             height: this.obj.parent.data('height'),
-            src: this.obj.parent.data('src')
+            src: this.obj.options.src
         });
 
         this.resize();

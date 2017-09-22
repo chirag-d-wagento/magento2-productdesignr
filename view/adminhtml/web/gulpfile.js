@@ -28,6 +28,7 @@ var jsFiles = [
         
         'js/src/view/windows/*.js',
         
+        'js/src/admin/models/parent/*.js',
         'js/src/admin/models/*.js',
         'js/src/admin/view/*.js',
         'js/src/admin/view/groups/*.js',
