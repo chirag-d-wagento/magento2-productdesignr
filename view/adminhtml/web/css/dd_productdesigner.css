@@ -2844,6 +2844,7 @@ ul.tabs li {
   display: inline-block;
   padding: 10px 15px;
   cursor: pointer;
+  text-align: center;
 }
 ul.tabs li.current {
   background: #ededed;
@@ -2929,11 +2930,13 @@ ul.tabs li.current {
 .dd-designer-container {
   height: 100%;
   min-height: 400px;
-  margin: 0 auto;
   padding: 10px;
   position: relative;
   max-width: 800px;
+  width: 49%;
   text-align: center;
+  display: inline-block;
+  float: left;
 }
 .dd-designer-container canvas {
   position: absolute;
@@ -2943,6 +2946,17 @@ ul.tabs li.current {
 }
 .dd-designer-container .canvas-container {
   display: inline-block;
+}
+.dd-setup-image {
+  display: inline-block;
+  border: 1px solid #ccc;
+  width: 49%;
+  min-height: 400px;
+  float: right;
+  padding: 10px;
+}
+.dd-setup-image #dd-setup-tabs ul li {
+  width: 16.5%;
 }
 .dd-admin-main-container {
   position: relative;
@@ -3089,5 +3103,9 @@ ul.tabs li.current {
 }
 .dd-admin-loadimages-container .dd-admin-product-image .fa-check-square-o {
   display: none;
+}
+body[class^="jBox-blockScroll-"],
+body[class*=" jBox-blockScroll-"] {
+  overflow: auto;
 }
 /*# sourceMappingURL=dd_productdesigner.css.map */

@@ -46,10 +46,12 @@ var DD_Uibase = DD_object.extend({
             this.self.on('click', function () {
                 if(!me.options.windowPreview) {
                     var window = me.modal.getWindow();
+                    var contentElement = me.modal.getContentElement();
                 }else{
                     var window = me.modal.getPreview();
+                    var contentElement = me.modal.getContentElementPreview();
                 }
-                var contentElement = me.modal.getContentElement();
+                
                 contentElement.empty();
                 me.model.opener = me;
                 me.model.setWindowContent( contentElement );

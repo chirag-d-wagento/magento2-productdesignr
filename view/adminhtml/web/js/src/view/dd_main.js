@@ -19,22 +19,11 @@ var DD_main = DD_panel.extend({
     },
     
     _addElements: function() {
-        this.addTopControls();
-        if(this._s('history')) {
-            this.addHistoryControls();
-        }
-        this.addMainControls();
-    },
-    
-    addTopControls: function() {
         new DD_Topcontrols(this.self);
-    },
-    
-    addMainControls: function() {
+        if(this._s('history')) {
+            new DD_Historycontrols(this.self);
+        }
         new DD_Maincontrols(this.self);
-    },
-    
-    addHistoryControls: function() {
-        new DD_Historycontrols(this.self);
+        new DD_setup(this.getParent());
     }
 });

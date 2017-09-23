@@ -21,7 +21,16 @@ $.fn.dd_productdesigner = function (options) {
             'drop_files_or_upload': 'Click to upload',
             'uploader_error': 'Uploader Error!!!',
             'loading': 'Loading',
-            'no_data': 'No Data Found'
+            'no_data': 'No Data Found',
+            
+            
+            //setup
+            'info': 'Image Info',
+            'layer_mask': 'Layer Mask',
+            'images': 'Images',
+            'texts': 'Texts',
+            'qr_code': 'QR Code',
+            'options': 'Options'
         },
         'settings': {
             'addphoto': true,

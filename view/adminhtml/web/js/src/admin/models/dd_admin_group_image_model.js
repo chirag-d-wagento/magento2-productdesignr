@@ -19,6 +19,8 @@ var DD_admin_group_image_model = DD_Admin_ImagesSelected_Model.extend({
             $('#dd_designer').dd_productdesigner({
                 'src': options.src
             });
+            
+            console.log(options);
         });
     }
 

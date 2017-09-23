@@ -1,6 +1,7 @@
 var DD_Window = DD_object.extend({
     CONST_WIN_WIDTH: 300,
     CONST_WIN_CONTENT_EL: 'modalContent',
+    CONST_WIN_PREVIEW_EL: 'previewContent',
 
     id: 'dd_window',
     init: function () {
@@ -8,7 +9,8 @@ var DD_Window = DD_object.extend({
             return;
         }
         this._super(this.id);
-        this.createContentElement();
+        this.createContentElement(this.CONST_WIN_CONTENT_EL);
+        this.createContentElement(this.CONST_WIN_PREVIEW_EL);
         this.registerModal();
         this.registerPreview();
         this.setGlobal();
@@ -24,7 +26,7 @@ var DD_Window = DD_object.extend({
             draggable: false,
             overlay: false,
             close: true,
-            content: $('#' + this.CONST_WIN_CONTENT_EL),
+            content: $('#' + this.CONST_WIN_PREVIEW_EL),
             width: $(window).width(),
             fixed: false,
             height: $(window).width(),
@@ -82,21 +84,32 @@ var DD_Window = DD_object.extend({
     },
 
     getContentElement: function () {
-        return this.getGlobal(this.id).contentElement;
+        return this.getGlobal(this.id).contentElement[this.CONST_WIN_CONTENT_EL];
+    },
+
+    getContentElementPreview: function () {
+        return this.getGlobal(this.id).contentElement[this.CONST_WIN_PREVIEW_EL];
     },
 
     getWinWidth: function () {
         return this.CONST_WIN_WIDTH;
     },
 
-    createContentElement: function () {
-        this.contentElement = $('<div />').attr({
-            'id': this.CONST_WIN_CONTENT_EL
+    createContentElement: function (id) {
+        if(!this.contentElement) {
+            this.contentElement = {};
+        }
+        if($('#' + id).get(0)) {
+            this.contentElement[id] = $('#' + id);
+            return;
+        }
+        this.contentElement[id] = $('<div />').attr({
+            'id': id
         }).css({
             'display': 'none'
         }).html('<p>&nbsp;</p>');
 
-        $('body').append(this.contentElement);
+        $('body').append(this.contentElement[id]);
     },
     
     registerCloseWinEventCall: function() {

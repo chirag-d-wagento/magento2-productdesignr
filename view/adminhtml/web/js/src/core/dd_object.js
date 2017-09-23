@@ -12,13 +12,25 @@ var DD_object = Class.extend({
     },
     
     setGlobal: function () {
+        var uid = this.getGlobalUid();
+        if(uid) {
+            DD_Global[uid][this.id] = this;
+        }
         DD_Global[this.id] = this;
     },
     getId: function () {
         return this.id;
     },
     getGlobal: function (id) {
+        var uid = this.getGlobalUid();
+        if(uid) {
+            return DD_Global[uid][id];
+        }
         return DD_Global[id];
+    },
+    
+    getGlobalUid: function() {
+        /////???????
     },
     
     createUUID: function () {

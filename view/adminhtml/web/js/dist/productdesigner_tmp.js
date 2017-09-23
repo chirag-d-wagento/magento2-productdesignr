@@ -27083,6 +27083,1456 @@ fabric.util.object.extend(fabric.IText.prototype, /** @lends fabric.IText.protot
 /*! modernizr 3.5.0 (Custom Build) | MIT *
  * https://modernizr.com/download/?-backgroundsize-bgsizecover-canvas-canvastext-cssresize-sizes-smil-svgfilters-mq-setclasses !*/
 !function(e,t,n){function r(e,t){return typeof e===t}function o(){var e,t,n,o,i,s,a;for(var l in w)if(w.hasOwnProperty(l)){if(e=[],t=w[l],t.name&&(e.push(t.name.toLowerCase()),t.options&&t.options.aliases&&t.options.aliases.length))for(n=0;n<t.options.aliases.length;n++)e.push(t.options.aliases[n].toLowerCase());for(o=r(t.fn,"function")?t.fn():t.fn,i=0;i<e.length;i++)s=e[i],a=s.split("."),1===a.length?Modernizr[a[0]]=o:(!Modernizr[a[0]]||Modernizr[a[0]]instanceof Boolean||(Modernizr[a[0]]=new Boolean(Modernizr[a[0]])),Modernizr[a[0]][a[1]]=o),C.push((o?"":"no-")+a.join("-"))}}function i(e){var t=_.className,n=Modernizr._config.classPrefix||"";if(b&&(t=t.baseVal),Modernizr._config.enableJSClass){var r=new RegExp("(^|\\s)"+n+"no-js(\\s|$)");t=t.replace(r,"$1"+n+"js$2")}Modernizr._config.enableClasses&&(t+=" "+n+e.join(" "+n),b?_.className.baseVal=t:_.className=t)}function s(){return"function"!=typeof t.createElement?t.createElement(arguments[0]):b?t.createElementNS.call(t,"http://www.w3.org/2000/svg",arguments[0]):t.createElement.apply(t,arguments)}function a(e,t){if("object"==typeof e)for(var n in e)T(e,n)&&a(n,e[n]);else{e=e.toLowerCase();var r=e.split("."),o=Modernizr[r[0]];if(2==r.length&&(o=o[r[1]]),"undefined"!=typeof o)return Modernizr;t="function"==typeof t?t():t,1==r.length?Modernizr[r[0]]=t:(!Modernizr[r[0]]||Modernizr[r[0]]instanceof Boolean||(Modernizr[r[0]]=new Boolean(Modernizr[r[0]])),Modernizr[r[0]][r[1]]=t),i([(t&&0!=t?"":"no-")+r.join("-")]),Modernizr._trigger(e,t)}return Modernizr}function l(e,t){return!!~(""+e).indexOf(t)}function u(e){return e.replace(/([a-z])-([a-z])/g,function(e,t,n){return t+n.toUpperCase()}).replace(/^-/,"")}function f(e,t){return function(){return e.apply(t,arguments)}}function c(e,t,n){var o;for(var i in e)if(e[i]in t)return n===!1?e[i]:(o=t[e[i]],r(o,"function")?f(o,n||t):o);return!1}function d(){var e=t.body;return e||(e=s(b?"svg":"body"),e.fake=!0),e}function p(e,n,r,o){var i,a,l,u,f="modernizr",c=s("div"),p=d();if(parseInt(r,10))for(;r--;)l=s("div"),l.id=o?o[r]:f+(r+1),c.appendChild(l);return i=s("style"),i.type="text/css",i.id="s"+f,(p.fake?p:c).appendChild(i),p.appendChild(c),i.styleSheet?i.styleSheet.cssText=e:i.appendChild(t.createTextNode(e)),c.id=f,p.fake&&(p.style.background="",p.style.overflow="hidden",u=_.style.overflow,_.style.overflow="hidden",_.appendChild(p)),a=n(c,e),p.fake?(p.parentNode.removeChild(p),_.style.overflow=u,_.offsetHeight):c.parentNode.removeChild(c),!!a}function m(e){return e.replace(/([A-Z])/g,function(e,t){return"-"+t.toLowerCase()}).replace(/^ms-/,"-ms-")}function A(t,n,r){var o;if("getComputedStyle"in e){o=getComputedStyle.call(e,t,n);var i=e.console;if(null!==o)r&&(o=o.getPropertyValue(r));else if(i){var s=i.error?"error":"log";i[s].call(i,"getComputedStyle returning null, its possible modernizr test results are inaccurate")}}else o=!n&&t.currentStyle&&t.currentStyle[r];return o}function g(t,r){var o=t.length;if("CSS"in e&&"supports"in e.CSS){for(;o--;)if(e.CSS.supports(m(t[o]),r))return!0;return!1}if("CSSSupportsRule"in e){for(var i=[];o--;)i.push("("+m(t[o])+":"+r+")");return i=i.join(" or "),p("@supports ("+i+") { #modernizr { position: absolute; } }",function(e){return"absolute"==A(e,null,"position")})}return n}function v(e,t,o,i){function a(){c&&(delete B.style,delete B.modElem)}if(i=r(i,"undefined")?!1:i,!r(o,"undefined")){var f=g(e,o);if(!r(f,"undefined"))return f}for(var c,d,p,m,A,v=["modernizr","tspan","samp"];!B.style&&v.length;)c=!0,B.modElem=s(v.shift()),B.style=B.modElem.style;for(p=e.length,d=0;p>d;d++)if(m=e[d],A=B.style[m],l(m,"-")&&(m=u(m)),B.style[m]!==n){if(i||r(o,"undefined"))return a(),"pfx"==t?m:!0;try{B.style[m]=o}catch(h){}if(B.style[m]!=A)return a(),"pfx"==t?m:!0}return a(),!1}function h(e,t,n,o,i){var s=e.charAt(0).toUpperCase()+e.slice(1),a=(e+" "+z.join(s+" ")+s).split(" ");return r(t,"string")||r(t,"undefined")?v(a,t,o,i):(a=(e+" "+P.join(s+" ")+s).split(" "),c(a,t,n))}function y(e,t,r){return h(e,n,n,t,r)}var C=[],w=[],S={_version:"3.5.0",_config:{classPrefix:"",enableClasses:!0,enableJSClass:!0,usePrefixes:!0},_q:[],on:function(e,t){var n=this;setTimeout(function(){t(n[e])},0)},addTest:function(e,t,n){w.push({name:e,fn:t,options:n})},addAsyncTest:function(e){w.push({name:null,fn:e})}},Modernizr=function(){};Modernizr.prototype=S,Modernizr=new Modernizr,Modernizr.addTest("svgfilters",function(){var t=!1;try{t="SVGFEColorMatrixElement"in e&&2==SVGFEColorMatrixElement.SVG_FECOLORMATRIX_TYPE_SATURATE}catch(n){}return t});var _=t.documentElement,b="svg"===_.nodeName.toLowerCase();Modernizr.addTest("canvas",function(){var e=s("canvas");return!(!e.getContext||!e.getContext("2d"))}),Modernizr.addTest("canvastext",function(){return Modernizr.canvas===!1?!1:"function"==typeof s("canvas").getContext("2d").fillText});var E={}.toString;Modernizr.addTest("smil",function(){return!!t.createElementNS&&/SVGAnimate/.test(E.call(t.createElementNS("http://www.w3.org/2000/svg","animate")))});var T;!function(){var e={}.hasOwnProperty;T=r(e,"undefined")||r(e.call,"undefined")?function(e,t){return t in e&&r(e.constructor.prototype[t],"undefined")}:function(t,n){return e.call(t,n)}}(),S._l={},S.on=function(e,t){this._l[e]||(this._l[e]=[]),this._l[e].push(t),Modernizr.hasOwnProperty(e)&&setTimeout(function(){Modernizr._trigger(e,Modernizr[e])},0)},S._trigger=function(e,t){if(this._l[e]){var n=this._l[e];setTimeout(function(){var e,r;for(e=0;e<n.length;e++)(r=n[e])(t)},0),delete this._l[e]}},Modernizr._q.push(function(){S.addTest=a}),Modernizr.addAsyncTest(function(){var e,t,n,r=s("img"),o="sizes"in r;!o&&"srcset"in r?(t="data:image/gif;base64,R0lGODlhAgABAPAAAP///wAAACH5BAAAAAAALAAAAAACAAEAAAICBAoAOw==",e="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==",n=function(){a("sizes",2==r.width)},r.onload=n,r.onerror=n,r.setAttribute("sizes","9px"),r.srcset=e+" 1w,"+t+" 8w",r.src=e):a("sizes",o)});var x="Moz O ms Webkit",z=S._config.usePrefixes?x.split(" "):[];S._cssomPrefixes=z;var P=S._config.usePrefixes?x.toLowerCase().split(" "):[];S._domPrefixes=P;var O=function(){var t=e.matchMedia||e.msMatchMedia;return t?function(e){var n=t(e);return n&&n.matches||!1}:function(t){var n=!1;return p("@media "+t+" { #modernizr { position: absolute; } }",function(t){n="absolute"==(e.getComputedStyle?e.getComputedStyle(t,null):t.currentStyle).position}),n}}();S.mq=O;var N={elem:s("modernizr")};Modernizr._q.push(function(){delete N.elem});var B={style:N.elem.style};Modernizr._q.unshift(function(){delete B.style}),S.testAllProps=h,S.testAllProps=y,Modernizr.addTest("backgroundsize",y("backgroundSize","100%",!0)),Modernizr.addTest("bgsizecover",y("backgroundSize","cover")),Modernizr.addTest("cssresize",y("resize","both",!0)),o(),i(C),delete S.addTest,delete S.addAsyncTest;for(var j=0;j<Modernizr._q.length;j++)Modernizr._q[j]();e.Modernizr=Modernizr}(window,document);
+/**!
+ * Sortable
+ * @author	RubaXa   <trash@rubaxa.org>
+ * @license MIT
+ */
+
+(function (root, factory) {
+    "use strict";
+    if (typeof define === "function" && define.amd) {
+        root.Sortable = factory();
+    } else if (typeof module != "undefined" && typeof module.exports != "undefined") {
+        module.exports = (root.Sortable = factory());
+    } else {
+        root.Sortable = factory();
+    }
+    
+})(this, function () {
+    "use strict";
+
+    if (typeof window == "undefined" || !window.document) {
+        return function sortableError() {
+            throw new Error("Sortable.js requires a window with a document");
+        };
+    }
+
+    var dragEl,
+            parentEl,
+            ghostEl,
+            cloneEl,
+            rootEl,
+            nextEl,
+            lastDownEl,
+            scrollEl,
+            scrollParentEl,
+            scrollCustomFn,
+            lastEl,
+            lastCSS,
+            lastParentCSS,
+            oldIndex,
+            newIndex,
+            activeGroup,
+            putSortable,
+            autoScroll = {},
+            tapEvt,
+            touchEvt,
+            moved,
+            /** @const */
+            R_SPACE = /\s+/g,
+            R_FLOAT = /left|right|inline/,
+            expando = 'Sortable' + (new Date).getTime(),
+            win = window,
+            document = win.document,
+            parseInt = win.parseInt,
+            $ = win.jQuery || win.Zepto,
+            Polymer = win.Polymer,
+            captureMode = false,
+            supportDraggable = !!('draggable' in document.createElement('div')),
+            supportCssPointerEvents = (function (el) {
+                // false when IE11
+                if (!!navigator.userAgent.match(/(?:Trident.*rv[ :]?11\.|msie)/i)) {
+                    return false;
+                }
+                el = document.createElement('x');
+                el.style.cssText = 'pointer-events:auto';
+                return el.style.pointerEvents === 'auto';
+            })(),
+            _silent = false,
+            abs = Math.abs,
+            min = Math.min,
+            savedInputChecked = [],
+            touchDragOverListeners = [],
+            _autoScroll = _throttle(function (/**Event*/evt, /**Object*/options, /**HTMLElement*/rootEl) {
+                // Bug: https://bugzilla.mozilla.org/show_bug.cgi?id=505521
+                if (rootEl && options.scroll) {
+                    var _this = rootEl[expando],
+                            el,
+                            rect,
+                            sens = options.scrollSensitivity,
+                            speed = options.scrollSpeed,
+                            x = evt.clientX,
+                            y = evt.clientY,
+                            winWidth = window.innerWidth,
+                            winHeight = window.innerHeight,
+                            vx,
+                            vy,
+                            scrollOffsetX,
+                            scrollOffsetY
+                            ;
+
+                    // Delect scrollEl
+                    if (scrollParentEl !== rootEl) {
+                        scrollEl = options.scroll;
+                        scrollParentEl = rootEl;
+                        scrollCustomFn = options.scrollFn;
+
+                        if (scrollEl === true) {
+                            scrollEl = rootEl;
+
+                            do {
+                                if ((scrollEl.offsetWidth < scrollEl.scrollWidth) ||
+                                        (scrollEl.offsetHeight < scrollEl.scrollHeight)
+                                        ) {
+                                    break;
+                                }
+                                /* jshint boss:true */
+                            } while (scrollEl = scrollEl.parentNode);
+                        }
+                    }
+
+                    if (scrollEl) {
+                        el = scrollEl;
+                        rect = scrollEl.getBoundingClientRect();
+                        vx = (abs(rect.right - x) <= sens) - (abs(rect.left - x) <= sens);
+                        vy = (abs(rect.bottom - y) <= sens) - (abs(rect.top - y) <= sens);
+                    }
+
+
+                    if (!(vx || vy)) {
+                        vx = (winWidth - x <= sens) - (x <= sens);
+                        vy = (winHeight - y <= sens) - (y <= sens);
+
+                        /* jshint expr:true */
+                        (vx || vy) && (el = win);
+                    }
+
+
+                    if (autoScroll.vx !== vx || autoScroll.vy !== vy || autoScroll.el !== el) {
+                        autoScroll.el = el;
+                        autoScroll.vx = vx;
+                        autoScroll.vy = vy;
+
+                        clearInterval(autoScroll.pid);
+
+                        if (el) {
+                            autoScroll.pid = setInterval(function () {
+                                scrollOffsetY = vy ? vy * speed : 0;
+                                scrollOffsetX = vx ? vx * speed : 0;
+
+                                if ('function' === typeof (scrollCustomFn)) {
+                                    return scrollCustomFn.call(_this, scrollOffsetX, scrollOffsetY, evt);
+                                }
+
+                                if (el === win) {
+                                    win.scrollTo(win.pageXOffset + scrollOffsetX, win.pageYOffset + scrollOffsetY);
+                                } else {
+                                    el.scrollTop += scrollOffsetY;
+                                    el.scrollLeft += scrollOffsetX;
+                                }
+                            }, 24);
+                        }
+                    }
+                }
+            }, 30),
+            _prepareGroup = function (options) {
+                function toFn(value, pull) {
+                    if (value === void 0 || value === true) {
+                        value = group.name;
+                    }
+
+                    if (typeof value === 'function') {
+                        return value;
+                    } else {
+                        return function (to, from) {
+                            var fromGroup = from.options.group.name;
+
+                            return pull
+                                    ? value
+                                    : value && (value.join
+                                            ? value.indexOf(fromGroup) > -1
+                                            : (fromGroup == value)
+                                            );
+                        };
+                    }
+                }
+
+                var group = {};
+                var originalGroup = options.group;
+
+                if (!originalGroup || typeof originalGroup != 'object') {
+                    originalGroup = {name: originalGroup};
+                }
+
+                group.name = originalGroup.name;
+                group.checkPull = toFn(originalGroup.pull, true);
+                group.checkPut = toFn(originalGroup.put);
+                group.revertClone = originalGroup.revertClone;
+
+                options.group = group;
+            }
+    ;
+
+
+    /**
+     * @class  Sortable
+     * @param  {HTMLElement}  el
+     * @param  {Object}       [options]
+     */
+    function Sortable(el, options) {
+        if (!(el && el.nodeType && el.nodeType === 1)) {
+            throw 'Sortable: `el` must be HTMLElement, and not ' + {}.toString.call(el);
+        }
+
+        this.el = el; // root element
+        this.options = options = _extend({}, options);
+
+
+        // Export instance
+        el[expando] = this;
+
+        // Default options
+        var defaults = {
+            group: Math.random(),
+            sort: true,
+            disabled: false,
+            store: null,
+            handle: null,
+            scroll: true,
+            scrollSensitivity: 30,
+            scrollSpeed: 10,
+            draggable: /[uo]l/i.test(el.nodeName) ? 'li' : '>*',
+            ghostClass: 'sortable-ghost',
+            chosenClass: 'sortable-chosen',
+            dragClass: 'sortable-drag',
+            ignore: 'a, img',
+            filter: null,
+            preventOnFilter: true,
+            animation: 0,
+            setData: function (dataTransfer, dragEl) {
+                dataTransfer.setData('Text', dragEl.textContent);
+            },
+            dropBubble: false,
+            dragoverBubble: false,
+            dataIdAttr: 'data-id',
+            delay: 0,
+            forceFallback: false,
+            fallbackClass: 'sortable-fallback',
+            fallbackOnBody: false,
+            fallbackTolerance: 0,
+            fallbackOffset: {x: 0, y: 0}
+        };
+
+
+        // Set default options
+        for (var name in defaults) {
+            !(name in options) && (options[name] = defaults[name]);
+        }
+
+        _prepareGroup(options);
+
+        // Bind all private methods
+        for (var fn in this) {
+            if (fn.charAt(0) === '_' && typeof this[fn] === 'function') {
+                this[fn] = this[fn].bind(this);
+            }
+        }
+
+        // Setup drag mode
+        this.nativeDraggable = options.forceFallback ? false : supportDraggable;
+
+        // Bind events
+        _on(el, 'mousedown', this._onTapStart);
+        _on(el, 'touchstart', this._onTapStart);
+        _on(el, 'pointerdown', this._onTapStart);
+
+        if (this.nativeDraggable) {
+            _on(el, 'dragover', this);
+            _on(el, 'dragenter', this);
+        }
+
+        touchDragOverListeners.push(this._onDragOver);
+
+        // Restore sorting
+        options.store && this.sort(options.store.get(this));
+    }
+
+
+    Sortable.prototype = /** @lends Sortable.prototype */ {
+        constructor: Sortable,
+
+        _onTapStart: function (/** Event|TouchEvent */evt) {
+            var _this = this,
+                    el = this.el,
+                    options = this.options,
+                    preventOnFilter = options.preventOnFilter,
+                    type = evt.type,
+                    touch = evt.touches && evt.touches[0],
+                    target = (touch || evt).target,
+                    originalTarget = evt.target.shadowRoot && (evt.path && evt.path[0]) || target,
+                    filter = options.filter,
+                    startIndex;
+
+            _saveInputCheckedState(el);
+
+
+            // Don't trigger start event when an element is been dragged, otherwise the evt.oldindex always wrong when set option.group.
+            if (dragEl) {
+                return;
+            }
+
+            if (/mousedown|pointerdown/.test(type) && evt.button !== 0 || options.disabled) {
+                return; // only left button or enabled
+            }
+
+            // cancel dnd if original target is content editable
+            if (originalTarget.isContentEditable) {
+                return;
+            }
+
+            target = _closest(target, options.draggable, el);
+
+            if (!target) {
+                return;
+            }
+
+            if (lastDownEl === target) {
+                // Ignoring duplicate `down`
+                return;
+            }
+
+            // Get the index of the dragged element within its parent
+            startIndex = _index(target, options.draggable);
+
+            // Check filter
+            if (typeof filter === 'function') {
+                if (filter.call(this, evt, target, this)) {
+                    _dispatchEvent(_this, originalTarget, 'filter', target, el, el, startIndex);
+                    preventOnFilter && evt.preventDefault();
+                    return; // cancel dnd
+                }
+            } else if (filter) {
+                filter = filter.split(',').some(function (criteria) {
+                    criteria = _closest(originalTarget, criteria.trim(), el);
+
+                    if (criteria) {
+                        _dispatchEvent(_this, criteria, 'filter', target, el, el, startIndex);
+                        return true;
+                    }
+                });
+
+                if (filter) {
+                    preventOnFilter && evt.preventDefault();
+                    return; // cancel dnd
+                }
+            }
+
+            if (options.handle && !_closest(originalTarget, options.handle, el)) {
+                return;
+            }
+
+            // Prepare `dragstart`
+            this._prepareDragStart(evt, touch, target, startIndex);
+        },
+
+        _prepareDragStart: function (/** Event */evt, /** Touch */touch, /** HTMLElement */target, /** Number */startIndex) {
+            var _this = this,
+                    el = _this.el,
+                    options = _this.options,
+                    ownerDocument = el.ownerDocument,
+                    dragStartFn;
+
+            if (target && !dragEl && (target.parentNode === el)) {
+                tapEvt = evt;
+
+                rootEl = el;
+                dragEl = target;
+                parentEl = dragEl.parentNode;
+                nextEl = dragEl.nextSibling;
+                lastDownEl = target;
+                activeGroup = options.group;
+                oldIndex = startIndex;
+
+                this._lastX = (touch || evt).clientX;
+                this._lastY = (touch || evt).clientY;
+
+                dragEl.style['will-change'] = 'all';
+
+                dragStartFn = function () {
+                    // Delayed drag has been triggered
+                    // we can re-enable the events: touchmove/mousemove
+                    _this._disableDelayedDrag();
+
+                    // Make the element draggable
+                    dragEl.draggable = _this.nativeDraggable;
+
+                    // Chosen item
+                    _toggleClass(dragEl, options.chosenClass, true);
+
+                    // Bind the events: dragstart/dragend
+                    _this._triggerDragStart(evt, touch);
+
+                    // Drag start event
+                    _dispatchEvent(_this, rootEl, 'choose', dragEl, rootEl, rootEl, oldIndex);
+                };
+
+                // Disable "draggable"
+                options.ignore.split(',').forEach(function (criteria) {
+                    _find(dragEl, criteria.trim(), _disableDraggable);
+                });
+
+                _on(ownerDocument, 'mouseup', _this._onDrop);
+                _on(ownerDocument, 'touchend', _this._onDrop);
+                _on(ownerDocument, 'touchcancel', _this._onDrop);
+                _on(ownerDocument, 'pointercancel', _this._onDrop);
+                _on(ownerDocument, 'selectstart', _this);
+
+                if (options.delay) {
+                    // If the user moves the pointer or let go the click or touch
+                    // before the delay has been reached:
+                    // disable the delayed drag
+                    _on(ownerDocument, 'mouseup', _this._disableDelayedDrag);
+                    _on(ownerDocument, 'touchend', _this._disableDelayedDrag);
+                    _on(ownerDocument, 'touchcancel', _this._disableDelayedDrag);
+                    _on(ownerDocument, 'mousemove', _this._disableDelayedDrag);
+                    _on(ownerDocument, 'touchmove', _this._disableDelayedDrag);
+                    _on(ownerDocument, 'pointermove', _this._disableDelayedDrag);
+
+                    _this._dragStartTimer = setTimeout(dragStartFn, options.delay);
+                } else {
+                    dragStartFn();
+                }
+
+
+            }
+        },
+
+        _disableDelayedDrag: function () {
+            var ownerDocument = this.el.ownerDocument;
+
+            clearTimeout(this._dragStartTimer);
+            _off(ownerDocument, 'mouseup', this._disableDelayedDrag);
+            _off(ownerDocument, 'touchend', this._disableDelayedDrag);
+            _off(ownerDocument, 'touchcancel', this._disableDelayedDrag);
+            _off(ownerDocument, 'mousemove', this._disableDelayedDrag);
+            _off(ownerDocument, 'touchmove', this._disableDelayedDrag);
+            _off(ownerDocument, 'pointermove', this._disableDelayedDrag);
+        },
+
+        _triggerDragStart: function (/** Event */evt, /** Touch */touch) {
+            touch = touch || (evt.pointerType == 'touch' ? evt : null);
+
+            if (touch) {
+                // Touch device support
+                tapEvt = {
+                    target: dragEl,
+                    clientX: touch.clientX,
+                    clientY: touch.clientY
+                };
+
+                this._onDragStart(tapEvt, 'touch');
+            } else if (!this.nativeDraggable) {
+                this._onDragStart(tapEvt, true);
+            } else {
+                _on(dragEl, 'dragend', this);
+                _on(rootEl, 'dragstart', this._onDragStart);
+            }
+
+            try {
+                if (document.selection) {
+                    // Timeout neccessary for IE9
+                    setTimeout(function () {
+                        document.selection.empty();
+                    });
+                } else {
+                    window.getSelection().removeAllRanges();
+                }
+            } catch (err) {
+            }
+        },
+
+        _dragStarted: function () {
+            if (rootEl && dragEl) {
+                var options = this.options;
+
+                // Apply effect
+                _toggleClass(dragEl, options.ghostClass, true);
+                _toggleClass(dragEl, options.dragClass, false);
+
+                Sortable.active = this;
+
+                // Drag start event
+                _dispatchEvent(this, rootEl, 'start', dragEl, rootEl, rootEl, oldIndex);
+            } else {
+                this._nulling();
+            }
+        },
+
+        _emulateDragOver: function () {
+            if (touchEvt) {
+                if (this._lastX === touchEvt.clientX && this._lastY === touchEvt.clientY) {
+                    return;
+                }
+
+                this._lastX = touchEvt.clientX;
+                this._lastY = touchEvt.clientY;
+
+                if (!supportCssPointerEvents) {
+                    _css(ghostEl, 'display', 'none');
+                }
+
+                var target = document.elementFromPoint(touchEvt.clientX, touchEvt.clientY),
+                        parent = target,
+                        i = touchDragOverListeners.length;
+
+                if (parent) {
+                    do {
+                        if (parent[expando]) {
+                            while (i--) {
+                                touchDragOverListeners[i]({
+                                    clientX: touchEvt.clientX,
+                                    clientY: touchEvt.clientY,
+                                    target: target,
+                                    rootEl: parent
+                                });
+                            }
+
+                            break;
+                        }
+
+                        target = parent; // store last element
+                    }
+                    /* jshint boss:true */
+                    while (parent = parent.parentNode);
+                }
+
+                if (!supportCssPointerEvents) {
+                    _css(ghostEl, 'display', '');
+                }
+            }
+        },
+
+        _onTouchMove: function (/**TouchEvent*/evt) {
+            if (tapEvt) {
+                var options = this.options,
+                        fallbackTolerance = options.fallbackTolerance,
+                        fallbackOffset = options.fallbackOffset,
+                        touch = evt.touches ? evt.touches[0] : evt,
+                        dx = (touch.clientX - tapEvt.clientX) + fallbackOffset.x,
+                        dy = (touch.clientY - tapEvt.clientY) + fallbackOffset.y,
+                        translate3d = evt.touches ? 'translate3d(' + dx + 'px,' + dy + 'px,0)' : 'translate(' + dx + 'px,' + dy + 'px)';
+
+                // only set the status to dragging, when we are actually dragging
+                if (!Sortable.active) {
+                    if (fallbackTolerance &&
+                            min(abs(touch.clientX - this._lastX), abs(touch.clientY - this._lastY)) < fallbackTolerance
+                            ) {
+                        return;
+                    }
+
+                    this._dragStarted();
+                }
+
+                // as well as creating the ghost element on the document body
+                this._appendGhost();
+
+                moved = true;
+                touchEvt = touch;
+
+                _css(ghostEl, 'webkitTransform', translate3d);
+                _css(ghostEl, 'mozTransform', translate3d);
+                _css(ghostEl, 'msTransform', translate3d);
+                _css(ghostEl, 'transform', translate3d);
+
+                evt.preventDefault();
+            }
+        },
+
+        _appendGhost: function () {
+            if (!ghostEl) {
+                var rect = dragEl.getBoundingClientRect(),
+                        css = _css(dragEl),
+                        options = this.options,
+                        ghostRect;
+
+                ghostEl = dragEl.cloneNode(true);
+
+                _toggleClass(ghostEl, options.ghostClass, false);
+                _toggleClass(ghostEl, options.fallbackClass, true);
+                _toggleClass(ghostEl, options.dragClass, true);
+
+                _css(ghostEl, 'top', rect.top - parseInt(css.marginTop, 10));
+                _css(ghostEl, 'left', rect.left - parseInt(css.marginLeft, 10));
+                _css(ghostEl, 'width', rect.width);
+                _css(ghostEl, 'height', rect.height);
+                _css(ghostEl, 'opacity', '0.8');
+                _css(ghostEl, 'position', 'fixed');
+                _css(ghostEl, 'zIndex', '100000');
+                _css(ghostEl, 'pointerEvents', 'none');
+
+                options.fallbackOnBody && document.body.appendChild(ghostEl) || rootEl.appendChild(ghostEl);
+
+                // Fixing dimensions.
+                ghostRect = ghostEl.getBoundingClientRect();
+                _css(ghostEl, 'width', rect.width * 2 - ghostRect.width);
+                _css(ghostEl, 'height', rect.height * 2 - ghostRect.height);
+            }
+        },
+
+        _onDragStart: function (/**Event*/evt, /**boolean*/useFallback) {
+            var dataTransfer = evt.dataTransfer,
+                    options = this.options;
+
+            this._offUpEvents();
+
+            if (activeGroup.checkPull(this, this, dragEl, evt)) {
+                cloneEl = _clone(dragEl);
+
+                cloneEl.draggable = false;
+                cloneEl.style['will-change'] = '';
+
+                _css(cloneEl, 'display', 'none');
+                _toggleClass(cloneEl, this.options.chosenClass, false);
+
+                rootEl.insertBefore(cloneEl, dragEl);
+                _dispatchEvent(this, rootEl, 'clone', dragEl);
+            }
+
+            _toggleClass(dragEl, options.dragClass, true);
+
+            if (useFallback) {
+                if (useFallback === 'touch') {
+                    // Bind touch events
+                    _on(document, 'touchmove', this._onTouchMove);
+                    _on(document, 'touchend', this._onDrop);
+                    _on(document, 'touchcancel', this._onDrop);
+                    _on(document, 'pointermove', this._onTouchMove);
+                    _on(document, 'pointerup', this._onDrop);
+                } else {
+                    // Old brwoser
+                    _on(document, 'mousemove', this._onTouchMove);
+                    _on(document, 'mouseup', this._onDrop);
+                }
+
+                this._loopId = setInterval(this._emulateDragOver, 50);
+            } else {
+                if (dataTransfer) {
+                    dataTransfer.effectAllowed = 'move';
+                    options.setData && options.setData.call(this, dataTransfer, dragEl);
+                }
+
+                _on(document, 'drop', this);
+                setTimeout(this._dragStarted, 0);
+            }
+        },
+
+        _onDragOver: function (/**Event*/evt) {
+            var el = this.el,
+                    target,
+                    dragRect,
+                    targetRect,
+                    revert,
+                    options = this.options,
+                    group = options.group,
+                    activeSortable = Sortable.active,
+                    isOwner = (activeGroup === group),
+                    isMovingBetweenSortable = false,
+                    canSort = options.sort;
+
+            if (evt.preventDefault !== void 0) {
+                evt.preventDefault();
+                !options.dragoverBubble && evt.stopPropagation();
+            }
+
+            if (dragEl.animated) {
+                return;
+            }
+
+            moved = true;
+
+            if (activeSortable && !options.disabled &&
+                    (isOwner
+                            ? canSort || (revert = !rootEl.contains(dragEl)) // Reverting item into the original list
+                            : (
+                                    putSortable === this ||
+                                    (
+                                            (activeSortable.lastPullMode = activeGroup.checkPull(this, activeSortable, dragEl, evt)) &&
+                                            group.checkPut(this, activeSortable, dragEl, evt)
+                                            )
+                                    )
+                            ) &&
+                    (evt.rootEl === void 0 || evt.rootEl === this.el) // touch fallback
+                    ) {
+                // Smart auto-scrolling
+                _autoScroll(evt, options, this.el);
+
+                if (_silent) {
+                    return;
+                }
+
+                target = _closest(evt.target, options.draggable, el);
+                dragRect = dragEl.getBoundingClientRect();
+
+                if (putSortable !== this) {
+                    putSortable = this;
+                    isMovingBetweenSortable = true;
+                }
+
+                if (revert) {
+                    _cloneHide(activeSortable, true);
+                    parentEl = rootEl; // actualization
+
+                    if (cloneEl || nextEl) {
+                        rootEl.insertBefore(dragEl, cloneEl || nextEl);
+                    } else if (!canSort) {
+                        rootEl.appendChild(dragEl);
+                    }
+
+                    return;
+                }
+
+
+                if ((el.children.length === 0) || (el.children[0] === ghostEl) ||
+                        (el === evt.target) && (_ghostIsLast(el, evt))
+                        ) {
+                    //assign target only if condition is true
+                    if (el.children.length !== 0 && el.children[0] !== ghostEl && el === evt.target) {
+                        target = el.lastElementChild;
+                    }
+
+                    if (target) {
+                        if (target.animated) {
+                            return;
+                        }
+
+                        targetRect = target.getBoundingClientRect();
+                    }
+
+                    _cloneHide(activeSortable, isOwner);
+
+                    if (_onMove(rootEl, el, dragEl, dragRect, target, targetRect, evt) !== false) {
+                        if (!dragEl.contains(el)) {
+                            el.appendChild(dragEl);
+                            parentEl = el; // actualization
+                        }
+
+                        this._animate(dragRect, dragEl);
+                        target && this._animate(targetRect, target);
+                    }
+                } else if (target && !target.animated && target !== dragEl && (target.parentNode[expando] !== void 0)) {
+                    if (lastEl !== target) {
+                        lastEl = target;
+                        lastCSS = _css(target);
+                        lastParentCSS = _css(target.parentNode);
+                    }
+
+                    targetRect = target.getBoundingClientRect();
+
+                    var width = targetRect.right - targetRect.left,
+                            height = targetRect.bottom - targetRect.top,
+                            floating = R_FLOAT.test(lastCSS.cssFloat + lastCSS.display)
+                            || (lastParentCSS.display == 'flex' && lastParentCSS['flex-direction'].indexOf('row') === 0),
+                            isWide = (target.offsetWidth > dragEl.offsetWidth),
+                            isLong = (target.offsetHeight > dragEl.offsetHeight),
+                            halfway = (floating ? (evt.clientX - targetRect.left) / width : (evt.clientY - targetRect.top) / height) > 0.5,
+                            nextSibling = target.nextElementSibling,
+                            after = false
+                            ;
+
+                    if (floating) {
+                        var elTop = dragEl.offsetTop,
+                                tgTop = target.offsetTop;
+
+                        if (elTop === tgTop) {
+                            after = (target.previousElementSibling === dragEl) && !isWide || halfway && isWide;
+                        } else if (target.previousElementSibling === dragEl || dragEl.previousElementSibling === target) {
+                            after = (evt.clientY - targetRect.top) / height > 0.5;
+                        } else {
+                            after = tgTop > elTop;
+                        }
+                    } else if (!isMovingBetweenSortable) {
+                        after = (nextSibling !== dragEl) && !isLong || halfway && isLong;
+                    }
+
+                    var moveVector = _onMove(rootEl, el, dragEl, dragRect, target, targetRect, evt, after);
+
+                    if (moveVector !== false) {
+                        if (moveVector === 1 || moveVector === -1) {
+                            after = (moveVector === 1);
+                        }
+
+                        _silent = true;
+                        setTimeout(_unsilent, 30);
+
+                        _cloneHide(activeSortable, isOwner);
+
+                        if (!dragEl.contains(el)) {
+                            if (after && !nextSibling) {
+                                el.appendChild(dragEl);
+                            } else {
+                                target.parentNode.insertBefore(dragEl, after ? nextSibling : target);
+                            }
+                        }
+
+                        parentEl = dragEl.parentNode; // actualization
+
+                        this._animate(dragRect, dragEl);
+                        this._animate(targetRect, target);
+                    }
+                }
+            }
+        },
+
+        _animate: function (prevRect, target) {
+            var ms = this.options.animation;
+
+            if (ms) {
+                var currentRect = target.getBoundingClientRect();
+
+                if (prevRect.nodeType === 1) {
+                    prevRect = prevRect.getBoundingClientRect();
+                }
+
+                _css(target, 'transition', 'none');
+                _css(target, 'transform', 'translate3d('
+                        + (prevRect.left - currentRect.left) + 'px,'
+                        + (prevRect.top - currentRect.top) + 'px,0)'
+                        );
+
+                target.offsetWidth; // repaint
+
+                _css(target, 'transition', 'all ' + ms + 'ms');
+                _css(target, 'transform', 'translate3d(0,0,0)');
+
+                clearTimeout(target.animated);
+                target.animated = setTimeout(function () {
+                    _css(target, 'transition', '');
+                    _css(target, 'transform', '');
+                    target.animated = false;
+                }, ms);
+            }
+        },
+
+        _offUpEvents: function () {
+            var ownerDocument = this.el.ownerDocument;
+
+            _off(document, 'touchmove', this._onTouchMove);
+            _off(document, 'pointermove', this._onTouchMove);
+            _off(ownerDocument, 'mouseup', this._onDrop);
+            _off(ownerDocument, 'touchend', this._onDrop);
+            _off(ownerDocument, 'pointerup', this._onDrop);
+            _off(ownerDocument, 'touchcancel', this._onDrop);
+            _off(ownerDocument, 'pointercancel', this._onDrop);
+            _off(ownerDocument, 'selectstart', this);
+        },
+
+        _onDrop: function (/**Event*/evt) {
+            var el = this.el,
+                    options = this.options;
+
+            clearInterval(this._loopId);
+            clearInterval(autoScroll.pid);
+            clearTimeout(this._dragStartTimer);
+
+            // Unbind events
+            _off(document, 'mousemove', this._onTouchMove);
+
+            if (this.nativeDraggable) {
+                _off(document, 'drop', this);
+                _off(el, 'dragstart', this._onDragStart);
+            }
+
+            this._offUpEvents();
+
+            if (evt) {
+                if (moved) {
+                    evt.preventDefault();
+                    !options.dropBubble && evt.stopPropagation();
+                }
+
+                ghostEl && ghostEl.parentNode && ghostEl.parentNode.removeChild(ghostEl);
+
+                if (rootEl === parentEl || Sortable.active.lastPullMode !== 'clone') {
+                    // Remove clone
+                    cloneEl && cloneEl.parentNode && cloneEl.parentNode.removeChild(cloneEl);
+                }
+
+                if (dragEl) {
+                    if (this.nativeDraggable) {
+                        _off(dragEl, 'dragend', this);
+                    }
+
+                    _disableDraggable(dragEl);
+                    dragEl.style['will-change'] = '';
+
+                    // Remove class's
+                    _toggleClass(dragEl, this.options.ghostClass, false);
+                    _toggleClass(dragEl, this.options.chosenClass, false);
+
+                    // Drag stop event
+                    _dispatchEvent(this, rootEl, 'unchoose', dragEl, parentEl, rootEl, oldIndex);
+
+                    if (rootEl !== parentEl) {
+                        newIndex = _index(dragEl, options.draggable);
+
+                        if (newIndex >= 0) {
+                            // Add event
+                            _dispatchEvent(null, parentEl, 'add', dragEl, parentEl, rootEl, oldIndex, newIndex);
+
+                            // Remove event
+                            _dispatchEvent(this, rootEl, 'remove', dragEl, parentEl, rootEl, oldIndex, newIndex);
+
+                            // drag from one list and drop into another
+                            _dispatchEvent(null, parentEl, 'sort', dragEl, parentEl, rootEl, oldIndex, newIndex);
+                            _dispatchEvent(this, rootEl, 'sort', dragEl, parentEl, rootEl, oldIndex, newIndex);
+                        }
+                    } else {
+                        if (dragEl.nextSibling !== nextEl) {
+                            // Get the index of the dragged element within its parent
+                            newIndex = _index(dragEl, options.draggable);
+
+                            if (newIndex >= 0) {
+                                // drag & drop within the same list
+                                _dispatchEvent(this, rootEl, 'update', dragEl, parentEl, rootEl, oldIndex, newIndex);
+                                _dispatchEvent(this, rootEl, 'sort', dragEl, parentEl, rootEl, oldIndex, newIndex);
+                            }
+                        }
+                    }
+
+                    if (Sortable.active) {
+                        /* jshint eqnull:true */
+                        if (newIndex == null || newIndex === -1) {
+                            newIndex = oldIndex;
+                        }
+
+                        _dispatchEvent(this, rootEl, 'end', dragEl, parentEl, rootEl, oldIndex, newIndex);
+
+                        // Save sorting
+                        this.save();
+                    }
+                }
+
+            }
+
+            this._nulling();
+        },
+
+        _nulling: function () {
+            rootEl =
+                    dragEl =
+                    parentEl =
+                    ghostEl =
+                    nextEl =
+                    cloneEl =
+                    lastDownEl =
+                    scrollEl =
+                    scrollParentEl =
+                    tapEvt =
+                    touchEvt =
+                    moved =
+                    newIndex =
+                    lastEl =
+                    lastCSS =
+                    putSortable =
+                    activeGroup =
+                    Sortable.active = null;
+
+            savedInputChecked.forEach(function (el) {
+                el.checked = true;
+            });
+            savedInputChecked.length = 0;
+        },
+
+        handleEvent: function (/**Event*/evt) {
+            switch (evt.type) {
+                case 'drop':
+                case 'dragend':
+                    this._onDrop(evt);
+                    break;
+
+                case 'dragover':
+                case 'dragenter':
+                    if (dragEl) {
+                        this._onDragOver(evt);
+                        _globalDragOver(evt);
+                    }
+                    break;
+
+                case 'selectstart':
+                    evt.preventDefault();
+                    break;
+            }
+        },
+
+        /**
+         * Serializes the item into an array of string.
+         * @returns {String[]}
+         */
+        toArray: function () {
+            var order = [],
+                    el,
+                    children = this.el.children,
+                    i = 0,
+                    n = children.length,
+                    options = this.options;
+
+            for (; i < n; i++) {
+                el = children[i];
+                if (_closest(el, options.draggable, this.el)) {
+                    order.push(el.getAttribute(options.dataIdAttr) || _generateId(el));
+                }
+            }
+
+            return order;
+        },
+
+        /**
+         * Sorts the elements according to the array.
+         * @param  {String[]}  order  order of the items
+         */
+        sort: function (order) {
+            var items = {}, rootEl = this.el;
+
+            this.toArray().forEach(function (id, i) {
+                var el = rootEl.children[i];
+
+                if (_closest(el, this.options.draggable, rootEl)) {
+                    items[id] = el;
+                }
+            }, this);
+
+            order.forEach(function (id) {
+                if (items[id]) {
+                    rootEl.removeChild(items[id]);
+                    rootEl.appendChild(items[id]);
+                }
+            });
+        },
+
+        /**
+         * Save the current sorting
+         */
+        save: function () {
+            var store = this.options.store;
+            store && store.set(this);
+        },
+
+        /**
+         * For each element in the set, get the first element that matches the selector by testing the element itself and traversing up through its ancestors in the DOM tree.
+         * @param   {HTMLElement}  el
+         * @param   {String}       [selector]  default: `options.draggable`
+         * @returns {HTMLElement|null}
+         */
+        closest: function (el, selector) {
+            return _closest(el, selector || this.options.draggable, this.el);
+        },
+
+        /**
+         * Set/get option
+         * @param   {string} name
+         * @param   {*}      [value]
+         * @returns {*}
+         */
+        option: function (name, value) {
+            var options = this.options;
+
+            if (value === void 0) {
+                return options[name];
+            } else {
+                options[name] = value;
+
+                if (name === 'group') {
+                    _prepareGroup(options);
+                }
+            }
+        },
+
+        /**
+         * Destroy
+         */
+        destroy: function () {
+            var el = this.el;
+
+            el[expando] = null;
+
+            _off(el, 'mousedown', this._onTapStart);
+            _off(el, 'touchstart', this._onTapStart);
+            _off(el, 'pointerdown', this._onTapStart);
+
+            if (this.nativeDraggable) {
+                _off(el, 'dragover', this);
+                _off(el, 'dragenter', this);
+            }
+
+            // Remove draggable attributes
+            Array.prototype.forEach.call(el.querySelectorAll('[draggable]'), function (el) {
+                el.removeAttribute('draggable');
+            });
+
+            touchDragOverListeners.splice(touchDragOverListeners.indexOf(this._onDragOver), 1);
+
+            this._onDrop();
+
+            this.el = el = null;
+        }
+    };
+
+
+    function _cloneHide(sortable, state) {
+        if (sortable.lastPullMode !== 'clone') {
+            state = true;
+        }
+
+        if (cloneEl && (cloneEl.state !== state)) {
+            _css(cloneEl, 'display', state ? 'none' : '');
+
+            if (!state) {
+                if (cloneEl.state) {
+                    if (sortable.options.group.revertClone) {
+                        rootEl.insertBefore(cloneEl, nextEl);
+                        sortable._animate(dragEl, cloneEl);
+                    } else {
+                        rootEl.insertBefore(cloneEl, dragEl);
+                    }
+                }
+            }
+
+            cloneEl.state = state;
+        }
+    }
+
+
+    function _closest(/**HTMLElement*/el, /**String*/selector, /**HTMLElement*/ctx) {
+        if (el) {
+            ctx = ctx || document;
+
+            do {
+                if ((selector === '>*' && el.parentNode === ctx) || _matches(el, selector)) {
+                    return el;
+                }
+                /* jshint boss:true */
+            } while (el = _getParentOrHost(el));
+        }
+
+        return null;
+    }
+
+
+    function _getParentOrHost(el) {
+        var parent = el.host;
+
+        return (parent && parent.nodeType) ? parent : el.parentNode;
+    }
+
+
+    function _globalDragOver(/**Event*/evt) {
+        if (evt.dataTransfer) {
+            evt.dataTransfer.dropEffect = 'move';
+        }
+        evt.preventDefault();
+    }
+
+
+    function _on(el, event, fn) {
+        el.addEventListener(event, fn, captureMode);
+    }
+
+
+    function _off(el, event, fn) {
+        el.removeEventListener(event, fn, captureMode);
+    }
+
+
+    function _toggleClass(el, name, state) {
+        if (el) {
+            if (el.classList) {
+                el.classList[state ? 'add' : 'remove'](name);
+            } else {
+                var className = (' ' + el.className + ' ').replace(R_SPACE, ' ').replace(' ' + name + ' ', ' ');
+                el.className = (className + (state ? ' ' + name : '')).replace(R_SPACE, ' ');
+            }
+        }
+    }
+
+
+    function _css(el, prop, val) {
+        var style = el && el.style;
+
+        if (style) {
+            if (val === void 0) {
+                if (document.defaultView && document.defaultView.getComputedStyle) {
+                    val = document.defaultView.getComputedStyle(el, '');
+                } else if (el.currentStyle) {
+                    val = el.currentStyle;
+                }
+
+                return prop === void 0 ? val : val[prop];
+            } else {
+                if (!(prop in style)) {
+                    prop = '-webkit-' + prop;
+                }
+
+                style[prop] = val + (typeof val === 'string' ? '' : 'px');
+            }
+        }
+    }
+
+
+    function _find(ctx, tagName, iterator) {
+        if (ctx) {
+            var list = ctx.getElementsByTagName(tagName), i = 0, n = list.length;
+
+            if (iterator) {
+                for (; i < n; i++) {
+                    iterator(list[i], i);
+                }
+            }
+
+            return list;
+        }
+
+        return [];
+    }
+
+
+
+    function _dispatchEvent(sortable, rootEl, name, targetEl, toEl, fromEl, startIndex, newIndex) {
+        sortable = (sortable || rootEl[expando]);
+
+        var evt = document.createEvent('Event'),
+                options = sortable.options,
+                onName = 'on' + name.charAt(0).toUpperCase() + name.substr(1);
+
+        evt.initEvent(name, true, true);
+
+        evt.to = toEl || rootEl;
+        evt.from = fromEl || rootEl;
+        evt.item = targetEl || rootEl;
+        evt.clone = cloneEl;
+
+        evt.oldIndex = startIndex;
+        evt.newIndex = newIndex;
+
+        rootEl.dispatchEvent(evt);
+
+        if (options[onName]) {
+            options[onName].call(sortable, evt);
+        }
+    }
+
+
+    function _onMove(fromEl, toEl, dragEl, dragRect, targetEl, targetRect, originalEvt, willInsertAfter) {
+        var evt,
+                sortable = fromEl[expando],
+                onMoveFn = sortable.options.onMove,
+                retVal;
+
+        evt = document.createEvent('Event');
+        evt.initEvent('move', true, true);
+
+        evt.to = toEl;
+        evt.from = fromEl;
+        evt.dragged = dragEl;
+        evt.draggedRect = dragRect;
+        evt.related = targetEl || toEl;
+        evt.relatedRect = targetRect || toEl.getBoundingClientRect();
+        evt.willInsertAfter = willInsertAfter;
+
+        fromEl.dispatchEvent(evt);
+
+        if (onMoveFn) {
+            retVal = onMoveFn.call(sortable, evt, originalEvt);
+        }
+
+        return retVal;
+    }
+
+
+    function _disableDraggable(el) {
+        el.draggable = false;
+    }
+
+
+    function _unsilent() {
+        _silent = false;
+    }
+
+
+    /** @returns {HTMLElement|false} */
+    function _ghostIsLast(el, evt) {
+        var lastEl = el.lastElementChild,
+                rect = lastEl.getBoundingClientRect();
+
+        // 5 — min delta
+        // abs — нельзя добавлять, а то глюки при наведении сверху
+        return (evt.clientY - (rect.top + rect.height) > 5) ||
+                (evt.clientX - (rect.left + rect.width) > 5);
+    }
+
+
+    /**
+     * Generate id
+     * @param   {HTMLElement} el
+     * @returns {String}
+     * @private
+     */
+    function _generateId(el) {
+        var str = el.tagName + el.className + el.src + el.href + el.textContent,
+                i = str.length,
+                sum = 0;
+
+        while (i--) {
+            sum += str.charCodeAt(i);
+        }
+
+        return sum.toString(36);
+    }
+
+    /**
+     * Returns the index of an element within its parent for a selected set of
+     * elements
+     * @param  {HTMLElement} el
+     * @param  {selector} selector
+     * @return {number}
+     */
+    function _index(el, selector) {
+        var index = 0;
+
+        if (!el || !el.parentNode) {
+            return -1;
+        }
+
+        while (el && (el = el.previousElementSibling)) {
+            if ((el.nodeName.toUpperCase() !== 'TEMPLATE') && (selector === '>*' || _matches(el, selector))) {
+                index++;
+            }
+        }
+
+        return index;
+    }
+
+    function _matches(/**HTMLElement*/el, /**String*/selector) {
+        if (el) {
+            selector = selector.split('.');
+
+            var tag = selector.shift().toUpperCase(),
+                    re = new RegExp('\\s(' + selector.join('|') + ')(?=\\s)', 'g');
+
+            return (
+                    (tag === '' || el.nodeName.toUpperCase() == tag) &&
+                    (!selector.length || ((' ' + el.className + ' ').match(re) || []).length == selector.length)
+                    );
+        }
+
+        return false;
+    }
+
+    function _throttle(callback, ms) {
+        var args, _this;
+
+        return function () {
+            if (args === void 0) {
+                args = arguments;
+                _this = this;
+
+                setTimeout(function () {
+                    if (args.length === 1) {
+                        callback.call(_this, args[0]);
+                    } else {
+                        callback.apply(_this, args);
+                    }
+
+                    args = void 0;
+                }, ms);
+            }
+        };
+    }
+
+    function _extend(dst, src) {
+        if (dst && src) {
+            for (var key in src) {
+                if (src.hasOwnProperty(key)) {
+                    dst[key] = src[key];
+                }
+            }
+        }
+
+        return dst;
+    }
+
+    function _clone(el) {
+        if (Polymer && Polymer.dom) {
+            return Polymer.dom(el).cloneNode(true);
+        } else if ($) {
+            return $(el).clone(true)[0];
+        } else {
+            return el.cloneNode(true);
+        }
+    }
+
+    function _saveInputCheckedState(root) {
+        var inputs = root.getElementsByTagName('input');
+        var idx = inputs.length;
+
+        while (idx--) {
+            var el = inputs[idx];
+            el.checked && savedInputChecked.push(el);
+        }
+    }
+
+    // Fixed #973:
+    _on(document, 'touchmove', function (evt) {
+        if (Sortable.active) {
+            evt.preventDefault();
+        }
+    });
+
+    try {
+        window.addEventListener('test', null, Object.defineProperty({}, 'passive', {
+            get: function () {
+                captureMode = {
+                    capture: false,
+                    passive: false
+                };
+            }
+        }));
+    } catch (err) {
+    }
+
+    // Export utils
+    Sortable.utils = {
+        on: _on,
+        off: _off,
+        css: _css,
+        find: _find,
+        is: function (el, selector) {
+            return !!_closest(el, selector, el);
+        },
+        extend: _extend,
+        throttle: _throttle,
+        closest: _closest,
+        toggleClass: _toggleClass,
+        clone: _clone,
+        index: _index
+    };
+
+
+    /**
+     * Create sortable instance
+     * @param {HTMLElement}  el
+     * @param {Object}      [options]
+     */
+    Sortable.create = function (el, options) {
+        return new Sortable(el, options);
+    };
+
+
+    // Export
+    Sortable.version = '1.6.1';
+    return Sortable;
+});
+
 var DD_Global = {};
 var DD_object = Class.extend({
     
@@ -27097,13 +28547,25 @@ var DD_object = Class.extend({
     },
     
     setGlobal: function () {
+        var uid = this.getGlobalUid();
+        if(uid) {
+            DD_Global[uid][this.id] = this;
+        }
         DD_Global[this.id] = this;
     },
     getId: function () {
         return this.id;
     },
     getGlobal: function (id) {
+        var uid = this.getGlobalUid();
+        if(uid) {
+            return DD_Global[uid][id];
+        }
         return DD_Global[id];
+    },
+    
+    getGlobalUid: function() {
+        /////???????
     },
     
     createUUID: function () {
@@ -27233,6 +28695,7 @@ var DD_Event = DD_object.extend({
 });
 
 var DD_Translator = DD_object.extend({
+
     id: 'dd_translate',
     translateObject: {},
     init: function(translate) {
@@ -27263,6 +28726,7 @@ var DD_Settings = DD_object.extend({
 var DD_Window = DD_object.extend({
     CONST_WIN_WIDTH: 300,
     CONST_WIN_CONTENT_EL: 'modalContent',
+    CONST_WIN_PREVIEW_EL: 'previewContent',
 
     id: 'dd_window',
     init: function () {
@@ -27270,7 +28734,8 @@ var DD_Window = DD_object.extend({
             return;
         }
         this._super(this.id);
-        this.createContentElement();
+        this.createContentElement(this.CONST_WIN_CONTENT_EL);
+        this.createContentElement(this.CONST_WIN_PREVIEW_EL);
         this.registerModal();
         this.registerPreview();
         this.setGlobal();
@@ -27286,7 +28751,7 @@ var DD_Window = DD_object.extend({
             draggable: false,
             overlay: false,
             close: true,
-            content: $('#' + this.CONST_WIN_CONTENT_EL),
+            content: $('#' + this.CONST_WIN_PREVIEW_EL),
             width: $(window).width(),
             fixed: false,
             height: $(window).width(),
@@ -27344,21 +28809,32 @@ var DD_Window = DD_object.extend({
     },
 
     getContentElement: function () {
-        return this.getGlobal(this.id).contentElement;
+        return this.getGlobal(this.id).contentElement[this.CONST_WIN_CONTENT_EL];
+    },
+
+    getContentElementPreview: function () {
+        return this.getGlobal(this.id).contentElement[this.CONST_WIN_PREVIEW_EL];
     },
 
     getWinWidth: function () {
         return this.CONST_WIN_WIDTH;
     },
 
-    createContentElement: function () {
-        this.contentElement = $('<div />').attr({
-            'id': this.CONST_WIN_CONTENT_EL
+    createContentElement: function (id) {
+        if(!this.contentElement) {
+            this.contentElement = {};
+        }
+        if($('#' + id).get(0)) {
+            this.contentElement[id] = $('#' + id);
+            return;
+        }
+        this.contentElement[id] = $('<div />').attr({
+            'id': id
         }).css({
             'display': 'none'
         }).html('<p>&nbsp;</p>');
 
-        $('body').append(this.contentElement);
+        $('body').append(this.contentElement[id]);
     },
     
     registerCloseWinEventCall: function() {
@@ -27417,10 +28893,12 @@ var DD_Uibase = DD_object.extend({
             this.self.on('click', function () {
                 if(!me.options.windowPreview) {
                     var window = me.modal.getWindow();
+                    var contentElement = me.modal.getContentElement();
                 }else{
                     var window = me.modal.getPreview();
+                    var contentElement = me.modal.getContentElementPreview();
                 }
-                var contentElement = me.modal.getContentElement();
+                
                 contentElement.empty();
                 me.model.opener = me;
                 me.model.setWindowContent( contentElement );
@@ -27542,32 +29020,32 @@ var DD_Debug = DD_object.extend({
 });
 
 var DD_ModelBase = DD_object.extend({
-     
-        init: function() {
-         if(this.eventBase) {
-             this._evnt().register(this.eventBase, this.obj, this.base);
-         }
-         if(this.registerEvents) {
+
+    init: function () {
+        if (this.eventBase) {
+            this._evnt().register(this.eventBase, this.obj, this.base);
+        }
+        if (this.registerEvents) {
             this.registerEvents();
-         }
-         if(this.registerCalls) {
+        }
+        if (this.registerCalls) {
             this.registerCalls();
-         }
-     },
-     
-     clickEventName: function() {
-         return this.eventClick;
-     },
-     
-     setWindow: function(window) {
-         this.window = window;
-     },
-     
-     closeWindow: function() {
-         if(this.window) {
-             this.window.close();
-         }
-     }
+        }
+    },
+
+    clickEventName: function () {
+        return this.eventClick;
+    },
+
+    setWindow: function (window) {
+        this.window = window;
+    },
+
+    closeWindow: function () {
+        if (this.window) {
+            this.window.close();
+        }
+    }
 });
 
 var DD_History = DD_object.extend({
@@ -27672,6 +29150,9 @@ var DD_panel = DD_Uibase.extend({
     mainClass: 'panel',
     init: function (options) {
         this.options = $.extend(( options ? options : {} ) , this.options);
+        if(!this.parent ) {
+            this.parent = this.options.parent;
+        }
         this._super(this.options.id);
         this.selfBase();
     },
@@ -28255,23 +29736,12 @@ var DD_main = DD_panel.extend({
     },
     
     _addElements: function() {
-        this.addTopControls();
-        if(this._s('history')) {
-            this.addHistoryControls();
-        }
-        this.addMainControls();
-    },
-    
-    addTopControls: function() {
         new DD_Topcontrols(this.self);
-    },
-    
-    addMainControls: function() {
+        if(this._s('history')) {
+            new DD_Historycontrols(this.self);
+        }
         new DD_Maincontrols(this.self);
-    },
-    
-    addHistoryControls: function() {
-        new DD_Historycontrols(this.self);
+        new DD_setup(this.getParent());
     }
 });
 
@@ -28475,6 +29945,106 @@ var DD_windowTextForm = DD_panel.extend({
     }
 });
 
+var DD_setup_model = DD_ModelBase.extend({
+
+    init: function (obj) {
+
+    },
+
+    tabActive: function (id, content) {
+        switch (id) {
+            case 'dd-setup-info':
+                    
+                break;
+            case 'dd-setup-layer-mask':
+
+                break;
+            case 'dd-setup-layer-images':
+
+                break;
+            case 'dd-setup-layer-texts':
+
+                break;
+            case 'dd-setup-layer-qrcode':
+
+                break;
+            default:
+
+                break;
+        }
+    }
+
+});
+
+var DD_setup = DD_panel.extend({
+    object_id: 'dd-setup',
+    class_name: 'dd-setup-image',
+    model: 'DD_setup_model',
+    
+    init: function(parent, imgOptions) {
+        this.parent = parent;
+        this.imgOptions = imgOptions;
+        this._super({
+            'id': this.object_id,
+            'class': this.class_name,
+            'parent': parent
+        });
+        this.add();
+        this.addElements();
+    },
+    
+    addElements: function() {
+        new DD_setup_tabs(this.self);
+    }
+    
+});
+
+
+
+var DD_setup_tabs = DD_Tabs.extend({
+    object_id: 'dd-setup-tabs',
+    model: 'DD_setup_model',
+    
+    init: function(parent) {
+        var options = {
+            parent: parent,
+            id: this.object_id,
+            tabs: this.getTabs()
+        }
+        this._super(options);
+    },
+    getTabs: function() {
+        return [
+            {
+                id: 'dd-setup-info',
+                text: this._('info')
+            },
+            {
+                id: 'dd-setup-layer-mask',
+                text: this._('layer_mask')
+            },
+            {
+                id: 'dd-setup-layer-images',
+                text: this._('images')
+            },
+            {
+                id: 'dd-setup-layer-texts',
+                text: this._('texts')
+            },
+            {
+                id: 'dd-setup-layer-qrcode',
+                text: this._('qr_code')
+            },
+            {
+                id: 'dd-setup-options',
+                text: this._('options')
+            }
+        ];
+    }
+});
+
+
+
 $.fn.dd_productdesigner = function (options) {
     //new
     this.options = $.extend({
@@ -28498,7 +30068,16 @@ $.fn.dd_productdesigner = function (options) {
             'drop_files_or_upload': 'Click to upload',
             'uploader_error': 'Uploader Error!!!',
             'loading': 'Loading',
-            'no_data': 'No Data Found'
+            'no_data': 'No Data Found',
+            
+            
+            //setup
+            'info': 'Image Info',
+            'layer_mask': 'Layer Mask',
+            'images': 'Images',
+            'texts': 'Texts',
+            'qr_code': 'QR Code',
+            'options': 'Options'
         },
         'settings': {
             'addphoto': true,
@@ -28528,847 +30107,5 @@ $.fn.dd_productdesigner = function (options) {
         new DD_Debug(this);
     }
     return this;
-};
-
-var DD_Admin_ImagesSelected_Model = DD_ModelBase.extend({
-
-    groupChangedEvent: 'image-group-changed',
-    groupSetEvent: 'image-group-setdata',
-    groupCancelEvent: 'image-group-cancel',
-    addGroupEvent: 'image-group-add',
-    removeGroupEvent: 'image-group-remove',
-
-    init: function (obj) {
-        this.obj = obj;
-        this._super();
-        //this.loadGroups();
-    },
-    _registerEvents: function () {
-        this._evnt().register(this.groupChangedEvent, this.obj);
-        this._evnt().register(this.groupSetEvent, this.obj);
-        this._evnt().register(this.addGroupEvent, this.obj);
-        this._evnt().register(this.groupCancelEvent, this.obj);
-        this._evnt().register(this.removeGroupEvent, this.obj);
-    },
-    _registerCalls: function () {
-        var self = this;
-        this._evnt().registerCallback(this.groupChangedEvent, function (obj) {
-            obj.groupContainer.empty();
-            var c = 0;
-            obj.groups.each(function (group) {
-                new DD_admin_group({
-                    data: group,
-                    parent: obj.groupContainer,
-                    index: c
-                });
-                c++;
-            });
-
-            if (this.sortable) {
-                this.sortable.destroy();
-            }
-            this.sortable = new Sortable(obj.groupContainer.get(0), {
-                handle: ".sortable",
-                onEnd: function (evt) {
-                    ;
-                    self.updateGroupsOrder(evt.oldIndex, evt.newIndex);
-                }
-            });
-        });
-        this._evnt().registerCallback(this.groupSetEvent, function (obj, eventName, data) {
-            obj.groups = data;
-        });
-
-        this._evnt().registerCallback(this.removeGroupEvent, function (obj, eventName, index) {
-            var tmpGroups = obj.groups;
-            tmpGroups.splice(index, 1);
-            obj.groups = tmpGroups;
-        });
-
-        this._evnt().registerCallback(this.addGroupEvent, function (obj, eventName, data) {
-            obj.groups[obj.groups.length] = data;
-        });
-
-        this._evnt().registerCallback(this.groupCancelEvent, function (obj, eventName, data) {
-            obj.drawNoImagesSelected();
-        });
-    },
-
-    updateGroupsOrder: function (group_index, new_index) {
-        this.groups = this.getGroups();
-        this.groups = this.sortArray(this.groups, new_index, group_index);
-        this._evnt().doCall(this.groupSetEvent, this.groups);
-        this._evnt().doCall(this.groupChangedEvent);
-    },
-
-    getGroups: function () {
-        return this._evnt().getEventObject(this.groupSetEvent).groups;
-    },
-
-    cancelGroups: function () {
-        this._evnt().doCall(this.groupSetEvent, []);
-        this._evnt().doCall(this.groupCancelEvent);
-    },
-    updateGroups: function (groups) {
-        this._evnt().doCall(this.groupSetEvent, groups);
-        this._evnt().doCall(this.groupChangedEvent);
-    },
-    removeGroup: function (index) {
-        this._evnt().doCall(this.removeGroupEvent, index);
-        this._evnt().doCall(this.groupChangedEvent);
-    },
-    addGroup: function (data) {
-        this._evnt().doCall(this.addGroupEvent, data);
-        this._evnt().doCall(this.groupChangedEvent);
-    },
-
-    addImage: function (group_index, media_id, img) {
-        var index = this.getImgIndex(group_index, media_id);
-        if (index) {
-            return;
-        }
-        this.groups = this.getGroups();
-        var imgGroup = this.groups[parseInt(group_index)];
-        var index = Object.keys(imgGroup).length ? Object.keys(imgGroup).length : 0;
-        this.groups[parseInt(group_index)][index] = img;
-        this._evnt().doCall(this.groupChangedEvent);
-    },
-
-    getImgIndex: function (group_index, media_id) {
-        var imgGroup = this.groups[parseInt(group_index)];
-        var index = false;
-        $.each(imgGroup, function (i, image) {
-            if (image.media_id == parseInt(media_id)) {
-                index = i;
-            }
-        });
-
-        return index;
-
-    },
-
-    removeImage: function (group_index, media_id) {
-        this.groups = this.getGroups();
-        var newGropImg = {};
-        var indexRemov = this.getImgIndex(group_index, media_id);
-        var imgGroup = this.groups[parseInt(group_index)];
-        var c = 0;
-        $.each(imgGroup, function (i, image) {
-            if (indexRemov != i) {
-                newGropImg[c] = image;
-                c++;
-            }
-        });
-        this.groups[parseInt(group_index)] = newGropImg;
-        this.updateGroups(this.groups);
-    },
-    loadGroups: function () {
-        var self = this;
-        this._evnt().doCall('show-admin-loader');
-        $.ajax({
-            url: this.obj.options.urlImages
-                    + '?form_key=' + window.FORM_KEY,
-            data: {
-                'product_sku': this.obj.options.psku
-            },
-            success: function (data) {
-                self.obj.processGroups(data);
-            },
-            error: function () {
-                alert("Something went wrong!");
-            },
-            complete: function () {
-                self._evnt().doCall('hide-admin-loader');
-            },
-            cache: false
-        }, 'json');
-    },
-    attachCustomizeButtonEvents: function (button, parent) {
-        var self = this;
-        button.on('click', function () {
-            self.obj.p_noimages.remove();
-            self.obj.panelCustomize.get().remove();
-            self.obj.drawCustomizePanel();
-        });
-    },
-
-    clearClickEvents: function (obj) {
-        var self = this;
-        obj.on('click', function () {
-            self.updateGroups([]);
-        });
-    },
-
-    addGroupClick: function (obj) {
-        var self = this;
-        obj.on('click', function () {
-            self.addGroup({});
-        });
-    },
-
-    removeGroupClick: function (obj) {
-        var self = this;
-        obj.on('click', function () {
-            var remove = obj.attr('data-remove');
-            self.removeGroup(remove);
-        });
-    },
-
-    addGroupCancelClick: function (obj) {
-        var self = this;
-        obj.on('click', function () {
-            self.cancelGroups();
-        });
-    },
-
-    addGroupSaveClick: function (obj) {
-        var self = this;
-        obj.on('click', function () {
-            console.log('save');
-        });
-    }
-
-});
-
-var DD_admin_group_image_model = DD_Admin_ImagesSelected_Model.extend({
-
-    clickRemove: function (el) {
-        var self = this;
-        el.on('click', function () {
-            var group = el.attr('data-group');
-            var media_id = el.attr('data-remove');
-            self.removeImage(group, media_id);
-
-        });
-    },
-
-    clickEdit: function (el, options) {
-        el.on('click', function () {
-            $('#dd_designer').html('');
-            $('#dd_designer').empty();
-            
-            
-            $('#dd_designer').dd_productdesigner({
-                'src': options.src
-            });
-        });
-    }
-
-});
-
-var DD_Admin_Image_Model = DD_Admin_ImagesSelected_Model.extend({
-    
-    class_selected: 'selected',
-    
-    registerImage: function(imgCnt, data) {
-        this.data = data;
-        if(this.findImage()) {
-            this.selectImage(imgCnt);
-        }
-        this.registerClickEvent(imgCnt);
-    },
-    
-    registerClickEvent: function(imgCnt) {
-        var self = this;
-        imgCnt.on('click', function() {
-            self.selectImage(imgCnt);
-        });
-    },
-    
-    selectImage: function(imgCnt) {
-        if(imgCnt.hasClass('selected')) {
-            imgCnt.removeClass('selected');
-            this.removeImage(this.data.group_index, this.data.media_id);
-        }else{
-            imgCnt.addClass('selected');
-            this.addImage(this.data.group_index, this.data.media_id, this.data);
-        }
-    },
-    
-    getGroupImages: function() {
-        this.groups = this.getGroups();
-        return this.groups[parseInt(this.data.group_index)]; 
-    },
-    
-    findImage: function() {
-        var self = this;
-        var images = this.getGroupImages();
-        var media_id = false;
-        $.each(images, function(i, image) {
-            if(image.media_id == self.data.media_id) {
-                media_id = image.media_id;
-            }
-        });
-        
-        return media_id;
-    }
-});
-
-var DD_Admin_ImagesLoader_Model = DD_ModelBase.extend({
-    
-    eventShow: 'show-admin-loader',
-    eventHide: 'hide-admin-loader',
-    
-    init: function (obj) {
-        this.obj = obj;
-        this._super();
-    },
-    
-    registerEvents: function () {
-        this._evnt().register(this.eventShow, this.obj);
-        this._evnt().register(this.eventHide, this.obj);
-    },
-    
-    registerCalls: function(){
-        var self = this;
-        this._evnt().registerCallback(this.eventShow, function() {
-            self.obj
-                .get(0)
-                .show();
-        });
-        this._evnt().registerCallback(this.eventHide, function() {
-            self.obj
-                .get(0)
-                .hide();
-        });
-    }
-    
-});
-
-var DD_Admin_loadimages_model = DD_Admin_ImagesSelected_Model.extend({
-
-    class_container: 'dd-admin-loadimages-container',
-    class_loading: 'dd-admin-loadimages-loading',
-
-    getWindowTitle: function () {
-        return this._('select_images');
-    },
-
-    setWindowContent: function (parent) {
-        this.parent = parent;
-        var container = new DD_panel({
-            'class': this.class_container,
-            'parent': parent
-        });
-        container.add();
-
-        this.container = container.get();
-        parent.append(this.container);
-        this.loadImages();
-    },
-
-    loadImages: function () {
-        this.showLoading();
-        var self = this;
-        $.ajax({
-            url: this._s('urlLoadImages')
-                    + '?form_key=' + window.FORM_KEY,
-            data: {
-                'product_sku': this._s('psku'),
-                'product_id': this._s('product_id'),
-                'group_index': this.opener.get().attr('data-group')
-            },
-            success: function (data) {
-                if(data.error) {
-                    alert(data.errorMessage);
-                    return;
-                }
-                self.container.append($('<h3 />').html(data.extra.product_name + '(' + data.extra.psku + ')'));
-                if(typeof(data.data) == 'undefined' || data.data.length == 0) {
-                    self.container.append($('<div />').html(data.extra.no_images_text));
-                }
-                
-                $.each(data.data, function(i, img) {
-                    new DD_admin_image(self.container, img);
-                });
-            },
-            error: function () {
-                alert("Something went wrong!");
-            },
-            complete: function () {
-                self.hideLoading();
-            },
-            cache: false
-        }, 'json');
-    },
-    
-    hideLoading: function() {
-        this.loading.remove();
-    },
-
-    showLoading: function () {
-        var loading = new DD_panel({
-            'class': this.class_loading,
-            'parent': this.container
-        });
-        loading.add();
-
-        this.loading = loading.get();
-    }
-});
-
-
-var DD_admin_group = DD_panel.extend({
-    class_name: 'dd-admin-group',
-    class_name_remove: 'dd-admin-group-remove fa fa-trash-o',
-    class_name_select_img: 'dd-admin-select-img fa fa-picture-o',
-    class_img_container: 'dd-admin-group-img-container',
-    class_sorting_container: 'dd-admin-group-sorting-container sortable',
-    class_sorting_icon: 'dd-admin-group-sorting-icon fa fa-arrows',
-
-    model: 'DD_Admin_ImagesSelected_Model',
-    modelLoadImages: 'DD_Admin_loadimages_model',
-
-    init: function (options) {
-        this.options = options;
-        this._super({
-            'class': this.class_name
-        });
-        this.add();
-        this.addElements();
-    },
-
-    addElements: function () {
-        this.addRemove();
-        this.addSelectImage();
-        this.addSortingPanel();
-        this.addImages();
-    },
-
-    addSortingPanel: function () {
-        var sorting = new DD_panel({
-            class: this.class_sorting_container,
-            parent: this.self
-        });
-        sorting.add();
-        sorting.get().append($('<span />').addClass(this.class_sorting_icon));
-    },
-
-    addImages: function () {
-        var imgContainer = new DD_panel({
-            class: this.class_img_container,
-            parent: this.self
-        });
-        imgContainer.add();
-
-        var index = this.options.index;
-        $.each(this.options.data, function (i, img) {
-            img.groupIndex = index
-            new DD_admin_group_image(imgContainer.get(), img);
-        });
-
-        new Sortable(imgContainer.get().get(0), {
-
-        });
-    },
-
-    addRemove: function () {
-        var remove = new DD_button({
-            'class': this.class_name_remove,
-            'text': this._('remove'),
-            'parent': this.self,
-            'fa': true
-        });
-        remove.get(0).attr({
-            'data-remove': this.options.index
-        });
-        this.model.removeGroupClick(remove.get(0));
-    },
-
-    addSelectImage: function () {
-        var selectImg = new DD_button({
-            'class': this.class_name_select_img,
-            'text': this._('image'),
-            'parent': this.self,
-            'fa': true,
-            'windowOpener': true,
-            'windowPreview': true,
-            'model': this.modelLoadImages
-
-        });
-        selectImg.get(0).attr({
-            'data-group': this.options.index
-        });
-    }
-});
-
-var DD_admin_loader_images = DD_panel.extend({
-    
-    class_name: 'dd-admin-designer-container',
-    model: 'DD_Admin_ImagesLoader_Model',
-    
-    init: function (parent) {
-        var self = this;
-        this.parent = parent;
-        this._super({
-            'class': this.class_name,
-            'parent': parent
-        });
-        this.add();
-    }
-     
-});
-
-var DD_admin_main = DD_panel.extend({
-    
-    object_id: 'dd-admin-main-panel',
-    class_name: 'dd-admin-main-container',
-    
-    init: function (parent, options) {
-        var self = this;
-        this.options = options;
-        this.parent = parent;
-        this._super({
-            'id': this.object_id,
-            'class': this.class_name,
-            'parent': parent
-        });
-        this.add();
-    },
-    
-    _addElements: function() {
-        this.addLoader();
-        this.addImagesSelectedPanel();
-    },
-    
-    addImagesSelectedPanel: function() {
-        this.options.parent = this.self;
-        new DD_admin_selected_images({
-            'parent': this.self,
-            'urlImages': this.options.urlImages,
-            'product_sku': this.options.psku
-        });
-    },
-    
-    addLoader: function() {
-        new DD_admin_loader_images(this.self);
-    }
-    
-})
-
-var DD_admin_selected_images = DD_panel.extend({
-    
-    class_name: 'dd-admin-designer-selected',
-    model: 'DD_Admin_ImagesSelected_Model',
-    class_no_image_selected: 'dd-admin-no-selected',
-    class_button_customize: 'dd-admin-images-customize',
-    class_group_container: 'dd-admin-group-container',
-    groups: [],
-    
-    init: function (options) {
-        var self = this;
-        this.options  = options;
-        this._super({
-            'class': this.class_name
-        });
-        this.add();
-        this.model._registerEvents();
-        this.model._registerCalls();
-        this.model.loadGroups();
-        
-    },
-    
-    processGroups: function(data) {
-        console.log(data);
-        if(data.error) {
-            alert(data.errorMessage);
-        }
-        if(data.success) {
-            return this.drawGroups(data.data);
-        }
-    },
-    
-    drawGroups: function(dataGroups){
-        this.model.groups = dataGroups;
-        if(dataGroups.length == 0) {
-            this.drawNoImagesSelected()
-        }
-    },
-    
-    drawNoImagesSelected: function() {
-        if(this.groupsPanel) {
-           this.groupsPanel.remove(); 
-        }
-        if(this.groupContainer){
-            this.groupContainer.remove();
-        }
-        this.p_noimages = $('<p />', {
-            id: this.getId(),
-            class: this.class_no_image_selected,
-            text: this._('default_main_image')
-        });
-        this.self.append(this.p_noimages);
-        this.panelCustomize = new DD_panel({
-            'parent': this.self
-        });
-        this.panelCustomize.add();
-        var buttonCustomize = new DD_button({
-            'class': this.class_button_customize,
-            'text': this._('configure_images'), 
-            'parent': this.panelCustomize.get(),
-            'fa_addon': 'fa fa-cogs'
-        });
-        this.model.attachCustomizeButtonEvents(buttonCustomize.get(), this.self);
-    },
-    
-    drawCustomizePanel: function() {
-        var groupsPanel = new DD_admin_groups_panel({parent: this.self});
-        this.groupsPanel = groupsPanel.get();
-        
-        var groupContainer = new DD_panel({
-            'parent': this.self,
-            'class': this.class_group_container
-        });
-        groupContainer.add();
-        this.groupContainer = groupContainer.get();
-    }
-    
-});
-
-var DD_admin_groups_panel = DD_panel.extend({
-    
-    class_name: 'dd-admin-groups-panel',
-    model: 'DD_Admin_ImagesSelected_Model',
-    
-    init: function (options) {
-        this.options  = options;
-        this._super({
-            'class': this.class_name
-        });
-        this.add();
-    },
-    
-    _addElements: function() {
-        this.addGroupButton();
-        this.addClearButton();
-        this.addCancelButton();
-        this.addSaveButton();
-    },
-    
-    addGroupButton: function(){
-        new DD_admin_group_button(
-            this.self
-        );
-    },
-    
-    addSaveButton: function(){
-        new DD_admin_groupsave_button(
-            this.self
-        );
-    },
-    
-    addClearButton: function() {
-        new DD_admin_clear_button(
-            this.self
-        );
-    },
-    
-    addCancelButton: function() {
-        new DD_admin_groupcancel_button(
-            this.self
-        );
-    }
-
-});
-
-var DD_admin_clear_button = DD_button.extend({
-    class_name: 'dd-admin-clear-button',
-    model: 'DD_Admin_ImagesSelected_Model',
-
-    init: function (parent) {
-        var options = {
-            parent: parent,
-            class: this.class_name,
-            text: this._('clear_all'),
-            fa_addon: ' fa fa-times '
-        }
-        this._super(options);
-        this.model.clearClickEvents(this.self);
-    }
-
-});
-
-var DD_admin_group_button= DD_button.extend({
-    class_name: 'dd-admin-group-button',
-    model: 'DD_Admin_ImagesSelected_Model',
-
-    init: function (parent) {
-        var options = {
-            parent: parent,
-            class: this.class_name,
-            text: this._('add_group'),
-            fa_addon: 'fa fa-folder-open-o'
-        }
-        this._super(options);
-        this.model.addGroupClick(this.self);
-    }
-
-});
-
-
-var DD_admin_group_image = DD_panel.extend({
-    model: 'DD_admin_group_image_model',
-    class_name_remove: 'dd-admin-image-remove fa fa-trash-o',
-    class_name_edit: 'dd-admin-image-edit fa fa-pencil-square-o',
-    
-    class_name: 'dd-admin-group-image',
-    
-    init: function (imgContainer, options) {
-        this.options  = options;
-        this._super({
-            'class': this.class_name,
-            'parent': imgContainer
-        });
-        this.add();
-        this.addElements();
-    },
-    
-    addElements: function(){
-        this.addImage();
-        this.addRemove();
-        this.addEdit();
-    },
-    
-    addImage: function() {
-        this.img = $('<img />').attr('src', this.options.src);
-        this.self.append(this.img);        
-    },
-    
-    addRemove: function() {
-        var remove = new DD_button({
-            'class': this.class_name_remove,
-            'text': this._('remove'),
-            'parent': this.self,
-            'fa': true
-        });
-        
-        remove.get(0).attr({
-            'data-remove': this.options.media_id,
-            'data-group': this.options.groupIndex
-        });
-        
-        this.model.clickRemove(remove.get(0));
-    },
-    
-    addEdit: function() {
-        var edit = new DD_button({
-            'class': this.class_name_edit,
-            'text': this._('edit'),
-            'parent': this.self,
-            'fa': true
-        });
-        
-        
-        this.model.clickEdit(edit.get(0), this.options);
-        edit.get(0).attr({
-            'data-edit': this.options.media_id,
-            'data-group': this.options.groupIndex
-        });
-    }
-
-});
-
-var DD_admin_groupcancel_button= DD_button.extend({
-    class_name: 'dd-admin-groupcancel-button',
-    model: 'DD_Admin_ImagesSelected_Model',
-
-    init: function (parent) {
-        var options = {
-            parent: parent,
-            class: this.class_name,
-            text: this._('cancel'),
-            fa_addon: 'fa fa-minus-circle'
-        }
-        this._super(options);
-        this.model.addGroupCancelClick(this.self);
-        
-    }
-
-});
-
-
-var DD_admin_groupsave_button= DD_button.extend({
-    class_name: 'dd-admin-groupsave-button',
-    model: 'DD_Admin_ImagesSelected_Model',
-
-    init: function (parent) {
-        var options = {
-            parent: parent,
-            class: this.class_name,
-            text: this._('save'),
-            fa_addon: 'fa fa-floppy-o'
-        }
-        this._super(options);
-        this.model.addGroupSaveClick(this.self);
-        
-    }
-
-});
-
-
-var DD_admin_image = DD_panel.extend({  
-    class_name: 'dd-admin-product-image',
-    class_selected: 'fa fa-check-square-o',
-    class_unselected: 'fa fa-square-o',
-    model: 'DD_Admin_Image_Model',
-    
-    init: function (parent, imgOptions) {
-        this.imgOptions  = imgOptions;
-        
-        this._super({
-            'class': this.class_name,
-            'parent': parent
-        });
-        this.add();
-        this.addImage();
-    },
-    
-    addImage: function(){
-        this.img = $('<img />').attr('src', this.imgOptions.src);
-        this.self.append(this.img);
-        this.model.registerImage(this.self, this.imgOptions);
-        this.addSelectedIcons();
-    },
-    
-    
-    addSelectedIcons: function() {
-        this.self.append($('<span />').addClass(this.class_selected));
-        this.self.append($('<span />').addClass(this.class_unselected));
-    }
-});
-$.fn.dd_productdesigner_admin = function (options) {
-    this.options = $.extend({
-        'urlImages': '',
-        'translator': {
-            'default_main_image': 'By default shows main product image',
-            'configure_images': 'Configure Images',
-            'add_group': 'Add Group',
-            'clear_all': 'Clear All',
-            'cancel': 'Cancel',
-            'save': 'Save',
-            'remove': 'Remove',
-            'image': 'Image',
-            'select_images': 'Select Images',
-            'edit': 'Edit'
-        },
-        
-        'settings': {
-            'psku': '',
-            'urlLoadImages': '',
-            'product_id': ''
-        }
-    }, options);
-    
-    new DD_Translator(this.options.translator);
-    new DD_Event();
-    new DD_admin_main(this, this.options);
-    new DD_Settings(this.options.settings);
-    
-    if(this.options.debug) {
-        new DD_Debug(this);
-    }
-    return this;
-    
-    
 };
 })(jQuery);

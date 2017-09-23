@@ -43,7 +43,7 @@ var DD_admin_group = DD_panel.extend({
 
         var index = this.options.index;
         $.each(this.options.data, function (i, img) {
-            img.groupIndex = index
+            img.group_index = index;
             new DD_admin_group_image(imgContainer.get(), img);
         });
 

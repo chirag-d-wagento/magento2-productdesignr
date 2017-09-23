@@ -36,7 +36,7 @@ var DD_admin_group_image = DD_panel.extend({
         
         remove.get(0).attr({
             'data-remove': this.options.media_id,
-            'data-group': this.options.groupIndex
+            'data-group': this.options.group_index
         });
         
         this.model.clickRemove(remove.get(0));
@@ -54,7 +54,7 @@ var DD_admin_group_image = DD_panel.extend({
         this.model.clickEdit(edit.get(0), this.options);
         edit.get(0).attr({
             'data-edit': this.options.media_id,
-            'data-group': this.options.groupIndex
+            'data-group': this.options.group_index
         });
     }
 
