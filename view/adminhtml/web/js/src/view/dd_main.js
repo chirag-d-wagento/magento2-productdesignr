@@ -24,6 +24,6 @@ var DD_main = DD_panel.extend({
             new DD_Historycontrols(this.self);
         }
         new DD_Maincontrols(this.self);
-        new DD_setup(this.getParent());
+        new DD_setup(this.getParent(), this.options);
     }
 });

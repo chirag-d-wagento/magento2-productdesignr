@@ -28,8 +28,6 @@ var DD_Layer_Img = DD_Layer_Base.extend({
             if (!options.noselectable) {
                 self._l().canvas.setActiveObject(iImg);
             }
-            
-            console.log('REAL WIDTH: ' + iImg.getWidth());
             self._addImage(options);
         }, {crossOrigin: 'anonymous'});
     },

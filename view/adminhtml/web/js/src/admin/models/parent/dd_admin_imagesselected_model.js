@@ -68,6 +68,14 @@ var DD_Admin_ImagesSelected_Model = DD_ModelBase.extend({
         this._evnt().doCall(this.groupSetEvent, this.groups);
         this._evnt().doCall(this.groupChangedEvent);
     },
+    
+    updateImageConf: function(group_index, media_id, confName, confValue) {
+        var index = this.getImgIndex(group_index, media_id);
+        this.groups = this.getGroups();
+        this.groups[group_index][index][confName] = confValue;
+        this._evnt().doCall(this.groupSetEvent, this.groups);
+        return this.groups[group_index][index];
+    },
 
     getGroups: function () {
         return this._evnt().getEventObject(this.groupSetEvent).groups;
@@ -103,6 +111,7 @@ var DD_Admin_ImagesSelected_Model = DD_ModelBase.extend({
     },
 
     getImgIndex: function (group_index, media_id) {
+        this.groups = this.getGroups();
         var imgGroup = this.groups[parseInt(group_index)];
         var index = false;
         $.each(imgGroup, function (i, image) {

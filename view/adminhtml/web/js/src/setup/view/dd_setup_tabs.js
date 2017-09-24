@@ -2,12 +2,13 @@ var DD_setup_tabs = DD_Tabs.extend({
     object_id: 'dd-setup-tabs',
     model: 'DD_setup_model',
     
-    init: function(parent) {
+    init: function(parent, imgOptions) {
         var options = {
             parent: parent,
             id: this.object_id,
             tabs: this.getTabs()
         }
+        this.imgOptions = imgOptions;
         this._super(options);
     },
     getTabs: function() {

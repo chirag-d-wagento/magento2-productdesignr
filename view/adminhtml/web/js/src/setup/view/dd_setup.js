@@ -16,7 +16,7 @@ var DD_setup = DD_panel.extend({
     },
     
     addElements: function() {
-        new DD_setup_tabs(this.self);
+        new DD_setup_tabs(this.self, this.imgOptions);
     }
     
 });

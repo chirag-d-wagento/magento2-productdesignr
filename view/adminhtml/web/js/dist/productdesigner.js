@@ -33085,6 +33085,56 @@ var DD_button = DD_Uibase.extend({
 
 
 
+var DD_checkbox = DD_Uibase.extend({
+    mainClass: 'dd-checkbox-container',
+    labelClass: 'dd-label',
+    init: function (options) {
+        this.options = $.extend((options ? options : {}), this.options);
+        if(this.options.model) {
+            this.model = this.options.model;
+        }
+        this._super(this.options.id);
+        this.selfBase();
+        this._add();
+        this.checkbox = $('<input />', {
+            id: this.createUUID(),
+            class: this.mainClass + ' ' + (this.options.class ? this.options.class : ''),
+            type: 'checkbox'
+        });
+        if(this.checked) {
+            this.checkbox.attr({
+                'checked': true
+            }).prop('checked');
+        }
+        this.self.append(this.checkbox);
+        
+        if(this.options.text) {
+            this.self.append($('<label />')
+                    .addClass(this.labelClass)
+                    .attr({'for': this.checkbox.attr('id')})
+                    .text(this.options.text));
+        }
+        if(!this.model || !this.model.checkedAction || !this.model.uncheckedAction) {
+            return;
+        }
+        var self = this;
+        this.checkbox.on('click', function() {
+            if($(this).is(':checked')) {
+                self.model.checkedAction.call(self.model, this, self.options.view);
+            }else{
+                self.model.uncheckedAction.call(self.model, this, self.options.view);
+            }
+        });
+        setTimeout(function() {
+            if(self.checked) {
+                self.model.checkedAction.call(self.model, self.checkbox, self.options.view);
+                return;
+            }
+            self.model.uncheckedAction.call(self.model, self.checkbox, self.options.view);
+        }, 100);
+    }
+});
+
 var DD_ImageLinkAdd = DD_Uibase.extend({
     
     mainClass: 'dd-image-link',
@@ -33410,18 +33460,15 @@ var DD_Main_Model = DD_ModelBase.extend({
         this.canvas = $('<canvas/>', {
             id: idCanvas
         });
-        this.width = parseInt(this.obj.parent.data('width'));
-        this.height = parseInt(this.obj.parent.data('height'));
+        this.width = this.obj.options.width;
+        this.height = this.obj.options.height;
         this.canvas.attr('width', this.width);
         this.canvas.attr('height', this.height);
         this.obj.self.append(this.canvas);
         this.layersObj.canvas = new fabric.Canvas(idCanvas);
-
-        console.log('this.obj.options.src');
-        console.log(this.obj.options.src);
         new DD_Layer_Main({
-            width: this.obj.parent.data('width'),
-            height: this.obj.parent.data('height'),
+            width: this.width,
+            height: this.height,
             src: this.obj.options.src
         });
 
@@ -33435,13 +33482,19 @@ var DD_Main_Model = DD_ModelBase.extend({
     resize: function () {
         var blockWidth = this.obj.self.width();
         var newWidth, newHeight;
-        var canvasContainer = document.getElementsByClassName("canvas-container")[0];
+        var proportion = this.height / this.width;
+        newWidth = blockWidth;
+        newHeight = proportion * newWidth;
         if (blockWidth < this.width) {
-            var proportion = this.height / this.width;
-            newWidth = blockWidth;
-            newHeight = proportion * newWidth;
-            canvasContainer.setAttribute("style", "width:100%;");
-            this.canvas.get(0).setAttribute("style", "width:" + newWidth + "px;height:" + newHeight + "px;position: relative;");
+            var scaleFactor = blockWidth / this.layersObj.canvas.getWidth();
+            if (scaleFactor != 1) {
+                this.layersObj.canvas.setWidth(blockWidth);
+                this.layersObj.canvas.setHeight(newHeight);
+                this.layersObj.canvas.setZoom(scaleFactor);
+                this.layersObj.canvas.calcOffset();
+                this.layersObj.canvas.renderAll();
+            }
+            return;
         }
         return;
     }
@@ -33496,8 +33549,6 @@ var DD_Layer_Img = DD_Layer_Base.extend({
             if (!options.noselectable) {
                 self._l().canvas.setActiveObject(iImg);
             }
-            
-            console.log('REAL WIDTH: ' + iImg.getWidth());
             self._addImage(options);
         }, {crossOrigin: 'anonymous'});
     },
@@ -33533,6 +33584,42 @@ var DD_Layer_Main = DD_Layer_Base.extend({
 });
 
 
+
+var DD_Layer_Mask = DD_Layer_Base.extend({
+    persentFromWidth: 40,
+    init: function (options) {
+        this.options = options;
+        this.addRect( options );
+    },
+    
+    addRect: function(options) {
+        var offsets = this.getOffsets(this.getRectSize());
+        console.log( offsets );
+        var rect = new fabric.Rect({
+            width: this.getRectSize(),
+            height: this.getRectSize(),
+            fill: 'white',
+            stroke: 'black',
+            opacity: 0.4,
+            left: offsets.left,
+            top: offsets.top
+        })
+        this._l().canvas.add(rect);
+        this._l().canvas.renderAll();
+        this._l().canvas.setActiveObject(rect);
+    },
+    
+    getRectSize: function() {
+        return (this.options.width / 100) * this.persentFromWidth;
+    },
+    
+    getOffsets: function(size) {
+        return {
+            'left': (this.options.width - size)/2,
+            'top': (this.options.height - size)/2  
+        }
+    }
+});
 
 var DD_Layer_Text = DD_Layer_Base.extend({
     init: function (options) {
@@ -33713,7 +33800,7 @@ var DD_main = DD_panel.extend({
             new DD_Historycontrols(this.self);
         }
         new DD_Maincontrols(this.self);
-        new DD_setup(this.getParent());
+        new DD_setup(this.getParent(), this.options);
     }
 });
 
@@ -33920,16 +34007,18 @@ var DD_windowTextForm = DD_panel.extend({
 var DD_setup_model = DD_ModelBase.extend({
 
     init: function (obj) {
-
+        this.obj = obj;
+        this._super();
     },
 
     tabActive: function (id, content) {
+        content.html('');
         switch (id) {
             case 'dd-setup-info':
-                    
+                    this.tabInfo(content);
                 break;
             case 'dd-setup-layer-mask':
-
+                    this.tabLayerMask(content);
                 break;
             case 'dd-setup-layer-images':
 
@@ -33940,10 +34029,38 @@ var DD_setup_model = DD_ModelBase.extend({
             case 'dd-setup-layer-qrcode':
 
                 break;
-            default:
+            default: //options
 
                 break;
         }
+    },
+    
+    tabLayerMask: function(content) {
+        new DD_setup_layer(content, this.obj.imgOptions);
+    },
+    
+    tabInfo: function(content) {
+        new DD_setup_info(content, this.obj.imgOptions);
+    }
+
+});
+
+var DD_setup_layer_model = DD_ModelBase.extend({
+
+    checkedAction: function (checkbox, view) {
+        console.log(view);
+        view.button.get().prop('disabled', false);
+    },
+
+    uncheckedAction: function (checkbox, view) {
+        console.log(view);
+        view.button.get().prop('disabled', true);
+    },
+
+    addEditLayerEvent: function (button, view) {
+        button.get().on('click', function () {
+            new DD_Layer_Mask(view.imgOptions);
+        });
     }
 
 });
@@ -33966,23 +34083,77 @@ var DD_setup = DD_panel.extend({
     },
     
     addElements: function() {
-        new DD_setup_tabs(this.self);
+        new DD_setup_tabs(this.self, this.imgOptions);
     }
     
 });
 
 
 
+var DD_setup_info = DD_panel.extend({
+    class_name: 'dd-setup-image-info',
+
+    init: function (parent, imgOptions) {
+        this.parent = parent;
+        this.imgOptions = imgOptions;
+        this._super({
+            'class': this.class_name,
+            'parent': parent
+        });
+        this.add();
+        this.addElements();
+    },
+    
+    addElements: function() {
+        this.self
+                .append($('<h3 />').text(this._('product_sku') + ': ' + this.imgOptions.sku))
+                .append($('<div />').text(this._('image_src') + ': ' + this.imgOptions.src))
+                .append($('<div />').text(this._('width') + ': ' + this.imgOptions.width + 'px'))
+                .append($('<div />').text(this._('height') + ': ' + this.imgOptions.height + 'px'))
+                .append($('<div />').text(this._('media_id') + ': ' + this.imgOptions.media_id))
+                .append($('<div />').text(this._('product_id') + ': ' + this.imgOptions.product_id));
+    }
+
+
+});
+
+var DD_setup_layer = DD_panel.extend({
+    class_name: 'dd-setup-layer',
+    model: 'DD_setup_layer_model',
+
+    init: function (parent, imgOptions) {
+        this.parentModel = this.model;
+        this.parent = parent;
+        this.imgOptions = imgOptions;
+        this._super({
+            'class': this.class_name,
+            'parent': parent
+        });
+        this.add();
+        this.addElements();
+    },
+    
+    addElements: function() {
+        this.self
+                .append($('<h3 />').text(this._('configure_layer_mask')));
+        this.checkbox = new DD_checkbox({parent: this.self, 'text': this._('enable_layer_mask'), model: this.parentModel, view: this});
+        this.button = new DD_button({parent: this.self, 'text': this._('add_layer_mask'), 'fa_addon': 'fa fa-window-restore'});
+        
+        this.model.addEditLayerEvent(this.button, this);
+    }
+});
+
 var DD_setup_tabs = DD_Tabs.extend({
     object_id: 'dd-setup-tabs',
     model: 'DD_setup_model',
     
-    init: function(parent) {
+    init: function(parent, imgOptions) {
         var options = {
             parent: parent,
             id: this.object_id,
             tabs: this.getTabs()
         }
+        this.imgOptions = imgOptions;
         this._super(options);
     },
     getTabs: function() {
@@ -34022,6 +34193,11 @@ $.fn.dd_productdesigner = function (options) {
     this.options = $.extend({
         'src': '',
         'debug': false,
+        'width': '',
+        'height': '',
+        'sku': '',
+        'product_id': '',
+        'media_id': '',
         'translator': {
             'back': 'Back',
             'next': 'Next',
@@ -34049,17 +34225,26 @@ $.fn.dd_productdesigner = function (options) {
             'images': 'Images',
             'texts': 'Texts',
             'qr_code': 'QR Code',
-            'options': 'Options'
+            'options': 'Options',
+            'image_src': 'Image src',
+            'width': 'Width',
+            'height': 'Height',
+            'media_id': 'Media ID',
+            'product_id': 'Product ID',
+            'product_sku': 'Product SKU',
+            'configure_layer_mask': 'Layer Mask Configuration',
+            'enable_layer_mask': 'Enable Layer Mask',
+            'add_layer_mask': 'Add/Edit Layer Mask'
         },
         'settings': {
-            'addphoto': true,
-            'addtext': true,
-            'addfromlibrary': true,
-            'history': true,
-            'layers': true,
-            'save': true,
-            'qrcode': true,
-            'preview': true,
+            'addphoto': false,
+            'addtext': false,
+            'addfromlibrary': false,
+            'history': false,
+            'layers': false,
+            'save': false,
+            'qrcode': false,
+            'preview': false,
             'defaultFont': 'Verdana',
             'defualtFontColor': '#ffffff',
             'defaultFontSize': 20,
@@ -34628,6 +34813,56 @@ var DD_button = DD_Uibase.extend({
 
 
 
+var DD_checkbox = DD_Uibase.extend({
+    mainClass: 'dd-checkbox-container',
+    labelClass: 'dd-label',
+    init: function (options) {
+        this.options = $.extend((options ? options : {}), this.options);
+        if(this.options.model) {
+            this.model = this.options.model;
+        }
+        this._super(this.options.id);
+        this.selfBase();
+        this._add();
+        this.checkbox = $('<input />', {
+            id: this.createUUID(),
+            class: this.mainClass + ' ' + (this.options.class ? this.options.class : ''),
+            type: 'checkbox'
+        });
+        if(this.checked) {
+            this.checkbox.attr({
+                'checked': true
+            }).prop('checked');
+        }
+        this.self.append(this.checkbox);
+        
+        if(this.options.text) {
+            this.self.append($('<label />')
+                    .addClass(this.labelClass)
+                    .attr({'for': this.checkbox.attr('id')})
+                    .text(this.options.text));
+        }
+        if(!this.model || !this.model.checkedAction || !this.model.uncheckedAction) {
+            return;
+        }
+        var self = this;
+        this.checkbox.on('click', function() {
+            if($(this).is(':checked')) {
+                self.model.checkedAction.call(self.model, this, self.options.view);
+            }else{
+                self.model.uncheckedAction.call(self.model, this, self.options.view);
+            }
+        });
+        setTimeout(function() {
+            if(self.checked) {
+                self.model.checkedAction.call(self.model, self.checkbox, self.options.view);
+                return;
+            }
+            self.model.uncheckedAction.call(self.model, self.checkbox, self.options.view);
+        }, 100);
+    }
+});
+
 var DD_ImageLinkAdd = DD_Uibase.extend({
     
     mainClass: 'dd-image-link',
@@ -34831,6 +35066,14 @@ var DD_Admin_ImagesSelected_Model = DD_ModelBase.extend({
         this._evnt().doCall(this.groupSetEvent, this.groups);
         this._evnt().doCall(this.groupChangedEvent);
     },
+    
+    updateImageConf: function(group_index, media_id, confName, confValue) {
+        var index = this.getImgIndex(group_index, media_id);
+        this.groups = this.getGroups();
+        this.groups[group_index][index][confName] = confValue;
+        this._evnt().doCall(this.groupSetEvent, this.groups);
+        return this.groups[group_index][index];
+    },
 
     getGroups: function () {
         return this._evnt().getEventObject(this.groupSetEvent).groups;
@@ -34866,6 +35109,7 @@ var DD_Admin_ImagesSelected_Model = DD_ModelBase.extend({
     },
 
     getImgIndex: function (group_index, media_id) {
+        this.groups = this.getGroups();
         var imgGroup = this.groups[parseInt(group_index)];
         var index = false;
         $.each(imgGroup, function (i, image) {
@@ -34963,6 +35207,32 @@ var DD_Admin_ImagesSelected_Model = DD_ModelBase.extend({
 
 var DD_admin_group_image_model = DD_Admin_ImagesSelected_Model.extend({
 
+    setImageSize: function (img, group_id, media_id) {//group_index, media_id, conf
+        var sizes = this.getImgSizes(img);
+        return this.updateImageConf(group_id, media_id, 'sizes', sizes);
+    },
+
+    getImgSizes: function (element) {
+        if (element.naturalWidth != undefined && element.naturalWidth != '' && element.naturalWidth != 0) {
+            this.width = element.naturalWidth;
+            this.height = element.naturalHeight;
+        } else if (element.width != undefined && element.width != '' && element.width != 0) {
+            this.width = element.width;
+            this.height = element.height;
+        } else if (element.clientWidth != undefined && element.clientWidth != '' && element.clientWidth != 0) {
+            this.width = element.clientWidth;
+            this.height = element.clientHeight;
+        } else if (element.offsetWidth != undefined && element.offsetWidth != '' && element.offsetWidth != 0) {
+            this.width = element.offsetWidth;
+            this.height = element.offsetHeight;
+        }
+
+        return {
+            'width': parseInt(this.width),
+            'height': parseInt(this.height)
+        }
+    },
+
     clickRemove: function (el) {
         var self = this;
         el.on('click', function () {
@@ -34977,12 +35247,18 @@ var DD_admin_group_image_model = DD_Admin_ImagesSelected_Model.extend({
         el.on('click', function () {
             $('#dd_designer').html('');
             $('#dd_designer').empty();
-            
-            
+
+
             $('#dd_designer').dd_productdesigner({
-                'src': options.src
+                'src': options.src,
+                'width': options.sizes.width,
+                'height': options.sizes.height,
+
+                'sku': options.sku,
+                'product_id': options.product_id,
+                'media_id': options.media_id
             });
-            
+
             console.log(options);
         });
     }
@@ -35443,11 +35719,11 @@ var DD_admin_group_image = DD_panel.extend({
     model: 'DD_admin_group_image_model',
     class_name_remove: 'dd-admin-image-remove fa fa-trash-o',
     class_name_edit: 'dd-admin-image-edit fa fa-pencil-square-o',
-    
+
     class_name: 'dd-admin-group-image',
-    
+
     init: function (imgContainer, options) {
-        this.options  = options;
+        this.options = options;
         this._super({
             'class': this.class_name,
             'parent': imgContainer
@@ -35455,43 +35731,49 @@ var DD_admin_group_image = DD_panel.extend({
         this.add();
         this.addElements();
     },
-    
-    addElements: function(){
+
+    addElements: function () {
         this.addImage();
-        this.addRemove();
-        this.addEdit();
     },
-    
-    addImage: function() {
-        this.img = $('<img />').attr('src', this.options.src);
-        this.self.append(this.img);        
+
+    addImage: function () {
+        var self = this;
+        this.img = $('<img />').attr('src', this.options.src)
+                .load(function () {
+                    self.options = self.model.setImageSize(this, self.options.group_index, self.options.media_id);
+            
+                    self.addRemove();
+                    self.addEdit();
+                });
+
+        this.self.append(this.img);
     },
-    
-    addRemove: function() {
+
+    addRemove: function () {
         var remove = new DD_button({
             'class': this.class_name_remove,
             'text': this._('remove'),
             'parent': this.self,
             'fa': true
         });
-        
+
         remove.get(0).attr({
             'data-remove': this.options.media_id,
             'data-group': this.options.group_index
         });
-        
+
         this.model.clickRemove(remove.get(0));
     },
-    
-    addEdit: function() {
+
+    addEdit: function () {
         var edit = new DD_button({
             'class': this.class_name_edit,
             'text': this._('edit'),
             'parent': this.self,
             'fa': true
         });
-        
-        
+
+
         this.model.clickEdit(edit.get(0), this.options);
         edit.get(0).attr({
             'data-edit': this.options.media_id,
@@ -35601,7 +35883,6 @@ $.fn.dd_productdesigner_admin = function (options) {
         new DD_Debug(this);
     }
     return this;
-    
     
 };
 })(jQuery);

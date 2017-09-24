@@ -31,5 +31,4 @@ $.fn.dd_productdesigner_admin = function (options) {
     }
     return this;
     
-    
 };

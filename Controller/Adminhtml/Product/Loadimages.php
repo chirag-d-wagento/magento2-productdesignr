@@ -55,7 +55,9 @@ class Loadimages extends \Magento\Backend\App\Action {
             $images[] = [
                 'src' => $image->getUrl(),
                 'media_id' => $image->getId(),
-                'group_index' => $groupIndex
+                'group_index' => $groupIndex,
+                'sku' => $product->getSku(),
+                'product_id' => $product->getId()
             ];
         }
         

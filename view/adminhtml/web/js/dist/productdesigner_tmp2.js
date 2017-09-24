@@ -545,6 +545,56 @@ var DD_button = DD_Uibase.extend({
 
 
 
+var DD_checkbox = DD_Uibase.extend({
+    mainClass: 'dd-checkbox-container',
+    labelClass: 'dd-label',
+    init: function (options) {
+        this.options = $.extend((options ? options : {}), this.options);
+        if(this.options.model) {
+            this.model = this.options.model;
+        }
+        this._super(this.options.id);
+        this.selfBase();
+        this._add();
+        this.checkbox = $('<input />', {
+            id: this.createUUID(),
+            class: this.mainClass + ' ' + (this.options.class ? this.options.class : ''),
+            type: 'checkbox'
+        });
+        if(this.checked) {
+            this.checkbox.attr({
+                'checked': true
+            }).prop('checked');
+        }
+        this.self.append(this.checkbox);
+        
+        if(this.options.text) {
+            this.self.append($('<label />')
+                    .addClass(this.labelClass)
+                    .attr({'for': this.checkbox.attr('id')})
+                    .text(this.options.text));
+        }
+        if(!this.model || !this.model.checkedAction || !this.model.uncheckedAction) {
+            return;
+        }
+        var self = this;
+        this.checkbox.on('click', function() {
+            if($(this).is(':checked')) {
+                self.model.checkedAction.call(self.model, this, self.options.view);
+            }else{
+                self.model.uncheckedAction.call(self.model, this, self.options.view);
+            }
+        });
+        setTimeout(function() {
+            if(self.checked) {
+                self.model.checkedAction.call(self.model, self.checkbox, self.options.view);
+                return;
+            }
+            self.model.uncheckedAction.call(self.model, self.checkbox, self.options.view);
+        }, 100);
+    }
+});
+
 var DD_ImageLinkAdd = DD_Uibase.extend({
     
     mainClass: 'dd-image-link',
@@ -748,6 +798,14 @@ var DD_Admin_ImagesSelected_Model = DD_ModelBase.extend({
         this._evnt().doCall(this.groupSetEvent, this.groups);
         this._evnt().doCall(this.groupChangedEvent);
     },
+    
+    updateImageConf: function(group_index, media_id, confName, confValue) {
+        var index = this.getImgIndex(group_index, media_id);
+        this.groups = this.getGroups();
+        this.groups[group_index][index][confName] = confValue;
+        this._evnt().doCall(this.groupSetEvent, this.groups);
+        return this.groups[group_index][index];
+    },
 
     getGroups: function () {
         return this._evnt().getEventObject(this.groupSetEvent).groups;
@@ -783,6 +841,7 @@ var DD_Admin_ImagesSelected_Model = DD_ModelBase.extend({
     },
 
     getImgIndex: function (group_index, media_id) {
+        this.groups = this.getGroups();
         var imgGroup = this.groups[parseInt(group_index)];
         var index = false;
         $.each(imgGroup, function (i, image) {
@@ -880,6 +939,32 @@ var DD_Admin_ImagesSelected_Model = DD_ModelBase.extend({
 
 var DD_admin_group_image_model = DD_Admin_ImagesSelected_Model.extend({
 
+    setImageSize: function (img, group_id, media_id) {//group_index, media_id, conf
+        var sizes = this.getImgSizes(img);
+        return this.updateImageConf(group_id, media_id, 'sizes', sizes);
+    },
+
+    getImgSizes: function (element) {
+        if (element.naturalWidth != undefined && element.naturalWidth != '' && element.naturalWidth != 0) {
+            this.width = element.naturalWidth;
+            this.height = element.naturalHeight;
+        } else if (element.width != undefined && element.width != '' && element.width != 0) {
+            this.width = element.width;
+            this.height = element.height;
+        } else if (element.clientWidth != undefined && element.clientWidth != '' && element.clientWidth != 0) {
+            this.width = element.clientWidth;
+            this.height = element.clientHeight;
+        } else if (element.offsetWidth != undefined && element.offsetWidth != '' && element.offsetWidth != 0) {
+            this.width = element.offsetWidth;
+            this.height = element.offsetHeight;
+        }
+
+        return {
+            'width': parseInt(this.width),
+            'height': parseInt(this.height)
+        }
+    },
+
     clickRemove: function (el) {
         var self = this;
         el.on('click', function () {
@@ -894,12 +979,18 @@ var DD_admin_group_image_model = DD_Admin_ImagesSelected_Model.extend({
         el.on('click', function () {
             $('#dd_designer').html('');
             $('#dd_designer').empty();
-            
-            
+
+
             $('#dd_designer').dd_productdesigner({
-                'src': options.src
+                'src': options.src,
+                'width': options.sizes.width,
+                'height': options.sizes.height,
+
+                'sku': options.sku,
+                'product_id': options.product_id,
+                'media_id': options.media_id
             });
-            
+
             console.log(options);
         });
     }
@@ -1360,11 +1451,11 @@ var DD_admin_group_image = DD_panel.extend({
     model: 'DD_admin_group_image_model',
     class_name_remove: 'dd-admin-image-remove fa fa-trash-o',
     class_name_edit: 'dd-admin-image-edit fa fa-pencil-square-o',
-    
+
     class_name: 'dd-admin-group-image',
-    
+
     init: function (imgContainer, options) {
-        this.options  = options;
+        this.options = options;
         this._super({
             'class': this.class_name,
             'parent': imgContainer
@@ -1372,43 +1463,49 @@ var DD_admin_group_image = DD_panel.extend({
         this.add();
         this.addElements();
     },
-    
-    addElements: function(){
+
+    addElements: function () {
         this.addImage();
-        this.addRemove();
-        this.addEdit();
     },
-    
-    addImage: function() {
-        this.img = $('<img />').attr('src', this.options.src);
-        this.self.append(this.img);        
+
+    addImage: function () {
+        var self = this;
+        this.img = $('<img />').attr('src', this.options.src)
+                .load(function () {
+                    self.options = self.model.setImageSize(this, self.options.group_index, self.options.media_id);
+            
+                    self.addRemove();
+                    self.addEdit();
+                });
+
+        this.self.append(this.img);
     },
-    
-    addRemove: function() {
+
+    addRemove: function () {
         var remove = new DD_button({
             'class': this.class_name_remove,
             'text': this._('remove'),
             'parent': this.self,
             'fa': true
         });
-        
+
         remove.get(0).attr({
             'data-remove': this.options.media_id,
             'data-group': this.options.group_index
         });
-        
+
         this.model.clickRemove(remove.get(0));
     },
-    
-    addEdit: function() {
+
+    addEdit: function () {
         var edit = new DD_button({
             'class': this.class_name_edit,
             'text': this._('edit'),
             'parent': this.self,
             'fa': true
         });
-        
-        
+
+
         this.model.clickEdit(edit.get(0), this.options);
         edit.get(0).attr({
             'data-edit': this.options.media_id,
@@ -1518,7 +1615,6 @@ $.fn.dd_productdesigner_admin = function (options) {
         new DD_Debug(this);
     }
     return this;
-    
     
 };
 })(jQuery);

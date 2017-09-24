@@ -20,18 +20,15 @@ var DD_Main_Model = DD_ModelBase.extend({
         this.canvas = $('<canvas/>', {
             id: idCanvas
         });
-        this.width = parseInt(this.obj.parent.data('width'));
-        this.height = parseInt(this.obj.parent.data('height'));
+        this.width = this.obj.options.width;
+        this.height = this.obj.options.height;
         this.canvas.attr('width', this.width);
         this.canvas.attr('height', this.height);
         this.obj.self.append(this.canvas);
         this.layersObj.canvas = new fabric.Canvas(idCanvas);
-
-        console.log('this.obj.options.src');
-        console.log(this.obj.options.src);
         new DD_Layer_Main({
-            width: this.obj.parent.data('width'),
-            height: this.obj.parent.data('height'),
+            width: this.width,
+            height: this.height,
             src: this.obj.options.src
         });
 
@@ -45,13 +42,19 @@ var DD_Main_Model = DD_ModelBase.extend({
     resize: function () {
         var blockWidth = this.obj.self.width();
         var newWidth, newHeight;
-        var canvasContainer = document.getElementsByClassName("canvas-container")[0];
+        var proportion = this.height / this.width;
+        newWidth = blockWidth;
+        newHeight = proportion * newWidth;
         if (blockWidth < this.width) {
-            var proportion = this.height / this.width;
-            newWidth = blockWidth;
-            newHeight = proportion * newWidth;
-            canvasContainer.setAttribute("style", "width:100%;");
-            this.canvas.get(0).setAttribute("style", "width:" + newWidth + "px;height:" + newHeight + "px;position: relative;");
+            var scaleFactor = blockWidth / this.layersObj.canvas.getWidth();
+            if (scaleFactor != 1) {
+                this.layersObj.canvas.setWidth(blockWidth);
+                this.layersObj.canvas.setHeight(newHeight);
+                this.layersObj.canvas.setZoom(scaleFactor);
+                this.layersObj.canvas.calcOffset();
+                this.layersObj.canvas.renderAll();
+            }
+            return;
         }
         return;
     }

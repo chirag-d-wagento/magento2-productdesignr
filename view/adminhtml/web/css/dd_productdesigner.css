@@ -2880,8 +2880,24 @@ ul.tabs li.current {
 .dd-image-link img.selected {
   border: 2px solid silver;
 }
+.dd-checkbox-container label {
+  font-size: 16px;
+}
 .dd-designer-topcontrols {
   width: 100%;
+  top: 0px;
+  z-index: 1000000000;
+  position: absolute;
+}
+.dd-designer-history-controls {
+  position: absolute;
+  top: 40px;
+  z-index: 1000000000;
+}
+.dd-designer-maincontrols {
+  position: absolute;
+  top: 80px;
+  z-index: 1000000000;
 }
 .dd-add-text-textarea {
   width: 100%;
@@ -2937,6 +2953,7 @@ ul.tabs li.current {
   text-align: center;
   display: inline-block;
   float: left;
+  border-right: 1px solid #ccc;
 }
 .dd-designer-container canvas {
   position: absolute;
@@ -2949,7 +2966,6 @@ ul.tabs li.current {
 }
 .dd-setup-image {
   display: inline-block;
-  border: 1px solid #ccc;
   width: 49%;
   min-height: 400px;
   float: right;
@@ -2957,6 +2973,16 @@ ul.tabs li.current {
 }
 .dd-setup-image #dd-setup-tabs ul li {
   width: 16.5%;
+}
+.dd-setup-image .tab-content {
+  padding: 15px 0;
+}
+.dd-setup-image .dd-setup-image-info div {
+  margin: 10px 0;
+  font-weight: bold;
+}
+.dd-setup-image .dd-setup-layer button {
+  margin: 20px 0px;
 }
 .dd-admin-main-container {
   position: relative;
