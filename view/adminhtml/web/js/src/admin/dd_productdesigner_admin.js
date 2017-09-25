@@ -17,7 +17,9 @@ $.fn.dd_productdesigner_admin = function (options) {
         'settings': {
             'psku': '',
             'urlLoadImages': '',
-            'product_id': ''
+            'product_id': '',
+            'urlUploadImages': '',
+            'percentSizeImage': ''
         }
     }, options);
     

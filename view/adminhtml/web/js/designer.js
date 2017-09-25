@@ -33,14 +33,11 @@ define([
                 'settings': {
                     'psku': data.psku(),
                     'product_id': data.product_id(),
-                    'urlLoadImages': data.urlLoadImages
+                    'urlLoadImages': data.urlLoadImages,
+                    'urlUploadImages': data.urlUploadImages,
+                    'percentSizeImage': 30
                 }
             });
-            /*
-             $('#dd_designer').dd_productdesigner({
-             'debug': true
-             });
-             */
         }
     });
 });

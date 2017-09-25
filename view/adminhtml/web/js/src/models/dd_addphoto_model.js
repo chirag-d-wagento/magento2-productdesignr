@@ -25,7 +25,10 @@ var DD_AddPhoto_Model = DD_ModelBase.extend({
         this.content = content;
         var self = this;
         content.html(this._('drop_files_or_upload'));
-        content.dropzone({url: this._s('uploaderPath'),
+        console.log( "self._s('urlUploadImages')" );
+        console.log( self._s('urlUploadImages') );
+        content.dropzone({
+            url: self._s('urlUploadImages') + '?form_key=' + window.FORM_KEY,
             maxFilesize: 2, // MB
             acceptedFiles: '.png, .jpeg, .jpg, .gif',
             init: function () {
@@ -37,8 +40,7 @@ var DD_AddPhoto_Model = DD_ModelBase.extend({
                 });
                 this.on("success", function (file, responseText) {
                     self.previousFile = $(file.previewElement);
-                    var obj = jQuery.parseJSON(responseText);
-
+                    var obj = responseText;
                     if (!obj) {
                         return processUploaderError(file, responseText);
                     }

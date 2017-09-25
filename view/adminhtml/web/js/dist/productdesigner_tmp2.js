@@ -346,7 +346,6 @@ var DD_Uibase = DD_object.extend({
     },
 
     _onAfterCreate: function () {
-        var me = this;
         var model = null;
         if (this.model) {
             eval("try {model = new " + this.model + "(this); }catch(err) {console.log('ERROR FOR MODEL: " + this.model + "; ERRTXT: ' + err)}");
@@ -355,7 +354,13 @@ var DD_Uibase = DD_object.extend({
             this.model = model;
         }
         if (this.options.windowOpener && model) {
-            this.self.on('click', function () {
+            this.addWindowOpenEvent(this.self);
+        }
+    },
+    
+    addWindowOpenEvent: function(obj) {
+        var me = this;
+        obj.on('click', function () {
                 if(!me.options.windowPreview) {
                     var window = me.modal.getWindow();
                     var contentElement = me.modal.getContentElement();
@@ -376,7 +381,6 @@ var DD_Uibase = DD_object.extend({
                     window.position({target: $('.canvas-container')});
                 }
             });
-        }
     },
 
     windowInit: function () {
@@ -976,6 +980,8 @@ var DD_admin_group_image_model = DD_Admin_ImagesSelected_Model.extend({
     },
 
     clickEdit: function (el, options) {
+        var urlUploadImages = this._s('urlUploadImages');
+        var percentSizeImage = this._s('percentSizeImage');
         el.on('click', function () {
             $('#dd_designer').html('');
             $('#dd_designer').empty();
@@ -988,7 +994,12 @@ var DD_admin_group_image_model = DD_Admin_ImagesSelected_Model.extend({
 
                 'sku': options.sku,
                 'product_id': options.product_id,
-                'media_id': options.media_id
+                'media_id': options.media_id,
+                'settings': {
+                    'urlUploadImages': urlUploadImages,
+                    'percentSizeImage': percentSizeImage
+                }
+                
             });
 
             console.log(options);
@@ -1602,7 +1613,9 @@ $.fn.dd_productdesigner_admin = function (options) {
         'settings': {
             'psku': '',
             'urlLoadImages': '',
-            'product_id': ''
+            'product_id': '',
+            'urlUploadImages': '',
+            'percentSizeImage': ''
         }
     }, options);
     

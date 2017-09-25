@@ -7,7 +7,7 @@ var DD_Layer_Mask = DD_Layer_Base.extend({
     
     addRect: function(options) {
         var offsets = this.getOffsets(this.getRectSize());
-        console.log( offsets );
+        console.log( offsets    );
         var rect = new fabric.Rect({
             width: this.getRectSize(),
             height: this.getRectSize(),

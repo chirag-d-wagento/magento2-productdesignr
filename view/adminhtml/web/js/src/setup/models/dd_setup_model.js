@@ -15,7 +15,7 @@ var DD_setup_model = DD_ModelBase.extend({
                     this.tabLayerMask(content);
                 break;
             case 'dd-setup-layer-images':
-
+                    this.tabImages(content);
                 break;
             case 'dd-setup-layer-texts':
 
@@ -28,6 +28,11 @@ var DD_setup_model = DD_ModelBase.extend({
                 break;
         }
     },
+    
+    tabImages: function(content) {
+        new DD_setup_images(content, this.obj.imgOptions);
+    },
+    
     
     tabLayerMask: function(content) {
         new DD_setup_layer(content, this.obj.imgOptions);

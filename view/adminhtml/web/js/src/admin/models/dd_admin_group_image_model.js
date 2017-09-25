@@ -37,6 +37,8 @@ var DD_admin_group_image_model = DD_Admin_ImagesSelected_Model.extend({
     },
 
     clickEdit: function (el, options) {
+        var urlUploadImages = this._s('urlUploadImages');
+        var percentSizeImage = this._s('percentSizeImage');
         el.on('click', function () {
             $('#dd_designer').html('');
             $('#dd_designer').empty();
@@ -49,7 +51,12 @@ var DD_admin_group_image_model = DD_Admin_ImagesSelected_Model.extend({
 
                 'sku': options.sku,
                 'product_id': options.product_id,
-                'media_id': options.media_id
+                'media_id': options.media_id,
+                'settings': {
+                    'urlUploadImages': urlUploadImages,
+                    'percentSizeImage': percentSizeImage
+                }
+                
             });
 
             console.log(options);

@@ -44,7 +44,9 @@ $.fn.dd_productdesigner = function (options) {
             'product_sku': 'Product SKU',
             'configure_layer_mask': 'Layer Mask Configuration',
             'enable_layer_mask': 'Enable Layer Mask',
-            'add_layer_mask': 'Add/Edit Layer Mask'
+            'add_layer_mask': 'Add/Edit Layer Mask',
+            'add_default_images': 'Add Default Images',
+            'add_image': 'Add Image'
         },
         'settings': {
             'addphoto': false,
@@ -59,12 +61,16 @@ $.fn.dd_productdesigner = function (options) {
             'defualtFontColor': '#ffffff',
             'defaultFontSize': 20,
             
-            'uploaderPath': '/upload.php',
+            'urlUploadImages': '',
             'myFilesPath': '/myfiles.php',
             'percentSizeImage': 20 //percentage size from canvas width
         },
         'afterLoad': function () {}
     }, options);
+    
+    
+    console.log('this.options');
+    console.log(this.options);
     
     new DD_Translator(this.options.translator);
     new DD_Settings(this.options.settings);

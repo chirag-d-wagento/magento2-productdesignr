@@ -32853,7 +32853,6 @@ var DD_Uibase = DD_object.extend({
     },
 
     _onAfterCreate: function () {
-        var me = this;
         var model = null;
         if (this.model) {
             eval("try {model = new " + this.model + "(this); }catch(err) {console.log('ERROR FOR MODEL: " + this.model + "; ERRTXT: ' + err)}");
@@ -32862,7 +32861,13 @@ var DD_Uibase = DD_object.extend({
             this.model = model;
         }
         if (this.options.windowOpener && model) {
-            this.self.on('click', function () {
+            this.addWindowOpenEvent(this.self);
+        }
+    },
+    
+    addWindowOpenEvent: function(obj) {
+        var me = this;
+        obj.on('click', function () {
                 if(!me.options.windowPreview) {
                     var window = me.modal.getWindow();
                     var contentElement = me.modal.getContentElement();
@@ -32883,7 +32888,6 @@ var DD_Uibase = DD_object.extend({
                     window.position({target: $('.canvas-container')});
                 }
             });
-        }
     },
 
     windowInit: function () {
@@ -33305,7 +33309,10 @@ var DD_AddPhoto_Model = DD_ModelBase.extend({
         this.content = content;
         var self = this;
         content.html(this._('drop_files_or_upload'));
-        content.dropzone({url: this._s('uploaderPath'),
+        console.log( "self._s('urlUploadImages')" );
+        console.log( self._s('urlUploadImages') );
+        content.dropzone({
+            url: self._s('urlUploadImages') + '?form_key=' + window.FORM_KEY,
             maxFilesize: 2, // MB
             acceptedFiles: '.png, .jpeg, .jpg, .gif',
             init: function () {
@@ -33317,8 +33324,7 @@ var DD_AddPhoto_Model = DD_ModelBase.extend({
                 });
                 this.on("success", function (file, responseText) {
                     self.previousFile = $(file.previewElement);
-                    var obj = jQuery.parseJSON(responseText);
-
+                    var obj = responseText;
                     if (!obj) {
                         return processUploaderError(file, responseText);
                     }
@@ -33526,23 +33532,28 @@ var DD_Layer_Img = DD_Layer_Base.extend({
             options = this.prepareSizeOfImage(options);
         }
         fabric.Image.fromURL(options.src, function (iImg) {
+            var opt = {
+                hasControls: options.nocontrols ? false : true,
+                hasBorders: options.noborders ? false : true,
+                selectable: options.noselectable ? false : true,
+                width: options.width,
+                height: options.height
+            };
             iImg
-                    .set({
-                        hasControls: options.nocontrols ? false : true,
-                        hasBorders: options.noborders ? false : true,
-                        selectable: options.noselectable ? false : true,
-                        width: options.width,
-                        height: options.height
-                    });
+                    .set(opt);
             if (options.scaleToWidth && options.scaleToWidth < options.width) {
                 iImg.scaleToWidth(options.scaleToWidth);
             }
             self._l().canvas.add(iImg);
 
             if (!options.noselectable) {
-                iImg.center();
-                iImg.setCoords();
-                
+                var offsets = self.getOffsets(opt)
+                iImg
+                        .set({
+                            left: offsets.left,
+                            top: offsets.top
+
+                        });
             }
             self._l().canvas.renderAll();
 
@@ -33553,10 +33564,18 @@ var DD_Layer_Img = DD_Layer_Base.extend({
         }, {crossOrigin: 'anonymous'});
     },
 
+    getOffsets: function (options, size) {
+        return {
+            'left': (options.width - size) / 2,
+            'top': (options.height - size) / 2
+        }
+    },
+
     prepareSizeOfImage: function (options) {
         console.log(options);
         var canvasWidth = this._l().canvas.getWidth();
         console.log(canvasWidth);
+        console.log(this._s('percentSizeImage'));
         var newImageWidth = parseInt(canvasWidth / 100 * this._s('percentSizeImage'));
         var newImageHeight = (newImageWidth / options.width) * options.height;
         options.scaleToWidth = newImageWidth;
@@ -33594,7 +33613,7 @@ var DD_Layer_Mask = DD_Layer_Base.extend({
     
     addRect: function(options) {
         var offsets = this.getOffsets(this.getRectSize());
-        console.log( offsets );
+        console.log( offsets    );
         var rect = new fabric.Rect({
             width: this.getRectSize(),
             height: this.getRectSize(),
@@ -34021,7 +34040,7 @@ var DD_setup_model = DD_ModelBase.extend({
                     this.tabLayerMask(content);
                 break;
             case 'dd-setup-layer-images':
-
+                    this.tabImages(content);
                 break;
             case 'dd-setup-layer-texts':
 
@@ -34035,6 +34054,11 @@ var DD_setup_model = DD_ModelBase.extend({
         }
     },
     
+    tabImages: function(content) {
+        new DD_setup_images(content, this.obj.imgOptions);
+    },
+    
+    
     tabLayerMask: function(content) {
         new DD_setup_layer(content, this.obj.imgOptions);
     },
@@ -34043,6 +34067,14 @@ var DD_setup_model = DD_ModelBase.extend({
         new DD_setup_info(content, this.obj.imgOptions);
     }
 
+});
+
+var DD_setup_images_model = DD_AddPhoto_Model.extend({
+    
+    addEditImageEvent: function(button, view) {
+        view.addWindowOpenEvent(button.get());
+    }
+    
 });
 
 var DD_setup_layer_model = DD_ModelBase.extend({
@@ -34089,6 +34121,31 @@ var DD_setup = DD_panel.extend({
 });
 
 
+
+var DD_setup_images = DD_panel.extend({
+    class_name: 'dd-setup-layer',
+    model: 'DD_setup_images_model',
+
+    init: function (parent, imgOptions) {
+        this.parentModel = this.model;
+        this.parent = parent;
+        this.imgOptions = imgOptions;
+        this._super({
+            'class': this.class_name,
+            'parent': parent
+        });
+        this.add();
+        this.addElements();
+    },
+    
+    addElements: function() {
+        this.self
+                .append($('<h3 />').text(this._('add_default_images')));
+        this.button = new DD_button({parent: this.self, 'text': this._('add_image'), 'fa_addon': 'fa fa-image'});
+        this.model.addEditImageEvent(this.button, this);
+    }
+    
+});
 
 var DD_setup_info = DD_panel.extend({
     class_name: 'dd-setup-image-info',
@@ -34234,7 +34291,9 @@ $.fn.dd_productdesigner = function (options) {
             'product_sku': 'Product SKU',
             'configure_layer_mask': 'Layer Mask Configuration',
             'enable_layer_mask': 'Enable Layer Mask',
-            'add_layer_mask': 'Add/Edit Layer Mask'
+            'add_layer_mask': 'Add/Edit Layer Mask',
+            'add_default_images': 'Add Default Images',
+            'add_image': 'Add Image'
         },
         'settings': {
             'addphoto': false,
@@ -34249,12 +34308,16 @@ $.fn.dd_productdesigner = function (options) {
             'defualtFontColor': '#ffffff',
             'defaultFontSize': 20,
             
-            'uploaderPath': '/upload.php',
+            'urlUploadImages': '',
             'myFilesPath': '/myfiles.php',
             'percentSizeImage': 20 //percentage size from canvas width
         },
         'afterLoad': function () {}
     }, options);
+    
+    
+    console.log('this.options');
+    console.log(this.options);
     
     new DD_Translator(this.options.translator);
     new DD_Settings(this.options.settings);
@@ -34614,7 +34677,6 @@ var DD_Uibase = DD_object.extend({
     },
 
     _onAfterCreate: function () {
-        var me = this;
         var model = null;
         if (this.model) {
             eval("try {model = new " + this.model + "(this); }catch(err) {console.log('ERROR FOR MODEL: " + this.model + "; ERRTXT: ' + err)}");
@@ -34623,7 +34685,13 @@ var DD_Uibase = DD_object.extend({
             this.model = model;
         }
         if (this.options.windowOpener && model) {
-            this.self.on('click', function () {
+            this.addWindowOpenEvent(this.self);
+        }
+    },
+    
+    addWindowOpenEvent: function(obj) {
+        var me = this;
+        obj.on('click', function () {
                 if(!me.options.windowPreview) {
                     var window = me.modal.getWindow();
                     var contentElement = me.modal.getContentElement();
@@ -34644,7 +34712,6 @@ var DD_Uibase = DD_object.extend({
                     window.position({target: $('.canvas-container')});
                 }
             });
-        }
     },
 
     windowInit: function () {
@@ -35244,6 +35311,8 @@ var DD_admin_group_image_model = DD_Admin_ImagesSelected_Model.extend({
     },
 
     clickEdit: function (el, options) {
+        var urlUploadImages = this._s('urlUploadImages');
+        var percentSizeImage = this._s('percentSizeImage');
         el.on('click', function () {
             $('#dd_designer').html('');
             $('#dd_designer').empty();
@@ -35256,7 +35325,12 @@ var DD_admin_group_image_model = DD_Admin_ImagesSelected_Model.extend({
 
                 'sku': options.sku,
                 'product_id': options.product_id,
-                'media_id': options.media_id
+                'media_id': options.media_id,
+                'settings': {
+                    'urlUploadImages': urlUploadImages,
+                    'percentSizeImage': percentSizeImage
+                }
+                
             });
 
             console.log(options);
@@ -35870,7 +35944,9 @@ $.fn.dd_productdesigner_admin = function (options) {
         'settings': {
             'psku': '',
             'urlLoadImages': '',
-            'product_id': ''
+            'product_id': '',
+            'urlUploadImages': '',
+            'percentSizeImage': ''
         }
     }, options);
     

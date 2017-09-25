@@ -34,7 +34,6 @@ var DD_Uibase = DD_object.extend({
     },
 
     _onAfterCreate: function () {
-        var me = this;
         var model = null;
         if (this.model) {
             eval("try {model = new " + this.model + "(this); }catch(err) {console.log('ERROR FOR MODEL: " + this.model + "; ERRTXT: ' + err)}");
@@ -43,7 +42,13 @@ var DD_Uibase = DD_object.extend({
             this.model = model;
         }
         if (this.options.windowOpener && model) {
-            this.self.on('click', function () {
+            this.addWindowOpenEvent(this.self);
+        }
+    },
+    
+    addWindowOpenEvent: function(obj) {
+        var me = this;
+        obj.on('click', function () {
                 if(!me.options.windowPreview) {
                     var window = me.modal.getWindow();
                     var contentElement = me.modal.getContentElement();
@@ -64,7 +69,6 @@ var DD_Uibase = DD_object.extend({
                     window.position({target: $('.canvas-container')});
                 }
             });
-        }
     },
 
     windowInit: function () {
