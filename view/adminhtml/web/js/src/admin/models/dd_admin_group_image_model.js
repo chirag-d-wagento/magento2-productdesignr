@@ -39,6 +39,10 @@ var DD_admin_group_image_model = DD_Admin_ImagesSelected_Model.extend({
     clickEdit: function (el, options) {
         var urlUploadImages = this._s('urlUploadImages');
         var percentSizeImage = this._s('percentSizeImage');
+        var defaultFontSize = this._s('defaultFontSize');
+        var defaultFont = this._s('defaultFont');
+        var defualtFontColor = this._s('defualtFontColor');
+        
         el.on('click', function () {
             $('#dd_designer').html('');
             $('#dd_designer').empty();
@@ -54,7 +58,10 @@ var DD_admin_group_image_model = DD_Admin_ImagesSelected_Model.extend({
                 'media_id': options.media_id,
                 'settings': {
                     'urlUploadImages': urlUploadImages,
-                    'percentSizeImage': percentSizeImage
+                    'percentSizeImage': percentSizeImage,
+                    'defualtFontColor': defualtFontColor,
+                    'defaultFont': defaultFont,
+                    'defaultFontSize': defaultFontSize
                 }
                 
             });

@@ -1,6 +1,6 @@
-var DD_setup_images = DD_panel.extend({
-    class_name: 'dd-setup-images',
-    model: 'DD_setup_images_model',
+var DD_setup_texts = DD_panel.extend({
+    class_name: 'dd-setup-texts',
+    model: 'DD_setup_texts_model',
 
     init: function (parent, imgOptions) {
         this.parentModel = this.model;
@@ -16,9 +16,9 @@ var DD_setup_images = DD_panel.extend({
     
     addElements: function() {
         this.self
-                .append($('<h3 />').text(this._('add_default_images')));
-        this.button = new DD_button({parent: this.self, 'text': this._('add_image'), 'fa_addon': 'fa fa-image'});
-        this.model.addEditImageEvent(this.button, this);
+                .append($('<h3 />').text(this._('add_default_texts')));
+        this.button = new DD_button({parent: this.self, 'text': this._('add_text'), 'fa_addon': 'fa fa-pencil'});
+        this.model.addEditTextEvent(this.button, this);
     }
     
 });

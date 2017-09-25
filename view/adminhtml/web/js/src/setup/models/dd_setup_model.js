@@ -18,7 +18,7 @@ var DD_setup_model = DD_ModelBase.extend({
                     this.tabImages(content);
                 break;
             case 'dd-setup-layer-texts':
-
+                    this.tabTexts(content);
                 break;
             case 'dd-setup-layer-qrcode':
 
@@ -27,6 +27,10 @@ var DD_setup_model = DD_ModelBase.extend({
 
                 break;
         }
+    },
+    
+    tabTexts: function(content) {
+         new DD_setup_texts(content, this.obj.imgOptions);
     },
     
     tabImages: function(content) {

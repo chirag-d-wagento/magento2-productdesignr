@@ -35,7 +35,11 @@ define([
                     'product_id': data.product_id(),
                     'urlLoadImages': data.urlLoadImages,
                     'urlUploadImages': data.urlUploadImages,
-                    'percentSizeImage': 30
+                    'percentSizeImage': 30,
+
+                    'defaultFont': 'Verdana',
+                    'defualtFontColor': '#ffffff',
+                    'defaultFontSize': 20,
                 }
             });
         }

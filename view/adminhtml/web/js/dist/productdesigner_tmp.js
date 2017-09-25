@@ -29560,28 +29560,23 @@ var DD_Layer_Img = DD_Layer_Base.extend({
             options = this.prepareSizeOfImage(options);
         }
         fabric.Image.fromURL(options.src, function (iImg) {
-            var opt = {
-                hasControls: options.nocontrols ? false : true,
-                hasBorders: options.noborders ? false : true,
-                selectable: options.noselectable ? false : true,
-                width: options.width,
-                height: options.height
-            };
             iImg
-                    .set(opt);
+                    .set({
+                        hasControls: options.nocontrols ? false : true,
+                        hasBorders: options.noborders ? false : true,
+                        selectable: options.noselectable ? false : true,
+                        width: options.width,
+                        height: options.height
+                    });
             if (options.scaleToWidth && options.scaleToWidth < options.width) {
                 iImg.scaleToWidth(options.scaleToWidth);
             }
             self._l().canvas.add(iImg);
 
             if (!options.noselectable) {
-                var offsets = self.getOffsets(opt)
-                iImg
-                        .set({
-                            left: offsets.left,
-                            top: offsets.top
-
-                        });
+                iImg.center();
+                iImg.setCoords();
+                
             }
             self._l().canvas.renderAll();
 
@@ -29592,18 +29587,10 @@ var DD_Layer_Img = DD_Layer_Base.extend({
         }, {crossOrigin: 'anonymous'});
     },
 
-    getOffsets: function (options, size) {
-        return {
-            'left': (options.width - size) / 2,
-            'top': (options.height - size) / 2
-        }
-    },
-
     prepareSizeOfImage: function (options) {
         console.log(options);
         var canvasWidth = this._l().canvas.getWidth();
         console.log(canvasWidth);
-        console.log(this._s('percentSizeImage'));
         var newImageWidth = parseInt(canvasWidth / 100 * this._s('percentSizeImage'));
         var newImageHeight = (newImageWidth / options.width) * options.height;
         options.scaleToWidth = newImageWidth;
@@ -29671,8 +29658,8 @@ var DD_Layer_Mask = DD_Layer_Base.extend({
 var DD_Layer_Text = DD_Layer_Base.extend({
     init: function (options) {
         var text = new fabric.IText(options.text, {
-            //left: 10,
-            //top: 5,
+            left: 10,
+            top: 5,
             fontSize: options.fontSize ? options.fontSize : this._s('defaultFontSize'),
             fontFamily: options.fontFamily ? options.fontFamily : this._s('defaultFont'),
             fill: options.fill ? options.fill : this._s('defualtFontColor')
@@ -29681,8 +29668,8 @@ var DD_Layer_Text = DD_Layer_Base.extend({
         });
         
         this._l().canvas.add(text);
-        text.center();
-        text.setCoords();
+        //text.center();
+        //text.setCoords();
         //this._l().canvas.centerObject(text);
         this._l().canvas.setActiveObject(text);
         this._l().canvas.renderAll();
@@ -30071,7 +30058,7 @@ var DD_setup_model = DD_ModelBase.extend({
                     this.tabImages(content);
                 break;
             case 'dd-setup-layer-texts':
-
+                    this.tabTexts(content);
                 break;
             case 'dd-setup-layer-qrcode':
 
@@ -30080,6 +30067,10 @@ var DD_setup_model = DD_ModelBase.extend({
 
                 break;
         }
+    },
+    
+    tabTexts: function(content) {
+         new DD_setup_texts(content, this.obj.imgOptions);
     },
     
     tabImages: function(content) {
@@ -30125,6 +30116,14 @@ var DD_setup_layer_model = DD_ModelBase.extend({
 
 });
 
+var DD_setup_texts_model = DD_AddText_Model.extend({
+    
+    addEditTextEvent: function(button, view) {
+        view.addWindowOpenEvent(button.get());
+    }
+    
+});
+
 var DD_setup = DD_panel.extend({
     object_id: 'dd-setup',
     class_name: 'dd-setup-image',
@@ -30151,7 +30150,7 @@ var DD_setup = DD_panel.extend({
 
 
 var DD_setup_images = DD_panel.extend({
-    class_name: 'dd-setup-layer',
+    class_name: 'dd-setup-images',
     model: 'DD_setup_images_model',
 
     init: function (parent, imgOptions) {
@@ -30273,6 +30272,31 @@ var DD_setup_tabs = DD_Tabs.extend({
 
 
 
+var DD_setup_texts = DD_panel.extend({
+    class_name: 'dd-setup-texts',
+    model: 'DD_setup_texts_model',
+
+    init: function (parent, imgOptions) {
+        this.parentModel = this.model;
+        this.parent = parent;
+        this.imgOptions = imgOptions;
+        this._super({
+            'class': this.class_name,
+            'parent': parent
+        });
+        this.add();
+        this.addElements();
+    },
+    
+    addElements: function() {
+        this.self
+                .append($('<h3 />').text(this._('add_default_texts')));
+        this.button = new DD_button({parent: this.self, 'text': this._('add_text'), 'fa_addon': 'fa fa-pencil'});
+        this.model.addEditTextEvent(this.button, this);
+    }
+    
+});
+
 $.fn.dd_productdesigner = function (options) {
     //new
     this.options = $.extend({
@@ -30321,7 +30345,8 @@ $.fn.dd_productdesigner = function (options) {
             'enable_layer_mask': 'Enable Layer Mask',
             'add_layer_mask': 'Add/Edit Layer Mask',
             'add_default_images': 'Add Default Images',
-            'add_image': 'Add Image'
+            'add_image': 'Add Image',
+            'add_default_texts': 'Add default texts'    
         },
         'settings': {
             'addphoto': false,
