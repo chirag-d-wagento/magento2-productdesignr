@@ -5,29 +5,40 @@ var DD_Admin_ImagesSelected_Model = DD_ModelBase.extend({
     groupCancelEvent: 'image-group-cancel',
     addGroupEvent: 'image-group-add',
     removeGroupEvent: 'image-group-remove',
-
+    
     init: function (obj) {
         this.obj = obj;
         this._super();
-        //this.loadGroups();
     },
+    
     _registerEvents: function () {
+        if(this._evnt().getEventObject(this.groupChangedEvent)) {
+            return;
+        }
         this._evnt().register(this.groupChangedEvent, this.obj);
         this._evnt().register(this.groupSetEvent, this.obj);
         this._evnt().register(this.addGroupEvent, this.obj);
         this._evnt().register(this.groupCancelEvent, this.obj);
         this._evnt().register(this.removeGroupEvent, this.obj);
     },
+    
     _registerCalls: function () {
+        if(this._evnt().getEventCallBacks(this.groupChangedEvent)) {
+            return;
+        }
         var self = this;
         this._evnt().registerCallback(this.groupChangedEvent, function (obj) {
+            if(!obj.groupContainer) {
+                return;
+            }
             obj.groupContainer.empty();
+            
             var c = 0;
             obj.groups.each(function (group) {
                 new DD_admin_group({
                     data: group,
                     parent: obj.groupContainer,
-                    index: c
+                    index: group.group_uid
                 });
                 c++;
             });
@@ -38,7 +49,6 @@ var DD_Admin_ImagesSelected_Model = DD_ModelBase.extend({
             this.sortable = new Sortable(obj.groupContainer.get(0), {
                 handle: ".sortable",
                 onEnd: function (evt) {
-                    ;
                     self.updateGroupsOrder(evt.oldIndex, evt.newIndex);
                 }
             });
@@ -47,8 +57,9 @@ var DD_Admin_ImagesSelected_Model = DD_ModelBase.extend({
             obj.groups = data;
         });
 
-        this._evnt().registerCallback(this.removeGroupEvent, function (obj, eventName, index) {
+        this._evnt().registerCallback(this.removeGroupEvent, function (obj, eventName, group_index) {
             var tmpGroups = obj.groups;
+            var index = self.getGroupIndexByUid(group_index);
             tmpGroups.splice(index, 1);
             obj.groups = tmpGroups;
         });
@@ -61,20 +72,26 @@ var DD_Admin_ImagesSelected_Model = DD_ModelBase.extend({
             obj.drawNoImagesSelected();
         });
     },
+    
+    _onComplete: function() {
+        if(this.obj._onComplete) {
+            this.loadGroups();
+        }   
+    },
 
     updateGroupsOrder: function (group_index, new_index) {
-        this.groups = this.getGroups();
-        this.groups = this.sortArray(this.groups, new_index, group_index);
-        this._evnt().doCall(this.groupSetEvent, this.groups);
-        this._evnt().doCall(this.groupChangedEvent);
+        var groups = this.getGroups();
+        var groups = this.sortArray(groups, new_index, group_index);
+        this._evnt().doCall(this.groupSetEvent, groups);
     },
     
-    updateImageConf: function(group_index, media_id, confName, confValue) {
-        var index = this.getImgIndex(group_index, media_id);
-        this.groups = this.getGroups();
-        this.groups[group_index][index][confName] = confValue;
-        this._evnt().doCall(this.groupSetEvent, this.groups);
-        return this.groups[group_index][index];
+    updateImageConf: function(group_uid, media_id, confName, confValue) {
+        var group_index = this.getGroupIndexByUid(group_uid);
+        var index = this.getImgIndex(group_uid, media_id);
+        var groups = this.getGroups();
+        groups[group_index]['imgs'][index][confName] = confValue;
+        this._evnt().doCall(this.groupSetEvent, groups);
+        return groups[group_index]['imgs'][index];
     },
 
     getGroups: function () {
@@ -98,48 +115,45 @@ var DD_Admin_ImagesSelected_Model = DD_ModelBase.extend({
         this._evnt().doCall(this.groupChangedEvent);
     },
 
-    addImage: function (group_index, media_id, img) {
-        var index = this.getImgIndex(group_index, media_id);
-        if (index) {
+    addImage: function (group_uid, media_id, img) {
+        var group_index = this.getGroupIndexByUid(group_uid);
+        var index = this.getImgIndex(group_uid, media_id);
+        if (index !== false) {
             return;
         }
-        this.groups = this.getGroups();
-        var imgGroup = this.groups[parseInt(group_index)];
-        var index = Object.keys(imgGroup).length ? Object.keys(imgGroup).length : 0;
-        this.groups[parseInt(group_index)][index] = img;
+        var groups = this.getGroups();
+        var imgGroup = groups[group_index].imgs;
+        var newImgIndex = Object.keys(imgGroup).length ? Object.keys(imgGroup).length : 0;
+        this.groups[parseInt(group_index)]['imgs'][newImgIndex] = img;
         this._evnt().doCall(this.groupChangedEvent);
     },
 
-    getImgIndex: function (group_index, media_id) {
-        this.groups = this.getGroups();
-        var imgGroup = this.groups[parseInt(group_index)];
+    getImgIndex: function (group_uid, media_id) {
+        var groups = this.getGroups();
+        var imgGroup = groups[this.getGroupIndexByUid(group_uid)]['imgs'];
         var index = false;
         $.each(imgGroup, function (i, image) {
             if (image.media_id == parseInt(media_id)) {
                 index = i;
             }
         });
-
         return index;
-
     },
 
-    removeImage: function (group_index, media_id) {
-        this.groups = this.getGroups();
-        var newGropImg = {};
+    removeImage: function (group_uid, media_id) {
+        var groups = this.getGroups();
+        var group_index = this.getGroupIndexByUid(group_uid);
         var indexRemov = this.getImgIndex(group_index, media_id);
-        var imgGroup = this.groups[parseInt(group_index)];
-        var c = 0;
-        $.each(imgGroup, function (i, image) {
-            if (indexRemov != i) {
-                newGropImg[c] = image;
-                c++;
-            }
-        });
-        this.groups[parseInt(group_index)] = newGropImg;
-        this.updateGroups(this.groups);
+        var imgGroup = groups[group_index]['imgs'];
+        imgGroup.splice(indexRemov, 1);
+        groups[parseInt(group_index)]['imgs'] = imgGroup;
+        this.updateGroups(groups);
     },
     loadGroups: function () {
+        
+        if(this.getGroups()) {
+            return;
+        }
         var self = this;
         this._evnt().doCall('show-admin-loader');
         $.ajax({
@@ -149,7 +163,17 @@ var DD_Admin_ImagesSelected_Model = DD_ModelBase.extend({
                 'product_sku': this.obj.options.psku
             },
             success: function (data) {
-                self.obj.processGroups(data);
+                if(data.error) {
+                    alert(data.errorMessage);
+                }else{
+                    self.updateGroups(data.data);
+                    if(data.data.length == 0) {
+                        var button = self.obj.drawNoImagesSelected();
+                        self.attachCustomizeButtonEvents(button);
+                        return;
+                    }
+                    //process groups!
+                }
             },
             error: function () {
                 alert("Something went wrong!");
@@ -160,7 +184,19 @@ var DD_Admin_ImagesSelected_Model = DD_ModelBase.extend({
             cache: false
         }, 'json');
     },
-    attachCustomizeButtonEvents: function (button, parent) {
+    
+    getGroupIndexByUid: function(group_uid) {
+        this.groups = this.getGroups();
+        var index = 0;
+        $.each(this.groups, function (i, group) {
+            if (group_uid == group.group_uid) {
+                index = i;
+            }
+        });
+        return index;
+    },
+    
+    attachCustomizeButtonEvents: function (button) {
         var self = this;
         button.on('click', function () {
             self.obj.p_noimages.remove();
@@ -176,10 +212,10 @@ var DD_Admin_ImagesSelected_Model = DD_ModelBase.extend({
         });
     },
 
-    addGroupClick: function (obj) {
+    addEmptyGroupClick: function (obj) {
         var self = this;
         obj.on('click', function () {
-            self.addGroup({});
+            self.addGroup({'group_uid': self.createUUID(), 'imgs': []});
         });
     },
 

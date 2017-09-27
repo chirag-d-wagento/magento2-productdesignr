@@ -12,10 +12,9 @@ var DD_setup = DD_panel.extend({
             'parent': parent
         });
         this.add();
-        this.addElements();
     },
     
-    addElements: function() {
+    _addElements: function() {
         new DD_setup_tabs(this.self, this.imgOptions);
     }
     

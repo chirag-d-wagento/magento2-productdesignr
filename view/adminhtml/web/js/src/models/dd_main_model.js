@@ -1,6 +1,8 @@
 var DD_Main_Model = DD_ModelBase.extend({
     eventBase: 'main-panel-created',
     eventClick: 'panel-click',
+    eventObjectChanged: 'object-changed',
+    eventObjectChanged: 'object-added',
     base: true,
     init: function (obj) {
         this.obj = obj;
@@ -11,48 +13,161 @@ var DD_Main_Model = DD_ModelBase.extend({
 
     registerEvents: function () {
         this._evnt().register(this.eventClick, this.obj);
+        this._evnt().register(this.eventObjectChanged, this.obj);
     },
 
     initLayers: function () {
         var self = this;
         this.layersObj = new DD_Layer();
-        var idCanvas = 'canvas-' + this.createUUID;
-        this.canvas = $('<canvas/>', {
-            id: idCanvas
+        var idBgCanvas = 'canvas-' + this.createUUID();
+        var idCanvasHover = 'canvas-hover-' + this.createUUID();
+        var bgCanvas = $('<canvas/>', {
+            id: idBgCanvas
         });
-        this.width = this.obj.options.width;
-        this.height = this.obj.options.height;
-        this.canvas.attr('width', this.width);
-        this.canvas.attr('height', this.height);
-        this.obj.self.append(this.canvas);
-        this.layersObj.canvas = new fabric.Canvas(idCanvas);
+        var hoverCanvas = $('<canvas/>', {
+            id: idCanvasHover
+        });
+        var width = this.obj.options.width;
+        var height = this.obj.options.height;
+        bgCanvas.attr({
+            'width': width,
+            'height': height
+        });
+        hoverCanvas.attr({
+            'width': width,
+            'height': height
+        });
+        this.obj.self.append(bgCanvas);
+        var div = $('<div />').addClass('canvas-absolute')
+                .append(hoverCanvas);
+        this.obj.self.append(div);
+
+        var bgCanvas = new fabric.Canvas(idBgCanvas);
+        var hoverCanvas = new fabric.Canvas(idCanvasHover);
+        this.layersObj.setBgCanvas(bgCanvas);
+        this.layersObj.setHoverCanvas(hoverCanvas);
+        this.layersObj.setHeight(height);
+        this.layersObj.setWidth(width);
+
+        hoverCanvas.on('object:added', function (e) {
+            new DD_control({
+                parent: self.obj.self,
+                fabricObject: e.target
+            });
+            console.log('object:added');
+            console.log(e.target);
+        });
+
+        hoverCanvas.on('mouse:down', function (e) {
+            /*
+             var target = e.target;
+             if (target.layerMask) {
+             hoverCanvas.clipTo = function (ctx) {
+             ctx.restore();
+             hoverCanvas.calcOffset();
+             hoverCanvas.replaceAll();
+             }
+             }
+             */
+            console.log('mouse:down');
+            console.log(e.target);
+        });
+        hoverCanvas.on('object:moving', function (e) {
+            console.log(e.target.controlModelCreated);
+            if (e.target.controlModelCreated) {
+                e.target.controlModelCreated.hide();
+            }
+            /*
+             var target = e.target;
+             if (target.layerMask) {
+             hoverCanvas.clipTo = function (ctx) {
+             var zoom = hoverCanvas.getZoom();
+             ctx.rect(target.get('left') * zoom,
+             target.get('top') * zoom,
+             target.get('width') * zoom,
+             target.get('height') * zoom
+             );
+             }
+             }
+             */
+        });
+
+/*
+        hoverCanvas.on('after:render', function () {
+            hoverCanvas.contextContainer.strokeStyle = '#555';
+            hoverCanvas.forEachObject(function (obj) {
+                var bound = obj.getBoundingRect(); // <== this is the magic
+                console.log(bound);
+                canvas.contextContainer.strokeRect(
+                        bound.left,
+                        bound.top,
+                        bound.width,
+                        bound.height
+                        );
+
+            });
+
+        });
+*/
+        hoverCanvas.on('before:selection:cleared', function (e) {
+            console.log(e.target.controlModelCreated);
+            console.log('selection:cleared');
+            if (e.target.controlModelCreated) {
+                e.target.controlModelCreated.hide();
+            }
+        });
+        
+        
+
+        hoverCanvas.on('object:selected', function (e) {
+            console.log(e.target.controlModelCreated);
+            if (e.target.controlModelCreated) {
+                e.target.controlModelCreated.initPosition();
+            }
+        })
+        hoverCanvas.on('object:modified', function (e) {
+            console.log('object:modified');
+            console.log(e.target);
+            if (e.target.controlModelCreated) {
+                e.target.controlModelCreated.initPosition();
+            }
+        });
+
         new DD_Layer_Main({
-            width: this.width,
-            height: this.height,
+            width: width,
+            height: height,
             src: this.obj.options.src
         });
 
-        this.resize();
+
+        this.resize(width, height);
         $(window).on('resize', function () {
-            self.resize();
+            self.resize(width, height);
         });
         return;
     },
 
-    resize: function () {
+    resize: function (width, height) {
         var blockWidth = this.obj.self.width();
         var newWidth, newHeight;
-        var proportion = this.height / this.width;
+        var proportion = height / width;
         newWidth = blockWidth;
         newHeight = proportion * newWidth;
-        if (blockWidth < this.width) {
-            var scaleFactor = blockWidth / this.layersObj.canvas.getWidth();
+        if (blockWidth < width) {
+            var bgCanvas = this.layersObj.getBgCanvas();
+            var hoverCanvas = this.layersObj.getHoverCanvas();
+            var scaleFactor = blockWidth / this._l().getWidth();
             if (scaleFactor != 1) {
-                this.layersObj.canvas.setWidth(blockWidth);
-                this.layersObj.canvas.setHeight(newHeight);
-                this.layersObj.canvas.setZoom(scaleFactor);
-                this.layersObj.canvas.calcOffset();
-                this.layersObj.canvas.renderAll();
+                bgCanvas.setWidth(blockWidth);
+                bgCanvas.setHeight(newHeight);
+                bgCanvas.setZoom(scaleFactor);
+                bgCanvas.calcOffset();
+                bgCanvas.renderAll();
+                hoverCanvas.setWidth(blockWidth);
+                hoverCanvas.setHeight(newHeight);
+                hoverCanvas.setZoom(scaleFactor);
+                hoverCanvas.calcOffset();
+                hoverCanvas.renderAll();
             }
             return;
         }

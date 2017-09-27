@@ -8,12 +8,12 @@ var DD_Admin_ImagesLoader_Model = DD_ModelBase.extend({
         this._super();
     },
     
-    registerEvents: function () {
+    _registerEvents: function () {
         this._evnt().register(this.eventShow, this.obj);
         this._evnt().register(this.eventHide, this.obj);
     },
     
-    registerCalls: function(){
+    _registerCalls: function(){
         var self = this;
         this._evnt().registerCallback(this.eventShow, function() {
             self.obj

@@ -10,7 +10,11 @@ var DD_admin_clear_button = DD_button.extend({
             fa_addon: ' fa fa-times '
         }
         this._super(options);
-        this.model.clearClickEvents(this.self);
+    },
+
+    _callBackModel: function (model) {
+        model.clearClickEvents(this.self);
     }
+
 
 });

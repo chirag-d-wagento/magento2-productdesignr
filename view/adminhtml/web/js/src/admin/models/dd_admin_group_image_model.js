@@ -42,6 +42,8 @@ var DD_admin_group_image_model = DD_Admin_ImagesSelected_Model.extend({
         var defaultFontSize = this._s('defaultFontSize');
         var defaultFont = this._s('defaultFont');
         var defualtFontColor = this._s('defualtFontColor');
+        var defaultLayerMaskWidth = this._s('defaultLayerMaskWidth');
+        var percentSizeFromMask = this._s('percentSizeFromMask');
         
         el.on('click', function () {
             $('#dd_designer').html('');
@@ -61,12 +63,12 @@ var DD_admin_group_image_model = DD_Admin_ImagesSelected_Model.extend({
                     'percentSizeImage': percentSizeImage,
                     'defualtFontColor': defualtFontColor,
                     'defaultFont': defaultFont,
-                    'defaultFontSize': defaultFontSize
+                    'defaultFontSize': defaultFontSize, 
+                    'defaultLayerMaskWidth': defaultLayerMaskWidth,
+                    'percentSizeFromMask': percentSizeFromMask
                 }
                 
             });
-
-            console.log(options);
         });
     }
 

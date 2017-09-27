@@ -2,6 +2,11 @@ var DD_Admin_loadimages_model = DD_Admin_ImagesSelected_Model.extend({
 
     class_container: 'dd-admin-loadimages-container',
     class_loading: 'dd-admin-loadimages-loading',
+    
+    init: function (obj) {
+        this.obj = obj;
+        this._super(obj);
+    },
 
     getWindowTitle: function () {
         return this._('select_images');
@@ -23,13 +28,14 @@ var DD_Admin_loadimages_model = DD_Admin_ImagesSelected_Model.extend({
     loadImages: function () {
         this.showLoading();
         var self = this;
+        
         $.ajax({
             url: this._s('urlLoadImages')
                     + '?form_key=' + window.FORM_KEY,
             data: {
                 'product_sku': this._s('psku'),
                 'product_id': this._s('product_id'),
-                'group_index': this.opener.get().attr('data-group')
+                'group_index': this.obj.get().attr('data-group')
             },
             success: function (data) {
                 if(data.error) {

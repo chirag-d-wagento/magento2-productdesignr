@@ -19,18 +19,26 @@ $.fn.dd_productdesigner_admin = function (options) {
             'urlLoadImages': '',
             'product_id': '',
             'urlUploadImages': '',
-            'percentSizeImage': ''
+            'percentSizeImage': '',
+            'percentSizeFromMask': 70,
+            'defaultFont': 'Verdana',
+            'defualtFontColor': '#ffffff',
+            'defaultFontSize': 20,
+            'defaultLayerMaskWidth': 50
         }
     }, options);
     
     new DD_Translator(this.options.translator);
     new DD_Event();
-    new DD_admin_main(this, this.options);
     new DD_Settings(this.options.settings);
+    
+    new DD_admin_main(this, this.options);
     
     if(this.options.debug) {
         new DD_Debug(this);
     }
+    
+    
     return this;
     
 };

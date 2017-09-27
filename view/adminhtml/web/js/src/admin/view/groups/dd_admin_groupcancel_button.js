@@ -10,8 +10,10 @@ var DD_admin_groupcancel_button= DD_button.extend({
             fa_addon: 'fa fa-minus-circle'
         }
         this._super(options);
-        this.model.addGroupCancelClick(this.self);
-        
+    },
+
+    _callBackModel: function (model) {
+        model.addGroupCancelClick(this.self);
     }
 
 });

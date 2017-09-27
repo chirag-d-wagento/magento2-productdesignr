@@ -10,6 +10,6 @@ var DD_panel = DD_Uibase.extend({
     },
     
     add: function() {
-        this._add();
+        return this._add();
     }
 });

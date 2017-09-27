@@ -12,13 +12,19 @@ var DD_admin_image = DD_panel.extend({
             'parent': parent
         });
         this.add();
-        this.addImage();
+    },
+    
+    _addElements: function() {
+        this.addImage(this);
+    },
+    
+    _callBackModel: function (model) {
+        model.registerImage(this);
     },
     
     addImage: function(){
         this.img = $('<img />').attr('src', this.imgOptions.src);
         this.self.append(this.img);
-        this.model.registerImage(this.self, this.imgOptions);
         this.addSelectedIcons();
     },
     

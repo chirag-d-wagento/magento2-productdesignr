@@ -11,14 +11,17 @@ var DD_setup_images = DD_panel.extend({
             'parent': parent
         });
         this.add();
-        this.addElements();
     },
     
-    addElements: function() {
+    _addElements: function() {
         this.self
                 .append($('<h3 />').text(this._('add_default_images')));
         this.button = new DD_button({parent: this.self, 'text': this._('add_image'), 'fa_addon': 'fa fa-image'});
-        this.model.addEditImageEvent(this.button, this);
+    },
+    
+    _callBackModel: function (model) {
+        model.addEditImageEvent(this.button, this);
     }
+    
     
 });

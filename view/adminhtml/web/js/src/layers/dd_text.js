@@ -7,7 +7,7 @@ var DD_Layer_Text = DD_Layer_Base.extend({
             fontFamily: options.fontFamily ? options.fontFamily : this._s('defaultFont'),
             fill: options.fill ? options.fill : this._s('defualtFontColor')
         }).on('changed', function(){
-            console.log(this);
+            console.log('TEXT CHANGED!');
         });
         
         this._l().canvas.add(text);
@@ -16,7 +16,7 @@ var DD_Layer_Text = DD_Layer_Base.extend({
         //this._l().canvas.centerObject(text);
         this._l().canvas.setActiveObject(text);
         this._l().canvas.renderAll();
-        this._addText(options);
 
+        this.object = text;
     }
 })

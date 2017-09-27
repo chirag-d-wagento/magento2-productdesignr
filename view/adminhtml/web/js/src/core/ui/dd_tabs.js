@@ -13,12 +13,18 @@ var DD_Tabs = DD_Uibase.extend({
         this._super(this.options.id);
         this.selfBase();
         this._add();
+    },
+    
+    _addElements: function() {
         this.addTabs();
-        this.setEvents();
+    },
+    
+    _callBackModel: function (model) {
         var self = this;
-        if (this.current && this.model.tabActive) {
+        this.setEvents(model);
+        if (this.current && model.tabActive) {
             setTimeout(function () {
-                self.model.tabActive(self.current.attr('id'), self.currentContent);
+                model.tabActive(self.current.attr('id'), self.currentContent);
             }, 100);
         }
     },
@@ -28,22 +34,23 @@ var DD_Tabs = DD_Uibase.extend({
         this.createTabPanel();
         this.createTabContent();
         $.each(this.options.tabs, function (a, tab) {
-            self.tabsContent[a] = $('<div />')
+            self.tabsContent[tab.id] = $('<div />')
                     .attr('id', 'content-' + tab.id)
                     .addClass(self.classTabsContent);
             
-            self.tabs[a] = $('<li />')
+            self.tabs[tab.id] = $('<li />')
                     .attr('id', tab.id)
                     .text(tab.text)
-                    .attr('data-index', a);
+                    .attr('data-index', tab.id);
             if (a == 0 && !self.options.activeTab) {
-                self.tabs[a].addClass('current');
-                self.tabsContent[a].addClass('current');
-                self.current = self.tabs[a];
-                self.currentContent = self.tabsContent[a];
+                self.tabs[tab.id].addClass('current');
+                self.tabsContent[tab.id].addClass('current');
+                self.current = self.tabs[tab.id];
+                self.currentContent = self.tabsContent[tab.id];
             }
-            self.tabPanel.append(self.tabs[a]);
-            self.tabContent.append(self.tabsContent[a]);
+            self.tabPanel.append(self.tabs[tab.id]);
+            self.tabContent.append(self.tabsContent[tab.id]);
+            
         });
         
     },
@@ -51,31 +58,30 @@ var DD_Tabs = DD_Uibase.extend({
     createTabPanel: function () {
         this.tabPanel = $('<ul />')
                 .addClass(this.classTabs);
-
         this.self.append(this.tabPanel);
     },
 
     createTabContent: function () {
         this.tabContent = $('<div />')
                 .addClass(this.classTabsContentContainer);
-
         this.self.append(this.tabContent);
     },
 
-    setEvents: function () {
+    setEvents: function (model) {
         var self = this;
         this.tabPanel.find('li').on('click', function () {
+            var id = $(this).attr('id');
             self.tabPanel.find('.current')
                     .removeClass('current');
             self.tabContent.find('.current')
                     .removeClass('current');
             var index = parseInt($(this).attr('data-index'));
-            self.tabsContent[index]
+            self.tabsContent[id]
                     .addClass('current');
             $(this).addClass('current');
-
-            if (self.model.tabActive) {
-                self.model.tabActive($(this).attr('id'), self.tabsContent[index]);
+            
+            if (model.tabActive) {
+                model.tabActive(id, self.tabsContent[id]);
             }
 
         });

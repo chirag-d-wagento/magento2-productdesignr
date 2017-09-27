@@ -1,4 +1,5 @@
 var DD_Uibase = DD_object.extend({
+    options: {},
 
     init: function (id) {
         this._super(id);
@@ -26,7 +27,11 @@ var DD_Uibase = DD_object.extend({
         if (this._addElements) {
             this._addElements();
         }
-        this._onAfterCreate();
+        var model = this._onAfterCreate();
+        if (model) {
+            model.registerEvents();
+            return model;
+        }
     },
 
     _onBeforeCreate: function () {
@@ -38,37 +43,38 @@ var DD_Uibase = DD_object.extend({
         if (this.model) {
             eval("try {model = new " + this.model + "(this); }catch(err) {console.log('ERROR FOR MODEL: " + this.model + "; ERRTXT: ' + err)}");
         }
-        if (model) {
-            this.model = model;
-        }
         if (this.options.windowOpener && model) {
-            this.addWindowOpenEvent(this.self);
+            this.addWindowOpenEvent(this, model, this.modal, this.options);
+        }
+        if (model) {
+            return model;
         }
     },
-    
-    addWindowOpenEvent: function(obj) {
-        var me = this;
-        obj.on('click', function () {
-                if(!me.options.windowPreview) {
-                    var window = me.modal.getWindow();
-                    var contentElement = me.modal.getContentElement();
-                }else{
-                    var window = me.modal.getPreview();
-                    var contentElement = me.modal.getContentElementPreview();
-                }
-                
-                contentElement.empty();
-                me.model.opener = me;
-                me.model.setWindowContent( contentElement );
-                me.model.setWindow(window);
-                
-                window.setTitle( me.model.getWindowTitle() )
-                window.open({});
-                
-                if(!window.isClosed && !me.options.windowPreview) {
-                    window.position({target: $('.canvas-container')});
-                }
-            });
+
+    addWindowOpenEvent: function (me, model, modal, options) {
+        var obj = me.get();
+        console.log(me);
+        $(obj).on('click', function () {
+            if (!options.windowPreview) {
+                var window = modal.getWindow();
+                var contentElement = modal.getContentElement();
+            } else {
+                var window = modal.getPreview();
+                var contentElement = modal.getContentElementPreview();
+            }
+
+            contentElement.empty();
+            //model.opener = me;
+            model.setWindowContent(contentElement);
+            model.setWindow(window);
+
+            window.setTitle(model.getWindowTitle())
+            window.open({});
+
+            if (!window.isClosed && !options.windowPreview) {
+                window.position({target: $('.canvas-container')});
+            }
+        });
     },
 
     windowInit: function () {

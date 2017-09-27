@@ -5,7 +5,8 @@ var DD_admin_selected_images = DD_panel.extend({
     class_no_image_selected: 'dd-admin-no-selected',
     class_button_customize: 'dd-admin-images-customize',
     class_group_container: 'dd-admin-group-container',
-    groups: [],
+    groups: null,
+    _onComplete: true, 
     
     init: function (options) {
         var self = this;
@@ -14,27 +15,6 @@ var DD_admin_selected_images = DD_panel.extend({
             'class': this.class_name
         });
         this.add();
-        this.model._registerEvents();
-        this.model._registerCalls();
-        this.model.loadGroups();
-        
-    },
-    
-    processGroups: function(data) {
-        console.log(data);
-        if(data.error) {
-            alert(data.errorMessage);
-        }
-        if(data.success) {
-            return this.drawGroups(data.data);
-        }
-    },
-    
-    drawGroups: function(dataGroups){
-        this.model.groups = dataGroups;
-        if(dataGroups.length == 0) {
-            this.drawNoImagesSelected()
-        }
     },
     
     drawNoImagesSelected: function() {
@@ -60,7 +40,7 @@ var DD_admin_selected_images = DD_panel.extend({
             'parent': this.panelCustomize.get(),
             'fa_addon': 'fa fa-cogs'
         });
-        this.model.attachCustomizeButtonEvents(buttonCustomize.get(), this.self);
+        return buttonCustomize.get();
     },
     
     drawCustomizePanel: function() {

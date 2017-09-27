@@ -1,6 +1,6 @@
 var DD_main = DD_panel.extend({
     object_id: 'dd-main-panel',
-    class_name: 'dd-designer-container',
+    class_name: 'dd-designer-container clearfix',
     model: 'DD_Main_Model',
 
     init: function (parent, options) {
@@ -12,10 +12,6 @@ var DD_main = DD_panel.extend({
             'parent': parent
         });
         this.add();
-        this.self.on('click', function() {
-            self._evnt().doCall(self.model.clickEventName());
-        });
-        
     },
     
     _addElements: function() {

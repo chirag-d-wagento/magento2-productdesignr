@@ -36,10 +36,13 @@ define([
                     'urlLoadImages': data.urlLoadImages,
                     'urlUploadImages': data.urlUploadImages,
                     'percentSizeImage': 30,
-
+                    'percentSizeFromMask': 70,
+                    
                     'defaultFont': 'Verdana',
                     'defualtFontColor': '#ffffff',
-                    'defaultFontSize': 20,
+                    'defaultFontSizePercent': 20,
+                    'defaultLayerMaskWidth': 70
+                    
                 }
             });
         }

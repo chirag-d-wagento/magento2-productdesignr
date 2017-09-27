@@ -2,6 +2,12 @@ var DD_AddPhoto_Model = DD_ModelBase.extend({
     idUploaderTab: 'dd-add-photo-tab',
     idMyPhotosTab: 'dd-my-photo-tab',
     uploaderInitiated: false,
+    
+    init: function (obj) {
+        this.obj = obj;
+        this._super(obj);
+    },
+    
     getWindowTitle: function () {
         return this._('add_photo_to_image');
     },
@@ -25,8 +31,6 @@ var DD_AddPhoto_Model = DD_ModelBase.extend({
         this.content = content;
         var self = this;
         content.html(this._('drop_files_or_upload'));
-        console.log( "self._s('urlUploadImages')" );
-        console.log( self._s('urlUploadImages') );
         content.dropzone({
             url: self._s('urlUploadImages') + '?form_key=' + window.FORM_KEY,
             maxFilesize: 2, // MB

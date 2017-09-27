@@ -11,14 +11,16 @@ var DD_setup_texts = DD_panel.extend({
             'parent': parent
         });
         this.add();
-        this.addElements();
     },
     
-    addElements: function() {
+    _addElements: function() {
         this.self
                 .append($('<h3 />').text(this._('add_default_texts')));
         this.button = new DD_button({parent: this.self, 'text': this._('add_text'), 'fa_addon': 'fa fa-pencil'});
-        this.model.addEditTextEvent(this.button, this);
+    },
+    
+    _callBackModel: function (model) {
+        model.addEditTextEvent(this.button, this);
     }
     
 });

@@ -9,10 +9,10 @@ var DD_setup_info = DD_panel.extend({
             'parent': parent
         });
         this.add();
-        this.addElements();
+        //this.addElements();
     },
     
-    addElements: function() {
+    _addElements: function() {
         this.self
                 .append($('<h3 />').text(this._('product_sku') + ': ' + this.imgOptions.sku))
                 .append($('<div />').text(this._('image_src') + ': ' + this.imgOptions.src))

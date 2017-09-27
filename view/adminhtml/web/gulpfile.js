@@ -6,6 +6,7 @@ var wrap = require("gulp-wrap");
 
 var jsFiles = [
     'js/src/plugins/fabric.1.7.18.js',
+    'js/src/plugins/fabric_override.js',
     //'js/src/plugins/fabric-resize.js',
     'js/src/plugins/modernizr-custom.js',
     'js/src/plugins/Sortable.js',
@@ -22,6 +23,7 @@ var jsFiles = [
     'js/src/core/dd_layer.js',
     'js/src/core/ui/*.js',
     'js/src/models/*.js',
+    'js/src/models/controls/*.js',
     'js/src/layers/*.js',
     'js/src/view/*.js',
     'js/src/view/windows/*.js',

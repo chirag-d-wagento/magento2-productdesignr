@@ -15,14 +15,17 @@ var DD_admin_group = DD_panel.extend({
             'class': this.class_name
         });
         this.add();
-        this.addElements();
     },
 
-    addElements: function () {
+    _addElements: function () {
         this.addRemove();
         this.addSelectImage();
         this.addSortingPanel();
         this.addImages();
+    },
+    
+    _callBackModel: function (model) {
+        model.removeGroupClick(this.remove.get(0));
     },
 
     addSortingPanel: function () {
@@ -42,7 +45,7 @@ var DD_admin_group = DD_panel.extend({
         imgContainer.add();
 
         var index = this.options.index;
-        $.each(this.options.data, function (i, img) {
+        $.each(this.options.data.imgs, function (i, img) {
             img.group_index = index;
             new DD_admin_group_image(imgContainer.get(), img);
         });
@@ -53,16 +56,15 @@ var DD_admin_group = DD_panel.extend({
     },
 
     addRemove: function () {
-        var remove = new DD_button({
+        this.remove = new DD_button({
             'class': this.class_name_remove,
             'text': this._('remove'),
             'parent': this.self,
             'fa': true
         });
-        remove.get(0).attr({
+        this.remove.get(0).attr({
             'data-remove': this.options.index
         });
-        this.model.removeGroupClick(remove.get(0));
     },
 
     addSelectImage: function () {

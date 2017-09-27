@@ -10,7 +10,10 @@ var DD_admin_group_button= DD_button.extend({
             fa_addon: 'fa fa-folder-open-o'
         }
         this._super(options);
-        this.model.addGroupClick(this.self);
+    },
+    
+    _callBackModel: function(model) {
+        model.addEmptyGroupClick(this.self);
     }
 
 });

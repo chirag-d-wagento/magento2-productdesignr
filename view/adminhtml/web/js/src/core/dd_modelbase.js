@@ -4,11 +4,27 @@ var DD_ModelBase = DD_object.extend({
         if (this.eventBase) {
             this._evnt().register(this.eventBase, this.obj, this.base);
         }
-        if (this.registerEvents) {
-            this.registerEvents();
+    },
+    
+    registerEvents: function() {
+        if (this._registerEvents) {
+            this._registerEvents();
         }
-        if (this.registerCalls) {
-            this.registerCalls();
+        if (this._registerCalls) {
+            this._registerCalls();
+        }
+        if (this._onComplete) {
+            this._onComplete();
+        }
+        this.callBackObject();
+    },
+    
+    callBackObject: function() {
+        if(!this.obj) {
+            return;
+        }
+        if(this.obj._callBackModel) {
+            this.obj._callBackModel.call(this.obj, this);
         }
     },
 

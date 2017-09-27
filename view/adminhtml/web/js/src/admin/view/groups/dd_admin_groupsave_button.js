@@ -10,8 +10,10 @@ var DD_admin_groupsave_button= DD_button.extend({
             fa_addon: 'fa fa-floppy-o'
         }
         this._super(options);
-        this.model.addGroupSaveClick(this.self);
-        
+    },
+
+    _callBackModel: function (model) {
+        model.addGroupSaveClick(this.self);
     }
 
 });

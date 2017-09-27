@@ -13,7 +13,6 @@ var DD_Debug = DD_object.extend({
             self.consoleInner.html('');
             self.title.html('All registrated Events');
             var eventsHtml = '';
-            console.log(events);
             $.each(events, function (index, event) {
                 if (event.get) {
                     var el = event.get();

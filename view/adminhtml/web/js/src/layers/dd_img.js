@@ -1,48 +1,43 @@
 var DD_Layer_Img = DD_Layer_Base.extend({
     init: function (options) {
         var self = this;
-        if (!options.noselectable) {
-            options = this.prepareSizeOfImage(options);
+        if(options.parent) {
+            this.parent = options.parent;
         }
         fabric.Image.fromURL(options.src, function (iImg) {
+            var parent = self.getParent()
+            var conf = {
+                hasControls: options.nocontrols ? false : true,
+                hasBorders: options.noborders ? false : true,
+                selectable: options.noselectable ? false : true,
+                controlModel: 'DD_control_image'
+            }
+            var percentWidth = self._s('defaultLayerMaskWidth');
+            var mask = self._l().getMask();
+            var percentWidth = !mask ? self._s('defaultLayerMaskWidth') : self._s('percentSizeFromMask');
+            if (!options.noChangeSize) {
+                conf = self.setSize(conf, {
+                    width: options.width,
+                    height: options.height
+                }, percentWidth);
+            }
+            if (!options.noChangeSize) {
+                conf = self.positionToBase(conf);
+            }
+
             iImg
-                    .set({
-                        hasControls: options.nocontrols ? false : true,
-                        hasBorders: options.noborders ? false : true,
-                        selectable: options.noselectable ? false : true,
-                        width: options.width,
-                        height: options.height
-                    });
-            if (options.scaleToWidth && options.scaleToWidth < options.width) {
-                iImg.scaleToWidth(options.scaleToWidth);
-            }
-            self._l().canvas.add(iImg);
-
+                    .set(conf);
+            parent.add(iImg);
+            parent.renderAll();
+            
             if (!options.noselectable) {
-                iImg.center();
-                iImg.setCoords();
-                
+                parent.setActiveObject(iImg);
             }
-            self._l().canvas.renderAll();
-
-            if (!options.noselectable) {
-                self._l().canvas.setActiveObject(iImg);
-            }
-            self._addImage(options);
+            
+            self.object = iImg;
+            self.setDeselectEvent();
+            
         }, {crossOrigin: 'anonymous'});
-    },
-
-    prepareSizeOfImage: function (options) {
-        console.log(options);
-        var canvasWidth = this._l().canvas.getWidth();
-        console.log(canvasWidth);
-        var newImageWidth = parseInt(canvasWidth / 100 * this._s('percentSizeImage'));
-        var newImageHeight = (newImageWidth / options.width) * options.height;
-        options.scaleToWidth = newImageWidth;
-        options.scaleToHeight = newImageHeight;
-        console.log(options);
-
-        return options;
     }
 });
 

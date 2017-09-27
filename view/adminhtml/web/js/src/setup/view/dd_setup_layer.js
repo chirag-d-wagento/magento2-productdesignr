@@ -11,15 +11,17 @@ var DD_setup_layer = DD_panel.extend({
             'parent': parent
         });
         this.add();
-        this.addElements();
     },
     
-    addElements: function() {
+    _addElements: function() {
         this.self
                 .append($('<h3 />').text(this._('configure_layer_mask')));
-        this.checkbox = new DD_checkbox({parent: this.self, 'text': this._('enable_layer_mask'), model: this.parentModel, view: this});
+        this.checkbox = new DD_checkbox({parent: this.self, 'text': this._('enable_layer_mask'), model: this.model, view: this});
         this.button = new DD_button({parent: this.self, 'text': this._('add_layer_mask'), 'fa_addon': 'fa fa-window-restore'});
-        
-        this.model.addEditLayerEvent(this.button, this);
+    },
+    
+    _callBackModel: function (model) {
+        model.addEditLayerEvent(this.button, this);
     }
+    
 });

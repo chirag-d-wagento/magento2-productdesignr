@@ -1,5 +1,10 @@
 var DD_AddText_Model = DD_ModelBase.extend({
     
+    init: function (obj) {
+        this.obj = obj;
+        this._super(obj);
+    },
+    
     getWindowTitle: function() {
         return this._('add_text_to_image');
     },

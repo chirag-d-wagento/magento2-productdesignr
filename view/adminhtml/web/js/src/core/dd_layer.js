@@ -12,17 +12,47 @@ var DD_Layer = DD_object.extend({
         this.setGlobal();
     },
     
-    addLayer: function(obj, type, data) {
-        this.layers.push({
-            obj: obj,
-            type: type ? type : this.TYPE_IMG,
-            data: data ? data : {}
-        });
-        
-        this.last = this.layers.length;
+    setHeight: function(height) {
+        this.height = height;
+    },
+    
+    getHeight: function(height) {
+        return this.height;
+    },
+    
+    setWidth: function(width) {
+        this.width = width;
+    },
+    
+    getWidth: function(width) {
+        return this.width;
+    },
+    
+    getBgCanvas: function() {
+        return this.bgCanvas;
+    },
+    
+    getHoverCanvas: function() {
+        return this.hoverCanvas;
+    },
+    
+    setBgCanvas: function(canvas) {
+        this.bgCanvas = canvas;
+    },
+    
+    setHoverCanvas: function(canvas) {
+        this.hoverCanvas = canvas;
     },
     
     getLast: function() {
         return this.layers.length;
+    },
+    
+    setMask: function(mask){
+        this.layerMask = mask;
+    },
+    
+    getMask: function() {
+        return this.layerMask;
     }
 });

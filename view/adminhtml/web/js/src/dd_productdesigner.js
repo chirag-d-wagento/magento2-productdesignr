@@ -50,7 +50,7 @@ $.fn.dd_productdesigner = function (options) {
             'add_default_texts': 'Add default texts'    
         },
         'settings': {
-            'addphoto': false,
+            'addphoto': true,
             'addtext': false,
             'addfromlibrary': false,
             'history': false,
@@ -61,24 +61,24 @@ $.fn.dd_productdesigner = function (options) {
             'defaultFont': 'Verdana',
             'defualtFontColor': '#ffffff',
             'defaultFontSize': 20,
+            'percentSizeFromMask': 70,
+            'defaultLayerMaskWidth': 40,
             
             'urlUploadImages': '',
             'myFilesPath': '/myfiles.php',
             'percentSizeImage': 20 //percentage size from canvas width
         },
-        'afterLoad': function () {}
+        'afterLoad': function () {},
+        'onUpdate': ''
     }, options);
-    
-    
-    console.log('this.options');
-    console.log(this.options);
     
     new DD_Translator(this.options.translator);
     new DD_Settings(this.options.settings);
     new DD_Event(); 
-    new DD_main(this, this.options);
+    var main = new DD_main(this, this.options);
     if(this.options.debug) {
         new DD_Debug(this);
     }
+    
     return this;
 };
