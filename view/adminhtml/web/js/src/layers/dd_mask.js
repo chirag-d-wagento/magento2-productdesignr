@@ -10,7 +10,6 @@ var DD_Layer_Mask = DD_Layer_Base.extend({
         
         var conf = {
             fill: 'white',
-            stroke: 'black',
             opacity: 0.4,
             layerMask: true,
             controlModel: 'DD_control_mask'

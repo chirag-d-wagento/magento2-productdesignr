@@ -10,7 +10,11 @@ var DD_Control_Base_Model = DD_ModelBase.extend({
             top: this.calcTopPosition()
         });
         this.obj.get().fadeIn('slow');
-        this.obj.options.fabricObject.controlModelCreated = this;
+        this.obj.options.fabricObject.controlModelCreated = this;   
+        if(this._addControls && !this.obj.options.fabricObject.controlsAdded) {
+            this._addControls();
+            this.obj.options.fabricObject.controlsAdded = true;
+        }
     },
     
     calcTopPosition: function() {
@@ -31,5 +35,9 @@ var DD_Control_Base_Model = DD_ModelBase.extend({
     
     hide: function() {
         this.obj.get().fadeOut('fast');
+    },
+    
+    remove: function() {
+        this.obj.get().remove();
     }
 });

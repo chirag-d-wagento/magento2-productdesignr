@@ -27,6 +27,8 @@ $.fn.dd_productdesigner = function (options) {
             'uploader_error': 'Uploader Error!!!',
             'loading': 'Loading',
             'no_data': 'No Data Found',
+            'delete': 'Delete',
+            'save': 'Save',
             
             
             //setup

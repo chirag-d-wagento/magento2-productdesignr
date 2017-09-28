@@ -29422,7 +29422,7 @@ var DD_AddPhoto_Model = DD_ModelBase.extend({
     },
 
     setWindowContent: function (parent) {
-        this.tabs = new DD_windowPhotoTabs(parent);
+        new DD_windowPhotoTabs(parent);
     },
 
     tabActive: function (id, content) {
@@ -29575,7 +29575,11 @@ var DD_Control_Base_Model = DD_ModelBase.extend({
             top: this.calcTopPosition()
         });
         this.obj.get().fadeIn('slow');
-        this.obj.options.fabricObject.controlModelCreated = this;
+        this.obj.options.fabricObject.controlModelCreated = this;   
+        if(this._addControls && !this.obj.options.fabricObject.controlsAdded) {
+            this._addControls();
+            this.obj.options.fabricObject.controlsAdded = true;
+        }
     },
     
     calcTopPosition: function() {
@@ -29596,6 +29600,10 @@ var DD_Control_Base_Model = DD_ModelBase.extend({
     
     hide: function() {
         this.obj.get().fadeOut('fast');
+    },
+    
+    remove: function() {
+        this.obj.get().remove();
     }
 });
 
@@ -29670,8 +29678,6 @@ var DD_Main_Model = DD_ModelBase.extend({
                 parent: self.obj.self,
                 fabricObject: e.target
             });
-            console.log('object:added');
-            console.log(e.target);
         });
 
         hoverCanvas.on('mouse:down', function (e) {
@@ -29693,38 +29699,43 @@ var DD_Main_Model = DD_ModelBase.extend({
             if (e.target.controlModelCreated) {
                 e.target.controlModelCreated.hide();
             }
-            /*
-             var target = e.target;
-             if (target.layerMask) {
-             hoverCanvas.clipTo = function (ctx) {
-             var zoom = hoverCanvas.getZoom();
-             ctx.rect(target.get('left') * zoom,
-             target.get('top') * zoom,
-             target.get('width') * zoom,
-             target.get('height') * zoom
-             );
-             }
-             }
-             */
+        });
+        hoverCanvas.on('object:scaling', function (e) {
+            console.log(e.target.controlModelCreated);
+            if (e.target.controlModelCreated) {
+                e.target.controlModelCreated.hide();
+            }
+        });
+        hoverCanvas.on('object:rotating', function (e) {
+            console.log(e.target.controlModelCreated);
+            if (e.target.controlModelCreated) {
+                e.target.controlModelCreated.hide();
+            }
+        });
+        hoverCanvas.on('object:skewing', function (e) {
+            console.log(e.target.controlModelCreated);
+            if (e.target.controlModelCreated) {
+                e.target.controlModelCreated.hide();
+            }
         });
 
-/*
-        hoverCanvas.on('after:render', function () {
-            hoverCanvas.contextContainer.strokeStyle = '#555';
-            hoverCanvas.forEachObject(function (obj) {
-                var bound = obj.getBoundingRect(); // <== this is the magic
-                console.log(bound);
-                canvas.contextContainer.strokeRect(
-                        bound.left,
-                        bound.top,
-                        bound.width,
-                        bound.height
-                        );
-
-            });
-
-        });
-*/
+        /*
+         hoverCanvas.on('after:render', function () {
+         hoverCanvas.contextContainer.strokeStyle = '#555';
+         hoverCanvas.forEachObject(function (obj) {
+         var bound = obj.getBoundingRect(); // <== this is the magic
+         console.log(bound);
+         canvas.contextContainer.strokeRect(
+         bound.left,
+         bound.top,
+         bound.width,
+         bound.height
+         );
+         
+         });
+         
+         });
+         */
         hoverCanvas.on('before:selection:cleared', function (e) {
             console.log(e.target.controlModelCreated);
             console.log('selection:cleared');
@@ -29732,8 +29743,8 @@ var DD_Main_Model = DD_ModelBase.extend({
                 e.target.controlModelCreated.hide();
             }
         });
-        
-        
+
+
 
         hoverCanvas.on('object:selected', function (e) {
             console.log(e.target.controlModelCreated);
@@ -29796,8 +29807,50 @@ var DD_control_image = DD_Control_Base_Model.extend({
 });
 
 var DD_control_mask = DD_Control_Base_Model.extend({
-    
-   
+    init: function (obj) {
+        this._super(obj);
+    },
+    _addControls: function () {
+        this.addDelete();
+        this.addSave();
+    },
+    addDelete: function () {
+        var _delete = new DD_button({
+            'parent': this.obj.get(),
+            //'text': this._('delete'),
+            'class': 'fa fa-trash'
+        });
+    },
+    addSave: function () {
+        var self = this;
+        var _save = new DD_button({
+            'parent': this.obj.get(),
+            //'text': this._('save'),
+            'class': 'fa fa-floppy-o'
+        });
+        _save.get().on('click', function () {
+            self._l().getHoverCanvas().clipTo = function (ctx) {
+                var object = self._l().getMask();
+                var oCoords = object.oCoords;
+                var zoom = self._l().getHoverCanvas().getZoom();
+                ctx.strokeStyle = '#ccc';
+                ctx.beginPath();
+                ctx.moveTo(oCoords.tl.x, oCoords.tl.y);
+                ctx.lineTo(oCoords.tr.x, oCoords.tr.y);
+                ctx.lineTo(oCoords.br.x, oCoords.br.y);
+                ctx.lineTo(oCoords.bl.x, oCoords.bl.y);
+                ctx.closePath();
+                ctx.stroke();
+                ctx.save();
+            }
+            self._l().getHoverCanvas().setBackgroundColor('rgba(255, 255, 153, 0.6)');
+            self._l().getMask().hasControls = false;
+            self._l().getMask().selectable = false;
+            self._l().getMask().controlModelCreated.hide();
+            self._l().getMask().setOpacity(0);
+            self._l().getHoverCanvas().renderAll();
+        });
+    }
 });
 
 var DD_Layer_Base = DD_object.extend({
@@ -29817,7 +29870,7 @@ var DD_Layer_Base = DD_object.extend({
                 options = this.positionCenterCenter(parent, options);  
                 break;
         }
-        return this.setAngle(parent, options);
+        return options;
     },
     
     getParent: function() {
@@ -29828,15 +29881,27 @@ var DD_Layer_Base = DD_object.extend({
     },
     
     positionCenterCenter: function(parent, options) {
-        options.left = (this._l().getWidth() - options.width)/2;
-        options.top = (this._l().getHeight() - options.height)/2;
+        if(this._l().getMask()) {
+            var mask = this._l().getMask();
+            var pointCenter = mask.getCenterPoint();
+            options.left = (pointCenter.x) - ((options.width)/2);
+            options.top = (pointCenter.y) - ((options.height)/2); 
+        }else{
+            options.left = (this._l().getWidth() - options.width)/2;
+            options.top = (this._l().getHeight() - options.height)/2;
+        }
+        options.centeredRotation = true;
         return options;
     },
     
-    setAngle: function(parent, options) {
-        var angle = parent.get('angle');
-        options.angle = (angle ? angle : 0);
-        return options;
+    getAngle: function() {
+        if(this._l().getMask()) {
+            var angle = this._l().getMask().get('angle');
+        }else{
+            var parent = this.getParent();
+            var angle = parent.get('angle');
+        }
+        return angle;
     },
 
     calcFontSize: function (baseSize, percentFromImg) {
@@ -29852,15 +29917,23 @@ var DD_Layer_Base = DD_object.extend({
 
     calcObjectSize: function (sizes, percentFromParent) {
         var parent = this.getParent();
-        var width    = this._l().getWidth();
+        if(this._l().getMask()) {
+            var mask = this._l().getMask();
+            var width  = mask.get('width') * mask.get('scaleX');
+            var height = mask.get('height') * mask.get('scaleY');
+        }else{
+            var width = this._l().getWidth();
+            var height = this._l().getHeight();
+        }
         var newWidth = (width/100)*percentFromParent;
         if(sizes && sizes.width < newWidth) {
             return sizes;
         }
         if(sizes){
-            var newHeight = newWidth * (sizes.width/sizes.height);
+            var prop = sizes.height/sizes.width;
+            var newHeight = newWidth * prop;
         }else{
-            var newHeight = (this._l().getHeight() / 100) * percentFromParent;
+            var newHeight = ( height / 100 ) * percentFromParent;
         }
         var sizes = {
             width: newWidth,
@@ -29874,9 +29947,24 @@ var DD_Layer_Base = DD_object.extend({
     },
     
     setDeselectEvent: function() {
-        this.object.on('selection:cleared', function() {
+        
+        this.object.on('deselected', function(e) {
             console.log('i am deselected!');
+            if(this.controlModelCreated) {
+                this.controlModelCreated.hide();
+            }
         });
+    },
+    
+    setObjAngle: function(object) {
+        var angle = this.getAngle();
+        if(angle) {
+            object.setAngle(angle);
+        }
+    },
+    
+    onCreated: function() {
+        this.setDeselectEvent();
     }
 });
 
@@ -29895,7 +29983,6 @@ var DD_Layer_Img = DD_Layer_Base.extend({
                 selectable: options.noselectable ? false : true,
                 controlModel: 'DD_control_image'
             }
-            var percentWidth = self._s('defaultLayerMaskWidth');
             var mask = self._l().getMask();
             var percentWidth = !mask ? self._s('defaultLayerMaskWidth') : self._s('percentSizeFromMask');
             if (!options.noChangeSize) {
@@ -29911,6 +29998,9 @@ var DD_Layer_Img = DD_Layer_Base.extend({
             iImg
                     .set(conf);
             parent.add(iImg);
+            
+            self.setObjAngle(iImg);
+            
             parent.renderAll();
             
             if (!options.noselectable) {
@@ -29918,7 +30008,8 @@ var DD_Layer_Img = DD_Layer_Base.extend({
             }
             
             self.object = iImg;
-            self.setDeselectEvent();
+            self.onCreated();
+            //self.setDeselectEvent();
             
         }, {crossOrigin: 'anonymous'});
     }
@@ -29955,7 +30046,6 @@ var DD_Layer_Mask = DD_Layer_Base.extend({
         
         var conf = {
             fill: 'white',
-            stroke: 'black',
             opacity: 0.4,
             layerMask: true,
             controlModel: 'DD_control_mask'
@@ -29979,22 +30069,26 @@ var DD_Layer_Mask = DD_Layer_Base.extend({
 
 var DD_Layer_Text = DD_Layer_Base.extend({
     init: function (options) {
+        var parent = this.getParent();
         var text = new fabric.IText(options.text, {
-            left: 10,
-            top: 5,
-            fontSize: options.fontSize ? options.fontSize : this._s('defaultFontSize'),
+            //left: 10,
+            //top: 5,
+            //fontSize: options.fontSize ? options.fontSize : this._s('defaultFontSize'),
             fontFamily: options.fontFamily ? options.fontFamily : this._s('defaultFont'),
             fill: options.fill ? options.fill : this._s('defualtFontColor')
         }).on('changed', function(){
             console.log('TEXT CHANGED!');
         });
+        var mask = self._l().getMask();
+        var percentWidth = !mask ? self._s('defaultLayerMaskWidth') : self._s('percentSizeFromMask');
         
-        this._l().canvas.add(text);
+        
+        //this._l().canvas.add(text);
         //text.center();
         //text.setCoords();
         //this._l().canvas.centerObject(text);
-        this._l().canvas.setActiveObject(text);
-        this._l().canvas.renderAll();
+        //this._l().canvas.setActiveObject(text);
+        //this._l().canvas.renderAll();
 
         this.object = text;
     }
@@ -30428,7 +30522,7 @@ var DD_setup_layer_model = DD_ModelBase.extend({
         this.obj = obj;
         this._super();
     },
-    
+
     checkedAction: function (checkbox, view) {
         view.button.get().prop('disabled', false);
     },
@@ -30438,8 +30532,33 @@ var DD_setup_layer_model = DD_ModelBase.extend({
     },
 
     addEditLayerEvent: function (button, view) {
+        var self = this;
         button.get().on('click', function () {
-            new DD_Layer_Mask();
+            if (!self._l().getMask()) {
+                return new DD_Layer_Mask();
+            }
+            
+            self._l().getHoverCanvas().clipTo = null;
+            /*
+            function ____(ctx) {
+                var mask = self._l().getBgCanvas();
+                var zoom = self._l().getHoverCanvas().getZoom();
+                var top = mask.get('top');
+                var left = mask.get('left');
+                var width = mask.get('width') * mask.get('scaleX');
+                var height = mask.get('height') * mask.get('scaleY');
+                ctx.rect(top, left, width, height);
+                ctx.save();
+            }
+            */
+            self._l().getMask().hasControls = true;
+            self._l().getMask().selectable = true;
+                
+            self._l().getMask().setOpacity(0.4);
+            self._l().getHoverCanvas().setActiveObject(self._l().getMask());
+            self._l().getHoverCanvas().setBackgroundColor('transparent');
+            self._l().getHoverCanvas().renderAll();
+
         });
     }
 
@@ -30555,7 +30674,7 @@ var DD_setup_layer = DD_panel.extend({
     _addElements: function() {
         this.self
                 .append($('<h3 />').text(this._('configure_layer_mask')));
-        this.checkbox = new DD_checkbox({parent: this.self, 'text': this._('enable_layer_mask'), model: this.model, view: this});
+        //this.checkbox = new DD_checkbox({parent: this.self, 'text': this._('enable_layer_mask'), model: this.model, view: this});
         this.button = new DD_button({parent: this.self, 'text': this._('add_layer_mask'), 'fa_addon': 'fa fa-window-restore'});
     },
     
@@ -30666,6 +30785,8 @@ $.fn.dd_productdesigner = function (options) {
             'uploader_error': 'Uploader Error!!!',
             'loading': 'Loading',
             'no_data': 'No Data Found',
+            'delete': 'Delete',
+            'save': 'Save',
             
             
             //setup

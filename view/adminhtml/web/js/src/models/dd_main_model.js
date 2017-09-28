@@ -54,8 +54,6 @@ var DD_Main_Model = DD_ModelBase.extend({
                 parent: self.obj.self,
                 fabricObject: e.target
             });
-            console.log('object:added');
-            console.log(e.target);
         });
 
         hoverCanvas.on('mouse:down', function (e) {
@@ -77,38 +75,43 @@ var DD_Main_Model = DD_ModelBase.extend({
             if (e.target.controlModelCreated) {
                 e.target.controlModelCreated.hide();
             }
-            /*
-             var target = e.target;
-             if (target.layerMask) {
-             hoverCanvas.clipTo = function (ctx) {
-             var zoom = hoverCanvas.getZoom();
-             ctx.rect(target.get('left') * zoom,
-             target.get('top') * zoom,
-             target.get('width') * zoom,
-             target.get('height') * zoom
-             );
-             }
-             }
-             */
+        });
+        hoverCanvas.on('object:scaling', function (e) {
+            console.log(e.target.controlModelCreated);
+            if (e.target.controlModelCreated) {
+                e.target.controlModelCreated.hide();
+            }
+        });
+        hoverCanvas.on('object:rotating', function (e) {
+            console.log(e.target.controlModelCreated);
+            if (e.target.controlModelCreated) {
+                e.target.controlModelCreated.hide();
+            }
+        });
+        hoverCanvas.on('object:skewing', function (e) {
+            console.log(e.target.controlModelCreated);
+            if (e.target.controlModelCreated) {
+                e.target.controlModelCreated.hide();
+            }
         });
 
-/*
-        hoverCanvas.on('after:render', function () {
-            hoverCanvas.contextContainer.strokeStyle = '#555';
-            hoverCanvas.forEachObject(function (obj) {
-                var bound = obj.getBoundingRect(); // <== this is the magic
-                console.log(bound);
-                canvas.contextContainer.strokeRect(
-                        bound.left,
-                        bound.top,
-                        bound.width,
-                        bound.height
-                        );
-
-            });
-
-        });
-*/
+        /*
+         hoverCanvas.on('after:render', function () {
+         hoverCanvas.contextContainer.strokeStyle = '#555';
+         hoverCanvas.forEachObject(function (obj) {
+         var bound = obj.getBoundingRect(); // <== this is the magic
+         console.log(bound);
+         canvas.contextContainer.strokeRect(
+         bound.left,
+         bound.top,
+         bound.width,
+         bound.height
+         );
+         
+         });
+         
+         });
+         */
         hoverCanvas.on('before:selection:cleared', function (e) {
             console.log(e.target.controlModelCreated);
             console.log('selection:cleared');
@@ -116,8 +119,8 @@ var DD_Main_Model = DD_ModelBase.extend({
                 e.target.controlModelCreated.hide();
             }
         });
-        
-        
+
+
 
         hoverCanvas.on('object:selected', function (e) {
             console.log(e.target.controlModelCreated);

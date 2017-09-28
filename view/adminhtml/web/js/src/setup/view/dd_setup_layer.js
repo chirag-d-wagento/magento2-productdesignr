@@ -16,7 +16,7 @@ var DD_setup_layer = DD_panel.extend({
     _addElements: function() {
         this.self
                 .append($('<h3 />').text(this._('configure_layer_mask')));
-        this.checkbox = new DD_checkbox({parent: this.self, 'text': this._('enable_layer_mask'), model: this.model, view: this});
+        //this.checkbox = new DD_checkbox({parent: this.self, 'text': this._('enable_layer_mask'), model: this.model, view: this});
         this.button = new DD_button({parent: this.self, 'text': this._('add_layer_mask'), 'fa_addon': 'fa fa-window-restore'});
     },
     

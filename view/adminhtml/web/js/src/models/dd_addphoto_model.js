@@ -13,7 +13,7 @@ var DD_AddPhoto_Model = DD_ModelBase.extend({
     },
 
     setWindowContent: function (parent) {
-        this.tabs = new DD_windowPhotoTabs(parent);
+        new DD_windowPhotoTabs(parent);
     },
 
     tabActive: function (id, content) {

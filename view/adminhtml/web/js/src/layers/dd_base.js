@@ -15,7 +15,7 @@ var DD_Layer_Base = DD_object.extend({
                 options = this.positionCenterCenter(parent, options);  
                 break;
         }
-        return this.setAngle(parent, options);
+        return options;
     },
     
     getParent: function() {
@@ -26,15 +26,27 @@ var DD_Layer_Base = DD_object.extend({
     },
     
     positionCenterCenter: function(parent, options) {
-        options.left = (this._l().getWidth() - options.width)/2;
-        options.top = (this._l().getHeight() - options.height)/2;
+        if(this._l().getMask()) {
+            var mask = this._l().getMask();
+            var pointCenter = mask.getCenterPoint();
+            options.left = (pointCenter.x) - ((options.width)/2);
+            options.top = (pointCenter.y) - ((options.height)/2); 
+        }else{
+            options.left = (this._l().getWidth() - options.width)/2;
+            options.top = (this._l().getHeight() - options.height)/2;
+        }
+        options.centeredRotation = true;
         return options;
     },
     
-    setAngle: function(parent, options) {
-        var angle = parent.get('angle');
-        options.angle = (angle ? angle : 0);
-        return options;
+    getAngle: function() {
+        if(this._l().getMask()) {
+            var angle = this._l().getMask().get('angle');
+        }else{
+            var parent = this.getParent();
+            var angle = parent.get('angle');
+        }
+        return angle;
     },
 
     calcFontSize: function (baseSize, percentFromImg) {
@@ -50,15 +62,23 @@ var DD_Layer_Base = DD_object.extend({
 
     calcObjectSize: function (sizes, percentFromParent) {
         var parent = this.getParent();
-        var width    = this._l().getWidth();
+        if(this._l().getMask()) {
+            var mask = this._l().getMask();
+            var width  = mask.get('width') * mask.get('scaleX');
+            var height = mask.get('height') * mask.get('scaleY');
+        }else{
+            var width = this._l().getWidth();
+            var height = this._l().getHeight();
+        }
         var newWidth = (width/100)*percentFromParent;
         if(sizes && sizes.width < newWidth) {
             return sizes;
         }
         if(sizes){
-            var newHeight = newWidth * (sizes.width/sizes.height);
+            var prop = sizes.height/sizes.width;
+            var newHeight = newWidth * prop;
         }else{
-            var newHeight = (this._l().getHeight() / 100) * percentFromParent;
+            var newHeight = ( height / 100 ) * percentFromParent;
         }
         var sizes = {
             width: newWidth,
@@ -72,9 +92,24 @@ var DD_Layer_Base = DD_object.extend({
     },
     
     setDeselectEvent: function() {
-        this.object.on('selection:cleared', function() {
+        
+        this.object.on('deselected', function(e) {
             console.log('i am deselected!');
+            if(this.controlModelCreated) {
+                this.controlModelCreated.hide();
+            }
         });
+    },
+    
+    setObjAngle: function(object) {
+        var angle = this.getAngle();
+        if(angle) {
+            object.setAngle(angle);
+        }
+    },
+    
+    onCreated: function() {
+        this.setDeselectEvent();
     }
 });
 

@@ -12,7 +12,6 @@ var DD_Layer_Img = DD_Layer_Base.extend({
                 selectable: options.noselectable ? false : true,
                 controlModel: 'DD_control_image'
             }
-            var percentWidth = self._s('defaultLayerMaskWidth');
             var mask = self._l().getMask();
             var percentWidth = !mask ? self._s('defaultLayerMaskWidth') : self._s('percentSizeFromMask');
             if (!options.noChangeSize) {
@@ -28,6 +27,9 @@ var DD_Layer_Img = DD_Layer_Base.extend({
             iImg
                     .set(conf);
             parent.add(iImg);
+            
+            self.setObjAngle(iImg);
+            
             parent.renderAll();
             
             if (!options.noselectable) {
@@ -35,7 +37,8 @@ var DD_Layer_Img = DD_Layer_Base.extend({
             }
             
             self.object = iImg;
-            self.setDeselectEvent();
+            self.onCreated();
+            //self.setDeselectEvent();
             
         }, {crossOrigin: 'anonymous'});
     }
