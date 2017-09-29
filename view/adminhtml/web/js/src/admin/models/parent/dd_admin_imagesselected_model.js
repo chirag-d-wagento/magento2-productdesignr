@@ -127,6 +127,74 @@ var DD_Admin_ImagesSelected_Model = DD_ModelBase.extend({
         this.groups[parseInt(group_index)]['imgs'][newImgIndex] = img;
         this._evnt().doCall(this.groupChangedEvent);
     },
+    
+    updateImgFabricConf: function(group_uid, media_id, fabricObj, type) {
+        if(fabricObj.mainBg) {
+            return;
+        }
+        if(fabricObj.layerMask && type == 'remove') {
+            this.removeMask(group_uid, media_id, fabricObj);
+        }
+        if(fabricObj.layerMask) {
+            this.updateMask(group_uid, media_id, fabricObj);
+        }
+        if(type == 'remove') {
+            this.removeLayer(group_uid, media_id, fabricObj);
+        }
+        this.updateLayer(group_uid, media_id, fabricObj);
+    },
+    
+    findLayerByUid: function(imgConf, fabricObj) {
+        var _layer = null;
+        var _index = null;
+        $.each(imgConf, function(index, layer) {
+            if(layer.uid == fabricObj.uid) {
+                _layer = layer;
+                _index = index;
+            }
+        });
+        return {
+            'layer': _layer,
+            'index': _index
+        };
+    },
+    
+    updateLayer: function(group_uid, media_id, fabricObj) {
+        var imgConf = this.getImgConf(group_uid, media_id);
+        var layer = this.findLayerByUid(imgConf, fabricObj);
+        if(!layer._layer) {
+            imgConf.push(fabricObj);
+        }else{
+            imgConf[layer._index] = fabricObj;
+        }
+        this.updateImageConf(group_uid, media_id, 'conf', imgConf);
+    },
+    
+    removeLayer: function(group_uid, media_id, fabricObj) {
+        var imgConf = this.getImgConf(group_uid, media_id);
+        var layer = this.findLayerByUid(imgConf, fabricObj);
+        imgConf.splice(layer._index, 1, imgConf);
+        this.updateImageConf(group_uid, media_id, 'conf', imgConf);
+    },
+    
+    updateMask: function(group_uid, media_id, fabricObj) {
+        this.updateImageConf(group_uid, media_id, 'mask', fabricObj);
+    },
+    
+    removeMask: function(group_uid, media_id, fabricObj) {
+        this.updateImageConf(group_uid, media_id, 'mask', null);
+    },
+    
+    getImgConf: function(group_uid, media_id) {
+        var groups = this.getGroups();
+        var index = this.getImgIndex(group_uid, media_id);
+        var img = groups[this.getGroupIndexByUid(group_uid)]['imgs'][index];
+        if(!img['conf']) {
+            img['conf'] = [];
+        }
+        
+        return img['conf'];
+    },
 
     getImgIndex: function (group_uid, media_id) {
         var groups = this.getGroups();
@@ -237,7 +305,11 @@ var DD_Admin_ImagesSelected_Model = DD_ModelBase.extend({
     addGroupSaveClick: function (obj) {
         var self = this;
         obj.on('click', function () {
-            console.log('save');
+            var groups = self.getGroups();
+            var jsonStr = JSON.stringify(groups);
+            
+            console.log(groups);
+            console.log(JSON.stringify(groups));
         });
     }
 

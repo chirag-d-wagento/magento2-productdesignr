@@ -9,6 +9,7 @@ var DD_Layer_Main = DD_Layer_Base.extend({
         options.top = 0;
         options.noChangeSize = true;
         options.parent = this._l().getBgCanvas();
+        options.mainBg = true;
         new DD_Layer_Img(options);
         return;
     }

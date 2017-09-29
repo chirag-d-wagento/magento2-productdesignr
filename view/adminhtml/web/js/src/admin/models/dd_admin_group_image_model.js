@@ -36,16 +36,8 @@ var DD_admin_group_image_model = DD_Admin_ImagesSelected_Model.extend({
         });
     },
     
-    onUpdate: function(fabricObj, group_index, media_id, type) {
-        if(type == 'remove') {
-            fabricObj = null;
-        }
-        console.log('fabricObj');
-        console.log(group_index);
-        console.log(media_id);
-        console.log(type);
-        console.log(fabricObj);
-        console.log(this);
+    onUpdate: function(fabricObj, group_uid, media_id, type) {
+        this.updateImgFabricConf(group_uid, media_id, fabricObj, type);
     },
 
     clickEdit: function (el, options) {
@@ -56,7 +48,7 @@ var DD_admin_group_image_model = DD_Admin_ImagesSelected_Model.extend({
         var defualtFontColor = this._s('defualtFontColor');
         var defaultLayerMaskWidth = this._s('defaultLayerMaskWidth');
         var percentSizeFromMask = this._s('percentSizeFromMask');
-        var onUpdate = this.onUpdate;
+        var onUpdate = this.onUpdate.bind(this);
         var group_index = el.attr('data-group');
         
         el.on('click', function () {

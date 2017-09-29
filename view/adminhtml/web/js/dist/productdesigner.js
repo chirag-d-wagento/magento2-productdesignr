@@ -32520,27 +32520,14 @@ var DD_object = Class.extend({
     },
     
     setGlobal: function () {
-        var uid = this.getGlobalUid();
-        if(uid) {
-            DD_Global[uid][this.id] = this;
-        }
         DD_Global[this.id] = this;
     },
     getId: function () {
         return this.id;
     },
     getGlobal: function (id) {
-        var uid = this.getGlobalUid();
-        if(uid) {
-            return DD_Global[uid][id];
-        }
         return DD_Global[id];
     },
-    
-    getGlobalUid: function() {
-        /////???????
-    },
-    
     createUUID: function () {
         var s = [];
         var hexDigits = "0123456789abcdef";
@@ -33225,6 +33212,47 @@ var DD_control = DD_Uibase.extend({
         model.initPosition();
     },
     
+    addDeleteBase: function() {
+        var _delete = new DD_button({
+            'parent': this.get(),
+            //'text': this._('delete'),
+            'class': 'fa fa-trash'
+        });
+        
+        return _delete;
+    },
+    
+    addRotateBase: function() {
+        var _rotate = new DD_button({
+            'parent': this.get(),
+            //'text': this._('delete'),
+            'class': 'fa fa-undo'
+        });
+        
+        return _rotate;
+    },
+    
+    addSaveBase: function() {
+        var _save = new DD_button({
+            'parent': this.get(),
+            //'text': this._('save'),
+            'class': 'fa fa-floppy-o'
+        });
+        
+        return _save;
+    },
+    
+    addSizeBase: function() {
+        var _size = new DD_button({
+            'parent': this.get(),
+            //'text': this._('save'),
+            'class': 'fa fa-arrows'
+        });
+        
+        return _size;
+    },
+    
+    
     remove: function() {
         
     }
@@ -33595,7 +33623,6 @@ var DD_Main_Model = DD_ModelBase.extend({
     init: function (obj) {
         this.obj = obj;
         this._super();
-        //this.registerEvents();
         this.initLayers();
     },
 
@@ -33642,91 +33669,49 @@ var DD_Main_Model = DD_ModelBase.extend({
                 parent: self.obj.self,
                 fabricObject: e.target
             });
+            e.target.uid = self.createUUID();
             self._onUpdate(e.target, 'update');
         });
 
         hoverCanvas.on('mouse:down', function (e) {
-            /*
-             var target = e.target;
-             if (target.layerMask) {
-             hoverCanvas.clipTo = function (ctx) {
-             ctx.restore();
-             hoverCanvas.calcOffset();
-             hoverCanvas.replaceAll();
-             }
-             }
-             */
-            //console.log('mouse:down');
-            //console.log(e.target);
+           
         });
         hoverCanvas.on('object:moving', function (e) {
-            //console.log(e.target.controlModelCreated);
             if (e.target.controlModelCreated) {
                 e.target.controlModelCreated.hide();
             }
         });
         hoverCanvas.on('object:scaling', function (e) {
-            //console.log(e.target.controlModelCreated);
             if (e.target.controlModelCreated) {
                 e.target.controlModelCreated.hide();
             }
         });
         hoverCanvas.on('object:rotating', function (e) {
-            //console.log(e.target.controlModelCreated);
             if (e.target.controlModelCreated) {
                 e.target.controlModelCreated.hide();
             }
         });
         hoverCanvas.on('object:skewing', function (e) {
-            //console.log(e.target.controlModelCreated);
             if (e.target.controlModelCreated) {
                 e.target.controlModelCreated.hide();
             }
         });
-
-        /*
-         hoverCanvas.on('after:render', function () {
-         hoverCanvas.contextContainer.strokeStyle = '#555';
-         hoverCanvas.forEachObject(function (obj) {
-         var bound = obj.getBoundingRect(); // <== this is the magic
-         console.log(bound);
-         canvas.contextContainer.strokeRect(
-         bound.left,
-         bound.top,
-         bound.width,
-         bound.height
-         );
-         
-         });
-         
-         });
-         */
         hoverCanvas.on('before:selection:cleared', function (e) {
-            //console.log(e.target.controlModelCreated);
-            //console.log('selection:cleared');
             if (e.target.controlModelCreated) {
                 e.target.controlModelCreated.hide();
             }
         });
-
-
-
         hoverCanvas.on('object:selected', function (e) {
-            //console.log(e.target.controlModelCreated);
             if (e.target.controlModelCreated) {
                 e.target.controlModelCreated.initPosition();
             }
         })
         hoverCanvas.on('object:modified', function (e) {
-            //console.log('object:modified');
-            //console.log(e.target);
             if (e.target.controlModelCreated) {
                 e.target.controlModelCreated.initPosition();
             }
             self._onUpdate(e.target, 'update');
         });
-        
-        
         hoverCanvas.on('object:removed', function (e) {
             self._onUpdate(e.target, 'remove');
         });
@@ -33744,12 +33729,18 @@ var DD_Main_Model = DD_ModelBase.extend({
         });
         return;
     },
-    
-    _onUpdate: function(fabricObj, type) {
+
+    _onUpdate: function (fabricObj, type) {
+        console.log('_onUpdate');
+        console.log(this);
         
-        if(this.obj.options.onUpdate) {
-           console.log(this.obj.options.onUpdate); 
-           this.obj.options.onUpdate.call(this, fabricObj, this.obj.options.group_index, this.obj.options.media_id, type); 
+        if (this.obj.options.onUpdate) {
+            this.obj.options.onUpdate.call(
+                    null,
+                    fabricObj,
+                    this.obj.options.group_index,
+                    this.obj.options.media_id,
+                    type);
         }
     },
 
@@ -33782,7 +33773,26 @@ var DD_Main_Model = DD_ModelBase.extend({
 });
 
 var DD_control_image = DD_Control_Base_Model.extend({
+    init: function (obj) {
+        this._super(obj);
+    },
+    _addControls: function () {
+        this.addDelete();
+        this.addRotate();
+        this.addSize();
+    },
     
+    addDelete: function() {
+        var _delete = this.obj.addDeleteBase();
+    },
+    
+    addRotate: function() {
+        var _rotate = this.obj.addRotateBase();
+    },
+    
+    addSize: function() {
+        var _size = this.obj.addSizeBase();
+    }
 });
 
 var DD_control_mask = DD_Control_Base_Model.extend({
@@ -33792,21 +33802,21 @@ var DD_control_mask = DD_Control_Base_Model.extend({
     _addControls: function () {
         this.addDelete();
         this.addSave();
+        this.addRotate();
+        this.addSize();
     },
     addDelete: function () {
-        var _delete = new DD_button({
-            'parent': this.obj.get(),
-            //'text': this._('delete'),
-            'class': 'fa fa-trash'
-        });
+        var _delete = this.obj.addDeleteBase();
+    },
+    addRotate: function() {
+        var _rotate = this.obj.addRotateBase();
+    },
+    addSize: function() {
+        var _size = this.obj.addSizeBase();
     },
     addSave: function () {
         var self = this;
-        var _save = new DD_button({
-            'parent': this.obj.get(),
-            //'text': this._('save'),
-            'class': 'fa fa-floppy-o'
-        });
+        var _save = this.obj.addSaveBase();
         _save.get().on('click', function () {
             self._l().getHoverCanvas().clipTo = function (ctx) {
                 var object = self._l().getMask();
@@ -34005,6 +34015,7 @@ var DD_Layer_Main = DD_Layer_Base.extend({
         options.top = 0;
         options.noChangeSize = true;
         options.parent = this._l().getBgCanvas();
+        options.mainBg = true;
         new DD_Layer_Img(options);
         return;
     }
@@ -34745,6 +34756,7 @@ $.fn.dd_productdesigner = function (options) {
         'sku': '',
         'product_id': '',
         'media_id': '',
+        'group_index': '',
         'translator': {
             'back': 'Back',
             'next': 'Next',
@@ -34806,8 +34818,8 @@ $.fn.dd_productdesigner = function (options) {
             'myFilesPath': '/myfiles.php',
             'percentSizeImage': 20 //percentage size from canvas width
         },
-        'afterLoad': function () {},
-        'onUpdate': ''
+        'afterLoad': null,
+        'onUpdate': null
     }, options);
     
     this.onUpdate = function(callback) {
@@ -34841,27 +34853,14 @@ var DD_object = Class.extend({
     },
     
     setGlobal: function () {
-        var uid = this.getGlobalUid();
-        if(uid) {
-            DD_Global[uid][this.id] = this;
-        }
         DD_Global[this.id] = this;
     },
     getId: function () {
         return this.id;
     },
     getGlobal: function (id) {
-        var uid = this.getGlobalUid();
-        if(uid) {
-            return DD_Global[uid][id];
-        }
         return DD_Global[id];
     },
-    
-    getGlobalUid: function() {
-        /////???????
-    },
-    
     createUUID: function () {
         var s = [];
         var hexDigits = "0123456789abcdef";
@@ -35483,6 +35482,47 @@ var DD_control = DD_Uibase.extend({
         model.initPosition();
     },
     
+    addDeleteBase: function() {
+        var _delete = new DD_button({
+            'parent': this.get(),
+            //'text': this._('delete'),
+            'class': 'fa fa-trash'
+        });
+        
+        return _delete;
+    },
+    
+    addRotateBase: function() {
+        var _rotate = new DD_button({
+            'parent': this.get(),
+            //'text': this._('delete'),
+            'class': 'fa fa-undo'
+        });
+        
+        return _rotate;
+    },
+    
+    addSaveBase: function() {
+        var _save = new DD_button({
+            'parent': this.get(),
+            //'text': this._('save'),
+            'class': 'fa fa-floppy-o'
+        });
+        
+        return _save;
+    },
+    
+    addSizeBase: function() {
+        var _size = new DD_button({
+            'parent': this.get(),
+            //'text': this._('save'),
+            'class': 'fa fa-arrows'
+        });
+        
+        return _size;
+    },
+    
+    
     remove: function() {
         
     }
@@ -35756,6 +35796,74 @@ var DD_Admin_ImagesSelected_Model = DD_ModelBase.extend({
         this.groups[parseInt(group_index)]['imgs'][newImgIndex] = img;
         this._evnt().doCall(this.groupChangedEvent);
     },
+    
+    updateImgFabricConf: function(group_uid, media_id, fabricObj, type) {
+        if(fabricObj.mainBg) {
+            return;
+        }
+        if(fabricObj.layerMask && type == 'remove') {
+            this.removeMask(group_uid, media_id, fabricObj);
+        }
+        if(fabricObj.layerMask) {
+            this.updateMask(group_uid, media_id, fabricObj);
+        }
+        if(type == 'remove') {
+            this.removeLayer(group_uid, media_id, fabricObj);
+        }
+        this.updateLayer(group_uid, media_id, fabricObj);
+    },
+    
+    findLayerByUid: function(imgConf, fabricObj) {
+        var _layer = null;
+        var _index = null;
+        $.each(imgConf, function(index, layer) {
+            if(layer.uid == fabricObj.uid) {
+                _layer = layer;
+                _index = index;
+            }
+        });
+        return {
+            'layer': _layer,
+            'index': _index
+        };
+    },
+    
+    updateLayer: function(group_uid, media_id, fabricObj) {
+        var imgConf = this.getImgConf(group_uid, media_id);
+        var layer = this.findLayerByUid(imgConf, fabricObj);
+        if(!layer._layer) {
+            imgConf.push(fabricObj);
+        }else{
+            imgConf[layer._index] = fabricObj;
+        }
+        this.updateImageConf(group_uid, media_id, 'conf', imgConf);
+    },
+    
+    removeLayer: function(group_uid, media_id, fabricObj) {
+        var imgConf = this.getImgConf(group_uid, media_id);
+        var layer = this.findLayerByUid(imgConf, fabricObj);
+        imgConf.splice(layer._index, 1, imgConf);
+        this.updateImageConf(group_uid, media_id, 'conf', imgConf);
+    },
+    
+    updateMask: function(group_uid, media_id, fabricObj) {
+        this.updateImageConf(group_uid, media_id, 'mask', fabricObj);
+    },
+    
+    removeMask: function(group_uid, media_id, fabricObj) {
+        this.updateImageConf(group_uid, media_id, 'mask', null);
+    },
+    
+    getImgConf: function(group_uid, media_id) {
+        var groups = this.getGroups();
+        var index = this.getImgIndex(group_uid, media_id);
+        var img = groups[this.getGroupIndexByUid(group_uid)]['imgs'][index];
+        if(!img['conf']) {
+            img['conf'] = [];
+        }
+        
+        return img['conf'];
+    },
 
     getImgIndex: function (group_uid, media_id) {
         var groups = this.getGroups();
@@ -35866,7 +35974,11 @@ var DD_Admin_ImagesSelected_Model = DD_ModelBase.extend({
     addGroupSaveClick: function (obj) {
         var self = this;
         obj.on('click', function () {
-            console.log('save');
+            var groups = self.getGroups();
+            var jsonStr = JSON.stringify(groups);
+            
+            console.log(groups);
+            console.log(JSON.stringify(groups));
         });
     }
 
@@ -35910,16 +36022,8 @@ var DD_admin_group_image_model = DD_Admin_ImagesSelected_Model.extend({
         });
     },
     
-    onUpdate: function(fabricObj, group_index, media_id, type) {
-        if(type == 'remove') {
-            fabricObj = null;
-        }
-        console.log('fabricObj');
-        console.log(group_index);
-        console.log(media_id);
-        console.log(type);
-        console.log(fabricObj);
-        console.log(this);
+    onUpdate: function(fabricObj, group_uid, media_id, type) {
+        this.updateImgFabricConf(group_uid, media_id, fabricObj, type);
     },
 
     clickEdit: function (el, options) {
@@ -35930,7 +36034,7 @@ var DD_admin_group_image_model = DD_Admin_ImagesSelected_Model.extend({
         var defualtFontColor = this._s('defualtFontColor');
         var defaultLayerMaskWidth = this._s('defaultLayerMaskWidth');
         var percentSizeFromMask = this._s('percentSizeFromMask');
-        var onUpdate = this.onUpdate;
+        var onUpdate = this.onUpdate.bind(this);
         var group_index = el.attr('data-group');
         
         el.on('click', function () {

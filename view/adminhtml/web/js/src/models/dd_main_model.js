@@ -7,7 +7,6 @@ var DD_Main_Model = DD_ModelBase.extend({
     init: function (obj) {
         this.obj = obj;
         this._super();
-        //this.registerEvents();
         this.initLayers();
     },
 
@@ -54,91 +53,49 @@ var DD_Main_Model = DD_ModelBase.extend({
                 parent: self.obj.self,
                 fabricObject: e.target
             });
+            e.target.uid = self.createUUID();
             self._onUpdate(e.target, 'update');
         });
 
         hoverCanvas.on('mouse:down', function (e) {
-            /*
-             var target = e.target;
-             if (target.layerMask) {
-             hoverCanvas.clipTo = function (ctx) {
-             ctx.restore();
-             hoverCanvas.calcOffset();
-             hoverCanvas.replaceAll();
-             }
-             }
-             */
-            //console.log('mouse:down');
-            //console.log(e.target);
+           
         });
         hoverCanvas.on('object:moving', function (e) {
-            //console.log(e.target.controlModelCreated);
             if (e.target.controlModelCreated) {
                 e.target.controlModelCreated.hide();
             }
         });
         hoverCanvas.on('object:scaling', function (e) {
-            //console.log(e.target.controlModelCreated);
             if (e.target.controlModelCreated) {
                 e.target.controlModelCreated.hide();
             }
         });
         hoverCanvas.on('object:rotating', function (e) {
-            //console.log(e.target.controlModelCreated);
             if (e.target.controlModelCreated) {
                 e.target.controlModelCreated.hide();
             }
         });
         hoverCanvas.on('object:skewing', function (e) {
-            //console.log(e.target.controlModelCreated);
             if (e.target.controlModelCreated) {
                 e.target.controlModelCreated.hide();
             }
         });
-
-        /*
-         hoverCanvas.on('after:render', function () {
-         hoverCanvas.contextContainer.strokeStyle = '#555';
-         hoverCanvas.forEachObject(function (obj) {
-         var bound = obj.getBoundingRect(); // <== this is the magic
-         console.log(bound);
-         canvas.contextContainer.strokeRect(
-         bound.left,
-         bound.top,
-         bound.width,
-         bound.height
-         );
-         
-         });
-         
-         });
-         */
         hoverCanvas.on('before:selection:cleared', function (e) {
-            //console.log(e.target.controlModelCreated);
-            //console.log('selection:cleared');
             if (e.target.controlModelCreated) {
                 e.target.controlModelCreated.hide();
             }
         });
-
-
-
         hoverCanvas.on('object:selected', function (e) {
-            //console.log(e.target.controlModelCreated);
             if (e.target.controlModelCreated) {
                 e.target.controlModelCreated.initPosition();
             }
         })
         hoverCanvas.on('object:modified', function (e) {
-            //console.log('object:modified');
-            //console.log(e.target);
             if (e.target.controlModelCreated) {
                 e.target.controlModelCreated.initPosition();
             }
             self._onUpdate(e.target, 'update');
         });
-        
-        
         hoverCanvas.on('object:removed', function (e) {
             self._onUpdate(e.target, 'remove');
         });
@@ -156,12 +113,18 @@ var DD_Main_Model = DD_ModelBase.extend({
         });
         return;
     },
-    
-    _onUpdate: function(fabricObj, type) {
+
+    _onUpdate: function (fabricObj, type) {
+        console.log('_onUpdate');
+        console.log(this);
         
-        if(this.obj.options.onUpdate) {
-           console.log(this.obj.options.onUpdate); 
-           this.obj.options.onUpdate.call(this, fabricObj, this.obj.options.group_index, this.obj.options.media_id, type); 
+        if (this.obj.options.onUpdate) {
+            this.obj.options.onUpdate.call(
+                    null,
+                    fabricObj,
+                    this.obj.options.group_index,
+                    this.obj.options.media_id,
+                    type);
         }
     },
 

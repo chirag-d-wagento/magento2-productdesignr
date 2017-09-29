@@ -21,6 +21,47 @@ var DD_control = DD_Uibase.extend({
         model.initPosition();
     },
     
+    addDeleteBase: function() {
+        var _delete = new DD_button({
+            'parent': this.get(),
+            //'text': this._('delete'),
+            'class': 'fa fa-trash'
+        });
+        
+        return _delete;
+    },
+    
+    addRotateBase: function() {
+        var _rotate = new DD_button({
+            'parent': this.get(),
+            //'text': this._('delete'),
+            'class': 'fa fa-undo'
+        });
+        
+        return _rotate;
+    },
+    
+    addSaveBase: function() {
+        var _save = new DD_button({
+            'parent': this.get(),
+            //'text': this._('save'),
+            'class': 'fa fa-floppy-o'
+        });
+        
+        return _save;
+    },
+    
+    addSizeBase: function() {
+        var _size = new DD_button({
+            'parent': this.get(),
+            //'text': this._('save'),
+            'class': 'fa fa-arrows'
+        });
+        
+        return _size;
+    },
+    
+    
     remove: function() {
         
     }

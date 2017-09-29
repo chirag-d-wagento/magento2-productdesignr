@@ -9,6 +9,7 @@ $.fn.dd_productdesigner = function (options) {
         'sku': '',
         'product_id': '',
         'media_id': '',
+        'group_index': '',
         'translator': {
             'back': 'Back',
             'next': 'Next',
@@ -70,8 +71,8 @@ $.fn.dd_productdesigner = function (options) {
             'myFilesPath': '/myfiles.php',
             'percentSizeImage': 20 //percentage size from canvas width
         },
-        'afterLoad': function () {},
-        'onUpdate': ''
+        'afterLoad': null,
+        'onUpdate': null
     }, options);
     
     this.onUpdate = function(callback) {

@@ -12,27 +12,14 @@ var DD_object = Class.extend({
     },
     
     setGlobal: function () {
-        var uid = this.getGlobalUid();
-        if(uid) {
-            DD_Global[uid][this.id] = this;
-        }
         DD_Global[this.id] = this;
     },
     getId: function () {
         return this.id;
     },
     getGlobal: function (id) {
-        var uid = this.getGlobalUid();
-        if(uid) {
-            return DD_Global[uid][id];
-        }
         return DD_Global[id];
     },
-    
-    getGlobalUid: function() {
-        /////???????
-    },
-    
     createUUID: function () {
         var s = [];
         var hexDigits = "0123456789abcdef";
@@ -654,6 +641,47 @@ var DD_control = DD_Uibase.extend({
         model.initPosition();
     },
     
+    addDeleteBase: function() {
+        var _delete = new DD_button({
+            'parent': this.get(),
+            //'text': this._('delete'),
+            'class': 'fa fa-trash'
+        });
+        
+        return _delete;
+    },
+    
+    addRotateBase: function() {
+        var _rotate = new DD_button({
+            'parent': this.get(),
+            //'text': this._('delete'),
+            'class': 'fa fa-undo'
+        });
+        
+        return _rotate;
+    },
+    
+    addSaveBase: function() {
+        var _save = new DD_button({
+            'parent': this.get(),
+            //'text': this._('save'),
+            'class': 'fa fa-floppy-o'
+        });
+        
+        return _save;
+    },
+    
+    addSizeBase: function() {
+        var _size = new DD_button({
+            'parent': this.get(),
+            //'text': this._('save'),
+            'class': 'fa fa-arrows'
+        });
+        
+        return _size;
+    },
+    
+    
     remove: function() {
         
     }
@@ -927,6 +955,74 @@ var DD_Admin_ImagesSelected_Model = DD_ModelBase.extend({
         this.groups[parseInt(group_index)]['imgs'][newImgIndex] = img;
         this._evnt().doCall(this.groupChangedEvent);
     },
+    
+    updateImgFabricConf: function(group_uid, media_id, fabricObj, type) {
+        if(fabricObj.mainBg) {
+            return;
+        }
+        if(fabricObj.layerMask && type == 'remove') {
+            this.removeMask(group_uid, media_id, fabricObj);
+        }
+        if(fabricObj.layerMask) {
+            this.updateMask(group_uid, media_id, fabricObj);
+        }
+        if(type == 'remove') {
+            this.removeLayer(group_uid, media_id, fabricObj);
+        }
+        this.updateLayer(group_uid, media_id, fabricObj);
+    },
+    
+    findLayerByUid: function(imgConf, fabricObj) {
+        var _layer = null;
+        var _index = null;
+        $.each(imgConf, function(index, layer) {
+            if(layer.uid == fabricObj.uid) {
+                _layer = layer;
+                _index = index;
+            }
+        });
+        return {
+            'layer': _layer,
+            'index': _index
+        };
+    },
+    
+    updateLayer: function(group_uid, media_id, fabricObj) {
+        var imgConf = this.getImgConf(group_uid, media_id);
+        var layer = this.findLayerByUid(imgConf, fabricObj);
+        if(!layer._layer) {
+            imgConf.push(fabricObj);
+        }else{
+            imgConf[layer._index] = fabricObj;
+        }
+        this.updateImageConf(group_uid, media_id, 'conf', imgConf);
+    },
+    
+    removeLayer: function(group_uid, media_id, fabricObj) {
+        var imgConf = this.getImgConf(group_uid, media_id);
+        var layer = this.findLayerByUid(imgConf, fabricObj);
+        imgConf.splice(layer._index, 1, imgConf);
+        this.updateImageConf(group_uid, media_id, 'conf', imgConf);
+    },
+    
+    updateMask: function(group_uid, media_id, fabricObj) {
+        this.updateImageConf(group_uid, media_id, 'mask', fabricObj);
+    },
+    
+    removeMask: function(group_uid, media_id, fabricObj) {
+        this.updateImageConf(group_uid, media_id, 'mask', null);
+    },
+    
+    getImgConf: function(group_uid, media_id) {
+        var groups = this.getGroups();
+        var index = this.getImgIndex(group_uid, media_id);
+        var img = groups[this.getGroupIndexByUid(group_uid)]['imgs'][index];
+        if(!img['conf']) {
+            img['conf'] = [];
+        }
+        
+        return img['conf'];
+    },
 
     getImgIndex: function (group_uid, media_id) {
         var groups = this.getGroups();
@@ -1037,7 +1133,11 @@ var DD_Admin_ImagesSelected_Model = DD_ModelBase.extend({
     addGroupSaveClick: function (obj) {
         var self = this;
         obj.on('click', function () {
-            console.log('save');
+            var groups = self.getGroups();
+            var jsonStr = JSON.stringify(groups);
+            
+            console.log(groups);
+            console.log(JSON.stringify(groups));
         });
     }
 
@@ -1081,16 +1181,8 @@ var DD_admin_group_image_model = DD_Admin_ImagesSelected_Model.extend({
         });
     },
     
-    onUpdate: function(fabricObj, group_index, media_id, type) {
-        if(type == 'remove') {
-            fabricObj = null;
-        }
-        console.log('fabricObj');
-        console.log(group_index);
-        console.log(media_id);
-        console.log(type);
-        console.log(fabricObj);
-        console.log(this);
+    onUpdate: function(fabricObj, group_uid, media_id, type) {
+        this.updateImgFabricConf(group_uid, media_id, fabricObj, type);
     },
 
     clickEdit: function (el, options) {
@@ -1101,7 +1193,7 @@ var DD_admin_group_image_model = DD_Admin_ImagesSelected_Model.extend({
         var defualtFontColor = this._s('defualtFontColor');
         var defaultLayerMaskWidth = this._s('defaultLayerMaskWidth');
         var percentSizeFromMask = this._s('percentSizeFromMask');
-        var onUpdate = this.onUpdate;
+        var onUpdate = this.onUpdate.bind(this);
         var group_index = el.attr('data-group');
         
         el.on('click', function () {
