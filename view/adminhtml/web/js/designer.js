@@ -35,6 +35,7 @@ define([
                     'product_id': data.product_id(),
                     'urlLoadImages': data.urlLoadImages,
                     'urlUploadImages': data.urlUploadImages,
+                    'urlSaveData': data.urlSaveData,
                     'percentSizeImage': 30,
                     'percentSizeFromMask': 70,
                     

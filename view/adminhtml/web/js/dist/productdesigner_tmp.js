@@ -2309,7 +2309,6 @@ $.fn.dd_productdesigner = function (options) {
             'defaultFontSize': 20,
             'percentSizeFromMask': 70,
             'defaultLayerMaskWidth': 40,
-
             'urlUploadImages': '',
             'myFilesPath': '/myfiles.php',
             'percentSizeImage': 20 //percentage size from canvas width

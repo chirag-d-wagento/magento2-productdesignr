@@ -19,6 +19,8 @@ $.fn.dd_productdesigner_admin = function (options) {
             'urlLoadImages': '',
             'product_id': '',
             'urlUploadImages': '',
+            
+            'urlSaveData': '',
             'percentSizeImage': '',
             'percentSizeFromMask': 70,
             'defaultFont': 'Verdana',

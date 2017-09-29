@@ -61,7 +61,7 @@ class Designer extends AbstractModifier {
                                 'urlImages' => $this->urlBuilder->getUrl('dd_productdesigner/product/images'),
                                 'urlLoadImages' => $this->urlBuilder->getUrl('dd_productdesigner/product/loadimages'),
                                 'urlUploadImages' => $this->urlBuilder->getUrl('dd_productdesigner/image/upload'),
-                                
+                                'urlSaveData' => $this->urlBuilder->getUrl('dd_productdesigner/group/save')
                             ],
                         ],
                     ],
