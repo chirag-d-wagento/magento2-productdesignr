@@ -24,7 +24,6 @@ var DD_control_mask = DD_Control_Base_Model.extend({
             self._l().getHoverCanvas().clipTo = function (ctx) {
                 var object = self._l().getMask();
                 var oCoords = object.oCoords;
-                var zoom = self._l().getHoverCanvas().getZoom();
                 ctx.strokeStyle = '#ccc';
                 ctx.beginPath();
                 ctx.moveTo(oCoords.tl.x, oCoords.tl.y);

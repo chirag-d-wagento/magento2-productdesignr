@@ -2886,10 +2886,16 @@ ul.tabs li.current {
 .dd-helper-popup {
   position: absolute;
   z-index: 1;
-  width: auto;
-  height: 10px;
+  width: 100%;
+  padding: 5px;
+  background: #fff;
+  border: 1px solid #ccc;
   top: 0px;
   display: none;
+}
+.dd-helper-popup .fa {
+  font-size: 20px;
+  margin-right: 20px;
 }
 .dd-designer-topcontrols {
   width: 100%;
@@ -2953,9 +2959,12 @@ ul.tabs li.current {
 }
 .clearfix:after,
 .clearfix:before {
-  content: "";
-  display: table;
+  visibility: hidden;
+  display: block;
+  font-size: 0;
+  content: " ";
   clear: both;
+  height: 0;
 }
 .dd-designer-container {
   height: 100%;
@@ -2966,6 +2975,7 @@ ul.tabs li.current {
   width: 49%;
   float: left;
   border-right: 1px solid #ccc;
+  margin-top: 20px;
 }
 .dd-designer-container canvas {
   width: 100%;

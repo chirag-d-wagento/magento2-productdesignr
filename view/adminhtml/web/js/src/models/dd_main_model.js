@@ -54,6 +54,7 @@ var DD_Main_Model = DD_ModelBase.extend({
                 parent: self.obj.self,
                 fabricObject: e.target
             });
+            self._onUpdate(e.target, 'update');
         });
 
         hoverCanvas.on('mouse:down', function (e) {
@@ -67,29 +68,29 @@ var DD_Main_Model = DD_ModelBase.extend({
              }
              }
              */
-            console.log('mouse:down');
-            console.log(e.target);
+            //console.log('mouse:down');
+            //console.log(e.target);
         });
         hoverCanvas.on('object:moving', function (e) {
-            console.log(e.target.controlModelCreated);
+            //console.log(e.target.controlModelCreated);
             if (e.target.controlModelCreated) {
                 e.target.controlModelCreated.hide();
             }
         });
         hoverCanvas.on('object:scaling', function (e) {
-            console.log(e.target.controlModelCreated);
+            //console.log(e.target.controlModelCreated);
             if (e.target.controlModelCreated) {
                 e.target.controlModelCreated.hide();
             }
         });
         hoverCanvas.on('object:rotating', function (e) {
-            console.log(e.target.controlModelCreated);
+            //console.log(e.target.controlModelCreated);
             if (e.target.controlModelCreated) {
                 e.target.controlModelCreated.hide();
             }
         });
         hoverCanvas.on('object:skewing', function (e) {
-            console.log(e.target.controlModelCreated);
+            //console.log(e.target.controlModelCreated);
             if (e.target.controlModelCreated) {
                 e.target.controlModelCreated.hide();
             }
@@ -113,8 +114,8 @@ var DD_Main_Model = DD_ModelBase.extend({
          });
          */
         hoverCanvas.on('before:selection:cleared', function (e) {
-            console.log(e.target.controlModelCreated);
-            console.log('selection:cleared');
+            //console.log(e.target.controlModelCreated);
+            //console.log('selection:cleared');
             if (e.target.controlModelCreated) {
                 e.target.controlModelCreated.hide();
             }
@@ -123,17 +124,23 @@ var DD_Main_Model = DD_ModelBase.extend({
 
 
         hoverCanvas.on('object:selected', function (e) {
-            console.log(e.target.controlModelCreated);
+            //console.log(e.target.controlModelCreated);
             if (e.target.controlModelCreated) {
                 e.target.controlModelCreated.initPosition();
             }
         })
         hoverCanvas.on('object:modified', function (e) {
-            console.log('object:modified');
-            console.log(e.target);
+            //console.log('object:modified');
+            //console.log(e.target);
             if (e.target.controlModelCreated) {
                 e.target.controlModelCreated.initPosition();
             }
+            self._onUpdate(e.target, 'update');
+        });
+        
+        
+        hoverCanvas.on('object:removed', function (e) {
+            self._onUpdate(e.target, 'remove');
         });
 
         new DD_Layer_Main({
@@ -148,6 +155,14 @@ var DD_Main_Model = DD_ModelBase.extend({
             self.resize(width, height);
         });
         return;
+    },
+    
+    _onUpdate: function(fabricObj, type) {
+        
+        if(this.obj.options.onUpdate) {
+           console.log(this.obj.options.onUpdate); 
+           this.obj.options.onUpdate.call(this, fabricObj, this.obj.options.group_index, this.obj.options.media_id, type); 
+        }
     },
 
     resize: function (width, height) {

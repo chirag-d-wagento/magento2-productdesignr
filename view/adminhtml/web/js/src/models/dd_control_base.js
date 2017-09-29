@@ -18,19 +18,11 @@ var DD_Control_Base_Model = DD_ModelBase.extend({
     },
     
     calcTopPosition: function() {
-        var parent = this._l().getHoverCanvas();
-        var zoom = parent.getZoom();
-        var bounds = this.obj.options.fabricObject.getBoundingRect();
-        return (bounds.top + bounds.height) + 10
+        return '0';
     },
     
     calcLeftosition: function() {
-        var parent = this._l().getHoverCanvas();
-        var zoom = parent.getZoom();
-        var bounds = this.obj.options.fabricObject.getBoundingRect();
-        var left = ( bounds.left + (bounds.width)/2 
-                - this.obj.get().width()/2) + 10;
-        return left;
+        return '0';
     },
     
     hide: function() {

@@ -1080,6 +1080,18 @@ var DD_admin_group_image_model = DD_Admin_ImagesSelected_Model.extend({
 
         });
     },
+    
+    onUpdate: function(fabricObj, group_index, media_id, type) {
+        if(type == 'remove') {
+            fabricObj = null;
+        }
+        console.log('fabricObj');
+        console.log(group_index);
+        console.log(media_id);
+        console.log(type);
+        console.log(fabricObj);
+        console.log(this);
+    },
 
     clickEdit: function (el, options) {
         var urlUploadImages = this._s('urlUploadImages');
@@ -1089,13 +1101,13 @@ var DD_admin_group_image_model = DD_Admin_ImagesSelected_Model.extend({
         var defualtFontColor = this._s('defualtFontColor');
         var defaultLayerMaskWidth = this._s('defaultLayerMaskWidth');
         var percentSizeFromMask = this._s('percentSizeFromMask');
+        var onUpdate = this.onUpdate;
+        var group_index = el.attr('data-group');
         
         el.on('click', function () {
             $('#dd_designer').html('');
             $('#dd_designer').empty();
-
-
-            $('#dd_designer').dd_productdesigner({
+            var designer = $('#dd_designer').dd_productdesigner({
                 'src': options.src,
                 'width': options.sizes.width,
                 'height': options.sizes.height,
@@ -1103,6 +1115,7 @@ var DD_admin_group_image_model = DD_Admin_ImagesSelected_Model.extend({
                 'sku': options.sku,
                 'product_id': options.product_id,
                 'media_id': options.media_id,
+                'group_index': group_index,
                 'settings': {
                     'urlUploadImages': urlUploadImages,
                     'percentSizeImage': percentSizeImage,
@@ -1114,6 +1127,8 @@ var DD_admin_group_image_model = DD_Admin_ImagesSelected_Model.extend({
                 }
                 
             });
+            designer.onUpdate(onUpdate);
+            designer.init();
         });
     }
 

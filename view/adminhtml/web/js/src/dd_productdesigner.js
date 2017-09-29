@@ -1,5 +1,6 @@
 $.fn.dd_productdesigner = function (options) {
-    //new
+    //
+    //
     this.options = $.extend({
         'src': '',
         'debug': false,
@@ -29,8 +30,7 @@ $.fn.dd_productdesigner = function (options) {
             'no_data': 'No Data Found',
             'delete': 'Delete',
             'save': 'Save',
-            
-            
+
             //setup
             'info': 'Image Info',
             'layer_mask': 'Layer Mask',
@@ -49,7 +49,7 @@ $.fn.dd_productdesigner = function (options) {
             'add_layer_mask': 'Add/Edit Layer Mask',
             'add_default_images': 'Add Default Images',
             'add_image': 'Add Image',
-            'add_default_texts': 'Add default texts'    
+            'add_default_texts': 'Add default texts'
         },
         'settings': {
             'addphoto': true,
@@ -65,7 +65,7 @@ $.fn.dd_productdesigner = function (options) {
             'defaultFontSize': 20,
             'percentSizeFromMask': 70,
             'defaultLayerMaskWidth': 40,
-            
+
             'urlUploadImages': '',
             'myFilesPath': '/myfiles.php',
             'percentSizeImage': 20 //percentage size from canvas width
@@ -74,13 +74,19 @@ $.fn.dd_productdesigner = function (options) {
         'onUpdate': ''
     }, options);
     
-    new DD_Translator(this.options.translator);
-    new DD_Settings(this.options.settings);
-    new DD_Event(); 
-    var main = new DD_main(this, this.options);
-    if(this.options.debug) {
-        new DD_Debug(this);
+    this.onUpdate = function(callback) {
+        this.options.onUpdate = callback;
     }
-    
+
+    this.init = function () {
+        new DD_Translator(this.options.translator);
+        new DD_Settings(this.options.settings);
+        new DD_Event();
+        var main = new DD_main(this, this.options);
+        if (this.options.debug) {
+            new DD_Debug(this);
+        }
+    }
+
     return this;
 };

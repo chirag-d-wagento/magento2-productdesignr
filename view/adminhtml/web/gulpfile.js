@@ -5,11 +5,11 @@ var uglify = require('gulp-uglify');
 var wrap = require("gulp-wrap");
 
 var jsFiles = [
-    'js/src/plugins/fabric.1.7.18.js',
+    //'js/src/plugins/fabric.1.7.18.js',
     'js/src/plugins/fabric_override.js',
     //'js/src/plugins/fabric-resize.js',
     'js/src/plugins/modernizr-custom.js',
-    'js/src/plugins/Sortable.js',
+    //'js/src/plugins/Sortable.js',
     //'js/src/plugins/jsBox.js',
     'js/src/core/dd_object.js',
     'js/src/core/dd_event.js',
@@ -61,7 +61,7 @@ var finalTmpFileTwo = 'productdesigner_tmp2.js';
 gulp.task('scripts', function () {
     return gulp.src(jsFiles)
             .pipe(concat(finalTmpFile))
-            .pipe(wrap('(function($){<%= contents %>})(jQuery);', {}, {parse: false}))
+            .pipe(wrap('(function($){"use strict"; <%= contents %>})(jQuery);', {}, {parse: false}))
             .pipe(gulp.dest(jsDest));
 
     cb(err);
