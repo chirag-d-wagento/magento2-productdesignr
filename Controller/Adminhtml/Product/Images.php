@@ -6,18 +6,22 @@ use Magento\Framework\Controller\ResultFactory;
 
 class Images extends \Magento\Backend\App\Action {
     
+    protected $_designer;
     
     public function __construct(
-        \Magento\Backend\App\Action\Context $context
+        \Magento\Backend\App\Action\Context $context,
+        \Develo\Designer\Model\Designer $designer   
     ) {
         parent::__construct($context);
+        $this->_designer = $designer;
     }
     
     public function execute() {
         
+        $productId = $this->getRequest()->getParam('product_id');
         return $this->sendResponse([
             'success' => true,
-            'data' => []
+            'data' => $this->_designer->loadConfguration($productId)
         ]);
     }
     

@@ -104,8 +104,9 @@ class Save extends \Magento\Backend\App\Action {
                 ->getCollection();
         
         $collection->getSelect()->where('group_id=?', $groupId);
-        
-        $collection->walk('delete');
+        foreach($collection as $image) {
+            $image->delete();
+        }
     }
     
     public function sendResponse($response = array()) {

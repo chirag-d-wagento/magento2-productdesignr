@@ -228,23 +228,26 @@ var DD_Admin_ImagesSelected_Model = DD_ModelBase.extend({
             url: this.obj.options.urlImages
                     + '?form_key=' + window.FORM_KEY,
             data: {
-                'product_sku': this.obj.options.psku
+                'product_id': self._s('product_id')
             },
             success: function (data) {
                 if (data.error) {
                     alert(data.errorMessage);
                 } else {
-                    self.updateGroups(data.data);
                     if (data.data.length == 0) {
+                        self.updateGroups(data.data);
                         var button = self.obj.drawNoImagesSelected();
                         self.attachCustomizeButtonEvents(button);
                         return;
+                    }else{
+                        self.obj.drawCustomizePanel();
+                        self.updateGroups(data.data);
                     }
                     //process groups!
                 }
             },
             error: function () {
-                alert("Something went wrong!");
+                alert("Something went while loading groups wrong!");
             },
             complete: function () {
                 self._evnt().doCall('hide-admin-loader');
@@ -307,10 +310,6 @@ var DD_Admin_ImagesSelected_Model = DD_ModelBase.extend({
         obj.on('click', function () {
             var groups = self.getGroups();
             var jsonStr = JSON.stringify(groups);
-
-            console.log(groups);
-            console.log(JSON.stringify(groups));
-
             self._evnt().doCall('show-admin-loader');
             $.ajax({
                 url: self._s('urlSaveData')
