@@ -101,7 +101,7 @@ var DD_Layer_Base = DD_object.extend({
     
     setObjAngle: function(object) {
         var angle = this.getAngle();
-        if(angle) {
+        if(angle && !object.get('angle')) {
             object.setAngle(angle);
         }
     },

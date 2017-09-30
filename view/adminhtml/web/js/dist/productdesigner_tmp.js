@@ -1469,7 +1469,7 @@ var DD_Layer_Base = DD_object.extend({
     
     setObjAngle: function(object) {
         var angle = this.getAngle();
-        if(angle) {
+        if(angle && !object.get('angle')) {
             object.setAngle(angle);
         }
     },
@@ -1485,6 +1485,8 @@ var DD_Layer_Img = DD_Layer_Base.extend({
         var self = this;
         var options = options ? options : {};
         if (options.parent) {
+            console.log('options.parent');
+            console.log(options.parent);
             this.parent = options.parent;
         }
         var src = fullCnfg ? fullCnfg.src : options.src;
@@ -1511,14 +1513,16 @@ var DD_Layer_Img = DD_Layer_Base.extend({
             } else {
                 var conf = fullCnfg;
             }
-            
+
             conf.notSelect = notSelect;
 
             iImg
                     .set(conf);
             parent.add(iImg);
 
-            self.setObjAngle(iImg);
+            if (!options.noChangeSize) {
+                self.setObjAngle(iImg);
+            }
 
             parent.renderAll();
 
