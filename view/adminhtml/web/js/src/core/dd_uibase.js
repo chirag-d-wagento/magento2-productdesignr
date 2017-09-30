@@ -41,7 +41,7 @@ var DD_Uibase = DD_object.extend({
     _onAfterCreate: function () {
         var model = null;
         if (this.model) {
-            eval("try {model = new " + this.model + "(this); }catch(err) {console.log('ERROR FOR MODEL: " + this.model + "; ERRTXT: ' + err)}");
+            eval("try {model = new " + this.model + "(this); }catch(err) {console.log('ERROR FOR MODEL: " + this.model + "; ERRTXT: ' + err + '; err.lineNumber: ' + err.lineNumber)}");
         }
         if (this.options.windowOpener && model) {
             this.addWindowOpenEvent(this, model, this.modal, this.options);

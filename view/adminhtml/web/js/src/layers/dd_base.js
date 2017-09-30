@@ -92,10 +92,8 @@ var DD_Layer_Base = DD_object.extend({
     },
     
     setDeselectEvent: function() {
-        
         this.object.on('deselected', function(e) {
-            console.log('i am deselected!');
-            if(this.controlModelCreated) {
+            if(typeof(this.controlModelCreated)!='undefined') {
                 this.controlModelCreated.hide();
             }
         });

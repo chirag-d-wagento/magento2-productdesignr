@@ -2,9 +2,13 @@ var DD_control = DD_Uibase.extend({
     mainClass: 'dd-helper-popup',
     init: function (options) {
         this.options = $.extend(( options ? options : {} ) , this.options);
+        console.log('DD_control');
+        
         if(!this.options.fabricObject) {
             return;
         }
+        console.log('this.options.fabricObject.controlModel');
+        console.log(this.options.fabricObject.controlModel);
         if(!this.options.fabricObject.controlModel) {
            return; 
         }

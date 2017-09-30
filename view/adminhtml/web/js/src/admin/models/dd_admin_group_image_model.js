@@ -41,6 +41,8 @@ var DD_admin_group_image_model = DD_Admin_ImagesSelected_Model.extend({
     },
 
     clickEdit: function (el, options) {
+        var self = this;
+        
         var urlUploadImages = this._s('urlUploadImages');
         var percentSizeImage = this._s('percentSizeImage');
         var defaultFontSize = this._s('defaultFontSize');
@@ -51,6 +53,7 @@ var DD_admin_group_image_model = DD_Admin_ImagesSelected_Model.extend({
         var onUpdate = this.onUpdate.bind(this);
         var group_index = el.attr('data-group');
         
+        console.log(options);
         el.on('click', function () {
             $('#dd_designer').html('');
             $('#dd_designer').empty();
@@ -63,6 +66,8 @@ var DD_admin_group_image_model = DD_Admin_ImagesSelected_Model.extend({
                 'product_id': options.product_id,
                 'media_id': options.media_id,
                 'group_index': group_index,
+                'mask': options.mask,
+                'conf': options.conf,
                 'settings': {
                     'urlUploadImages': urlUploadImages,
                     'percentSizeImage': percentSizeImage,

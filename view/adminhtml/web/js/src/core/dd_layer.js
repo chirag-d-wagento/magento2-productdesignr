@@ -55,4 +55,5 @@ var DD_Layer = DD_object.extend({
     getMask: function() {
         return this.layerMask;
     }
+    
 });

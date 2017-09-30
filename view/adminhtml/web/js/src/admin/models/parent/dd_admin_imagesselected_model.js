@@ -55,6 +55,8 @@ var DD_Admin_ImagesSelected_Model = DD_ModelBase.extend({
         });
         this._evnt().registerCallback(this.groupSetEvent, function (obj, eventName, data) {
             obj.groups = data;
+            console.log('obj.groups SET EVENT: ');
+            console.log(obj.groups);
         });
 
         this._evnt().registerCallback(this.removeGroupEvent, function (obj, eventName, group_index) {
@@ -148,9 +150,11 @@ var DD_Admin_ImagesSelected_Model = DD_ModelBase.extend({
         var _layer = null;
         var _index = null;
         $.each(imgConf, function (index, layer) {
+            console.log('layer.uid == fabricObj.uid ' + layer.uid + '==' +  fabricObj.uid);
             if (layer.uid == fabricObj.uid) {
                 _layer = layer;
                 _index = index;
+                return true;
             }
         });
         return {
@@ -162,10 +166,10 @@ var DD_Admin_ImagesSelected_Model = DD_ModelBase.extend({
     updateLayer: function (group_uid, media_id, fabricObj) {
         var imgConf = this.getImgConf(group_uid, media_id);
         var layer = this.findLayerByUid(imgConf, fabricObj);
-        if (!layer._layer) {
+        if (!layer.layer) {
             imgConf.push(fabricObj);
         } else {
-            imgConf[layer._index] = fabricObj;
+            imgConf[layer.index] = fabricObj;
         }
         this.updateImageConf(group_uid, media_id, 'conf', imgConf);
     },
@@ -192,7 +196,6 @@ var DD_Admin_ImagesSelected_Model = DD_ModelBase.extend({
         if (!img['conf']) {
             img['conf'] = [];
         }
-
         return img['conf'];
     },
 
@@ -310,12 +313,14 @@ var DD_Admin_ImagesSelected_Model = DD_ModelBase.extend({
         obj.on('click', function () {
             var groups = self.getGroups();
             var jsonStr = JSON.stringify(groups);
+            
+            console.log(jsonStr);
             self._evnt().doCall('show-admin-loader');
             $.ajax({
                 url: self._s('urlSaveData')
                         + '?form_key=' + window.FORM_KEY,
                 data: {
-                    'data': JSON.stringify(groups),
+                    'data': jsonStr,
                     'product_id': self._s('product_id')
                 },
                 success: function (data) {

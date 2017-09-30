@@ -48,17 +48,36 @@ var DD_Main_Model = DD_ModelBase.extend({
         this.layersObj.setHeight(height);
         this.layersObj.setWidth(width);
 
+        new DD_Layer_Main({
+            width: width,
+            height: height,
+            src: this.obj.options.src
+        });
+
+        this._addObjects(this.obj.options);
+        this._canvasEvents(hoverCanvas);
+
+        this.resize(width, height);
+        $(window).on('resize', function () {
+            self.resize(width, height);
+        });
+        return;
+    },
+
+    _canvasEvents: function (hoverCanvas) {
+        var self = this;
         hoverCanvas.on('object:added', function (e) {
             new DD_control({
                 parent: self.obj.self,
                 fabricObject: e.target
             });
+            if (e.target.uid) {
+                return;
+            }
             e.target.uid = self.createUUID();
+            e.target.uid.toString();
             self._onUpdate(e.target, 'update');
-        });
 
-        hoverCanvas.on('mouse:down', function (e) {
-           
         });
         hoverCanvas.on('object:moving', function (e) {
             if (e.target.controlModelCreated) {
@@ -80,12 +99,22 @@ var DD_Main_Model = DD_ModelBase.extend({
                 e.target.controlModelCreated.hide();
             }
         });
+
         hoverCanvas.on('before:selection:cleared', function (e) {
             if (e.target.controlModelCreated) {
                 e.target.controlModelCreated.hide();
             }
         });
         hoverCanvas.on('object:selected', function (e) {
+            console.log('object:selected');
+            if (!e.target.controlModelCreated) {
+                new DD_control({
+                    parent: self.obj.self,
+                    fabricObject: e.target
+                });
+            }
+            console.log(e.target.controlModelCreated);
+
             if (e.target.controlModelCreated) {
                 e.target.controlModelCreated.initPosition();
             }
@@ -99,29 +128,39 @@ var DD_Main_Model = DD_ModelBase.extend({
         hoverCanvas.on('object:removed', function (e) {
             self._onUpdate(e.target, 'remove');
         });
+    },
 
-        new DD_Layer_Main({
-            width: width,
-            height: height,
-            src: this.obj.options.src
-        });
-
-
-        this.resize(width, height);
-        $(window).on('resize', function () {
-            self.resize(width, height);
-        });
-        return;
+    _addObjects: function (options) {
+        if (options.mask) {
+            var mask = new DD_Layer_Mask(options.mask);
+            mask.save();
+        }
+        if (options.conf) {
+            var last = options.conf.length;
+            $(options.conf).each(function (i, obj) {
+                if (obj.type == 'image') {
+                    var notSelect = (last - 1) == i ? false : true;
+                    new DD_Layer_Img(null, obj, notSelect);
+                }
+            });
+        }
+        ;
     },
 
     _onUpdate: function (fabricObj, type) {
-        console.log('_onUpdate');
-        console.log(this);
-        
+        var newObject = fabricObj.toJSON();
+        newObject.uid = fabricObj.uid;
+        if (fabricObj.layerMask) {
+            newObject.layerMask = true;
+        }
+        if (fabricObj.controlModel) {
+            newObject.controlModel = fabricObj.controlModel;
+        }
+
         if (this.obj.options.onUpdate) {
             this.obj.options.onUpdate.call(
                     null,
-                    fabricObj,
+                    newObject,
                     this.obj.options.group_index,
                     this.obj.options.media_id,
                     type);

@@ -344,7 +344,7 @@ var DD_Uibase = DD_object.extend({
     _onAfterCreate: function () {
         var model = null;
         if (this.model) {
-            eval("try {model = new " + this.model + "(this); }catch(err) {console.log('ERROR FOR MODEL: " + this.model + "; ERRTXT: ' + err)}");
+            eval("try {model = new " + this.model + "(this); }catch(err) {console.log('ERROR FOR MODEL: " + this.model + "; ERRTXT: ' + err + '; err.lineNumber: ' + err.lineNumber)}");
         }
         if (this.options.windowOpener && model) {
             this.addWindowOpenEvent(this, model, this.modal, this.options);
@@ -622,9 +622,13 @@ var DD_control = DD_Uibase.extend({
     mainClass: 'dd-helper-popup',
     init: function (options) {
         this.options = $.extend(( options ? options : {} ) , this.options);
+        console.log('DD_control');
+        
         if(!this.options.fabricObject) {
             return;
         }
+        console.log('this.options.fabricObject.controlModel');
+        console.log(this.options.fabricObject.controlModel);
         if(!this.options.fabricObject.controlModel) {
            return; 
         }
@@ -883,6 +887,8 @@ var DD_Admin_ImagesSelected_Model = DD_ModelBase.extend({
         });
         this._evnt().registerCallback(this.groupSetEvent, function (obj, eventName, data) {
             obj.groups = data;
+            console.log('obj.groups SET EVENT: ');
+            console.log(obj.groups);
         });
 
         this._evnt().registerCallback(this.removeGroupEvent, function (obj, eventName, group_index) {
@@ -976,9 +982,11 @@ var DD_Admin_ImagesSelected_Model = DD_ModelBase.extend({
         var _layer = null;
         var _index = null;
         $.each(imgConf, function (index, layer) {
+            console.log('layer.uid == fabricObj.uid ' + layer.uid + '==' +  fabricObj.uid);
             if (layer.uid == fabricObj.uid) {
                 _layer = layer;
                 _index = index;
+                return true;
             }
         });
         return {
@@ -990,10 +998,10 @@ var DD_Admin_ImagesSelected_Model = DD_ModelBase.extend({
     updateLayer: function (group_uid, media_id, fabricObj) {
         var imgConf = this.getImgConf(group_uid, media_id);
         var layer = this.findLayerByUid(imgConf, fabricObj);
-        if (!layer._layer) {
+        if (!layer.layer) {
             imgConf.push(fabricObj);
         } else {
-            imgConf[layer._index] = fabricObj;
+            imgConf[layer.index] = fabricObj;
         }
         this.updateImageConf(group_uid, media_id, 'conf', imgConf);
     },
@@ -1020,7 +1028,6 @@ var DD_Admin_ImagesSelected_Model = DD_ModelBase.extend({
         if (!img['conf']) {
             img['conf'] = [];
         }
-
         return img['conf'];
     },
 
@@ -1138,12 +1145,14 @@ var DD_Admin_ImagesSelected_Model = DD_ModelBase.extend({
         obj.on('click', function () {
             var groups = self.getGroups();
             var jsonStr = JSON.stringify(groups);
+            
+            console.log(jsonStr);
             self._evnt().doCall('show-admin-loader');
             $.ajax({
                 url: self._s('urlSaveData')
                         + '?form_key=' + window.FORM_KEY,
                 data: {
-                    'data': JSON.stringify(groups),
+                    'data': jsonStr,
                     'product_id': self._s('product_id')
                 },
                 success: function (data) {
@@ -1206,6 +1215,8 @@ var DD_admin_group_image_model = DD_Admin_ImagesSelected_Model.extend({
     },
 
     clickEdit: function (el, options) {
+        var self = this;
+        
         var urlUploadImages = this._s('urlUploadImages');
         var percentSizeImage = this._s('percentSizeImage');
         var defaultFontSize = this._s('defaultFontSize');
@@ -1216,6 +1227,7 @@ var DD_admin_group_image_model = DD_Admin_ImagesSelected_Model.extend({
         var onUpdate = this.onUpdate.bind(this);
         var group_index = el.attr('data-group');
         
+        console.log(options);
         el.on('click', function () {
             $('#dd_designer').html('');
             $('#dd_designer').empty();
@@ -1228,6 +1240,8 @@ var DD_admin_group_image_model = DD_Admin_ImagesSelected_Model.extend({
                 'product_id': options.product_id,
                 'media_id': options.media_id,
                 'group_index': group_index,
+                'mask': options.mask,
+                'conf': options.conf,
                 'settings': {
                     'urlUploadImages': urlUploadImages,
                     'percentSizeImage': percentSizeImage,

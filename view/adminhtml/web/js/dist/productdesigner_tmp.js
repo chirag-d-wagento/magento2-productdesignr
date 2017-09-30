@@ -1,5 +1,4 @@
-(function($){"use strict"; 
-/*! modernizr 3.5.0 (Custom Build) | MIT *
+(function($){"use strict"; /*! modernizr 3.5.0 (Custom Build) | MIT *
  * https://modernizr.com/download/?-backgroundsize-bgsizecover-canvas-canvastext-cssresize-sizes-smil-svgfilters-mq-setclasses !*/
 !function(e,t,n){function r(e,t){return typeof e===t}function o(){var e,t,n,o,i,s,a;for(var l in w)if(w.hasOwnProperty(l)){if(e=[],t=w[l],t.name&&(e.push(t.name.toLowerCase()),t.options&&t.options.aliases&&t.options.aliases.length))for(n=0;n<t.options.aliases.length;n++)e.push(t.options.aliases[n].toLowerCase());for(o=r(t.fn,"function")?t.fn():t.fn,i=0;i<e.length;i++)s=e[i],a=s.split("."),1===a.length?Modernizr[a[0]]=o:(!Modernizr[a[0]]||Modernizr[a[0]]instanceof Boolean||(Modernizr[a[0]]=new Boolean(Modernizr[a[0]])),Modernizr[a[0]][a[1]]=o),C.push((o?"":"no-")+a.join("-"))}}function i(e){var t=_.className,n=Modernizr._config.classPrefix||"";if(b&&(t=t.baseVal),Modernizr._config.enableJSClass){var r=new RegExp("(^|\\s)"+n+"no-js(\\s|$)");t=t.replace(r,"$1"+n+"js$2")}Modernizr._config.enableClasses&&(t+=" "+n+e.join(" "+n),b?_.className.baseVal=t:_.className=t)}function s(){return"function"!=typeof t.createElement?t.createElement(arguments[0]):b?t.createElementNS.call(t,"http://www.w3.org/2000/svg",arguments[0]):t.createElement.apply(t,arguments)}function a(e,t){if("object"==typeof e)for(var n in e)T(e,n)&&a(n,e[n]);else{e=e.toLowerCase();var r=e.split("."),o=Modernizr[r[0]];if(2==r.length&&(o=o[r[1]]),"undefined"!=typeof o)return Modernizr;t="function"==typeof t?t():t,1==r.length?Modernizr[r[0]]=t:(!Modernizr[r[0]]||Modernizr[r[0]]instanceof Boolean||(Modernizr[r[0]]=new Boolean(Modernizr[r[0]])),Modernizr[r[0]][r[1]]=t),i([(t&&0!=t?"":"no-")+r.join("-")]),Modernizr._trigger(e,t)}return Modernizr}function l(e,t){return!!~(""+e).indexOf(t)}function u(e){return e.replace(/([a-z])-([a-z])/g,function(e,t,n){return t+n.toUpperCase()}).replace(/^-/,"")}function f(e,t){return function(){return e.apply(t,arguments)}}function c(e,t,n){var o;for(var i in e)if(e[i]in t)return n===!1?e[i]:(o=t[e[i]],r(o,"function")?f(o,n||t):o);return!1}function d(){var e=t.body;return e||(e=s(b?"svg":"body"),e.fake=!0),e}function p(e,n,r,o){var i,a,l,u,f="modernizr",c=s("div"),p=d();if(parseInt(r,10))for(;r--;)l=s("div"),l.id=o?o[r]:f+(r+1),c.appendChild(l);return i=s("style"),i.type="text/css",i.id="s"+f,(p.fake?p:c).appendChild(i),p.appendChild(c),i.styleSheet?i.styleSheet.cssText=e:i.appendChild(t.createTextNode(e)),c.id=f,p.fake&&(p.style.background="",p.style.overflow="hidden",u=_.style.overflow,_.style.overflow="hidden",_.appendChild(p)),a=n(c,e),p.fake?(p.parentNode.removeChild(p),_.style.overflow=u,_.offsetHeight):c.parentNode.removeChild(c),!!a}function m(e){return e.replace(/([A-Z])/g,function(e,t){return"-"+t.toLowerCase()}).replace(/^ms-/,"-ms-")}function A(t,n,r){var o;if("getComputedStyle"in e){o=getComputedStyle.call(e,t,n);var i=e.console;if(null!==o)r&&(o=o.getPropertyValue(r));else if(i){var s=i.error?"error":"log";i[s].call(i,"getComputedStyle returning null, its possible modernizr test results are inaccurate")}}else o=!n&&t.currentStyle&&t.currentStyle[r];return o}function g(t,r){var o=t.length;if("CSS"in e&&"supports"in e.CSS){for(;o--;)if(e.CSS.supports(m(t[o]),r))return!0;return!1}if("CSSSupportsRule"in e){for(var i=[];o--;)i.push("("+m(t[o])+":"+r+")");return i=i.join(" or "),p("@supports ("+i+") { #modernizr { position: absolute; } }",function(e){return"absolute"==A(e,null,"position")})}return n}function v(e,t,o,i){function a(){c&&(delete B.style,delete B.modElem)}if(i=r(i,"undefined")?!1:i,!r(o,"undefined")){var f=g(e,o);if(!r(f,"undefined"))return f}for(var c,d,p,m,A,v=["modernizr","tspan","samp"];!B.style&&v.length;)c=!0,B.modElem=s(v.shift()),B.style=B.modElem.style;for(p=e.length,d=0;p>d;d++)if(m=e[d],A=B.style[m],l(m,"-")&&(m=u(m)),B.style[m]!==n){if(i||r(o,"undefined"))return a(),"pfx"==t?m:!0;try{B.style[m]=o}catch(h){}if(B.style[m]!=A)return a(),"pfx"==t?m:!0}return a(),!1}function h(e,t,n,o,i){var s=e.charAt(0).toUpperCase()+e.slice(1),a=(e+" "+z.join(s+" ")+s).split(" ");return r(t,"string")||r(t,"undefined")?v(a,t,o,i):(a=(e+" "+P.join(s+" ")+s).split(" "),c(a,t,n))}function y(e,t,r){return h(e,n,n,t,r)}var C=[],w=[],S={_version:"3.5.0",_config:{classPrefix:"",enableClasses:!0,enableJSClass:!0,usePrefixes:!0},_q:[],on:function(e,t){var n=this;setTimeout(function(){t(n[e])},0)},addTest:function(e,t,n){w.push({name:e,fn:t,options:n})},addAsyncTest:function(e){w.push({name:null,fn:e})}},Modernizr=function(){};Modernizr.prototype=S,Modernizr=new Modernizr,Modernizr.addTest("svgfilters",function(){var t=!1;try{t="SVGFEColorMatrixElement"in e&&2==SVGFEColorMatrixElement.SVG_FECOLORMATRIX_TYPE_SATURATE}catch(n){}return t});var _=t.documentElement,b="svg"===_.nodeName.toLowerCase();Modernizr.addTest("canvas",function(){var e=s("canvas");return!(!e.getContext||!e.getContext("2d"))}),Modernizr.addTest("canvastext",function(){return Modernizr.canvas===!1?!1:"function"==typeof s("canvas").getContext("2d").fillText});var E={}.toString;Modernizr.addTest("smil",function(){return!!t.createElementNS&&/SVGAnimate/.test(E.call(t.createElementNS("http://www.w3.org/2000/svg","animate")))});var T;!function(){var e={}.hasOwnProperty;T=r(e,"undefined")||r(e.call,"undefined")?function(e,t){return t in e&&r(e.constructor.prototype[t],"undefined")}:function(t,n){return e.call(t,n)}}(),S._l={},S.on=function(e,t){this._l[e]||(this._l[e]=[]),this._l[e].push(t),Modernizr.hasOwnProperty(e)&&setTimeout(function(){Modernizr._trigger(e,Modernizr[e])},0)},S._trigger=function(e,t){if(this._l[e]){var n=this._l[e];setTimeout(function(){var e,r;for(e=0;e<n.length;e++)(r=n[e])(t)},0),delete this._l[e]}},Modernizr._q.push(function(){S.addTest=a}),Modernizr.addAsyncTest(function(){var e,t,n,r=s("img"),o="sizes"in r;!o&&"srcset"in r?(t="data:image/gif;base64,R0lGODlhAgABAPAAAP///wAAACH5BAAAAAAALAAAAAACAAEAAAICBAoAOw==",e="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==",n=function(){a("sizes",2==r.width)},r.onload=n,r.onerror=n,r.setAttribute("sizes","9px"),r.srcset=e+" 1w,"+t+" 8w",r.src=e):a("sizes",o)});var x="Moz O ms Webkit",z=S._config.usePrefixes?x.split(" "):[];S._cssomPrefixes=z;var P=S._config.usePrefixes?x.toLowerCase().split(" "):[];S._domPrefixes=P;var O=function(){var t=e.matchMedia||e.msMatchMedia;return t?function(e){var n=t(e);return n&&n.matches||!1}:function(t){var n=!1;return p("@media "+t+" { #modernizr { position: absolute; } }",function(t){n="absolute"==(e.getComputedStyle?e.getComputedStyle(t,null):t.currentStyle).position}),n}}();S.mq=O;var N={elem:s("modernizr")};Modernizr._q.push(function(){delete N.elem});var B={style:N.elem.style};Modernizr._q.unshift(function(){delete B.style}),S.testAllProps=h,S.testAllProps=y,Modernizr.addTest("backgroundsize",y("backgroundSize","100%",!0)),Modernizr.addTest("bgsizecover",y("backgroundSize","cover")),Modernizr.addTest("cssresize",y("resize","both",!0)),o(),i(C),delete S.addTest,delete S.addAsyncTest;for(var j=0;j<Modernizr._q.length;j++)Modernizr._q[j]();e.Modernizr=Modernizr}(window,document);
 var DD_Global = {};
@@ -348,7 +347,7 @@ var DD_Uibase = DD_object.extend({
     _onAfterCreate: function () {
         var model = null;
         if (this.model) {
-            eval("try {model = new " + this.model + "(this); }catch(err) {console.log('ERROR FOR MODEL: " + this.model + "; ERRTXT: ' + err)}");
+            eval("try {model = new " + this.model + "(this); }catch(err) {console.log('ERROR FOR MODEL: " + this.model + "; ERRTXT: ' + err + '; err.lineNumber: ' + err.lineNumber)}");
         }
         if (this.options.windowOpener && model) {
             this.addWindowOpenEvent(this, model, this.modal, this.options);
@@ -594,6 +593,7 @@ var DD_Layer = DD_object.extend({
     getMask: function() {
         return this.layerMask;
     }
+    
 });
 
 var DD_button = DD_Uibase.extend({
@@ -689,9 +689,13 @@ var DD_control = DD_Uibase.extend({
     mainClass: 'dd-helper-popup',
     init: function (options) {
         this.options = $.extend(( options ? options : {} ) , this.options);
+        console.log('DD_control');
+        
         if(!this.options.fabricObject) {
             return;
         }
+        console.log('this.options.fabricObject.controlModel');
+        console.log(this.options.fabricObject.controlModel);
         if(!this.options.fabricObject.controlModel) {
            return; 
         }
@@ -1070,12 +1074,16 @@ var DD_Control_Base_Model = DD_ModelBase.extend({
             left: this.calcLeftosition(),
             top: this.calcTopPosition()
         });
-        this.obj.get().fadeIn('slow');
+        if(!this.obj.options.fabricObject.notSelect || typeof(this.obj.options.fabricObject.notSelect) == 'undefined') {
+            this.obj.get().fadeIn('slow');
+            
+        }
         this.obj.options.fabricObject.controlModelCreated = this;   
         if(this._addControls && !this.obj.options.fabricObject.controlsAdded) {
             this._addControls();
             this.obj.options.fabricObject.controlsAdded = true;
         }
+        this.obj.options.fabricObject.notSelect = false;
     },
     
     calcTopPosition: function() {
@@ -1160,17 +1168,36 @@ var DD_Main_Model = DD_ModelBase.extend({
         this.layersObj.setHeight(height);
         this.layersObj.setWidth(width);
 
+        new DD_Layer_Main({
+            width: width,
+            height: height,
+            src: this.obj.options.src
+        });
+
+        this._addObjects(this.obj.options);
+        this._canvasEvents(hoverCanvas);
+
+        this.resize(width, height);
+        $(window).on('resize', function () {
+            self.resize(width, height);
+        });
+        return;
+    },
+
+    _canvasEvents: function (hoverCanvas) {
+        var self = this;
         hoverCanvas.on('object:added', function (e) {
             new DD_control({
                 parent: self.obj.self,
                 fabricObject: e.target
             });
+            if (e.target.uid) {
+                return;
+            }
             e.target.uid = self.createUUID();
+            e.target.uid.toString();
             self._onUpdate(e.target, 'update');
-        });
 
-        hoverCanvas.on('mouse:down', function (e) {
-           
         });
         hoverCanvas.on('object:moving', function (e) {
             if (e.target.controlModelCreated) {
@@ -1192,12 +1219,22 @@ var DD_Main_Model = DD_ModelBase.extend({
                 e.target.controlModelCreated.hide();
             }
         });
+
         hoverCanvas.on('before:selection:cleared', function (e) {
             if (e.target.controlModelCreated) {
                 e.target.controlModelCreated.hide();
             }
         });
         hoverCanvas.on('object:selected', function (e) {
+            console.log('object:selected');
+            if (!e.target.controlModelCreated) {
+                new DD_control({
+                    parent: self.obj.self,
+                    fabricObject: e.target
+                });
+            }
+            console.log(e.target.controlModelCreated);
+
             if (e.target.controlModelCreated) {
                 e.target.controlModelCreated.initPosition();
             }
@@ -1211,29 +1248,39 @@ var DD_Main_Model = DD_ModelBase.extend({
         hoverCanvas.on('object:removed', function (e) {
             self._onUpdate(e.target, 'remove');
         });
+    },
 
-        new DD_Layer_Main({
-            width: width,
-            height: height,
-            src: this.obj.options.src
-        });
-
-
-        this.resize(width, height);
-        $(window).on('resize', function () {
-            self.resize(width, height);
-        });
-        return;
+    _addObjects: function (options) {
+        if (options.mask) {
+            var mask = new DD_Layer_Mask(options.mask);
+            mask.save();
+        }
+        if (options.conf) {
+            var last = options.conf.length;
+            $(options.conf).each(function (i, obj) {
+                if (obj.type == 'image') {
+                    var notSelect = (last - 1) == i ? false : true;
+                    new DD_Layer_Img(null, obj, notSelect);
+                }
+            });
+        }
+        ;
     },
 
     _onUpdate: function (fabricObj, type) {
-        console.log('_onUpdate');
-        console.log(this);
-        
+        var newObject = fabricObj.toJSON();
+        newObject.uid = fabricObj.uid;
+        if (fabricObj.layerMask) {
+            newObject.layerMask = true;
+        }
+        if (fabricObj.controlModel) {
+            newObject.controlModel = fabricObj.controlModel;
+        }
+
         if (this.obj.options.onUpdate) {
             this.obj.options.onUpdate.call(
                     null,
-                    fabricObj,
+                    newObject,
                     this.obj.options.group_index,
                     this.obj.options.media_id,
                     type);
@@ -1314,25 +1361,7 @@ var DD_control_mask = DD_Control_Base_Model.extend({
         var self = this;
         var _save = this.obj.addSaveBase();
         _save.get().on('click', function () {
-            self._l().getHoverCanvas().clipTo = function (ctx) {
-                var object = self._l().getMask();
-                var oCoords = object.oCoords;
-                ctx.strokeStyle = '#ccc';
-                ctx.beginPath();
-                ctx.moveTo(oCoords.tl.x, oCoords.tl.y);
-                ctx.lineTo(oCoords.tr.x, oCoords.tr.y);
-                ctx.lineTo(oCoords.br.x, oCoords.br.y);
-                ctx.lineTo(oCoords.bl.x, oCoords.bl.y);
-                ctx.closePath();
-                ctx.stroke();
-                ctx.save();
-            }
-            self._l().getHoverCanvas().setBackgroundColor('rgba(255, 255, 153, 0.6)');
-            self._l().getMask().hasControls = false;
-            self._l().getMask().selectable = false;
-            self._l().getMask().controlModelCreated.hide();
-            self._l().getMask().setOpacity(0);
-            self._l().getHoverCanvas().renderAll();
+            self._l().getMask().eventSave.call();
         });
     }
 });
@@ -1431,10 +1460,8 @@ var DD_Layer_Base = DD_object.extend({
     },
     
     setDeselectEvent: function() {
-        
         this.object.on('deselected', function(e) {
-            console.log('i am deselected!');
-            if(this.controlModelCreated) {
+            if(typeof(this.controlModelCreated)!='undefined') {
                 this.controlModelCreated.hide();
             }
         });
@@ -1454,47 +1481,55 @@ var DD_Layer_Base = DD_object.extend({
 
 
 var DD_Layer_Img = DD_Layer_Base.extend({
-    init: function (options) {
+    init: function (options, fullCnfg, notSelect) {
         var self = this;
-        if(options.parent) {
+        var options = options ? options : {};
+        if (options.parent) {
             this.parent = options.parent;
         }
-        fabric.Image.fromURL(options.src, function (iImg) {
+        var src = fullCnfg ? fullCnfg.src : options.src;
+        fabric.Image.fromURL(src, function (iImg) {
             var parent = self.getParent()
-            var conf = {
-                hasControls: options.nocontrols ? false : true,
-                hasBorders: options.noborders ? false : true,
-                selectable: options.noselectable ? false : true,
-                controlModel: 'DD_control_image'
+            if (!fullCnfg) {
+                var conf = {
+                    hasControls: options.nocontrols ? false : true,
+                    hasBorders: options.noborders ? false : true,
+                    selectable: options.noselectable ? false : true,
+                    controlModel: 'DD_control_image'
+                }
+                var mask = self._l().getMask();
+                var percentWidth = !mask ? self._s('defaultLayerMaskWidth') : self._s('percentSizeFromMask');
+                if (!options.noChangeSize) {
+                    conf = self.setSize(conf, {
+                        width: options.width,
+                        height: options.height
+                    }, percentWidth);
+                }
+                if (!options.noChangeSize) {
+                    conf = self.positionToBase(conf);
+                }
+            } else {
+                var conf = fullCnfg;
             }
-            var mask = self._l().getMask();
-            var percentWidth = !mask ? self._s('defaultLayerMaskWidth') : self._s('percentSizeFromMask');
-            if (!options.noChangeSize) {
-                conf = self.setSize(conf, {
-                    width: options.width,
-                    height: options.height
-                }, percentWidth);
-            }
-            if (!options.noChangeSize) {
-                conf = self.positionToBase(conf);
-            }
+            
+            conf.notSelect = notSelect;
 
             iImg
                     .set(conf);
             parent.add(iImg);
-            
+
             self.setObjAngle(iImg);
-            
+
             parent.renderAll();
-            
-            if (!options.noselectable) {
+
+            if (!options.noselectable && !conf.notSelect) {
                 parent.setActiveObject(iImg);
             }
-            
+
             self.object = iImg;
             self.onCreated();
             //self.setDeselectEvent();
-            
+
         }, {crossOrigin: 'anonymous'});
     }
 });
@@ -1520,35 +1555,81 @@ var DD_Layer_Main = DD_Layer_Base.extend({
 
 
 var DD_Layer_Mask = DD_Layer_Base.extend({
-    
-    init: function () {
-        this.addRectLayer();
+
+    init: function (maskOptions, notSelect) {
+        if (maskOptions) {
+            if (maskOptions.type == 'rect') {
+                maskOptions.controlModel = 'DD_control_mask';
+                return this.addRectLayer(maskOptions, notSelect);
+            }
+        }
+        return this.addRectLayer(false, notSelect);
     },
-    
-    addRectLayer: function() {
-        
+    addRectLayer: function (conf, notSelect) {
         var parent = this.getParent();
-        
-        var conf = {
-            fill: 'white',
-            opacity: 0.4,
-            layerMask: true,
-            controlModel: 'DD_control_mask'
-        };
-        
-        conf = this.setSize(conf, null, this._s('defaultLayerMaskWidth'));
-        conf = this.positionToBase(conf);
-        
+        if (!conf) {
+            var conf = {
+                fill: 'white',
+                opacity: 0.4,
+                layerMask: true,
+                controlModel: 'DD_control_mask'
+            };
+
+            conf = this.setSize(conf, null, this._s('defaultLayerMaskWidth'));
+            conf = this.positionToBase(conf);
+
+        }
         var rect = new fabric.Rect(conf);
         parent.add(rect);
+        rect.notSelect = notSelect;
+        if(!notSelect) {
+            parent.setActiveObject(rect);
+        }
         parent.renderAll();
-        parent.setActiveObject(rect);
-        
         this._l().setMask(rect);
-        
-        
+        rect.eventSave = this.save.bind(this);
+        rect.eventRestore = this.restore.bind(this);
         this.object = rect;
         this.setDeselectEvent();
+        
+        return this;
+    },
+
+    save: function () {
+        var object = this._l().getMask();
+        var canvas = this._l().getHoverCanvas();
+        canvas.clipTo = function (ctx) {
+            var oCoords = object.oCoords;
+            ctx.strokeStyle = '#ccc';
+            ctx.beginPath();
+            ctx.moveTo(oCoords.tl.x, oCoords.tl.y);
+            ctx.lineTo(oCoords.tr.x, oCoords.tr.y);
+            ctx.lineTo(oCoords.br.x, oCoords.br.y);
+            ctx.lineTo(oCoords.bl.x, oCoords.bl.y);
+            ctx.closePath();
+            ctx.stroke();
+            ctx.save();
+        }
+        canvas.setBackgroundColor('rgba(255, 255, 153, 0.6)');
+        object.hasControls = false;
+        object.selectable = false;
+        if(object.controlModelCreated) {
+            object.controlModelCreated.hide();
+        }
+        object.setOpacity(0);
+        canvas.renderAll();
+    },
+
+    restore: function () {
+        var object = this._l().getMask();
+        var canvas = this._l().getHoverCanvas();
+        canvas.clipTo = null;
+        object.hasControls = true;
+        object.selectable = true;
+        object.setOpacity(0.4);
+        canvas.setActiveObject(object);
+        canvas.setBackgroundColor('transparent');
+        canvas.renderAll();
     }
 });
 
@@ -2021,28 +2102,8 @@ var DD_setup_layer_model = DD_ModelBase.extend({
         button.get().on('click', function () {
             if (!self._l().getMask()) {
                 return new DD_Layer_Mask();
-            }
-            
-            self._l().getHoverCanvas().clipTo = null;
-            /*
-            function ____(ctx) {
-                var mask = self._l().getBgCanvas();
-                var zoom = self._l().getHoverCanvas().getZoom();
-                var top = mask.get('top');
-                var left = mask.get('left');
-                var width = mask.get('width') * mask.get('scaleX');
-                var height = mask.get('height') * mask.get('scaleY');
-                ctx.rect(top, left, width, height);
-                ctx.save();
-            }
-            */
-            self._l().getMask().hasControls = true;
-            self._l().getMask().selectable = true;
-                
-            self._l().getMask().setOpacity(0.4);
-            self._l().getHoverCanvas().setActiveObject(self._l().getMask());
-            self._l().getHoverCanvas().setBackgroundColor('transparent');
-            self._l().getHoverCanvas().renderAll();
+            }   
+            self._l().getMask().eventRestore.call();
 
         });
     }
@@ -2253,6 +2314,7 @@ $.fn.dd_productdesigner = function (options) {
         'product_id': '',
         'media_id': '',
         'group_index': '',
+        'mask': '',
         'translator': {
             'back': 'Back',
             'next': 'Next',

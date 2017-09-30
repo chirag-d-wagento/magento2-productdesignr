@@ -9,12 +9,16 @@ var DD_Control_Base_Model = DD_ModelBase.extend({
             left: this.calcLeftosition(),
             top: this.calcTopPosition()
         });
-        this.obj.get().fadeIn('slow');
+        if(!this.obj.options.fabricObject.notSelect || typeof(this.obj.options.fabricObject.notSelect) == 'undefined') {
+            this.obj.get().fadeIn('slow');
+            
+        }
         this.obj.options.fabricObject.controlModelCreated = this;   
         if(this._addControls && !this.obj.options.fabricObject.controlsAdded) {
             this._addControls();
             this.obj.options.fabricObject.controlsAdded = true;
         }
+        this.obj.options.fabricObject.notSelect = false;
     },
     
     calcTopPosition: function() {

@@ -10,6 +10,7 @@ $.fn.dd_productdesigner = function (options) {
         'product_id': '',
         'media_id': '',
         'group_index': '',
+        'mask': '',
         'translator': {
             'back': 'Back',
             'next': 'Next',
