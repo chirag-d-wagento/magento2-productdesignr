@@ -32654,6 +32654,13 @@ var DD_Event = DD_object.extend({
     
     getEventCallBacks: function(eventName) {
         return this.listEventsCallbacks[eventName];
+    },
+    
+    unregisterAll: function() {
+        var self = this;
+        $.each(this.listEvents, function(eventName, obj) {
+            self.unregister(eventName);
+        });
     }
 });
 
@@ -32863,7 +32870,6 @@ var DD_Uibase = DD_object.extend({
 
     addWindowOpenEvent: function (me, model, modal, options) {
         var obj = me.get();
-        console.log(me);
         $(obj).on('click', function () {
             if (!options.windowPreview) {
                 var window = modal.getWindow();
@@ -32874,7 +32880,6 @@ var DD_Uibase = DD_object.extend({
             }
 
             contentElement.empty();
-            //model.opener = me;
             model.setWindowContent(contentElement);
             model.setWindow(window);
 
@@ -33626,7 +33631,7 @@ var DD_Main_Model = DD_ModelBase.extend({
     eventBase: 'main-panel-created',
     eventClick: 'panel-click',
     eventObjectChanged: 'object-changed',
-    eventObjectChanged: 'object-added',
+    eventObjectAdded: 'object-added',
     base: true,
     init: function (obj) {
         this.obj = obj;
@@ -33637,6 +33642,7 @@ var DD_Main_Model = DD_ModelBase.extend({
     registerEvents: function () {
         this._evnt().register(this.eventClick, this.obj);
         this._evnt().register(this.eventObjectChanged, this.obj);
+        this._evnt().register(this.eventObjectAdded, this.obj);
     },
 
     initLayers: function () {
@@ -33816,6 +33822,14 @@ var DD_Main_Model = DD_ModelBase.extend({
             return;
         }
         return;
+    },
+    
+    destroy: function() {
+        this._evnt().unregisterAll();
+        this.obj.self.parent().empty();
+        this.obj.self.parent().remove();
+        
+        delete this;
     }
 });
 
@@ -34311,7 +34325,10 @@ var DD_main = DD_panel.extend({
             'class': this.class_name,
             'parent': parent
         });
-        this.add();
+    },
+    
+    create: function() {
+        return this.add();
     },
     
     _addElements: function() {
@@ -34811,8 +34828,6 @@ var DD_setup_texts = DD_panel.extend({
 });
 
 $.fn.dd_productdesigner = function (options) {
-    //
-    //
     this.options = $.extend({
         'src': '',
         'debug': false,
@@ -34886,19 +34901,28 @@ $.fn.dd_productdesigner = function (options) {
         'afterLoad': null,
         'onUpdate': null
     }, options);
-    
-    this.onUpdate = function(callback) {
+
+    this.onUpdate = function (callback) {
         this.options.onUpdate = callback;
     }
+
+
 
     this.init = function () {
         new DD_Translator(this.options.translator);
         new DD_Settings(this.options.settings);
         new DD_Event();
         var main = new DD_main(this, this.options);
+        var app = main.create();
         if (this.options.debug) {
             new DD_Debug(this);
         }
+
+        this.destroy = function () {
+            app.destroy();
+        }
+        
+        return this;
     }
 
     return this;
@@ -35053,6 +35077,13 @@ var DD_Event = DD_object.extend({
     
     getEventCallBacks: function(eventName) {
         return this.listEventsCallbacks[eventName];
+    },
+    
+    unregisterAll: function() {
+        var self = this;
+        $.each(this.listEvents, function(eventName, obj) {
+            self.unregister(eventName);
+        });
     }
 });
 
@@ -35262,7 +35293,6 @@ var DD_Uibase = DD_object.extend({
 
     addWindowOpenEvent: function (me, model, modal, options) {
         var obj = me.get();
-        console.log(me);
         $(obj).on('click', function () {
             if (!options.windowPreview) {
                 var window = modal.getWindow();
@@ -35273,7 +35303,6 @@ var DD_Uibase = DD_object.extend({
             }
 
             contentElement.empty();
-            //model.opener = me;
             model.setWindowContent(contentElement);
             model.setWindow(window);
 
@@ -35824,13 +35853,17 @@ var DD_Admin_ImagesSelected_Model = DD_ModelBase.extend({
     },
 
     updateImageConf: function (group_uid, media_id, confName, confValue) {
-        
+
         var group_index = this.getGroupIndexByUid(group_uid);
         var index = this.getImgIndex(group_uid, media_id);
         var groups = this.getGroups();
         groups[group_index]['imgs'][index][confName] = confValue;
         this._evnt().doCall(this.groupSetEvent, groups);
         return groups[group_index]['imgs'][index];
+    },
+
+    getObject: function () {
+        return this._evnt().getEventObject(this.groupSetEvent);
     },
 
     getGroups: function () {
@@ -35846,6 +35879,12 @@ var DD_Admin_ImagesSelected_Model = DD_ModelBase.extend({
         this._evnt().doCall(this.groupChangedEvent);
     },
     removeGroup: function (index) {
+        if (this.getObject().designerGroupId === index && this.getObject().designer) {
+            this.getObject().designer.destroy();
+            delete this.getObject().designer;
+            delete this.getObject().media_id;
+            delete this.getObject().designerGroupId;
+        }
         this._evnt().doCall(this.removeGroupEvent, index);
         this._evnt().doCall(this.groupChangedEvent);
     },
@@ -35856,9 +35895,8 @@ var DD_Admin_ImagesSelected_Model = DD_ModelBase.extend({
 
     addImage: function (group_uid, media_id, img) {
         var group_index = this.getGroupIndexByUid(group_uid);
-        
         var groups = this.getGroups();
-        if(group_index === false) {
+        if (group_index === false) {
             this.addGroup({
                 'product_id': img.product_id,
                 'group_uid': group_uid,
@@ -35866,7 +35904,7 @@ var DD_Admin_ImagesSelected_Model = DD_ModelBase.extend({
                     img
                 ]
             });
-            return;    
+            return;
         }
         var index = this.getImgIndex(group_uid, media_id);
         if (index !== false) {
@@ -35947,11 +35985,11 @@ var DD_Admin_ImagesSelected_Model = DD_ModelBase.extend({
     },
 
     getImgIndex: function (group_uid, media_id) {
-        if(!group_uid) {
+        if (!group_uid) {
             return false;
         }
         var groups = this.getGroups();
-        if(!groups[this.getGroupIndexByUid(group_uid)]) {
+        if (!groups[this.getGroupIndexByUid(group_uid)]) {
             return false;
         }
         var imgGroup = groups[this.getGroupIndexByUid(group_uid)]['imgs'];
@@ -35970,15 +36008,23 @@ var DD_Admin_ImagesSelected_Model = DD_ModelBase.extend({
         var indexRemov = this.getImgIndex(group_index, media_id);
         var imgGroup = groups[group_index]['imgs'];
         imgGroup.splice(indexRemov, 1);
-        if(imgGroup.length == 0) {
+        if (imgGroup.length == 0) {
             this.removeGroup(group_uid);
-        }else{
+        } else {
             groups[parseInt(group_index)]['imgs'] = imgGroup;
         }
-        
+
+        if (this.getObject().designerMediaId === media_id
+                && this.getObject().designerGroupId === group_uid) {
+            this.getObject().designer.destroy();
+            delete this.getObject().designer;
+            delete this.getObject().media_id;
+            delete this.getObject().designerGroupId;
+        }
+
         this.updateGroups(groups);
     },
-    
+
     loadGroups: function () {
 
         if (this.getGroups()) {
@@ -36001,7 +36047,7 @@ var DD_Admin_ImagesSelected_Model = DD_ModelBase.extend({
                         var button = self.obj.drawNoImagesSelected();
                         self.attachCustomizeButtonEvents(button);
                         return;
-                    }else{
+                    } else {
                         self.obj.drawCustomizePanel();
                         self.updateGroups(data.data);
                     }
@@ -36041,17 +36087,23 @@ var DD_Admin_ImagesSelected_Model = DD_ModelBase.extend({
     clearClickEvents: function (obj) {
         var self = this;
         obj.on('click', function () {
+            if (self.getObject().designer) {
+                self.getObject().designer.destroy();
+                delete self.getObject().designer;
+                delete self.getObject().media_id;
+                delete self.getObject().designerGroupId;
+            }
             self.updateGroups([]);
         });
     },
     /*
-    addEmptyGroupClick: function (obj) {
-        var self = this;
-        obj.on('click', function () {
-            self.addGroup({'group_uid': self.createUUID(), 'imgs': []});
-        });
-    },
-    */
+     addEmptyGroupClick: function (obj) {
+     var self = this;
+     obj.on('click', function () {
+     self.addGroup({'group_uid': self.createUUID(), 'imgs': []});
+     });
+     },
+     */
 
     removeGroupClick: function (obj) {
         var self = this;
@@ -36064,6 +36116,12 @@ var DD_Admin_ImagesSelected_Model = DD_ModelBase.extend({
     addGroupCancelClick: function (obj) {
         var self = this;
         obj.on('click', function () {
+            if (self.getObject().designer) {
+                self.getObject().designer.destroy();
+                delete self.getObject().designer;
+                delete self.getObject().media_id;
+                delete self.getObject().designerGroupId;
+            }
             self.cancelGroups();
         });
     },
@@ -36073,7 +36131,7 @@ var DD_Admin_ImagesSelected_Model = DD_ModelBase.extend({
         obj.on('click', function () {
             var groups = self.getGroups();
             var jsonStr = JSON.stringify(groups);
-            
+
             self._evnt().doCall('show-admin-loader');
             $.ajax({
                 url: self._s('urlSaveData')
@@ -36154,7 +36212,6 @@ var DD_admin_group_image_model = DD_Admin_ImagesSelected_Model.extend({
         var onUpdate = this.onUpdate.bind(this);
         var group_index = el.attr('data-group');
         
-        console.log(options);
         el.on('click', function () {
             $('#dd_designer').html('');
             $('#dd_designer').empty();
@@ -36181,7 +36238,10 @@ var DD_admin_group_image_model = DD_Admin_ImagesSelected_Model.extend({
                 
             });
             designer.onUpdate(onUpdate);
-            designer.init();
+            self.getObject().designer = designer.init();
+            
+            self.getObject().designerMediaId = options.media_id;
+            self.getObject().designerGroupId = group_index;
         });
     }
 

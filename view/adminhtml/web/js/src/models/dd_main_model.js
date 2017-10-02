@@ -2,7 +2,7 @@ var DD_Main_Model = DD_ModelBase.extend({
     eventBase: 'main-panel-created',
     eventClick: 'panel-click',
     eventObjectChanged: 'object-changed',
-    eventObjectChanged: 'object-added',
+    eventObjectAdded: 'object-added',
     base: true,
     init: function (obj) {
         this.obj = obj;
@@ -13,6 +13,7 @@ var DD_Main_Model = DD_ModelBase.extend({
     registerEvents: function () {
         this._evnt().register(this.eventClick, this.obj);
         this._evnt().register(this.eventObjectChanged, this.obj);
+        this._evnt().register(this.eventObjectAdded, this.obj);
     },
 
     initLayers: function () {
@@ -192,5 +193,13 @@ var DD_Main_Model = DD_ModelBase.extend({
             return;
         }
         return;
+    },
+    
+    destroy: function() {
+        this._evnt().unregisterAll();
+        this.obj.self.parent().empty();
+        this.obj.self.parent().remove();
+        
+        delete this;
     }
 });

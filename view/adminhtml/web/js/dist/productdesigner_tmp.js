@@ -150,6 +150,13 @@ var DD_Event = DD_object.extend({
     
     getEventCallBacks: function(eventName) {
         return this.listEventsCallbacks[eventName];
+    },
+    
+    unregisterAll: function() {
+        var self = this;
+        $.each(this.listEvents, function(eventName, obj) {
+            self.unregister(eventName);
+        });
     }
 });
 
@@ -359,7 +366,6 @@ var DD_Uibase = DD_object.extend({
 
     addWindowOpenEvent: function (me, model, modal, options) {
         var obj = me.get();
-        console.log(me);
         $(obj).on('click', function () {
             if (!options.windowPreview) {
                 var window = modal.getWindow();
@@ -370,7 +376,6 @@ var DD_Uibase = DD_object.extend({
             }
 
             contentElement.empty();
-            //model.opener = me;
             model.setWindowContent(contentElement);
             model.setWindow(window);
 
@@ -1122,7 +1127,7 @@ var DD_Main_Model = DD_ModelBase.extend({
     eventBase: 'main-panel-created',
     eventClick: 'panel-click',
     eventObjectChanged: 'object-changed',
-    eventObjectChanged: 'object-added',
+    eventObjectAdded: 'object-added',
     base: true,
     init: function (obj) {
         this.obj = obj;
@@ -1133,6 +1138,7 @@ var DD_Main_Model = DD_ModelBase.extend({
     registerEvents: function () {
         this._evnt().register(this.eventClick, this.obj);
         this._evnt().register(this.eventObjectChanged, this.obj);
+        this._evnt().register(this.eventObjectAdded, this.obj);
     },
 
     initLayers: function () {
@@ -1312,6 +1318,14 @@ var DD_Main_Model = DD_ModelBase.extend({
             return;
         }
         return;
+    },
+    
+    destroy: function() {
+        this._evnt().unregisterAll();
+        this.obj.self.parent().empty();
+        this.obj.self.parent().remove();
+        
+        delete this;
     }
 });
 
@@ -1807,7 +1821,10 @@ var DD_main = DD_panel.extend({
             'class': this.class_name,
             'parent': parent
         });
-        this.add();
+    },
+    
+    create: function() {
+        return this.add();
     },
     
     _addElements: function() {
@@ -2307,8 +2324,6 @@ var DD_setup_texts = DD_panel.extend({
 });
 
 $.fn.dd_productdesigner = function (options) {
-    //
-    //
     this.options = $.extend({
         'src': '',
         'debug': false,
@@ -2382,19 +2397,28 @@ $.fn.dd_productdesigner = function (options) {
         'afterLoad': null,
         'onUpdate': null
     }, options);
-    
-    this.onUpdate = function(callback) {
+
+    this.onUpdate = function (callback) {
         this.options.onUpdate = callback;
     }
+
+
 
     this.init = function () {
         new DD_Translator(this.options.translator);
         new DD_Settings(this.options.settings);
         new DD_Event();
         var main = new DD_main(this, this.options);
+        var app = main.create();
         if (this.options.debug) {
             new DD_Debug(this);
         }
+
+        this.destroy = function () {
+            app.destroy();
+        }
+        
+        return this;
     }
 
     return this;

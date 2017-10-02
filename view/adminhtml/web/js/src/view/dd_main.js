@@ -11,7 +11,10 @@ var DD_main = DD_panel.extend({
             'class': this.class_name,
             'parent': parent
         });
-        this.add();
+    },
+    
+    create: function() {
+        return this.add();
     },
     
     _addElements: function() {

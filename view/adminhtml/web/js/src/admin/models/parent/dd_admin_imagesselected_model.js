@@ -86,13 +86,17 @@ var DD_Admin_ImagesSelected_Model = DD_ModelBase.extend({
     },
 
     updateImageConf: function (group_uid, media_id, confName, confValue) {
-        
+
         var group_index = this.getGroupIndexByUid(group_uid);
         var index = this.getImgIndex(group_uid, media_id);
         var groups = this.getGroups();
         groups[group_index]['imgs'][index][confName] = confValue;
         this._evnt().doCall(this.groupSetEvent, groups);
         return groups[group_index]['imgs'][index];
+    },
+
+    getObject: function () {
+        return this._evnt().getEventObject(this.groupSetEvent);
     },
 
     getGroups: function () {
@@ -108,6 +112,12 @@ var DD_Admin_ImagesSelected_Model = DD_ModelBase.extend({
         this._evnt().doCall(this.groupChangedEvent);
     },
     removeGroup: function (index) {
+        if (this.getObject().designerGroupId === index && this.getObject().designer) {
+            this.getObject().designer.destroy();
+            delete this.getObject().designer;
+            delete this.getObject().media_id;
+            delete this.getObject().designerGroupId;
+        }
         this._evnt().doCall(this.removeGroupEvent, index);
         this._evnt().doCall(this.groupChangedEvent);
     },
@@ -119,7 +129,7 @@ var DD_Admin_ImagesSelected_Model = DD_ModelBase.extend({
     addImage: function (group_uid, media_id, img) {
         var group_index = this.getGroupIndexByUid(group_uid);
         var groups = this.getGroups();
-        if(group_index === false) {
+        if (group_index === false) {
             this.addGroup({
                 'product_id': img.product_id,
                 'group_uid': group_uid,
@@ -127,7 +137,7 @@ var DD_Admin_ImagesSelected_Model = DD_ModelBase.extend({
                     img
                 ]
             });
-            return;    
+            return;
         }
         var index = this.getImgIndex(group_uid, media_id);
         if (index !== false) {
@@ -208,11 +218,11 @@ var DD_Admin_ImagesSelected_Model = DD_ModelBase.extend({
     },
 
     getImgIndex: function (group_uid, media_id) {
-        if(!group_uid) {
+        if (!group_uid) {
             return false;
         }
         var groups = this.getGroups();
-        if(!groups[this.getGroupIndexByUid(group_uid)]) {
+        if (!groups[this.getGroupIndexByUid(group_uid)]) {
             return false;
         }
         var imgGroup = groups[this.getGroupIndexByUid(group_uid)]['imgs'];
@@ -231,15 +241,23 @@ var DD_Admin_ImagesSelected_Model = DD_ModelBase.extend({
         var indexRemov = this.getImgIndex(group_index, media_id);
         var imgGroup = groups[group_index]['imgs'];
         imgGroup.splice(indexRemov, 1);
-        if(imgGroup.length == 0) {
+        if (imgGroup.length == 0) {
             this.removeGroup(group_uid);
-        }else{
+        } else {
             groups[parseInt(group_index)]['imgs'] = imgGroup;
         }
-        
+
+        if (this.getObject().designerMediaId === media_id
+                && this.getObject().designerGroupId === group_uid) {
+            this.getObject().designer.destroy();
+            delete this.getObject().designer;
+            delete this.getObject().media_id;
+            delete this.getObject().designerGroupId;
+        }
+
         this.updateGroups(groups);
     },
-    
+
     loadGroups: function () {
 
         if (this.getGroups()) {
@@ -262,7 +280,7 @@ var DD_Admin_ImagesSelected_Model = DD_ModelBase.extend({
                         var button = self.obj.drawNoImagesSelected();
                         self.attachCustomizeButtonEvents(button);
                         return;
-                    }else{
+                    } else {
                         self.obj.drawCustomizePanel();
                         self.updateGroups(data.data);
                     }
@@ -302,17 +320,23 @@ var DD_Admin_ImagesSelected_Model = DD_ModelBase.extend({
     clearClickEvents: function (obj) {
         var self = this;
         obj.on('click', function () {
+            if (self.getObject().designer) {
+                self.getObject().designer.destroy();
+                delete self.getObject().designer;
+                delete self.getObject().media_id;
+                delete self.getObject().designerGroupId;
+            }
             self.updateGroups([]);
         });
     },
     /*
-    addEmptyGroupClick: function (obj) {
-        var self = this;
-        obj.on('click', function () {
-            self.addGroup({'group_uid': self.createUUID(), 'imgs': []});
-        });
-    },
-    */
+     addEmptyGroupClick: function (obj) {
+     var self = this;
+     obj.on('click', function () {
+     self.addGroup({'group_uid': self.createUUID(), 'imgs': []});
+     });
+     },
+     */
 
     removeGroupClick: function (obj) {
         var self = this;
@@ -325,6 +349,12 @@ var DD_Admin_ImagesSelected_Model = DD_ModelBase.extend({
     addGroupCancelClick: function (obj) {
         var self = this;
         obj.on('click', function () {
+            if (self.getObject().designer) {
+                self.getObject().designer.destroy();
+                delete self.getObject().designer;
+                delete self.getObject().media_id;
+                delete self.getObject().designerGroupId;
+            }
             self.cancelGroups();
         });
     },
@@ -334,7 +364,7 @@ var DD_Admin_ImagesSelected_Model = DD_ModelBase.extend({
         obj.on('click', function () {
             var groups = self.getGroups();
             var jsonStr = JSON.stringify(groups);
-            
+
             self._evnt().doCall('show-admin-loader');
             $.ajax({
                 url: self._s('urlSaveData')

@@ -53,7 +53,6 @@ var DD_Uibase = DD_object.extend({
 
     addWindowOpenEvent: function (me, model, modal, options) {
         var obj = me.get();
-        console.log(me);
         $(obj).on('click', function () {
             if (!options.windowPreview) {
                 var window = modal.getWindow();
@@ -64,7 +63,6 @@ var DD_Uibase = DD_object.extend({
             }
 
             contentElement.empty();
-            //model.opener = me;
             model.setWindowContent(contentElement);
             model.setWindow(window);
 

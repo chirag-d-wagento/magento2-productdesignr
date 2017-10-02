@@ -1,6 +1,4 @@
 $.fn.dd_productdesigner = function (options) {
-    //
-    //
     this.options = $.extend({
         'src': '',
         'debug': false,
@@ -74,19 +72,28 @@ $.fn.dd_productdesigner = function (options) {
         'afterLoad': null,
         'onUpdate': null
     }, options);
-    
-    this.onUpdate = function(callback) {
+
+    this.onUpdate = function (callback) {
         this.options.onUpdate = callback;
     }
+
+
 
     this.init = function () {
         new DD_Translator(this.options.translator);
         new DD_Settings(this.options.settings);
         new DD_Event();
         var main = new DD_main(this, this.options);
+        var app = main.create();
         if (this.options.debug) {
             new DD_Debug(this);
         }
+
+        this.destroy = function () {
+            app.destroy();
+        }
+        
+        return this;
     }
 
     return this;

@@ -53,7 +53,6 @@ var DD_admin_group_image_model = DD_Admin_ImagesSelected_Model.extend({
         var onUpdate = this.onUpdate.bind(this);
         var group_index = el.attr('data-group');
         
-        console.log(options);
         el.on('click', function () {
             $('#dd_designer').html('');
             $('#dd_designer').empty();
@@ -80,7 +79,10 @@ var DD_admin_group_image_model = DD_Admin_ImagesSelected_Model.extend({
                 
             });
             designer.onUpdate(onUpdate);
-            designer.init();
+            self.getObject().designer = designer.init();
+            
+            self.getObject().designerMediaId = options.media_id;
+            self.getObject().designerGroupId = group_index;
         });
     }
 

@@ -75,5 +75,12 @@ var DD_Event = DD_object.extend({
     
     getEventCallBacks: function(eventName) {
         return this.listEventsCallbacks[eventName];
+    },
+    
+    unregisterAll: function() {
+        var self = this;
+        $.each(this.listEvents, function(eventName, obj) {
+            self.unregister(eventName);
+        });
     }
 });
