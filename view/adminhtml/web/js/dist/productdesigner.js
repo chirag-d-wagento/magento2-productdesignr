@@ -35793,8 +35793,6 @@ var DD_Admin_ImagesSelected_Model = DD_ModelBase.extend({
         });
         this._evnt().registerCallback(this.groupSetEvent, function (obj, eventName, data) {
             obj.groups = data;
-            console.log('obj.groups SET EVENT: ');
-            console.log(obj.groups);
         });
 
         this._evnt().registerCallback(this.removeGroupEvent, function (obj, eventName, group_index) {
@@ -35826,6 +35824,7 @@ var DD_Admin_ImagesSelected_Model = DD_ModelBase.extend({
     },
 
     updateImageConf: function (group_uid, media_id, confName, confValue) {
+        
         var group_index = this.getGroupIndexByUid(group_uid);
         var index = this.getImgIndex(group_uid, media_id);
         var groups = this.getGroups();
@@ -35857,15 +35856,26 @@ var DD_Admin_ImagesSelected_Model = DD_ModelBase.extend({
 
     addImage: function (group_uid, media_id, img) {
         var group_index = this.getGroupIndexByUid(group_uid);
+        
+        var groups = this.getGroups();
+        if(group_index === false) {
+            this.addGroup({
+                'product_id': img.product_id,
+                'group_uid': group_uid,
+                'imgs': [
+                    img
+                ]
+            });
+            return;    
+        }
         var index = this.getImgIndex(group_uid, media_id);
         if (index !== false) {
             return;
         }
-        var groups = this.getGroups();
         var imgGroup = groups[group_index].imgs;
         var newImgIndex = Object.keys(imgGroup).length ? Object.keys(imgGroup).length : 0;
-        this.groups[parseInt(group_index)]['imgs'][newImgIndex] = img;
-        this._evnt().doCall(this.groupChangedEvent);
+        groups[parseInt(group_index)]['imgs'][newImgIndex] = img;
+        this.updateGroups(groups);
     },
 
     updateImgFabricConf: function (group_uid, media_id, fabricObj, type) {
@@ -35888,7 +35898,6 @@ var DD_Admin_ImagesSelected_Model = DD_ModelBase.extend({
         var _layer = null;
         var _index = null;
         $.each(imgConf, function (index, layer) {
-            console.log('layer.uid == fabricObj.uid ' + layer.uid + '==' +  fabricObj.uid);
             if (layer.uid == fabricObj.uid) {
                 _layer = layer;
                 _index = index;
@@ -35938,7 +35947,13 @@ var DD_Admin_ImagesSelected_Model = DD_ModelBase.extend({
     },
 
     getImgIndex: function (group_uid, media_id) {
+        if(!group_uid) {
+            return false;
+        }
         var groups = this.getGroups();
+        if(!groups[this.getGroupIndexByUid(group_uid)]) {
+            return false;
+        }
         var imgGroup = groups[this.getGroupIndexByUid(group_uid)]['imgs'];
         var index = false;
         $.each(imgGroup, function (i, image) {
@@ -35955,9 +35970,15 @@ var DD_Admin_ImagesSelected_Model = DD_ModelBase.extend({
         var indexRemov = this.getImgIndex(group_index, media_id);
         var imgGroup = groups[group_index]['imgs'];
         imgGroup.splice(indexRemov, 1);
-        groups[parseInt(group_index)]['imgs'] = imgGroup;
+        if(imgGroup.length == 0) {
+            this.removeGroup(group_uid);
+        }else{
+            groups[parseInt(group_index)]['imgs'] = imgGroup;
+        }
+        
         this.updateGroups(groups);
     },
+    
     loadGroups: function () {
 
         if (this.getGroups()) {
@@ -35998,9 +36019,9 @@ var DD_Admin_ImagesSelected_Model = DD_ModelBase.extend({
     },
 
     getGroupIndexByUid: function (group_uid) {
-        this.groups = this.getGroups();
-        var index = 0;
-        $.each(this.groups, function (i, group) {
+        var groups = this.getGroups();
+        var index = false;
+        $.each(groups, function (i, group) {
             if (group_uid == group.group_uid) {
                 index = i;
             }
@@ -36023,13 +36044,14 @@ var DD_Admin_ImagesSelected_Model = DD_ModelBase.extend({
             self.updateGroups([]);
         });
     },
-
+    /*
     addEmptyGroupClick: function (obj) {
         var self = this;
         obj.on('click', function () {
             self.addGroup({'group_uid': self.createUUID(), 'imgs': []});
         });
     },
+    */
 
     removeGroupClick: function (obj) {
         var self = this;
@@ -36052,7 +36074,6 @@ var DD_Admin_ImagesSelected_Model = DD_ModelBase.extend({
             var groups = self.getGroups();
             var jsonStr = JSON.stringify(groups);
             
-            console.log(jsonStr);
             self._evnt().doCall('show-admin-loader');
             $.ajax({
                 url: self._s('urlSaveData')
@@ -36173,7 +36194,7 @@ var DD_Admin_Image_Model = DD_Admin_ImagesSelected_Model.extend({
     registerImage: function (obj) {
         var imgCnt = obj.self;
         this.data = obj.imgOptions;
-        if (this.findImage() !== false) {
+        if (this.getImgIndex(this.data.group_index, this.data.media_id) !== false) {
             this.selectImage(imgCnt);
         }
         this.registerClickEvent(imgCnt);
@@ -36194,16 +36215,6 @@ var DD_Admin_Image_Model = DD_Admin_ImagesSelected_Model.extend({
             imgCnt.addClass('selected');
             this.addImage(this.data.group_index, this.data.media_id, this.data);
         }
-    },
-
-    getGroupImages: function () {
-        this.groups = this.getGroups();
-        return this.groups[this.getGroupIndexByUid(this.data.group_index)]['imgs'];
-    },
-
-    findImage: function () {
-        var media_id = this.getImgIndex(this.data.group_index, this.data.media_id);
-        return media_id;
     }
 });
 
@@ -36242,7 +36253,7 @@ var DD_Admin_loadimages_model = DD_Admin_ImagesSelected_Model.extend({
 
     class_container: 'dd-admin-loadimages-container',
     class_loading: 'dd-admin-loadimages-loading',
-    
+
     init: function (obj) {
         this.obj = obj;
         this._super(obj);
@@ -36265,31 +36276,39 @@ var DD_Admin_loadimages_model = DD_Admin_ImagesSelected_Model.extend({
         this.loadImages();
     },
 
+    prepareGroupsData: function () {
+        var groups = this.getGroups();
+        var dataGroups = {};
+        if (groups && groups.length) {
+            $.each(groups, function (i, group) {
+                dataGroups[group.product_id] = group.group_uid;
+            });
+        }
+        return dataGroups;
+    },
+
     loadImages: function () {
         this.showLoading();
         var self = this;
-        
         $.ajax({
             url: this._s('urlLoadImages')
                     + '?form_key=' + window.FORM_KEY,
             data: {
                 'product_sku': this._s('psku'),
                 'product_id': this._s('product_id'),
-                'group_index': this.obj.get().attr('data-group')
+                'groups': this.prepareGroupsData()
             },
             success: function (data) {
-                if(data.error) {
+                if (data.error) {
                     alert(data.errorMessage);
                     return;
                 }
-                self.container.append($('<h3 />').html(data.extra.product_name + '(' + data.extra.psku + ')'));
-                if(typeof(data.data) == 'undefined' || data.data.length == 0) {
-                    self.container.append($('<div />').html(data.extra.no_images_text));
+                if (data.success && data.parent) {
+                    self.container.append($('<h2 />').html(self._('configure_images') + ' ' + data.parent.product_name + '(' + data.parent.psku + ')'));
+                    $.each(data.data, function (i, row) {
+                        new DD_admin_image_row(self.container, row.imgs, row.extra);
+                    });
                 }
-                
-                $.each(data.data, function(i, img) {
-                    new DD_admin_image(self.container, img);
-                });
             },
             error: function () {
                 alert("Something went wrong!");
@@ -36300,8 +36319,8 @@ var DD_Admin_loadimages_model = DD_Admin_ImagesSelected_Model.extend({
             cache: false
         }, 'json');
     },
-    
-    hideLoading: function() {
+
+    hideLoading: function () {
         this.loading.remove();
     },
 
@@ -36326,7 +36345,7 @@ var DD_admin_group = DD_panel.extend({
     class_sorting_icon: 'dd-admin-group-sorting-icon fa fa-arrows',
 
     model: 'DD_Admin_ImagesSelected_Model',
-    modelLoadImages: 'DD_Admin_loadimages_model',
+    //modelLoadImages: 'DD_Admin_loadimages_model',
 
     init: function (options) {
         this.options = options;
@@ -36338,7 +36357,7 @@ var DD_admin_group = DD_panel.extend({
 
     _addElements: function () {
         this.addRemove();
-        this.addSelectImage();
+        /*this.addSelectImage();*/
         this.addSortingPanel();
         this.addImages();
     },
@@ -36386,6 +36405,7 @@ var DD_admin_group = DD_panel.extend({
         });
     },
 
+    /*
     addSelectImage: function () {
         var selectImg = new DD_button({
             'class': this.class_name_select_img,
@@ -36401,6 +36421,7 @@ var DD_admin_group = DD_panel.extend({
             'data-group': this.options.index
         });
     }
+    */
 });
 
 var DD_admin_loader_images = DD_panel.extend({
@@ -36534,14 +36555,14 @@ var DD_admin_groups_panel = DD_panel.extend({
     },
     
     _addElements: function() {
-        this.addGroupButton();
+        this.addEditImgButton();
         this.addClearButton();
         this.addCancelButton();
         this.addSaveButton();
     },
-    
-    addGroupButton: function(){
-        new DD_admin_group_button(
+   
+    addEditImgButton: function(){
+        new DD_admin_image_button(
             this.self
         );
     },
@@ -36587,7 +36608,8 @@ var DD_admin_clear_button = DD_button.extend({
 
 });
 
-var DD_admin_group_button= DD_button.extend({
+/*
+ * var DD_admin_group_button= DD_button.extend({
     class_name: 'dd-admin-group-button',
     model: 'DD_Admin_ImagesSelected_Model',
 
@@ -36606,6 +36628,7 @@ var DD_admin_group_button= DD_button.extend({
     }
 
 });
+*/
 
 
 var DD_admin_group_image = DD_panel.extend({
@@ -36720,6 +36743,24 @@ var DD_admin_groupsave_button= DD_button.extend({
 });
 
 
+var DD_admin_image_button = DD_button.extend({
+    model: 'DD_Admin_loadimages_model',
+    class_name: 'dd-admin-image-button',
+
+    init: function (parent) {
+        this._super({
+            'class': this.class_name,
+            'parent': parent,
+            'text': this._('add_edit_image'),
+            'fa_addon': 'fa fa-image',
+            'windowOpener': true,
+            'windowPreview': true
+        });
+        
+    }
+
+});
+
 var DD_admin_image = DD_panel.extend({  
     class_name: 'dd-admin-product-image',
     class_selected: 'fa fa-check-square-o',
@@ -36756,6 +36797,43 @@ var DD_admin_image = DD_panel.extend({
         this.self.append($('<span />').addClass(this.class_unselected));
     }
 });
+var DD_admin_image_row = DD_panel.extend({
+
+    class_name: 'dd-admin-product-image-row clearfix',
+
+    init: function (parent, imgs, rowOptions) {
+        this.imgs = imgs;
+        if (rowOptions) {
+            this.rowOptions = rowOptions;
+            if (!this.rowOptions.group_index || this.rowOptions.group_index == 0) {
+                this.rowOptions.group_index = this.createUUID();
+            }
+        }
+        this._super({
+            'class': this.class_name,
+            'parent': parent
+        });
+        this.add();
+    },
+
+    _addElements: function () {
+        if (typeof (this.imgs) == 'undefined' || this.imgs.length == 0) {
+            this.self.append($('<div />').html(this.rowOptions.no_images_text));
+            return;
+        }
+        this.self.append($('<h3 />').html(this.rowOptions.product_name + '(' + this.rowOptions.psku + ')'));
+        this.addImages();
+    },
+
+    addImages: function () {
+        var me = this;
+        $.each(this.imgs, function (i, img) {
+            img.group_index = me.rowOptions.group_index;
+            new DD_admin_image(me.self, img);
+        });
+    }
+})
+
 $.fn.dd_productdesigner_admin = function (options) {
     this.options = $.extend({
         'urlImages': '',
@@ -36769,7 +36847,9 @@ $.fn.dd_productdesigner_admin = function (options) {
             'remove': 'Remove',
             'image': 'Image',
             'select_images': 'Select Images',
-            'edit': 'Edit'
+            'edit': 'Edit',
+            'add_edit_image': 'Add/Edit Image',
+            'configure_images': 'Configure Images'
         },
         
         'settings': {

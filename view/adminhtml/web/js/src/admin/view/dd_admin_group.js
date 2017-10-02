@@ -7,7 +7,7 @@ var DD_admin_group = DD_panel.extend({
     class_sorting_icon: 'dd-admin-group-sorting-icon fa fa-arrows',
 
     model: 'DD_Admin_ImagesSelected_Model',
-    modelLoadImages: 'DD_Admin_loadimages_model',
+    //modelLoadImages: 'DD_Admin_loadimages_model',
 
     init: function (options) {
         this.options = options;
@@ -19,7 +19,7 @@ var DD_admin_group = DD_panel.extend({
 
     _addElements: function () {
         this.addRemove();
-        this.addSelectImage();
+        /*this.addSelectImage();*/
         this.addSortingPanel();
         this.addImages();
     },
@@ -67,6 +67,7 @@ var DD_admin_group = DD_panel.extend({
         });
     },
 
+    /*
     addSelectImage: function () {
         var selectImg = new DD_button({
             'class': this.class_name_select_img,
@@ -82,4 +83,5 @@ var DD_admin_group = DD_panel.extend({
             'data-group': this.options.index
         });
     }
+    */
 });

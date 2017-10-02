@@ -1,4 +1,5 @@
-var DD_admin_group_button= DD_button.extend({
+/*
+ * var DD_admin_group_button= DD_button.extend({
     class_name: 'dd-admin-group-button',
     model: 'DD_Admin_ImagesSelected_Model',
 
@@ -17,4 +18,5 @@ var DD_admin_group_button= DD_button.extend({
     }
 
 });
+*/
 

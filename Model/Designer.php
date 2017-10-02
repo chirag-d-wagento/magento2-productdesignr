@@ -28,9 +28,11 @@ class Designer{
         
         if($groups->getSize()) {
             foreach($groups as $group) {
+                $this->_currentGroupProductId = null;
                 $out[] = [
                     'group_uid' => $group->getGroupUid(),
-                    'imgs' => $this->prepareImgsOut($group)
+                    'imgs' => $this->prepareImgsOut($group),
+                    'product_id' => $this->_currentGroupProductId 
                 ];
             }
         }
@@ -47,6 +49,9 @@ class Designer{
                 $product = $this->_getProduct($image->getSystemChildProductId());
                 if(!$product->getId()) {
                     continue;
+                }
+                if(!$this->_currentGroupProductId) {
+                    $this->_currentGroupProductId = $product->getId();
                 }
                 $imgArr = [
                     'src' => $image->getImageSrc(),

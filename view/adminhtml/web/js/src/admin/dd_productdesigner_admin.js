@@ -11,7 +11,9 @@ $.fn.dd_productdesigner_admin = function (options) {
             'remove': 'Remove',
             'image': 'Image',
             'select_images': 'Select Images',
-            'edit': 'Edit'
+            'edit': 'Edit',
+            'add_edit_image': 'Add/Edit Image',
+            'configure_images': 'Configure Images'
         },
         
         'settings': {

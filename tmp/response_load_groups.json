@@ -1,0 +1,128 @@
+{
+    "success": true,
+    "data": [{
+            "group_uid": "966411ac-f558-46e6-8942-6a7c526cd9b8",
+            "imgs": [{
+                    "src": "http:\/\/magento2.test\/pub\/media\/catalog\/product\/m\/h\/mh01-gray_alt1.jpg",
+                    "media_id": "60",
+                    "group_index": "966411ac-f558-46e6-8942-6a7c526cd9b8",
+                    "sku": "MH01-XS-Gray",
+                    "product_id": "53",
+                    "sizes": {
+                        "width": 1080,
+                        "height": 1340
+                    },
+                    "mask": {
+                        "type": "rect",
+                        "originX": "left",
+                        "originY": "top",
+                        "left": 545.02,
+                        "top": 539.8,
+                        "width": 756,
+                        "height": 938,
+                        "fill": "white",
+                        "stroke": null,
+                        "strokeWidth": 1,
+                        "strokeDashArray": null,
+                        "strokeLineCap": "butt",
+                        "strokeLineJoin": "miter",
+                        "strokeMiterLimit": 10,
+                        "scaleX": 0.29,
+                        "scaleY": 0.29,
+                        "angle": 9.23,
+                        "flipX": false,
+                        "flipY": false,
+                        "opacity": 0.4,
+                        "shadow": null,
+                        "visible": true,
+                        "clipTo": null,
+                        "backgroundColor": "",
+                        "fillRule": "nonzero",
+                        "globalCompositeOperation": "source-over",
+                        "transformMatrix": null,
+                        "skewX": 0,
+                        "skewY": 0,
+                        "rx": 0,
+                        "ry": 0,
+                        "uid": "a868aaa7-e20b-40df-8eca-e90908b01276",
+                        "layerMask": true,
+                        "controlModel": "DD_control_mask"
+                    },
+                    "conf": [{
+                            "type": "rect",
+                            "originX": "left",
+                            "originY": "top",
+                            "left": 545.02,
+                            "top": 539.8,
+                            "width": 756,
+                            "height": 938,
+                            "fill": "white",
+                            "stroke": null,
+                            "strokeWidth": 1,
+                            "strokeDashArray": null,
+                            "strokeLineCap": "butt",
+                            "strokeLineJoin": "miter",
+                            "strokeMiterLimit": 10,
+                            "scaleX": 0.29,
+                            "scaleY": 0.29,
+                            "angle": 9.23,
+                            "flipX": false,
+                            "flipY": false,
+                            "opacity": 0.4,
+                            "shadow": null,
+                            "visible": true,
+                            "clipTo": null,
+                            "backgroundColor": "",
+                            "fillRule": "nonzero",
+                            "globalCompositeOperation": "source-over",
+                            "transformMatrix": null,
+                            "skewX": 0,
+                            "skewY": 0,
+                            "rx": 0,
+                            "ry": 0,
+                            "uid": "a868aaa7-e20b-40df-8eca-e90908b01276",
+                            "layerMask": true,
+                            "controlModel": "DD_control_mask"
+                        }]
+                }, {
+                    "src": "http:\/\/magento2.test\/pub\/media\/catalog\/product\/m\/h\/mh01-gray_back.jpg",
+                    "media_id": "61",
+                    "group_index": "966411ac-f558-46e6-8942-6a7c526cd9b8",
+                    "sku": "MH01-XS-Gray",
+                    "product_id": "53",
+                    "sizes": {
+                        "width": 1274,
+                        "height": 1580
+                    }
+                }],
+            "product_id": "53"
+        }, {
+            "group_uid": "216513d4-14b8-4d30-8c61-49cf1a507ae9",
+            "imgs": [{
+                    "src": "http:\/\/magento2.test\/pub\/media\/catalog\/product\/m\/h\/mh01-black_main.jpg",
+                    "media_id": "58",
+                    "group_index": "216513d4-14b8-4d30-8c61-49cf1a507ae9",
+                    "sku": "MH01-XS-Black",
+                    "product_id": "52",
+                    "sizes": {
+                        "width": 1274,
+                        "height": 1580
+                    }
+                }],
+            "product_id": "52"
+        }, {
+            "group_uid": "7d9efe53-e7f7-49eb-8c90-3ed99cf59199",
+            "imgs": [{
+                    "src": "http:\/\/magento2.test\/pub\/media\/catalog\/product\/m\/h\/mh01-orange_main.jpg",
+                    "media_id": "62",
+                    "group_index": "7d9efe53-e7f7-49eb-8c90-3ed99cf59199",
+                    "sku": "MH01-XS-Orange",
+                    "product_id": "54",
+                    "sizes": {
+                        "width": 1274,
+                        "height": 1580
+                    }
+                }],
+            "product_id": "54"
+        }]
+}

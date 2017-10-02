@@ -5,7 +5,7 @@ var DD_Admin_Image_Model = DD_Admin_ImagesSelected_Model.extend({
     registerImage: function (obj) {
         var imgCnt = obj.self;
         this.data = obj.imgOptions;
-        if (this.findImage() !== false) {
+        if (this.getImgIndex(this.data.group_index, this.data.media_id) !== false) {
             this.selectImage(imgCnt);
         }
         this.registerClickEvent(imgCnt);
@@ -26,15 +26,5 @@ var DD_Admin_Image_Model = DD_Admin_ImagesSelected_Model.extend({
             imgCnt.addClass('selected');
             this.addImage(this.data.group_index, this.data.media_id, this.data);
         }
-    },
-
-    getGroupImages: function () {
-        this.groups = this.getGroups();
-        return this.groups[this.getGroupIndexByUid(this.data.group_index)]['imgs'];
-    },
-
-    findImage: function () {
-        var media_id = this.getImgIndex(this.data.group_index, this.data.media_id);
-        return media_id;
     }
 });

@@ -55,8 +55,6 @@ var DD_Admin_ImagesSelected_Model = DD_ModelBase.extend({
         });
         this._evnt().registerCallback(this.groupSetEvent, function (obj, eventName, data) {
             obj.groups = data;
-            console.log('obj.groups SET EVENT: ');
-            console.log(obj.groups);
         });
 
         this._evnt().registerCallback(this.removeGroupEvent, function (obj, eventName, group_index) {
@@ -88,6 +86,7 @@ var DD_Admin_ImagesSelected_Model = DD_ModelBase.extend({
     },
 
     updateImageConf: function (group_uid, media_id, confName, confValue) {
+        
         var group_index = this.getGroupIndexByUid(group_uid);
         var index = this.getImgIndex(group_uid, media_id);
         var groups = this.getGroups();
@@ -119,15 +118,25 @@ var DD_Admin_ImagesSelected_Model = DD_ModelBase.extend({
 
     addImage: function (group_uid, media_id, img) {
         var group_index = this.getGroupIndexByUid(group_uid);
+        var groups = this.getGroups();
+        if(group_index === false) {
+            this.addGroup({
+                'product_id': img.product_id,
+                'group_uid': group_uid,
+                'imgs': [
+                    img
+                ]
+            });
+            return;    
+        }
         var index = this.getImgIndex(group_uid, media_id);
         if (index !== false) {
             return;
         }
-        var groups = this.getGroups();
         var imgGroup = groups[group_index].imgs;
         var newImgIndex = Object.keys(imgGroup).length ? Object.keys(imgGroup).length : 0;
-        this.groups[parseInt(group_index)]['imgs'][newImgIndex] = img;
-        this._evnt().doCall(this.groupChangedEvent);
+        groups[parseInt(group_index)]['imgs'][newImgIndex] = img;
+        this.updateGroups(groups);
     },
 
     updateImgFabricConf: function (group_uid, media_id, fabricObj, type) {
@@ -150,7 +159,6 @@ var DD_Admin_ImagesSelected_Model = DD_ModelBase.extend({
         var _layer = null;
         var _index = null;
         $.each(imgConf, function (index, layer) {
-            console.log('layer.uid == fabricObj.uid ' + layer.uid + '==' +  fabricObj.uid);
             if (layer.uid == fabricObj.uid) {
                 _layer = layer;
                 _index = index;
@@ -200,7 +208,13 @@ var DD_Admin_ImagesSelected_Model = DD_ModelBase.extend({
     },
 
     getImgIndex: function (group_uid, media_id) {
+        if(!group_uid) {
+            return false;
+        }
         var groups = this.getGroups();
+        if(!groups[this.getGroupIndexByUid(group_uid)]) {
+            return false;
+        }
         var imgGroup = groups[this.getGroupIndexByUid(group_uid)]['imgs'];
         var index = false;
         $.each(imgGroup, function (i, image) {
@@ -217,9 +231,15 @@ var DD_Admin_ImagesSelected_Model = DD_ModelBase.extend({
         var indexRemov = this.getImgIndex(group_index, media_id);
         var imgGroup = groups[group_index]['imgs'];
         imgGroup.splice(indexRemov, 1);
-        groups[parseInt(group_index)]['imgs'] = imgGroup;
+        if(imgGroup.length == 0) {
+            this.removeGroup(group_uid);
+        }else{
+            groups[parseInt(group_index)]['imgs'] = imgGroup;
+        }
+        
         this.updateGroups(groups);
     },
+    
     loadGroups: function () {
 
         if (this.getGroups()) {
@@ -260,9 +280,9 @@ var DD_Admin_ImagesSelected_Model = DD_ModelBase.extend({
     },
 
     getGroupIndexByUid: function (group_uid) {
-        this.groups = this.getGroups();
-        var index = 0;
-        $.each(this.groups, function (i, group) {
+        var groups = this.getGroups();
+        var index = false;
+        $.each(groups, function (i, group) {
             if (group_uid == group.group_uid) {
                 index = i;
             }
@@ -285,13 +305,14 @@ var DD_Admin_ImagesSelected_Model = DD_ModelBase.extend({
             self.updateGroups([]);
         });
     },
-
+    /*
     addEmptyGroupClick: function (obj) {
         var self = this;
         obj.on('click', function () {
             self.addGroup({'group_uid': self.createUUID(), 'imgs': []});
         });
     },
+    */
 
     removeGroupClick: function (obj) {
         var self = this;
@@ -314,7 +335,6 @@ var DD_Admin_ImagesSelected_Model = DD_ModelBase.extend({
             var groups = self.getGroups();
             var jsonStr = JSON.stringify(groups);
             
-            console.log(jsonStr);
             self._evnt().doCall('show-admin-loader');
             $.ajax({
                 url: self._s('urlSaveData')

@@ -12,14 +12,14 @@ var DD_admin_groups_panel = DD_panel.extend({
     },
     
     _addElements: function() {
-        this.addGroupButton();
+        this.addEditImgButton();
         this.addClearButton();
         this.addCancelButton();
         this.addSaveButton();
     },
-    
-    addGroupButton: function(){
-        new DD_admin_group_button(
+   
+    addEditImgButton: function(){
+        new DD_admin_image_button(
             this.self
         );
     },
