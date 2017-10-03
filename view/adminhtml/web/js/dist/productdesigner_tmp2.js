@@ -650,14 +650,25 @@ var DD_control = DD_Uibase.extend({
 
     _callBackModel: function (model) {
         model._initBase();
+        model.hideContentEvent();
     },
 
     addContentControls: function () {
-        this.content = new DD_panel({
+        this.contentContainer = new DD_panel({
             'parent': this.self,
-            'class': 'dd-helper-popup-content clearfix'
+            'class': 'dd-helper-popup-content-container clearfix'
+        });
+        this.contentContainer._add();
+        this.content = new DD_panel({
+            'parent': this.contentContainer.get(),
+            'class': 'dd-helper-popup-content'
         });
         this.content._add();
+        this._closeContent = new DD_button({
+            'parent': this.contentContainer.get(),
+            //'text': this._('delete'),
+            'class': 'fa fa-angle-double-up dd-helper-popup-content-close'
+        });
     },
 
     addButtonPanel: function () {
@@ -2018,9 +2029,11 @@ $.fn.dd_productdesigner_admin = function (options) {
             'urlSaveData': '',
             'percentSizeImage': '',
             'percentSizeFromMask': 70,
-            'defaultFont': 'Verdana',
+            'defaultFont': 'Verdana,Geneva,sans-serif',
+            
             'defualtFontColor': '#ffffff',
             'defaultFontSize': 20,
+            'listFonts': [],
             'defaultLayerMaskWidth': 50
         }
     }, options);

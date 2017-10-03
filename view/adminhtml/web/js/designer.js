@@ -36,6 +36,7 @@ define([
                     'urlLoadImages': data.urlLoadImages,
                     'urlUploadImages': data.urlUploadImages,
                     'urlSaveData': data.urlSaveData,
+                    'listFonts': data.fonts,
                     'percentSizeImage': 30,
                     'percentSizeFromMask': 70,
                     

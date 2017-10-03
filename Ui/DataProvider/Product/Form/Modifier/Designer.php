@@ -25,15 +25,19 @@ class Designer extends AbstractModifier {
     protected $urlBuilder;
     
     protected $_assetRepo;
+    
+    protected $_designerFonts;
 
     public function __construct(
         LocatorInterface $locator, 
-        \Magento\Framework\View\Asset\Repository $assetRepo,    
+        \Magento\Framework\View\Asset\Repository $assetRepo,  
+        \Develo\Designer\Helper\Fonts $designerFonts,    
         UrlInterface $urlBuilder
     ) {
         $this->locator    = $locator;
         $this->urlBuilder = $urlBuilder;
         $this->_assetRepo = $assetRepo;
+        $this->_designerFonts = $designerFonts;
     }
 
     public function modifyMeta(array $meta) {
@@ -61,7 +65,8 @@ class Designer extends AbstractModifier {
                                 'urlImages' => $this->urlBuilder->getUrl('dd_productdesigner/product/images'),
                                 'urlLoadImages' => $this->urlBuilder->getUrl('dd_productdesigner/product/loadimages'),
                                 'urlUploadImages' => $this->urlBuilder->getUrl('dd_productdesigner/image/upload'),
-                                'urlSaveData' => $this->urlBuilder->getUrl('dd_productdesigner/group/save')
+                                'urlSaveData' => $this->urlBuilder->getUrl('dd_productdesigner/group/save'),
+                                'fonts' => $this->_designerFonts->getFonts()
                             ],
                         ],
                     ],

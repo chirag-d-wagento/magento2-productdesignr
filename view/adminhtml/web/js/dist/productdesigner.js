@@ -30649,6 +30649,146 @@ fabric.util.object.extend(fabric.IText.prototype, /** @lends fabric.IText.protot
 })();
 
 
+
+(function ($) {
+
+    "use strict";
+
+    var settings;
+
+    var methods = {
+        init: function (options) {
+
+            settings = $.extend({
+                'hide_fallbacks': false,
+                'selected': function (style) {},
+                'opened': function () {},
+                'closed': function () {},
+                'initial': '',
+                'fonts': []
+            }, options);
+
+            var root = this;
+            var $root = $(this);
+            root.selectedCallback = settings['selected'];
+            root.openedCallback = settings['opened'];
+            root.closedCallback = settings['closed'];
+            var visible = false;
+            var selected = false;
+            var openedClass = 'fontSelectOpen';
+
+            var displayName = function (font) {
+                if (settings['hide_fallbacks'])
+                    return font.substr(0, font.indexOf(','));
+                else
+                    return font;
+            }
+
+            var select = function (font) {
+                root.find('span').html(displayName(font).replace(/["']{1}/gi, ""));
+                root.css('font-family', font);
+                selected = font;
+
+                root.selectedCallback(selected);
+            }
+
+            var positionUl = function () {
+                var left, top;
+                left = $(root).offset().left;
+                top = $(root).offset().top + $(root).outerHeight();
+
+                $(ul).css({
+                    'position': 'absolute',
+                    'left': left + 'px',
+                    'top': top + 'px',
+                    'width': $(root).outerWidth() + 'px'
+                });
+            }
+
+            var closeUl = function () {
+                ul.slideUp('fast', function () {
+                    visible = false;
+                });
+
+                $root.removeClass(openedClass);
+
+                root.closedCallback();
+            }
+
+            var openUi = function () {
+                ul.slideDown('fast', function () {
+                    visible = true;
+                });
+
+                $root.addClass(openedClass);
+
+                root.openedCallback();
+            }
+
+            // Setup markup
+            $root.prepend('<span>' + settings['initial'].replace(/'/g, '&#039;') + '</span>');
+            var ul = $('<ul class="fontSelectUl"></ul>').appendTo('body');
+            ul.hide();
+            positionUl();
+
+            for (var i = 0; i < settings['fonts'].length; i++) {
+                var item = $('<li>' + displayName(settings['fonts'][i]) + '</li>').appendTo(ul);
+                $(item).css('font-family', settings['fonts'][i]);
+            }
+
+            if (settings['initial'] != '')
+                select(settings['initial']);
+
+            ul.find('li').click(function () {
+
+                if (!visible)
+                    return;
+
+                positionUl();
+                closeUl();
+
+                select($(this).css('font-family'));
+            });
+
+            $root.click(function (event) {
+
+                if (visible)
+                    return;
+
+                event.stopPropagation();
+
+                positionUl();
+                openUi();
+            });
+
+            $('html').click(function () {
+                if (visible)
+                {
+                    closeUl();
+                }
+            })
+        },
+        selected: function () {
+            return this.css('font-family');
+        },
+        select: function (font) {
+            this.find('span').html(font.substr(0, font.indexOf(',')).replace(/["']{1}/gi, ""));
+            this.css('font-family', font);
+            selected = font;
+        }
+    };
+
+    $.fn.fontSelector = function (method) {
+        if (methods[method]) {
+            return methods[ method ].apply(this, Array.prototype.slice.call(arguments, 1));
+        } else if (typeof method === 'object' || !method) {
+            return methods.init.apply(this, arguments);
+        } else {
+            $.error('Method ' + method + ' does not exist on jQuery.fontSelector');
+        }
+    }
+})(jQuery);
+
 // AMD and CommonJS support: http://ifandelse.com/its-not-hard-making-your-library-support-amd-and-commonjs
 (function (root, factory) {
   // AMD support
@@ -33225,14 +33365,25 @@ var DD_control = DD_Uibase.extend({
 
     _callBackModel: function (model) {
         model._initBase();
+        model.hideContentEvent();
     },
 
     addContentControls: function () {
-        this.content = new DD_panel({
+        this.contentContainer = new DD_panel({
             'parent': this.self,
-            'class': 'dd-helper-popup-content clearfix'
+            'class': 'dd-helper-popup-content-container clearfix'
+        });
+        this.contentContainer._add();
+        this.content = new DD_panel({
+            'parent': this.contentContainer.get(),
+            'class': 'dd-helper-popup-content'
         });
         this.content._add();
+        this._closeContent = new DD_button({
+            'parent': this.contentContainer.get(),
+            //'text': this._('delete'),
+            'class': 'fa fa-angle-double-up dd-helper-popup-content-close'
+        });
     },
 
     addButtonPanel: function () {
@@ -33654,7 +33805,7 @@ var DD_Control_Base_Model = DD_ModelBase.extend({
             });
             console.log('defaultScale: ' + defaultScale);
             console.log('currentScale: ' + currentScale);
-            self.obj.content.get().show();
+            self.obj.contentContainer.get().show();
             self.obj.control.on('input', function () {
                 var val = $(this).val();
                 val = val * defaultScale;
@@ -33688,7 +33839,7 @@ var DD_Control_Base_Model = DD_ModelBase.extend({
                 'max': 360,
                 'value': parseInt(fabricObj.get('angle'))
             });
-            self.obj.content.get().show();
+            self.obj.contentContainer.get().show();
             self.obj.control.on('input', function () {
                 var val = $(this).val();
                 fabricObj.setAngle(val);
@@ -33710,6 +33861,13 @@ var DD_Control_Base_Model = DD_ModelBase.extend({
             this.rotateBase();
         }
     },
+    
+    hideContentEvent: function() {
+        var self = this;
+        this.obj._closeContent.get().on('click', function() {
+            self.obj.contentContainer.get().hide();
+        });
+    },
 
     removeBase: function () {
         this.obj.options.fabricObject.remove();
@@ -33724,7 +33882,7 @@ var DD_Control_Base_Model = DD_ModelBase.extend({
     },
 
     hide: function () {
-        this.obj.content.get().hide()
+        this.obj.contentContainer.get().hide()
         this.obj.get().fadeOut('fast');
     },
 
@@ -34011,8 +34169,25 @@ var DD_control_text = DD_Control_Base_Model.extend({
         this.addDelete();
         this.obj.addRotateBase();
         this.obj.addSizeBase();
+        this.addFontSelector();
         
         this.baseEvents();
+    },
+    
+    addFontSelector: function() {
+        var self = this;
+        var _selector = new DD_button({
+            'parent': this.obj.buttons.get(),
+            //'text': this._('save'),
+            'class': 'fa fa-font'
+        });
+        _selector.get().on('click', function() {
+            self.showTextSetting();
+        });
+    },
+    
+    showTextSetting: function() {
+        var content = this.obj.content.get();
     },
     
     addDelete: function() {
@@ -35010,9 +35185,10 @@ $.fn.dd_productdesigner = function (options) {
         'save': false,
         'qrcode': false,
         'preview': false,
-        'defaultFont': 'Verdana',
+        'defaultFont': 'Verdana,Geneva,sans-serif',
         'defualtFontColor': '#ffffff',
         'defaultFontSize': 25,
+        'listFonts': [],
         'percentSizeFromMask': 70,
         'defaultLayerMaskWidth': 40,
         'urlUploadImages': '',
@@ -35758,14 +35934,25 @@ var DD_control = DD_Uibase.extend({
 
     _callBackModel: function (model) {
         model._initBase();
+        model.hideContentEvent();
     },
 
     addContentControls: function () {
-        this.content = new DD_panel({
+        this.contentContainer = new DD_panel({
             'parent': this.self,
-            'class': 'dd-helper-popup-content clearfix'
+            'class': 'dd-helper-popup-content-container clearfix'
+        });
+        this.contentContainer._add();
+        this.content = new DD_panel({
+            'parent': this.contentContainer.get(),
+            'class': 'dd-helper-popup-content'
         });
         this.content._add();
+        this._closeContent = new DD_button({
+            'parent': this.contentContainer.get(),
+            //'text': this._('delete'),
+            'class': 'fa fa-angle-double-up dd-helper-popup-content-close'
+        });
     },
 
     addButtonPanel: function () {
@@ -37126,9 +37313,11 @@ $.fn.dd_productdesigner_admin = function (options) {
             'urlSaveData': '',
             'percentSizeImage': '',
             'percentSizeFromMask': 70,
-            'defaultFont': 'Verdana',
+            'defaultFont': 'Verdana,Geneva,sans-serif',
+            
             'defualtFontColor': '#ffffff',
             'defaultFontSize': 20,
+            'listFonts': [],
             'defaultLayerMaskWidth': 50
         }
     }, options);

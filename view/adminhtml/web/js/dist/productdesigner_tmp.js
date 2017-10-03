@@ -721,14 +721,25 @@ var DD_control = DD_Uibase.extend({
 
     _callBackModel: function (model) {
         model._initBase();
+        model.hideContentEvent();
     },
 
     addContentControls: function () {
-        this.content = new DD_panel({
+        this.contentContainer = new DD_panel({
             'parent': this.self,
-            'class': 'dd-helper-popup-content clearfix'
+            'class': 'dd-helper-popup-content-container clearfix'
+        });
+        this.contentContainer._add();
+        this.content = new DD_panel({
+            'parent': this.contentContainer.get(),
+            'class': 'dd-helper-popup-content'
         });
         this.content._add();
+        this._closeContent = new DD_button({
+            'parent': this.contentContainer.get(),
+            //'text': this._('delete'),
+            'class': 'fa fa-angle-double-up dd-helper-popup-content-close'
+        });
     },
 
     addButtonPanel: function () {
@@ -1150,7 +1161,7 @@ var DD_Control_Base_Model = DD_ModelBase.extend({
             });
             console.log('defaultScale: ' + defaultScale);
             console.log('currentScale: ' + currentScale);
-            self.obj.content.get().show();
+            self.obj.contentContainer.get().show();
             self.obj.control.on('input', function () {
                 var val = $(this).val();
                 val = val * defaultScale;
@@ -1184,7 +1195,7 @@ var DD_Control_Base_Model = DD_ModelBase.extend({
                 'max': 360,
                 'value': parseInt(fabricObj.get('angle'))
             });
-            self.obj.content.get().show();
+            self.obj.contentContainer.get().show();
             self.obj.control.on('input', function () {
                 var val = $(this).val();
                 fabricObj.setAngle(val);
@@ -1206,6 +1217,13 @@ var DD_Control_Base_Model = DD_ModelBase.extend({
             this.rotateBase();
         }
     },
+    
+    hideContentEvent: function() {
+        var self = this;
+        this.obj._closeContent.get().on('click', function() {
+            self.obj.contentContainer.get().hide();
+        });
+    },
 
     removeBase: function () {
         this.obj.options.fabricObject.remove();
@@ -1220,7 +1238,7 @@ var DD_Control_Base_Model = DD_ModelBase.extend({
     },
 
     hide: function () {
-        this.obj.content.get().hide()
+        this.obj.contentContainer.get().hide()
         this.obj.get().fadeOut('fast');
     },
 
@@ -1507,8 +1525,25 @@ var DD_control_text = DD_Control_Base_Model.extend({
         this.addDelete();
         this.obj.addRotateBase();
         this.obj.addSizeBase();
+        this.addFontSelector();
         
         this.baseEvents();
+    },
+    
+    addFontSelector: function() {
+        var self = this;
+        var _selector = new DD_button({
+            'parent': this.obj.buttons.get(),
+            //'text': this._('save'),
+            'class': 'fa fa-font'
+        });
+        _selector.get().on('click', function() {
+            self.showTextSetting();
+        });
+    },
+    
+    showTextSetting: function() {
+        var content = this.obj.content.get();
     },
     
     addDelete: function() {
@@ -2506,9 +2541,10 @@ $.fn.dd_productdesigner = function (options) {
         'save': false,
         'qrcode': false,
         'preview': false,
-        'defaultFont': 'Verdana',
+        'defaultFont': 'Verdana,Geneva,sans-serif',
         'defualtFontColor': '#ffffff',
         'defaultFontSize': 25,
+        'listFonts': [],
         'percentSizeFromMask': 70,
         'defaultLayerMaskWidth': 40,
         'urlUploadImages': '',

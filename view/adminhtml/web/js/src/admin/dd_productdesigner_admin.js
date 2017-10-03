@@ -25,9 +25,11 @@ $.fn.dd_productdesigner_admin = function (options) {
             'urlSaveData': '',
             'percentSizeImage': '',
             'percentSizeFromMask': 70,
-            'defaultFont': 'Verdana',
+            'defaultFont': 'Verdana,Geneva,sans-serif',
+            
             'defualtFontColor': '#ffffff',
             'defaultFontSize': 20,
+            'listFonts': [],
             'defaultLayerMaskWidth': 50
         }
     }, options);

@@ -54,7 +54,7 @@ var DD_Control_Base_Model = DD_ModelBase.extend({
             });
             console.log('defaultScale: ' + defaultScale);
             console.log('currentScale: ' + currentScale);
-            self.obj.content.get().show();
+            self.obj.contentContainer.get().show();
             self.obj.control.on('input', function () {
                 var val = $(this).val();
                 val = val * defaultScale;
@@ -88,7 +88,7 @@ var DD_Control_Base_Model = DD_ModelBase.extend({
                 'max': 360,
                 'value': parseInt(fabricObj.get('angle'))
             });
-            self.obj.content.get().show();
+            self.obj.contentContainer.get().show();
             self.obj.control.on('input', function () {
                 var val = $(this).val();
                 fabricObj.setAngle(val);
@@ -110,6 +110,13 @@ var DD_Control_Base_Model = DD_ModelBase.extend({
             this.rotateBase();
         }
     },
+    
+    hideContentEvent: function() {
+        var self = this;
+        this.obj._closeContent.get().on('click', function() {
+            self.obj.contentContainer.get().hide();
+        });
+    },
 
     removeBase: function () {
         this.obj.options.fabricObject.remove();
@@ -124,7 +131,7 @@ var DD_Control_Base_Model = DD_ModelBase.extend({
     },
 
     hide: function () {
-        this.obj.content.get().hide()
+        this.obj.contentContainer.get().hide()
         this.obj.get().fadeOut('fast');
     },
 
