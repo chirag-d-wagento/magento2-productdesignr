@@ -26,6 +26,7 @@ var DD_Layer_Base = DD_object.extend({
     },
     
     positionCenterCenter: function(parent, options) {
+        
         if(this._l().getMask()) {
             var mask = this._l().getMask();
             var pointCenter = mask.getCenterPoint();
@@ -49,8 +50,15 @@ var DD_Layer_Base = DD_object.extend({
         return angle;
     },
 
-    calcFontSize: function (baseSize, percentFromImg) {
-
+    calcFontSize: function () {
+        if(this._l().getMask()) {
+           var width = this._l().getMask().getWidth(); 
+        }else{
+            var width = this._l().getWidth();
+        }
+        var canvas = this._l().getHoverCanvas();
+        return parseInt(this._s('defaultFontSize')/canvas.getZoom()) * 
+                (width / canvas.getWidth());
     },
     
     setSize: function(options, sizes, percentFromParent) {

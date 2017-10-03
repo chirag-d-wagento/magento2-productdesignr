@@ -1,4 +1,25 @@
 $.fn.dd_productdesigner = function (options) {
+    var settings = {
+        'addphoto': false,
+        'addtext': false,
+        'addfromlibrary': false,
+        'history': false,
+        'layers': false,
+        'save': false,
+        'qrcode': false,
+        'preview': false,
+        'defaultFont': 'Verdana',
+        'defualtFontColor': '#ffffff',
+        'defaultFontSize': 25,
+        'percentSizeFromMask': 70,
+        'defaultLayerMaskWidth': 40,
+        'urlUploadImages': '',
+        'myFilesPath': '/myfiles.php',
+        'percentSizeImage': 20 //percentage size from canvas width
+    };
+    
+    settings = $.extend(settings, options.settings);
+    
     this.options = $.extend({
         'src': '',
         'debug': false,
@@ -51,33 +72,15 @@ $.fn.dd_productdesigner = function (options) {
             'add_image': 'Add Image',
             'add_default_texts': 'Add default texts'
         },
-        'settings': {
-            'addphoto': true,
-            'addtext': false,
-            'addfromlibrary': false,
-            'history': false,
-            'layers': false,
-            'save': false,
-            'qrcode': false,
-            'preview': false,
-            'defaultFont': 'Verdana',
-            'defualtFontColor': '#ffffff',
-            'defaultFontSize': 20,
-            'percentSizeFromMask': 70,
-            'defaultLayerMaskWidth': 40,
-            'urlUploadImages': '',
-            'myFilesPath': '/myfiles.php',
-            'percentSizeImage': 20 //percentage size from canvas width
-        },
+        //'settings': settings,
         'afterLoad': null,
         'onUpdate': null
     }, options);
 
+    this.options.settings = settings;
     this.onUpdate = function (callback) {
         this.options.onUpdate = callback;
     }
-
-
 
     this.init = function () {
         new DD_Translator(this.options.translator);
@@ -92,7 +95,7 @@ $.fn.dd_productdesigner = function (options) {
         this.destroy = function () {
             app.destroy();
         }
-        
+
         return this;
     }
 

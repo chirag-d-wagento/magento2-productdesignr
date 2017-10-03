@@ -139,9 +139,12 @@ var DD_Main_Model = DD_ModelBase.extend({
         if (options.conf) {
             var last = options.conf.length;
             $(options.conf).each(function (i, obj) {
-                if (obj.type == 'image') {
-                    var notSelect = (last - 1) == i ? false : true;
+                var notSelect = (last - 1) == i ? false : true;
+                if (obj.type === 'image') {
                     new DD_Layer_Img(null, obj, notSelect);
+                }
+                if(obj.type === 'text') {
+                    new DD_Layer_Text(null, obj);
                 }
             });
         }

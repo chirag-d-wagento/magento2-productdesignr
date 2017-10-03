@@ -1264,9 +1264,12 @@ var DD_Main_Model = DD_ModelBase.extend({
         if (options.conf) {
             var last = options.conf.length;
             $(options.conf).each(function (i, obj) {
-                if (obj.type == 'image') {
-                    var notSelect = (last - 1) == i ? false : true;
+                var notSelect = (last - 1) == i ? false : true;
+                if (obj.type === 'image') {
                     new DD_Layer_Img(null, obj, notSelect);
+                }
+                if(obj.type === 'text') {
+                    new DD_Layer_Text(null, obj);
                 }
             });
         }
@@ -1408,6 +1411,7 @@ var DD_Layer_Base = DD_object.extend({
     },
     
     positionCenterCenter: function(parent, options) {
+        
         if(this._l().getMask()) {
             var mask = this._l().getMask();
             var pointCenter = mask.getCenterPoint();
@@ -1431,8 +1435,15 @@ var DD_Layer_Base = DD_object.extend({
         return angle;
     },
 
-    calcFontSize: function (baseSize, percentFromImg) {
-
+    calcFontSize: function () {
+        if(this._l().getMask()) {
+           var width = this._l().getMask().getWidth(); 
+        }else{
+            var width = this._l().getWidth();
+        }
+        var canvas = this._l().getHoverCanvas();
+        return parseInt(this._s('defaultFontSize')/canvas.getZoom()) * 
+                (width / canvas.getWidth());
     },
     
     setSize: function(options, sizes, percentFromParent) {
@@ -1652,29 +1663,45 @@ var DD_Layer_Mask = DD_Layer_Base.extend({
 });
 
 var DD_Layer_Text = DD_Layer_Base.extend({
-    init: function (options) {
+    init: function (options, fullCnfg) {
         var parent = this.getParent();
-        var text = new fabric.IText(options.text, {
-            //left: 10,
-            //top: 5,
-            //fontSize: options.fontSize ? options.fontSize : this._s('defaultFontSize'),
-            fontFamily: options.fontFamily ? options.fontFamily : this._s('defaultFont'),
-            fill: options.fill ? options.fill : this._s('defualtFontColor')
-        }).on('changed', function(){
-            console.log('TEXT CHANGED!');
-        });
-        var mask = self._l().getMask();
-        var percentWidth = !mask ? self._s('defaultLayerMaskWidth') : self._s('percentSizeFromMask');
-        
-        
-        //this._l().canvas.add(text);
-        //text.center();
-        //text.setCoords();
-        //this._l().canvas.centerObject(text);
-        //this._l().canvas.setActiveObject(text);
-        //this._l().canvas.renderAll();
 
+        var options = options ? options : {};
+        var text = fullCnfg ? fullCnfg.text : options.text;
+        
+        if (!fullCnfg) {
+            var conf = {
+                fontSize: this.calcFontSize(),
+                fontFamily: options.fontFamily ? options.fontFamily : this._s('defaultFont'),
+                fill: options.fill ? options.fill : this._s('defualtFontColor')
+            };
+        } else {
+            var conf = fullCnfg;
+        }
+
+        var text = new fabric.Text(text, conf);
+        parent.add(text);
+        
+        if (!fullCnfg) {
+            var coords = this.positionToBase({width: text.getWidth(), height: text.getHeight()});
+
+            text.set({
+                left: parseInt(coords.left),
+                top: parseInt(coords.top)
+            }).setCoords();
+
+            this.setObjAngle(text);
+        }else{
+            text.setCoords();
+        }
+
+        parent.renderAll();
+        if (!options.noselectable) {
+            parent.setActiveObject(text);
+        }
+        
         this.object = text;
+        this.onCreated();
     }
 })
 
@@ -2324,6 +2351,27 @@ var DD_setup_texts = DD_panel.extend({
 });
 
 $.fn.dd_productdesigner = function (options) {
+    var settings = {
+        'addphoto': false,
+        'addtext': false,
+        'addfromlibrary': false,
+        'history': false,
+        'layers': false,
+        'save': false,
+        'qrcode': false,
+        'preview': false,
+        'defaultFont': 'Verdana',
+        'defualtFontColor': '#ffffff',
+        'defaultFontSize': 25,
+        'percentSizeFromMask': 70,
+        'defaultLayerMaskWidth': 40,
+        'urlUploadImages': '',
+        'myFilesPath': '/myfiles.php',
+        'percentSizeImage': 20 //percentage size from canvas width
+    };
+    
+    settings = $.extend(settings, options.settings);
+    
     this.options = $.extend({
         'src': '',
         'debug': false,
@@ -2376,33 +2424,15 @@ $.fn.dd_productdesigner = function (options) {
             'add_image': 'Add Image',
             'add_default_texts': 'Add default texts'
         },
-        'settings': {
-            'addphoto': true,
-            'addtext': false,
-            'addfromlibrary': false,
-            'history': false,
-            'layers': false,
-            'save': false,
-            'qrcode': false,
-            'preview': false,
-            'defaultFont': 'Verdana',
-            'defualtFontColor': '#ffffff',
-            'defaultFontSize': 20,
-            'percentSizeFromMask': 70,
-            'defaultLayerMaskWidth': 40,
-            'urlUploadImages': '',
-            'myFilesPath': '/myfiles.php',
-            'percentSizeImage': 20 //percentage size from canvas width
-        },
+        //'settings': settings,
         'afterLoad': null,
         'onUpdate': null
     }, options);
 
+    this.options.settings = settings;
     this.onUpdate = function (callback) {
         this.options.onUpdate = callback;
     }
-
-
 
     this.init = function () {
         new DD_Translator(this.options.translator);
@@ -2417,7 +2447,7 @@ $.fn.dd_productdesigner = function (options) {
         this.destroy = function () {
             app.destroy();
         }
-        
+
         return this;
     }
 

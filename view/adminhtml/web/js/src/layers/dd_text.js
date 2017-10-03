@@ -1,26 +1,42 @@
 var DD_Layer_Text = DD_Layer_Base.extend({
-    init: function (options) {
+    init: function (options, fullCnfg) {
         var parent = this.getParent();
-        var text = new fabric.IText(options.text, {
-            //left: 10,
-            //top: 5,
-            //fontSize: options.fontSize ? options.fontSize : this._s('defaultFontSize'),
-            fontFamily: options.fontFamily ? options.fontFamily : this._s('defaultFont'),
-            fill: options.fill ? options.fill : this._s('defualtFontColor')
-        }).on('changed', function(){
-            console.log('TEXT CHANGED!');
-        });
-        var mask = self._l().getMask();
-        var percentWidth = !mask ? self._s('defaultLayerMaskWidth') : self._s('percentSizeFromMask');
-        
-        
-        //this._l().canvas.add(text);
-        //text.center();
-        //text.setCoords();
-        //this._l().canvas.centerObject(text);
-        //this._l().canvas.setActiveObject(text);
-        //this._l().canvas.renderAll();
 
+        var options = options ? options : {};
+        var text = fullCnfg ? fullCnfg.text : options.text;
+        
+        if (!fullCnfg) {
+            var conf = {
+                fontSize: this.calcFontSize(),
+                fontFamily: options.fontFamily ? options.fontFamily : this._s('defaultFont'),
+                fill: options.fill ? options.fill : this._s('defualtFontColor')
+            };
+        } else {
+            var conf = fullCnfg;
+        }
+
+        var text = new fabric.Text(text, conf);
+        parent.add(text);
+        
+        if (!fullCnfg) {
+            var coords = this.positionToBase({width: text.getWidth(), height: text.getHeight()});
+
+            text.set({
+                left: parseInt(coords.left),
+                top: parseInt(coords.top)
+            }).setCoords();
+
+            this.setObjAngle(text);
+        }else{
+            text.setCoords();
+        }
+
+        parent.renderAll();
+        if (!options.noselectable) {
+            parent.setActiveObject(text);
+        }
+        
         this.object = text;
+        this.onCreated();
     }
 })
