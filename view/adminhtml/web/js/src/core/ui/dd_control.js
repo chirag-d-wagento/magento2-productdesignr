@@ -17,8 +17,8 @@ var DD_control = DD_Uibase.extend({
         });
         this._add();
     },
-    
-    _addElements: function() {
+
+    _addElements: function () {
         this.addButtonPanel();
         this.addContentControls();
     },
@@ -96,10 +96,77 @@ var DD_control = DD_Uibase.extend({
 
     addControlBase: function (attrs) {
         this.control = $('<input>').attr({'type': 'range'}).addClass('dd-helper-range');
-        if(attrs) {
+        if (attrs) {
             this.control.attr(attrs);
         }
         this.content.get().append(this.control);
+    },
+
+    fontSelector: function (parent, fonts) {
+        var fontSelectorContainer = new DD_panel({
+            'parent': parent,
+            'class': 'dd-helper-font-selector-container'
+        });
+        fontSelectorContainer._add();
+        
+        //fontSelect
+        var uid = this.createUUID();
+
+        var fontSelect = $('<div />').attr({
+                    'id': uid,
+                }).addClass('fontSelect').html('<div class="arrow-down"></div>');
+                
+        fontSelectorContainer.get()
+                .append(fontSelect);
+
+        $(fontSelect).fontSelector({
+            'hide_fallbacks': true,
+            'initial': 'Courier New,Courier New,Courier,monospace',
+            'selected': function (style) {
+                console.log("S1: " + style);
+            },
+            'fonts': [
+                'Arial,Arial,Helvetica,sans-serif',
+                'Arial Black,Arial Black,Gadget,sans-serif',
+                'Comic Sans MS,Comic Sans MS,cursive',
+                'Courier New,Courier New,Courier,monospace',
+                'Georgia,Georgia,serif',
+                'Impact,Charcoal,sans-serif',
+                'Lucida Console,Monaco,monospace',
+                'Lucida Sans Unicode,Lucida Grande,sans-serif',
+                'Palatino Linotype,Book Antiqua,Palatino,serif',
+                'Tahoma,Geneva,sans-serif',
+                'Times New Roman,Times,serif',
+                'Trebuchet MS,Helvetica,sans-serif',
+                'Verdana,Geneva,sans-serif',
+                'Gill Sans,Geneva,sans-serif'
+            ]
+        });
+    },
+
+    colorSelector: function (parent, name, color, onUpdate) {
+        var colorSelectorContainer = new DD_panel({
+            'parent': parent,
+            'class': 'dd-helper-color-selector-container'
+        });
+
+        colorSelectorContainer._add();
+
+        var uid = this.createUUID();
+
+        colorSelectorContainer.get()
+                .append($('<input />').attr({
+                    'id': uid,
+                    'type': 'text'
+                }));
+
+        $("#" + uid).spectrum({
+            allowEmpty: true,
+            color: color
+        });
+        colorSelectorContainer.get()
+                .append($('<span />').text(name)
+                        .addClass('dd-helper-color-selector-title'));
     }
 
 });

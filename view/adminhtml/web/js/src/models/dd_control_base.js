@@ -52,8 +52,6 @@ var DD_Control_Base_Model = DD_ModelBase.extend({
                 'step': 0.01,
                 'value': currentScale / defaultScale
             });
-            console.log('defaultScale: ' + defaultScale);
-            console.log('currentScale: ' + currentScale);
             self.obj.contentContainer.get().show();
             self.obj.control.on('input', function () {
                 var val = $(this).val();
@@ -64,7 +62,6 @@ var DD_Control_Base_Model = DD_ModelBase.extend({
                     'scaleY': parseFloat(val)
                 });
                 fabricObj.setCoords();
-                console.log('set Scale: ' + parseFloat(val));
                 canvas.renderAll();
             });
 
@@ -92,6 +89,7 @@ var DD_Control_Base_Model = DD_ModelBase.extend({
             self.obj.control.on('input', function () {
                 var val = $(this).val();
                 fabricObj.setAngle(val);
+                fabricObj.setCoords();
                 canvas.renderAll();
             });
 

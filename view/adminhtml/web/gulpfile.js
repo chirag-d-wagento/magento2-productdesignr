@@ -10,7 +10,7 @@ var jsFiles = [
     //'js/src/plugins/fabric-resize.js',
     'js/src/plugins/modernizr-custom.js',
     //'js/src/plugins/Sortable.js',
-    //'js/src/plugins/jsBox.js',
+    //'js/src/plugins/colorSelector.js',
     'js/src/core/dd_object.js',
     'js/src/core/dd_event.js',
     'js/src/core/dd_translator.js',

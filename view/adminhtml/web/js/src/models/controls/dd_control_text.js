@@ -1,9 +1,12 @@
 var DD_control_text = DD_Control_Base_Model.extend({
+    containerClass: 'dd-helper-control-text',
+    
     init: function (obj) {
         this._super(obj);
     },
     
     _addControls: function () {
+        this.obj.contentContainer.get().addClass(this.containerClass);
         this.addDelete();
         this.obj.addRotateBase();
         this.obj.addSizeBase();
@@ -26,6 +29,12 @@ var DD_control_text = DD_Control_Base_Model.extend({
     
     showTextSetting: function() {
         var content = this.obj.content.get();
+        content.empty();
+        this.obj.colorSelector(content, this._('background_color'));
+        this.obj.colorSelector(content, this._('text_color'));
+        this.obj.fontSelector(content);
+        
+        this.obj.contentContainer.get().show();
     },
     
     addDelete: function() {

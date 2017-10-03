@@ -32,6 +32,10 @@
         text-align:center;
         position:relative;
 
+        &.dd-helper-control-text{
+            text-align: left;
+            padding:20px 0 10px;
+        }
         .control-title{
             font-weight:bold;
             display:block;
@@ -130,6 +134,23 @@
         }
         input[type=range]:focus::-ms-fill-upper {
             background: #367ebd;
+        }
+        
+        .dd-helper-color-selector-container{
+            display:inline-block;
+            .dd-helper-color-selector-title {
+                font-weight:bold;
+                display:inline-block;
+                margin:0 10px;
+            }
+            input[type="text"]{
+                display:none !important;
+            }
+            
+        }
+        .dd-helper-font-selector-container{
+            display:inline-block;
+            margin:0 10px;
         }
     }
 }

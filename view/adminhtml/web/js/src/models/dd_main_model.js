@@ -44,6 +44,7 @@ var DD_Main_Model = DD_ModelBase.extend({
 
         var bgCanvas = new fabric.Canvas(idBgCanvas);
         var hoverCanvas = new fabric.Canvas(idCanvasHover);
+        
         this.layersObj.setBgCanvas(bgCanvas);
         this.layersObj.setHoverCanvas(hoverCanvas);
         this.layersObj.setHeight(height);
