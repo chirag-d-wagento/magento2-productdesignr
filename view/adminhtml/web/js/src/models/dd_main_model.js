@@ -55,8 +55,8 @@ var DD_Main_Model = DD_ModelBase.extend({
             src: this.obj.options.src
         });
 
-        this._addObjects(this.obj.options);
         this._canvasEvents(hoverCanvas);
+        this._addObjects(this.obj.options);
 
         this.resize(width, height);
         $(window).on('resize', function () {
@@ -68,6 +68,7 @@ var DD_Main_Model = DD_ModelBase.extend({
     _canvasEvents: function (hoverCanvas) {
         var self = this;
         hoverCanvas.on('object:added', function (e) {
+            console.log('object:added');
             new DD_control({
                 parent: self.obj.self,
                 fabricObject: e.target
@@ -107,15 +108,6 @@ var DD_Main_Model = DD_ModelBase.extend({
             }
         });
         hoverCanvas.on('object:selected', function (e) {
-            console.log('object:selected');
-            if (!e.target.controlModelCreated) {
-                new DD_control({
-                    parent: self.obj.self,
-                    fabricObject: e.target
-                });
-            }
-            console.log(e.target.controlModelCreated);
-
             if (e.target.controlModelCreated) {
                 e.target.controlModelCreated.initPosition();
             }
@@ -128,12 +120,15 @@ var DD_Main_Model = DD_ModelBase.extend({
         });
         hoverCanvas.on('object:removed', function (e) {
             self._onUpdate(e.target, 'remove');
+            if (e.target.controlModelCreated) {
+                e.target.controlModelCreated.remove();
+            }
         });
     },
 
     _addObjects: function (options) {
         if (options.mask) {
-            var mask = new DD_Layer_Mask(options.mask);
+            var mask = new DD_Layer_Mask(options.mask, true);
             mask.save();
         }
         if (options.conf) {
@@ -144,7 +139,7 @@ var DD_Main_Model = DD_ModelBase.extend({
                     new DD_Layer_Img(null, obj, notSelect);
                 }
                 if(obj.type === 'text') {
-                    new DD_Layer_Text(null, obj);
+                    new DD_Layer_Text(null, obj, notSelect);
                 }
             });
         }

@@ -153,16 +153,20 @@ var DD_Admin_ImagesSelected_Model = DD_ModelBase.extend({
         if (fabricObj.mainBg) {
             return;
         }
-        if (fabricObj.layerMask && type == 'remove') {
+        if (fabricObj.layerMask && type === 'remove') {
             this.removeMask(group_uid, media_id, fabricObj);
         }
         if (fabricObj.layerMask) {
             this.updateMask(group_uid, media_id, fabricObj);
         }
-        if (type == 'remove') {
+        if (type === 'remove') {
             this.removeLayer(group_uid, media_id, fabricObj);
+            return;
         }
-        this.updateLayer(group_uid, media_id, fabricObj);
+        if(fabricObj.type === 'image' || fabricObj.type === 'text') {
+            this.updateLayer(group_uid, media_id, fabricObj)
+        }
+        
     },
 
     findLayerByUid: function (imgConf, fabricObj) {
@@ -195,7 +199,7 @@ var DD_Admin_ImagesSelected_Model = DD_ModelBase.extend({
     removeLayer: function (group_uid, media_id, fabricObj) {
         var imgConf = this.getImgConf(group_uid, media_id);
         var layer = this.findLayerByUid(imgConf, fabricObj);
-        imgConf.splice(layer._index, 1, imgConf);
+        var newImgConf = imgConf.splice(layer.index, 1);
         this.updateImageConf(group_uid, media_id, 'conf', imgConf);
     },
 
@@ -228,7 +232,7 @@ var DD_Admin_ImagesSelected_Model = DD_ModelBase.extend({
         var imgGroup = groups[this.getGroupIndexByUid(group_uid)]['imgs'];
         var index = false;
         $.each(imgGroup, function (i, image) {
-            if (image.media_id == parseInt(media_id)) {
+            if (parseInt(image.media_id) === parseInt(media_id)) {
                 index = i;
             }
         });
@@ -363,6 +367,7 @@ var DD_Admin_ImagesSelected_Model = DD_ModelBase.extend({
         var self = this;
         obj.on('click', function () {
             var groups = self.getGroups();
+            console.log(groups);
             var jsonStr = JSON.stringify(groups);
 
             self._evnt().doCall('show-admin-loader');

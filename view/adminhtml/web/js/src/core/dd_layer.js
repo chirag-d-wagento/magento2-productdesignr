@@ -49,6 +49,10 @@ var DD_Layer = DD_object.extend({
     },
     
     setMask: function(mask){
+        if(mask === null) {
+            delete this.layerMask;
+            return;
+        }
         this.layerMask = mask;
     },
     

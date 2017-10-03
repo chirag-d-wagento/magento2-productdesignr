@@ -1,5 +1,6 @@
 var DD_Layer_Text = DD_Layer_Base.extend({
-    init: function (options, fullCnfg) {
+    init: function (options, fullCnfg, notSelect) {
+        console.log('notSelect: ' + notSelect);
         var parent = this.getParent();
 
         var options = options ? options : {};
@@ -9,12 +10,15 @@ var DD_Layer_Text = DD_Layer_Base.extend({
             var conf = {
                 fontSize: this.calcFontSize(),
                 fontFamily: options.fontFamily ? options.fontFamily : this._s('defaultFont'),
-                fill: options.fill ? options.fill : this._s('defualtFontColor')
+                fill: options.fill ? options.fill : this._s('defualtFontColor'),
+                controlModel: 'DD_control_text'
             };
         } else {
             var conf = fullCnfg;
         }
 
+        conf.notSelect = notSelect;
+        
         var text = new fabric.Text(text, conf);
         parent.add(text);
         
@@ -32,7 +36,7 @@ var DD_Layer_Text = DD_Layer_Base.extend({
         }
 
         parent.renderAll();
-        if (!options.noselectable) {
+        if (!options.noselectable && !conf.notSelect) {
             parent.setActiveObject(text);
         }
         

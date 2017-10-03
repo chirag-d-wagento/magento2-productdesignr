@@ -10,6 +10,11 @@ var DD_control_mask = DD_Control_Base_Model.extend({
     },
     addDelete: function () {
         var _delete = this.obj.addDeleteBase();
+        var self = this;
+        _delete.get().on('click', function() {
+            self.removeBase();
+            self._l().setMask(null)
+        });
     },
     addRotate: function() {
         var _rotate = this.obj.addRotateBase();

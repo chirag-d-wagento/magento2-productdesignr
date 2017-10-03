@@ -33096,6 +33096,10 @@ var DD_Layer = DD_object.extend({
     },
     
     setMask: function(mask){
+        if(mask === null) {
+            delete this.layerMask;
+            return;
+        }
         this.layerMask = mask;
     },
     
@@ -33198,13 +33202,9 @@ var DD_control = DD_Uibase.extend({
     mainClass: 'dd-helper-popup',
     init: function (options) {
         this.options = $.extend(( options ? options : {} ) , this.options);
-        console.log('DD_control');
-        
         if(!this.options.fabricObject) {
             return;
         }
-        console.log('this.options.fabricObject.controlModel');
-        console.log(this.options.fabricObject.controlModel);
         if(!this.options.fabricObject.controlModel) {
            return; 
         }
@@ -33218,7 +33218,7 @@ var DD_control = DD_Uibase.extend({
     },
     
     _callBackModel: function(model) {
-        model.initPosition();
+        model._initBase();
     },
     
     addDeleteBase: function() {
@@ -33259,11 +33259,6 @@ var DD_control = DD_Uibase.extend({
         });
         
         return _size;
-    },
-    
-    
-    remove: function() {
-        
     }
 });
 
@@ -33578,21 +33573,24 @@ var DD_Control_Base_Model = DD_ModelBase.extend({
         this._super();
     },
     
+    _initBase: function() {
+        this.obj.options.fabricObject.controlModelCreated = this;
+    },
+    
     initPosition: function() {
         this.obj.get().css({
             left: this.calcLeftosition(),
             top: this.calcTopPosition()
         });
-        if(!this.obj.options.fabricObject.notSelect || typeof(this.obj.options.fabricObject.notSelect) == 'undefined') {
-            this.obj.get().fadeIn('slow');
-            
-        }
-        this.obj.options.fabricObject.controlModelCreated = this;   
+        this.obj.get().fadeIn('slow');    
         if(this._addControls && !this.obj.options.fabricObject.controlsAdded) {
             this._addControls();
             this.obj.options.fabricObject.controlsAdded = true;
         }
-        this.obj.options.fabricObject.notSelect = false;
+    },
+    
+    removeBase: function() {
+        this.obj.options.fabricObject.remove();
     },
     
     calcTopPosition: function() {
@@ -33684,8 +33682,8 @@ var DD_Main_Model = DD_ModelBase.extend({
             src: this.obj.options.src
         });
 
-        this._addObjects(this.obj.options);
         this._canvasEvents(hoverCanvas);
+        this._addObjects(this.obj.options);
 
         this.resize(width, height);
         $(window).on('resize', function () {
@@ -33697,6 +33695,7 @@ var DD_Main_Model = DD_ModelBase.extend({
     _canvasEvents: function (hoverCanvas) {
         var self = this;
         hoverCanvas.on('object:added', function (e) {
+            console.log('object:added');
             new DD_control({
                 parent: self.obj.self,
                 fabricObject: e.target
@@ -33736,15 +33735,6 @@ var DD_Main_Model = DD_ModelBase.extend({
             }
         });
         hoverCanvas.on('object:selected', function (e) {
-            console.log('object:selected');
-            if (!e.target.controlModelCreated) {
-                new DD_control({
-                    parent: self.obj.self,
-                    fabricObject: e.target
-                });
-            }
-            console.log(e.target.controlModelCreated);
-
             if (e.target.controlModelCreated) {
                 e.target.controlModelCreated.initPosition();
             }
@@ -33757,12 +33747,15 @@ var DD_Main_Model = DD_ModelBase.extend({
         });
         hoverCanvas.on('object:removed', function (e) {
             self._onUpdate(e.target, 'remove');
+            if (e.target.controlModelCreated) {
+                e.target.controlModelCreated.remove();
+            }
         });
     },
 
     _addObjects: function (options) {
         if (options.mask) {
-            var mask = new DD_Layer_Mask(options.mask);
+            var mask = new DD_Layer_Mask(options.mask, true);
             mask.save();
         }
         if (options.conf) {
@@ -33773,8 +33766,7 @@ var DD_Main_Model = DD_ModelBase.extend({
                     new DD_Layer_Img(null, obj, notSelect);
                 }
                 if(obj.type === 'text') {
-                    new DD_Layer_Text(null, obj);
-                    console.log('TEXT ADDED!!!!!!');
+                    new DD_Layer_Text(null, obj, notSelect);
                 }
             });
         }
@@ -33848,7 +33840,11 @@ var DD_control_image = DD_Control_Base_Model.extend({
     },
     
     addDelete: function() {
+        var self = this;
         var _delete = this.obj.addDeleteBase();
+        _delete.get().on('click', function() {
+            self.removeBase();
+        });
     },
     
     addRotate: function() {
@@ -33872,6 +33868,11 @@ var DD_control_mask = DD_Control_Base_Model.extend({
     },
     addDelete: function () {
         var _delete = this.obj.addDeleteBase();
+        var self = this;
+        _delete.get().on('click', function() {
+            self.removeBase();
+            self._l().setMask(null)
+        });
     },
     addRotate: function() {
         var _rotate = this.obj.addRotateBase();
@@ -33887,6 +33888,24 @@ var DD_control_mask = DD_Control_Base_Model.extend({
         });
     }
 });
+
+var DD_control_text = DD_Control_Base_Model.extend({
+    init: function (obj) {
+        this._super(obj);
+    },
+    
+    _addControls: function () {
+        this.addDelete();
+    },
+    
+    addDelete: function() {
+        var self = this;
+        var _delete = this.obj.addDeleteBase();
+        _delete.get().on('click', function() {
+            self.removeBase();
+        });
+    }
+})
 
 var DD_Layer_Base = DD_object.extend({
 
@@ -34015,8 +34034,6 @@ var DD_Layer_Img = DD_Layer_Base.extend({
         var self = this;
         var options = options ? options : {};
         if (options.parent) {
-            console.log('options.parent');
-            console.log(options.parent);
             this.parent = options.parent;
         }
         var src = fullCnfg ? fullCnfg.src : options.src;
@@ -34168,7 +34185,8 @@ var DD_Layer_Mask = DD_Layer_Base.extend({
 });
 
 var DD_Layer_Text = DD_Layer_Base.extend({
-    init: function (options, fullCnfg) {
+    init: function (options, fullCnfg, notSelect) {
+        console.log('notSelect: ' + notSelect);
         var parent = this.getParent();
 
         var options = options ? options : {};
@@ -34178,12 +34196,15 @@ var DD_Layer_Text = DD_Layer_Base.extend({
             var conf = {
                 fontSize: this.calcFontSize(),
                 fontFamily: options.fontFamily ? options.fontFamily : this._s('defaultFont'),
-                fill: options.fill ? options.fill : this._s('defualtFontColor')
+                fill: options.fill ? options.fill : this._s('defualtFontColor'),
+                controlModel: 'DD_control_text'
             };
         } else {
             var conf = fullCnfg;
         }
 
+        conf.notSelect = notSelect;
+        
         var text = new fabric.Text(text, conf);
         parent.add(text);
         
@@ -34201,7 +34222,7 @@ var DD_Layer_Text = DD_Layer_Base.extend({
         }
 
         parent.renderAll();
-        if (!options.noselectable) {
+        if (!options.noselectable && !conf.notSelect) {
             parent.setActiveObject(text);
         }
         
@@ -35588,13 +35609,9 @@ var DD_control = DD_Uibase.extend({
     mainClass: 'dd-helper-popup',
     init: function (options) {
         this.options = $.extend(( options ? options : {} ) , this.options);
-        console.log('DD_control');
-        
         if(!this.options.fabricObject) {
             return;
         }
-        console.log('this.options.fabricObject.controlModel');
-        console.log(this.options.fabricObject.controlModel);
         if(!this.options.fabricObject.controlModel) {
            return; 
         }
@@ -35608,7 +35625,7 @@ var DD_control = DD_Uibase.extend({
     },
     
     _callBackModel: function(model) {
-        model.initPosition();
+        model._initBase();
     },
     
     addDeleteBase: function() {
@@ -35649,11 +35666,6 @@ var DD_control = DD_Uibase.extend({
         });
         
         return _size;
-    },
-    
-    
-    remove: function() {
-        
     }
 });
 
@@ -35951,16 +35963,20 @@ var DD_Admin_ImagesSelected_Model = DD_ModelBase.extend({
         if (fabricObj.mainBg) {
             return;
         }
-        if (fabricObj.layerMask && type == 'remove') {
+        if (fabricObj.layerMask && type === 'remove') {
             this.removeMask(group_uid, media_id, fabricObj);
         }
         if (fabricObj.layerMask) {
             this.updateMask(group_uid, media_id, fabricObj);
         }
-        if (type == 'remove') {
+        if (type === 'remove') {
             this.removeLayer(group_uid, media_id, fabricObj);
+            return;
         }
-        this.updateLayer(group_uid, media_id, fabricObj);
+        if(fabricObj.type === 'image' || fabricObj.type === 'text') {
+            this.updateLayer(group_uid, media_id, fabricObj)
+        }
+        
     },
 
     findLayerByUid: function (imgConf, fabricObj) {
@@ -35993,7 +36009,7 @@ var DD_Admin_ImagesSelected_Model = DD_ModelBase.extend({
     removeLayer: function (group_uid, media_id, fabricObj) {
         var imgConf = this.getImgConf(group_uid, media_id);
         var layer = this.findLayerByUid(imgConf, fabricObj);
-        imgConf.splice(layer._index, 1, imgConf);
+        var newImgConf = imgConf.splice(layer.index, 1);
         this.updateImageConf(group_uid, media_id, 'conf', imgConf);
     },
 
@@ -36026,7 +36042,7 @@ var DD_Admin_ImagesSelected_Model = DD_ModelBase.extend({
         var imgGroup = groups[this.getGroupIndexByUid(group_uid)]['imgs'];
         var index = false;
         $.each(imgGroup, function (i, image) {
-            if (image.media_id == parseInt(media_id)) {
+            if (parseInt(image.media_id) === parseInt(media_id)) {
                 index = i;
             }
         });
@@ -36161,6 +36177,7 @@ var DD_Admin_ImagesSelected_Model = DD_ModelBase.extend({
         var self = this;
         obj.on('click', function () {
             var groups = self.getGroups();
+            console.log(groups);
             var jsonStr = JSON.stringify(groups);
 
             self._evnt().doCall('show-admin-loader');
