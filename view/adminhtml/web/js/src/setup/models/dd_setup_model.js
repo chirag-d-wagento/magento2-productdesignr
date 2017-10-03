@@ -23,9 +23,11 @@ var DD_setup_model = DD_ModelBase.extend({
             case 'dd-setup-layer-texts':
                     this.tabTexts(content);
                 break;
+                /*
             case 'dd-setup-layer-qrcode':
 
                 break;
+                */
             default: //options
 
                 break;

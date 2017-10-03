@@ -4,8 +4,10 @@ var DD_control_image = DD_Control_Base_Model.extend({
     },
     _addControls: function () {
         this.addDelete();
-        this.addRotate();
-        this.addSize();
+        this.obj.addRotateBase();
+        this.obj.addSizeBase();
+        
+        this.baseEvents();
     },
     
     addDelete: function() {
@@ -14,13 +16,5 @@ var DD_control_image = DD_Control_Base_Model.extend({
         _delete.get().on('click', function() {
             self.removeBase();
         });
-    },
-    
-    addRotate: function() {
-        var _rotate = this.obj.addRotateBase();
-    },
-    
-    addSize: function() {
-        var _size = this.obj.addSizeBase();
     }
 });

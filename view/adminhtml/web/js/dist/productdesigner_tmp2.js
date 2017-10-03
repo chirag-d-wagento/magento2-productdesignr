@@ -625,13 +625,14 @@ var DD_checkbox = DD_Uibase.extend({
 
 var DD_control = DD_Uibase.extend({
     mainClass: 'dd-helper-popup',
+    contentAdded: false,
     init: function (options) {
-        this.options = $.extend(( options ? options : {} ) , this.options);
-        if(!this.options.fabricObject) {
+        this.options = $.extend((options ? options : {}), this.options);
+        if (!this.options.fabricObject) {
             return;
         }
-        if(!this.options.fabricObject.controlModel) {
-           return; 
+        if (!this.options.fabricObject.controlModel) {
+            return;
         }
         this.model = this.options.fabricObject.controlModel;
         this._super(this.options.id);
@@ -642,49 +643,79 @@ var DD_control = DD_Uibase.extend({
         this._add();
     },
     
-    _callBackModel: function(model) {
+    _addElements: function() {
+        this.addButtonPanel();
+        this.addContentControls();
+    },
+
+    _callBackModel: function (model) {
         model._initBase();
     },
-    
-    addDeleteBase: function() {
-        var _delete = new DD_button({
-            'parent': this.get(),
+
+    addContentControls: function () {
+        this.content = new DD_panel({
+            'parent': this.self,
+            'class': 'dd-helper-popup-content clearfix'
+        });
+        this.content._add();
+    },
+
+    addButtonPanel: function () {
+        this.buttons = new DD_panel({
+            'parent': this.self,
+            'class': 'dd-helper-popup-buttons clearfix'
+        });
+        this.buttons._add();
+    },
+
+    addDeleteBase: function () {
+        this._delete = new DD_button({
+            'parent': this.buttons.get(),
             //'text': this._('delete'),
             'class': 'fa fa-trash'
         });
-        
-        return _delete;
+
+        return this._delete;
     },
-    
-    addRotateBase: function() {
-        var _rotate = new DD_button({
-            'parent': this.get(),
+
+    addRotateBase: function () {
+        this._rotate = new DD_button({
+            'parent': this.buttons.get(),
             //'text': this._('delete'),
-            'class': 'fa fa-undo'
+            'class': 'fa fa-refresh'
         });
-        
-        return _rotate;
+
+        return this._rotate;
     },
-    
-    addSaveBase: function() {
-        var _save = new DD_button({
-            'parent': this.get(),
+
+    addSaveBase: function () {
+        this._save = new DD_button({
+            'parent': this.buttons.get(),
             //'text': this._('save'),
             'class': 'fa fa-floppy-o'
         });
-        
-        return _save;
+
+        return this._save;
     },
-    
-    addSizeBase: function() {
-        var _size = new DD_button({
-            'parent': this.get(),
+
+    addSizeBase: function () {
+        this._size = new DD_button({
+            'parent': this.buttons.get(),
             //'text': this._('save'),
-            'class': 'fa fa-arrows'
+            'class': 'fa fa-arrows fa-rotate-45'
         });
-        
-        return _size;
+
+        return this._size;
+    },
+
+    addControlBase: function (attrs) {
+        this.control = $('<input>').attr({'type': 'range'}).addClass('dd-helper-range');
+        if(attrs) {
+            this.control.attr(attrs);
+        }
+        this.content.get().append(this.control);
     }
+
 });
 
 var DD_ImageLinkAdd = DD_Uibase.extend({

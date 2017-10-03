@@ -5,6 +5,10 @@ var DD_control_text = DD_Control_Base_Model.extend({
     
     _addControls: function () {
         this.addDelete();
+        this.obj.addRotateBase();
+        this.obj.addSizeBase();
+        
+        this.baseEvents();
     },
     
     addDelete: function() {

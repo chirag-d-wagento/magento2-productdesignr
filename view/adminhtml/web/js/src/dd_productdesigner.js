@@ -51,6 +51,8 @@ $.fn.dd_productdesigner = function (options) {
             'no_data': 'No Data Found',
             'delete': 'Delete',
             'save': 'Save',
+            'change_size': 'Change Size',
+            'rotate': 'Rotate',
 
             //setup
             'info': 'Image Info',

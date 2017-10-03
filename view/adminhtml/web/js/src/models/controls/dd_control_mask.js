@@ -5,8 +5,10 @@ var DD_control_mask = DD_Control_Base_Model.extend({
     _addControls: function () {
         this.addDelete();
         this.addSave();
-        this.addRotate();
-        this.addSize();
+        this.obj.addRotateBase();
+        this.obj.addSizeBase();
+      
+        this.baseEvents();
     },
     addDelete: function () {
         var _delete = this.obj.addDeleteBase();
@@ -15,12 +17,6 @@ var DD_control_mask = DD_Control_Base_Model.extend({
             self.removeBase();
             self._l().setMask(null)
         });
-    },
-    addRotate: function() {
-        var _rotate = this.obj.addRotateBase();
-    },
-    addSize: function() {
-        var _size = this.obj.addSizeBase();
     },
     addSave: function () {
         var self = this;

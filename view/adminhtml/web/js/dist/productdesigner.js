@@ -33200,13 +33200,14 @@ var DD_checkbox = DD_Uibase.extend({
 
 var DD_control = DD_Uibase.extend({
     mainClass: 'dd-helper-popup',
+    contentAdded: false,
     init: function (options) {
-        this.options = $.extend(( options ? options : {} ) , this.options);
-        if(!this.options.fabricObject) {
+        this.options = $.extend((options ? options : {}), this.options);
+        if (!this.options.fabricObject) {
             return;
         }
-        if(!this.options.fabricObject.controlModel) {
-           return; 
+        if (!this.options.fabricObject.controlModel) {
+            return;
         }
         this.model = this.options.fabricObject.controlModel;
         this._super(this.options.id);
@@ -33217,49 +33218,79 @@ var DD_control = DD_Uibase.extend({
         this._add();
     },
     
-    _callBackModel: function(model) {
+    _addElements: function() {
+        this.addButtonPanel();
+        this.addContentControls();
+    },
+
+    _callBackModel: function (model) {
         model._initBase();
     },
-    
-    addDeleteBase: function() {
-        var _delete = new DD_button({
-            'parent': this.get(),
+
+    addContentControls: function () {
+        this.content = new DD_panel({
+            'parent': this.self,
+            'class': 'dd-helper-popup-content clearfix'
+        });
+        this.content._add();
+    },
+
+    addButtonPanel: function () {
+        this.buttons = new DD_panel({
+            'parent': this.self,
+            'class': 'dd-helper-popup-buttons clearfix'
+        });
+        this.buttons._add();
+    },
+
+    addDeleteBase: function () {
+        this._delete = new DD_button({
+            'parent': this.buttons.get(),
             //'text': this._('delete'),
             'class': 'fa fa-trash'
         });
-        
-        return _delete;
+
+        return this._delete;
     },
-    
-    addRotateBase: function() {
-        var _rotate = new DD_button({
-            'parent': this.get(),
+
+    addRotateBase: function () {
+        this._rotate = new DD_button({
+            'parent': this.buttons.get(),
             //'text': this._('delete'),
-            'class': 'fa fa-undo'
+            'class': 'fa fa-refresh'
         });
-        
-        return _rotate;
+
+        return this._rotate;
     },
-    
-    addSaveBase: function() {
-        var _save = new DD_button({
-            'parent': this.get(),
+
+    addSaveBase: function () {
+        this._save = new DD_button({
+            'parent': this.buttons.get(),
             //'text': this._('save'),
             'class': 'fa fa-floppy-o'
         });
-        
-        return _save;
+
+        return this._save;
     },
-    
-    addSizeBase: function() {
-        var _size = new DD_button({
-            'parent': this.get(),
+
+    addSizeBase: function () {
+        this._size = new DD_button({
+            'parent': this.buttons.get(),
             //'text': this._('save'),
-            'class': 'fa fa-arrows'
+            'class': 'fa fa-arrows fa-rotate-45'
         });
-        
-        return _size;
+
+        return this._size;
+    },
+
+    addControlBase: function (attrs) {
+        this.control = $('<input>').attr({'type': 'range'}).addClass('dd-helper-range');
+        if(attrs) {
+            this.control.attr(attrs);
+        }
+        this.content.get().append(this.control);
     }
+
 });
 
 var DD_ImageLinkAdd = DD_Uibase.extend({
@@ -33568,44 +33599,136 @@ var DD_AddText_Model = DD_ModelBase.extend({
 });
 
 var DD_Control_Base_Model = DD_ModelBase.extend({
+    controlTitleClass: 'control-title',
+
     init: function (obj) {
         this.obj = obj;
         this._super();
     },
-    
-    _initBase: function() {
+
+    _initBase: function () {
         this.obj.options.fabricObject.controlModelCreated = this;
     },
-    
-    initPosition: function() {
+
+    initPosition: function () {
         this.obj.get().css({
             left: this.calcLeftosition(),
             top: this.calcTopPosition()
         });
-        this.obj.get().fadeIn('slow');    
-        if(this._addControls && !this.obj.options.fabricObject.controlsAdded) {
+        this.obj.get().fadeIn('slow');
+        if (this._addControls && !this.obj.options.fabricObject.controlsAdded) {
             this._addControls();
             this.obj.options.fabricObject.controlsAdded = true;
         }
     },
-    
-    removeBase: function() {
+
+    titleControl: function (titleText) {
+        this.obj.content.get()
+                .append($('<span />').addClass(this.controlTitleClass).text(titleText));
+    },
+
+    sizeBase: function () {
+        var self = this;
+        var fabricObj = this.obj.options.fabricObject;
+        var canvas = this._l().getHoverCanvas();
+
+        this.obj._size.get().on('click', function () {
+            
+            var defaultScale = self.obj.options.fabricObject.defaultScale
+                    ? self.obj.options.fabricObject.defaultScale
+                    : self.obj.options.fabricObject.scaleX;
+
+            //defaultScale = defaultScale ? defaultScale : 1;    
+            if (!self.obj.options.fabricObject.defaultScale) {
+                self.obj.options.fabricObject.defaultScale = defaultScale;
+            }
+            var currentScale = self.obj.options.fabricObject.scaleX;
+            
+            self.obj.content.get().empty();
+            self.titleControl(self._('change_size'));
+            self.obj.addControlBase({
+                'min': 0,
+                'max': 2,
+                'step': 0.01,
+                'value': currentScale / defaultScale
+            });
+            console.log('defaultScale: ' + defaultScale);
+            console.log('currentScale: ' + currentScale);
+            self.obj.content.get().show();
+            self.obj.control.on('input', function () {
+                var val = $(this).val();
+                val = val * defaultScale;
+
+                fabricObj.set({
+                    'scaleX': parseFloat(val),
+                    'scaleY': parseFloat(val)
+                });
+                fabricObj.setCoords();
+                console.log('set Scale: ' + parseFloat(val));
+                canvas.renderAll();
+            });
+
+            self.obj.control.on('mouseup', function () {
+                canvas.trigger('object:modified', {target: fabricObj});
+            });
+            
+        });
+    },
+
+    rotateBase: function () {
+        var self = this;
+        var fabricObj = this.obj.options.fabricObject;
+        var canvas = this._l().getHoverCanvas();
+        this.obj._rotate.get().on('click', function () {
+            
+            self.obj.content.get().empty();
+            self.titleControl(self._('rotate'));
+            self.obj.addControlBase({
+                'min': 0,
+                'max': 360,
+                'value': parseInt(fabricObj.get('angle'))
+            });
+            self.obj.content.get().show();
+            self.obj.control.on('input', function () {
+                var val = $(this).val();
+                fabricObj.setAngle(val);
+                canvas.renderAll();
+            });
+
+            self.obj.control.on('mouseup', function () {
+                canvas.trigger('object:modified', {target: fabricObj});
+            });
+            
+        });
+    },
+
+    baseEvents: function () {
+        if (this.obj._size) {
+            this.sizeBase();
+        }
+        if (this.obj._rotate) {
+            this.rotateBase();
+        }
+    },
+
+    removeBase: function () {
         this.obj.options.fabricObject.remove();
     },
-    
-    calcTopPosition: function() {
+
+    calcTopPosition: function () {
         return '0';
     },
-    
-    calcLeftosition: function() {
+
+    calcLeftosition: function () {
         return '0';
     },
-    
-    hide: function() {
+
+    hide: function () {
+        this.obj.content.get().hide()
         this.obj.get().fadeOut('fast');
     },
-    
-    remove: function() {
+
+    remove: function () {
         this.obj.get().remove();
     }
 });
@@ -33835,8 +33958,10 @@ var DD_control_image = DD_Control_Base_Model.extend({
     },
     _addControls: function () {
         this.addDelete();
-        this.addRotate();
-        this.addSize();
+        this.obj.addRotateBase();
+        this.obj.addSizeBase();
+        
+        this.baseEvents();
     },
     
     addDelete: function() {
@@ -33845,14 +33970,6 @@ var DD_control_image = DD_Control_Base_Model.extend({
         _delete.get().on('click', function() {
             self.removeBase();
         });
-    },
-    
-    addRotate: function() {
-        var _rotate = this.obj.addRotateBase();
-    },
-    
-    addSize: function() {
-        var _size = this.obj.addSizeBase();
     }
 });
 
@@ -33863,8 +33980,10 @@ var DD_control_mask = DD_Control_Base_Model.extend({
     _addControls: function () {
         this.addDelete();
         this.addSave();
-        this.addRotate();
-        this.addSize();
+        this.obj.addRotateBase();
+        this.obj.addSizeBase();
+      
+        this.baseEvents();
     },
     addDelete: function () {
         var _delete = this.obj.addDeleteBase();
@@ -33873,12 +33992,6 @@ var DD_control_mask = DD_Control_Base_Model.extend({
             self.removeBase();
             self._l().setMask(null)
         });
-    },
-    addRotate: function() {
-        var _rotate = this.obj.addRotateBase();
-    },
-    addSize: function() {
-        var _size = this.obj.addSizeBase();
     },
     addSave: function () {
         var self = this;
@@ -33896,6 +34009,10 @@ var DD_control_text = DD_Control_Base_Model.extend({
     
     _addControls: function () {
         this.addDelete();
+        this.obj.addRotateBase();
+        this.obj.addSizeBase();
+        
+        this.baseEvents();
     },
     
     addDelete: function() {
@@ -34044,7 +34161,8 @@ var DD_Layer_Img = DD_Layer_Base.extend({
                     hasControls: options.nocontrols ? false : true,
                     hasBorders: options.noborders ? false : true,
                     selectable: options.noselectable ? false : true,
-                    controlModel: 'DD_control_image'
+                    controlModel: 'DD_control_image',
+                    centeredScaling: true
                 }
                 var mask = self._l().getMask();
                 var percentWidth = !mask ? self._s('defaultLayerMaskWidth') : self._s('percentSizeFromMask');
@@ -34123,7 +34241,8 @@ var DD_Layer_Mask = DD_Layer_Base.extend({
                 fill: 'white',
                 opacity: 0.4,
                 layerMask: true,
-                controlModel: 'DD_control_mask'
+                controlModel: 'DD_control_mask',
+                centeredScaling: true
             };
 
             conf = this.setSize(conf, null, this._s('defaultLayerMaskWidth'));
@@ -34197,7 +34316,8 @@ var DD_Layer_Text = DD_Layer_Base.extend({
                 fontSize: this.calcFontSize(),
                 fontFamily: options.fontFamily ? options.fontFamily : this._s('defaultFont'),
                 fill: options.fill ? options.fill : this._s('defualtFontColor'),
-                controlModel: 'DD_control_text'
+                controlModel: 'DD_control_text',
+                centeredScaling: true
             };
         } else {
             var conf = fullCnfg;
@@ -34615,9 +34735,11 @@ var DD_setup_model = DD_ModelBase.extend({
             case 'dd-setup-layer-texts':
                     this.tabTexts(content);
                 break;
+                /*
             case 'dd-setup-layer-qrcode':
 
                 break;
+                */
             default: //options
 
                 break;
@@ -34835,10 +34957,12 @@ var DD_setup_tabs = DD_Tabs.extend({
                 id: 'dd-setup-layer-texts',
                 text: this._('texts')
             },
+            /*
             {
                 id: 'dd-setup-layer-qrcode',
                 text: this._('qr_code')
             },
+            */
             {
                 id: 'dd-setup-options',
                 text: this._('options')
@@ -34929,6 +35053,8 @@ $.fn.dd_productdesigner = function (options) {
             'no_data': 'No Data Found',
             'delete': 'Delete',
             'save': 'Save',
+            'change_size': 'Change Size',
+            'rotate': 'Rotate',
 
             //setup
             'info': 'Image Info',
@@ -35607,13 +35733,14 @@ var DD_checkbox = DD_Uibase.extend({
 
 var DD_control = DD_Uibase.extend({
     mainClass: 'dd-helper-popup',
+    contentAdded: false,
     init: function (options) {
-        this.options = $.extend(( options ? options : {} ) , this.options);
-        if(!this.options.fabricObject) {
+        this.options = $.extend((options ? options : {}), this.options);
+        if (!this.options.fabricObject) {
             return;
         }
-        if(!this.options.fabricObject.controlModel) {
-           return; 
+        if (!this.options.fabricObject.controlModel) {
+            return;
         }
         this.model = this.options.fabricObject.controlModel;
         this._super(this.options.id);
@@ -35624,49 +35751,79 @@ var DD_control = DD_Uibase.extend({
         this._add();
     },
     
-    _callBackModel: function(model) {
+    _addElements: function() {
+        this.addButtonPanel();
+        this.addContentControls();
+    },
+
+    _callBackModel: function (model) {
         model._initBase();
     },
-    
-    addDeleteBase: function() {
-        var _delete = new DD_button({
-            'parent': this.get(),
+
+    addContentControls: function () {
+        this.content = new DD_panel({
+            'parent': this.self,
+            'class': 'dd-helper-popup-content clearfix'
+        });
+        this.content._add();
+    },
+
+    addButtonPanel: function () {
+        this.buttons = new DD_panel({
+            'parent': this.self,
+            'class': 'dd-helper-popup-buttons clearfix'
+        });
+        this.buttons._add();
+    },
+
+    addDeleteBase: function () {
+        this._delete = new DD_button({
+            'parent': this.buttons.get(),
             //'text': this._('delete'),
             'class': 'fa fa-trash'
         });
-        
-        return _delete;
+
+        return this._delete;
     },
-    
-    addRotateBase: function() {
-        var _rotate = new DD_button({
-            'parent': this.get(),
+
+    addRotateBase: function () {
+        this._rotate = new DD_button({
+            'parent': this.buttons.get(),
             //'text': this._('delete'),
-            'class': 'fa fa-undo'
+            'class': 'fa fa-refresh'
         });
-        
-        return _rotate;
+
+        return this._rotate;
     },
-    
-    addSaveBase: function() {
-        var _save = new DD_button({
-            'parent': this.get(),
+
+    addSaveBase: function () {
+        this._save = new DD_button({
+            'parent': this.buttons.get(),
             //'text': this._('save'),
             'class': 'fa fa-floppy-o'
         });
-        
-        return _save;
+
+        return this._save;
     },
-    
-    addSizeBase: function() {
-        var _size = new DD_button({
-            'parent': this.get(),
+
+    addSizeBase: function () {
+        this._size = new DD_button({
+            'parent': this.buttons.get(),
             //'text': this._('save'),
-            'class': 'fa fa-arrows'
+            'class': 'fa fa-arrows fa-rotate-45'
         });
-        
-        return _size;
+
+        return this._size;
+    },
+
+    addControlBase: function (attrs) {
+        this.control = $('<input>').attr({'type': 'range'}).addClass('dd-helper-range');
+        if(attrs) {
+            this.control.attr(attrs);
+        }
+        this.content.get().append(this.control);
     }
+
 });
 
 var DD_ImageLinkAdd = DD_Uibase.extend({

@@ -13,7 +13,8 @@ var DD_Layer_Img = DD_Layer_Base.extend({
                     hasControls: options.nocontrols ? false : true,
                     hasBorders: options.noborders ? false : true,
                     selectable: options.noselectable ? false : true,
-                    controlModel: 'DD_control_image'
+                    controlModel: 'DD_control_image',
+                    centeredScaling: true
                 }
                 var mask = self._l().getMask();
                 var percentWidth = !mask ? self._s('defaultLayerMaskWidth') : self._s('percentSizeFromMask');

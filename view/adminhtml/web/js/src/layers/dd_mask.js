@@ -16,7 +16,8 @@ var DD_Layer_Mask = DD_Layer_Base.extend({
                 fill: 'white',
                 opacity: 0.4,
                 layerMask: true,
-                controlModel: 'DD_control_mask'
+                controlModel: 'DD_control_mask',
+                centeredScaling: true
             };
 
             conf = this.setSize(conf, null, this._s('defaultLayerMaskWidth'));

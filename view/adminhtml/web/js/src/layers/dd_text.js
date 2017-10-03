@@ -11,7 +11,8 @@ var DD_Layer_Text = DD_Layer_Base.extend({
                 fontSize: this.calcFontSize(),
                 fontFamily: options.fontFamily ? options.fontFamily : this._s('defaultFont'),
                 fill: options.fill ? options.fill : this._s('defualtFontColor'),
-                controlModel: 'DD_control_text'
+                controlModel: 'DD_control_text',
+                centeredScaling: true
             };
         } else {
             var conf = fullCnfg;
