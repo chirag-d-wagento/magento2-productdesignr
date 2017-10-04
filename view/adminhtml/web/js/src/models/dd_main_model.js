@@ -7,6 +7,21 @@ var DD_Main_Model = DD_ModelBase.extend({
     init: function (obj) {
         this.obj = obj;
         this._super();
+        var self = this;
+
+        if (this._s('loadGoogleFonts')) {
+            var fonts = self.prepareFonts();
+            console.log(fonts);
+            WebFont.load({
+                google: {
+                    families: fonts
+                },
+                active: function () {
+                    self.initLayers();
+                }
+            });
+            return;
+        }
         this.initLayers();
     },
 
@@ -44,7 +59,7 @@ var DD_Main_Model = DD_ModelBase.extend({
 
         var bgCanvas = new fabric.Canvas(idBgCanvas);
         var hoverCanvas = new fabric.Canvas(idCanvasHover);
-        
+
         this.layersObj.setBgCanvas(bgCanvas);
         this.layersObj.setHoverCanvas(hoverCanvas);
         this.layersObj.setHeight(height);
@@ -69,7 +84,7 @@ var DD_Main_Model = DD_ModelBase.extend({
     _canvasEvents: function (hoverCanvas) {
         var self = this;
         hoverCanvas.on('object:added', function (e) {
-            console.log('object:added');
+
             new DD_control({
                 parent: self.obj.self,
                 fabricObject: e.target
@@ -112,6 +127,7 @@ var DD_Main_Model = DD_ModelBase.extend({
             if (e.target.controlModelCreated) {
                 e.target.controlModelCreated.initPosition();
             }
+            self._onUpdate(e.target, 'update');
         })
         hoverCanvas.on('object:modified', function (e) {
             if (e.target.controlModelCreated) {
@@ -139,7 +155,7 @@ var DD_Main_Model = DD_ModelBase.extend({
                 if (obj.type === 'image') {
                     new DD_Layer_Img(null, obj, notSelect);
                 }
-                if(obj.type === 'text') {
+                if (obj.type === 'text') {
                     new DD_Layer_Text(null, obj, notSelect);
                 }
             });
@@ -193,12 +209,26 @@ var DD_Main_Model = DD_ModelBase.extend({
         }
         return;
     },
-    
-    destroy: function() {
+
+    destroy: function () {
         this._evnt().unregisterAll();
         this.obj.self.parent().empty();
         this.obj.self.parent().remove();
-        
+
         delete this;
+    },
+
+    prepareFonts: function () {
+        var listFonts = this._s('listFonts');
+        var googleFonts = [];
+        console.log(listFonts);
+        $.each(listFonts, function (i, font) {
+            if (font.indexOf('"') != -1) { //custom named font
+                var fontArr = font.split(',');
+                googleFonts.push(fontArr[0].replace(/\"/g, ''));
+            }
+        });
+
+        return googleFonts;
     }
 });

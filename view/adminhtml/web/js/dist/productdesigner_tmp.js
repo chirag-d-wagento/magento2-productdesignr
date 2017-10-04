@@ -787,6 +787,15 @@ var DD_control = DD_Uibase.extend({
         return this._size;
     },
 
+    addEditBase: function () {
+        this._edit = new DD_button({
+            'parent': this.buttons.get(),
+            //'text': this._('save'),
+            'class': 'fa fa-edit'
+        });
+        return this._edit;
+    },
+
     addControlBase: function (attrs) {
         this.control = $('<input>').attr({'type': 'range'}).addClass('dd-helper-range');
         if (attrs) {
@@ -795,11 +804,12 @@ var DD_control = DD_Uibase.extend({
         this.content.get().append(this.control);
     },
 
-    fontSelector: function (parent, fonts) {
+    fontSelector: function (parent, selectedFont, onUpdate, model) {
         var fontSelectorContainer = new DD_panel({
             'parent': parent,
             'class': 'dd-helper-font-selector-container'
         });
+        
         fontSelectorContainer._add();
         
         //fontSelect
@@ -814,30 +824,18 @@ var DD_control = DD_Uibase.extend({
 
         $(fontSelect).fontSelector({
             'hide_fallbacks': true,
-            'initial': 'Courier New,Courier New,Courier,monospace',
+            'initial': selectedFont,
             'selected': function (style) {
-                console.log("S1: " + style);
+                if(onUpdate) {
+                    onUpdate.call(this, style, model);
+                }
             },
-            'fonts': [
-                'Arial,Arial,Helvetica,sans-serif',
-                'Arial Black,Arial Black,Gadget,sans-serif',
-                'Comic Sans MS,Comic Sans MS,cursive',
-                'Courier New,Courier New,Courier,monospace',
-                'Georgia,Georgia,serif',
-                'Impact,Charcoal,sans-serif',
-                'Lucida Console,Monaco,monospace',
-                'Lucida Sans Unicode,Lucida Grande,sans-serif',
-                'Palatino Linotype,Book Antiqua,Palatino,serif',
-                'Tahoma,Geneva,sans-serif',
-                'Times New Roman,Times,serif',
-                'Trebuchet MS,Helvetica,sans-serif',
-                'Verdana,Geneva,sans-serif',
-                'Gill Sans,Geneva,sans-serif'
-            ]
+            'fonts': this._s('listFonts')
         });
     },
 
-    colorSelector: function (parent, name, color, onUpdate) {
+    colorSelector: function (parent, name, color, onUpdate, model) {
+        var self = this;
         var colorSelectorContainer = new DD_panel({
             'parent': parent,
             'class': 'dd-helper-color-selector-container'
@@ -855,7 +853,12 @@ var DD_control = DD_Uibase.extend({
 
         $("#" + uid).spectrum({
             allowEmpty: true,
-            color: color
+            color: color,
+            change: function(color) {
+                if(onUpdate) {
+                    onUpdate.call(this, color, model);
+                }
+            }
         });
         colorSelectorContainer.get()
                 .append($('<span />').text(name)
@@ -1152,8 +1155,8 @@ var DD_AddText_Model = DD_ModelBase.extend({
     setSaveTextEvent: function() {
         var textarea = this.form.get().find('textarea');
         var self = this;
+        
         this.form.get().find('button').on('click', function() {
-            //alert(textarea.val());
             var text = textarea.val();
             if(text.trim() == '') {
                 textarea.addClass('empty');
@@ -1290,6 +1293,15 @@ var DD_Control_Base_Model = DD_ModelBase.extend({
     removeBase: function () {
         this.obj.options.fabricObject.remove();
     },
+    
+    setFabricObjVal: function(val, propName) {
+        var fabricObject = this.obj.options.fabricObject;
+        var canvas = this._l().getHoverCanvas();
+        fabricObject.set(val, propName);
+        
+        canvas.renderAll();
+        canvas.trigger('object:modified', {target: fabricObject});
+    },
 
     calcTopPosition: function () {
         return '0';
@@ -1333,6 +1345,21 @@ var DD_Main_Model = DD_ModelBase.extend({
     init: function (obj) {
         this.obj = obj;
         this._super();
+        var self = this;
+
+        if (this._s('loadGoogleFonts')) {
+            var fonts = self.prepareFonts();
+            console.log(fonts);
+            WebFont.load({
+                google: {
+                    families: fonts
+                },
+                active: function () {
+                    self.initLayers();
+                }
+            });
+            return;
+        }
         this.initLayers();
     },
 
@@ -1370,7 +1397,7 @@ var DD_Main_Model = DD_ModelBase.extend({
 
         var bgCanvas = new fabric.Canvas(idBgCanvas);
         var hoverCanvas = new fabric.Canvas(idCanvasHover);
-        
+
         this.layersObj.setBgCanvas(bgCanvas);
         this.layersObj.setHoverCanvas(hoverCanvas);
         this.layersObj.setHeight(height);
@@ -1395,7 +1422,7 @@ var DD_Main_Model = DD_ModelBase.extend({
     _canvasEvents: function (hoverCanvas) {
         var self = this;
         hoverCanvas.on('object:added', function (e) {
-            console.log('object:added');
+
             new DD_control({
                 parent: self.obj.self,
                 fabricObject: e.target
@@ -1438,6 +1465,7 @@ var DD_Main_Model = DD_ModelBase.extend({
             if (e.target.controlModelCreated) {
                 e.target.controlModelCreated.initPosition();
             }
+            self._onUpdate(e.target, 'update');
         })
         hoverCanvas.on('object:modified', function (e) {
             if (e.target.controlModelCreated) {
@@ -1465,7 +1493,7 @@ var DD_Main_Model = DD_ModelBase.extend({
                 if (obj.type === 'image') {
                     new DD_Layer_Img(null, obj, notSelect);
                 }
-                if(obj.type === 'text') {
+                if (obj.type === 'text') {
                     new DD_Layer_Text(null, obj, notSelect);
                 }
             });
@@ -1519,13 +1547,27 @@ var DD_Main_Model = DD_ModelBase.extend({
         }
         return;
     },
-    
-    destroy: function() {
+
+    destroy: function () {
         this._evnt().unregisterAll();
         this.obj.self.parent().empty();
         this.obj.self.parent().remove();
-        
+
         delete this;
+    },
+
+    prepareFonts: function () {
+        var listFonts = this._s('listFonts');
+        var googleFonts = [];
+        console.log(listFonts);
+        $.each(listFonts, function (i, font) {
+            if (font.indexOf('"') != -1) { //custom named font
+                var fontArr = font.split(',');
+                googleFonts.push(fontArr[0].replace(/\"/g, ''));
+            }
+        });
+
+        return googleFonts;
     }
 });
 
@@ -1581,47 +1623,99 @@ var DD_control_mask = DD_Control_Base_Model.extend({
 
 var DD_control_text = DD_Control_Base_Model.extend({
     containerClass: 'dd-helper-control-text',
-    
+
     init: function (obj) {
         this._super(obj);
     },
-    
+
     _addControls: function () {
         this.obj.contentContainer.get().addClass(this.containerClass);
         this.addDelete();
         this.obj.addRotateBase();
         this.obj.addSizeBase();
         this.addFontSelector();
-        
+        this.addEdit();
+
         this.baseEvents();
     },
-    
-    addFontSelector: function() {
+
+    addEdit: function () {
+        var self = this;
+        var edit = this.obj.addEditBase();
+        
+
+        edit.get().on('click', function () {
+            var content = self.obj.content.get();
+            content.empty();
+            var fabricObject = self.obj.options.fabricObject;
+            var text = fabricObject.text;
+            var form = new DD_windowTextForm(content, text);
+            self.obj.contentContainer.get().show();
+            self.setEditEvents(form);
+        });
+    },
+
+    setEditEvents: function (form) {
+        var self = this;
+        var textarea = form.get().find('textarea');
+        form.get().find('button').on('click', function () {
+            var text = textarea.val();
+            if (text.trim() == '') {
+                textarea.addClass('empty');
+            } else {
+                textarea.removeClass('empty');
+                textarea.addClass('valid');
+                self.setFabricObjVal("text", text.trim());
+            }
+        });
+    },
+
+    addFontSelector: function () {
         var self = this;
         var _selector = new DD_button({
             'parent': this.obj.buttons.get(),
             //'text': this._('save'),
             'class': 'fa fa-font'
         });
-        _selector.get().on('click', function() {
+        _selector.get().on('click', function () {
             self.showTextSetting();
         });
     },
-    
-    showTextSetting: function() {
+
+    setBgColor: function (color, model) {
+        var setColor = color ? color.toHexString() : null;
+        model.setFabricObjVal("backgroundColor", setColor);
+    },
+
+    setFontColor: function (color, model) {
+
+        var setColor = color ? color.toHexString() : null;
+        model.setFabricObjVal("fill", setColor);
+    },
+
+    setFont: function (font, model) {
+        model.setFabricObjVal("fontFamily", font);
+    },
+
+    showTextSetting: function () {
+        var fabricObject = this.obj.options.fabricObject;
+
+        var color = fabricObject.fill;
+        var bg = fabricObject.backgroundColor;
+        var font = fabricObject.fontFamily;
         var content = this.obj.content.get();
         content.empty();
-        this.obj.colorSelector(content, this._('background_color'));
-        this.obj.colorSelector(content, this._('text_color'));
-        this.obj.fontSelector(content);
-        
+        this.obj.colorSelector(content, this._('background_color'), bg, this.setBgColor, this);
+        this.obj.colorSelector(content, this._('text_color'), color, this.setFontColor, this);
+        this.obj.fontSelector(content, font, this.setFont, this);
+
         this.obj.contentContainer.get().show();
     },
-    
-    addDelete: function() {
+
+    addDelete: function () {
         var self = this;
         var _delete = this.obj.addDeleteBase();
-        _delete.get().on('click', function() {
+        _delete.get().on('click', function () {
             self.removeBase();
         });
     }
@@ -2286,11 +2380,12 @@ var DD_windowPhotoTabs = DD_Tabs.extend({
 var DD_windowTextForm = DD_panel.extend({
     object_id: 'dd-add-text-form',
     
-    init: function(parent) {
+    init: function(parent, value) {
         var options = {
             parent: parent,
             id: this.object_id
         }
+        this.value = value;
         this._super(options);
         this.add();
     },
@@ -2302,6 +2397,9 @@ var DD_windowTextForm = DD_panel.extend({
     
     addTextArea: function() {
         this.textArea = $('<textarea />').attr('class', 'dd-add-text-textarea');
+        if(this.value) {
+            this.textArea.val(this.value);
+        }
         this.self.append(this.textArea);
     },
     
@@ -2309,7 +2407,7 @@ var DD_windowTextForm = DD_panel.extend({
         new DD_button({
             'id': 'dd-add-text-button',
             'parent': this.self,
-            'text': this._('Add Text')
+            'text': this.value ? this._('update_text'): this._('add_text')
         });
     }
 });
@@ -2622,6 +2720,7 @@ $.fn.dd_productdesigner = function (options) {
         'defaultLayerMaskWidth': 40,
         'urlUploadImages': '',
         'myFilesPath': '/myfiles.php',
+        'loadGoogleFonts': true,
         'percentSizeImage': 20 //percentage size from canvas width
     };
     
@@ -2642,6 +2741,7 @@ $.fn.dd_productdesigner = function (options) {
             'next': 'Next',
             'add_photo': 'Add Photo',
             'add_text': 'Add Text',
+            'update_text': 'Update Text',
             'add_from_library': 'Add from Library',
             'layers': 'Layers',
             'save': 'Save',

@@ -2863,6 +2863,8 @@ body[class*=" jBox-blockScroll-"] {
   position: absolute;
   left: 0;
   top: 35px;
+  max-height: 225px;
+  overflow: auto;
 }
 .fontSelectUl li {
   height: 24px;
@@ -3470,12 +3472,13 @@ ul.tabs li.current {
 }
 .dd-helper-popup .dd-helper-popup-content-close {
   right: 7px;
-  bottom: -32px;
+  bottom: -34px;
   position: absolute;
   /* margin-top: -59px; */
   background: #fff;
   border-top: 0px;
-  border-radius: 3px;
+  border-bottom-right-radius: 3px;
+  border-bottom-left-radius: 3px;
   padding: 7px 30px;
 }
 .dd-helper-popup .dd-helper-popup-content-container {

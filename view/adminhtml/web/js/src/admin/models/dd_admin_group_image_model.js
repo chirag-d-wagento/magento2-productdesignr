@@ -52,6 +52,7 @@ var DD_admin_group_image_model = DD_Admin_ImagesSelected_Model.extend({
         var percentSizeFromMask = this._s('percentSizeFromMask');
         var onUpdate = this.onUpdate.bind(this);
         var group_index = el.attr('data-group');
+        var listFonts = this._s('listFonts');
         
         el.on('click', function () {
             $('#dd_designer').html('');
@@ -74,7 +75,8 @@ var DD_admin_group_image_model = DD_Admin_ImagesSelected_Model.extend({
                     'defaultFont': defaultFont,
                     'defaultFontSize': defaultFontSize, 
                     'defaultLayerMaskWidth': defaultLayerMaskWidth,
-                    'percentSizeFromMask': percentSizeFromMask
+                    'percentSizeFromMask': percentSizeFromMask,
+                    'listFonts': listFonts
                 }
                 
             });

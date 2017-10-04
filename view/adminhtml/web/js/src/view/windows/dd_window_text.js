@@ -1,11 +1,12 @@
 var DD_windowTextForm = DD_panel.extend({
     object_id: 'dd-add-text-form',
     
-    init: function(parent) {
+    init: function(parent, value) {
         var options = {
             parent: parent,
             id: this.object_id
         }
+        this.value = value;
         this._super(options);
         this.add();
     },
@@ -17,6 +18,9 @@ var DD_windowTextForm = DD_panel.extend({
     
     addTextArea: function() {
         this.textArea = $('<textarea />').attr('class', 'dd-add-text-textarea');
+        if(this.value) {
+            this.textArea.val(this.value);
+        }
         this.self.append(this.textArea);
     },
     
@@ -24,7 +28,7 @@ var DD_windowTextForm = DD_panel.extend({
         new DD_button({
             'id': 'dd-add-text-button',
             'parent': this.self,
-            'text': this._('Add Text')
+            'text': this.value ? this._('update_text'): this._('add_text')
         });
     }
 });

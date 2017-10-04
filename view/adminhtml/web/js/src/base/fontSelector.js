@@ -81,7 +81,7 @@
 
             for (var i = 0; i < settings['fonts'].length; i++) {
                 var item = $('<li>' + displayName(settings['fonts'][i]) + '</li>').appendTo(ul);
-                $(item).css('font-family', settings['fonts'][i]);
+                $(item).css('font-family', settings['fonts'][i].replace(/\"/g, ""));
             }
 
             if (settings['initial'] != '')

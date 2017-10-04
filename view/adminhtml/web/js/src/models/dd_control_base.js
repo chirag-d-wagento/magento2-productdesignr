@@ -119,6 +119,15 @@ var DD_Control_Base_Model = DD_ModelBase.extend({
     removeBase: function () {
         this.obj.options.fabricObject.remove();
     },
+    
+    setFabricObjVal: function(val, propName) {
+        var fabricObject = this.obj.options.fabricObject;
+        var canvas = this._l().getHoverCanvas();
+        fabricObject.set(val, propName);
+        
+        canvas.renderAll();
+        canvas.trigger('object:modified', {target: fabricObject});
+    },
 
     calcTopPosition: function () {
         return '0';

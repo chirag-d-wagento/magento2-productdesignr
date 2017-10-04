@@ -719,6 +719,15 @@ var DD_control = DD_Uibase.extend({
         return this._size;
     },
 
+    addEditBase: function () {
+        this._edit = new DD_button({
+            'parent': this.buttons.get(),
+            //'text': this._('save'),
+            'class': 'fa fa-edit'
+        });
+        return this._edit;
+    },
+
     addControlBase: function (attrs) {
         this.control = $('<input>').attr({'type': 'range'}).addClass('dd-helper-range');
         if (attrs) {
@@ -727,11 +736,12 @@ var DD_control = DD_Uibase.extend({
         this.content.get().append(this.control);
     },
 
-    fontSelector: function (parent, fonts) {
+    fontSelector: function (parent, selectedFont, onUpdate, model) {
         var fontSelectorContainer = new DD_panel({
             'parent': parent,
             'class': 'dd-helper-font-selector-container'
         });
+        
         fontSelectorContainer._add();
         
         //fontSelect
@@ -746,30 +756,18 @@ var DD_control = DD_Uibase.extend({
 
         $(fontSelect).fontSelector({
             'hide_fallbacks': true,
-            'initial': 'Courier New,Courier New,Courier,monospace',
+            'initial': selectedFont,
             'selected': function (style) {
-                console.log("S1: " + style);
+                if(onUpdate) {
+                    onUpdate.call(this, style, model);
+                }
             },
-            'fonts': [
-                'Arial,Arial,Helvetica,sans-serif',
-                'Arial Black,Arial Black,Gadget,sans-serif',
-                'Comic Sans MS,Comic Sans MS,cursive',
-                'Courier New,Courier New,Courier,monospace',
-                'Georgia,Georgia,serif',
-                'Impact,Charcoal,sans-serif',
-                'Lucida Console,Monaco,monospace',
-                'Lucida Sans Unicode,Lucida Grande,sans-serif',
-                'Palatino Linotype,Book Antiqua,Palatino,serif',
-                'Tahoma,Geneva,sans-serif',
-                'Times New Roman,Times,serif',
-                'Trebuchet MS,Helvetica,sans-serif',
-                'Verdana,Geneva,sans-serif',
-                'Gill Sans,Geneva,sans-serif'
-            ]
+            'fonts': this._s('listFonts')
         });
     },
 
-    colorSelector: function (parent, name, color, onUpdate) {
+    colorSelector: function (parent, name, color, onUpdate, model) {
+        var self = this;
         var colorSelectorContainer = new DD_panel({
             'parent': parent,
             'class': 'dd-helper-color-selector-container'
@@ -787,7 +785,12 @@ var DD_control = DD_Uibase.extend({
 
         $("#" + uid).spectrum({
             allowEmpty: true,
-            color: color
+            color: color,
+            change: function(color) {
+                if(onUpdate) {
+                    onUpdate.call(this, color, model);
+                }
+            }
         });
         colorSelectorContainer.get()
                 .append($('<span />').text(name)
@@ -1386,6 +1389,7 @@ var DD_admin_group_image_model = DD_Admin_ImagesSelected_Model.extend({
         var percentSizeFromMask = this._s('percentSizeFromMask');
         var onUpdate = this.onUpdate.bind(this);
         var group_index = el.attr('data-group');
+        var listFonts = this._s('listFonts');
         
         el.on('click', function () {
             $('#dd_designer').html('');
@@ -1408,7 +1412,8 @@ var DD_admin_group_image_model = DD_Admin_ImagesSelected_Model.extend({
                     'defaultFont': defaultFont,
                     'defaultFontSize': defaultFontSize, 
                     'defaultLayerMaskWidth': defaultLayerMaskWidth,
-                    'percentSizeFromMask': percentSizeFromMask
+                    'percentSizeFromMask': percentSizeFromMask,
+                    'listFonts': listFonts
                 }
                 
             });
