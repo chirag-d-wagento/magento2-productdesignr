@@ -36871,6 +36871,7 @@ var DD_Layer_Text = DD_Layer_Base.extend({
         var text = fullCnfg ? fullCnfg.text : options.text;
         
         if (!fullCnfg) {
+            console.log(this._s('defaultFont'));
             var conf = {
                 fontSize: this.calcFontSize(),
                 fontFamily: options.fontFamily ? options.fontFamily : this._s('defaultFont'),
@@ -39766,7 +39767,7 @@ $.fn.dd_productdesigner_admin = function (options) {
             'urlSaveData': '',
             'percentSizeImage': '',
             'percentSizeFromMask': 70,
-            'defaultFont': 'Verdana,Geneva,sans-serif',
+            'defaultFont': 'c',
             
             'defualtFontColor': '#ffffff',
             'defaultFontSize': 20,

@@ -40,7 +40,7 @@ define([
                     'percentSizeImage': 30,
                     'percentSizeFromMask': 70,
                     
-                    'defaultFont': 'Verdana',
+                    'defaultFont': 'Verdana,Geneva,sans-serif',
                     'defualtFontColor': '#ffffff',
                     'defaultFontSizePercent': 20,
                     'defaultLayerMaskWidth': 70

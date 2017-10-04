@@ -1,3 +1,37 @@
+/* jBox */
 body[class^="jBox-blockScroll-"], body[class*=" jBox-blockScroll-"]{
     overflow: auto;
+}
+
+/* color selector */
+.sp-button-container{
+    width:100%;
+}
+.sp-cancel, .sp-container button,
+.sp-container button:hover{
+    display:inline-block;
+    font-size: 0;
+    border: 0px;
+    padding: 0px;
+}
+.sp-container button{
+    float: right;
+}
+.sp-cancel:after,
+.sp-container button:after{
+    display: inline-block;
+    font: normal normal normal 14px/1 FontAwesome;
+    font-size: inherit;
+    text-rendering: auto;
+    -webkit-font-smoothing: antialiased;
+    background: #e3e3e3;
+    border: 1px solid #adadad;
+    color: #514943;
+    font-size: 15px;
+    float: left;
+    content: "\f2d1";
+    padding: 4px;
+}
+.sp-container button:after{
+    content: "\f00c";
 }
