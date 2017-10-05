@@ -1,9 +1,81 @@
 <?php if ($block->showCustomizeButton()): ?>
     <div class="product-designer-button-container">
-        <button onclick="document.location.href='<?php echo $block->getCustomizeUrl();  ?>'" type="button" class="action primary product-designer-button product-designer-customize">
+        <button type="button" class="action primary product-designer-button product-designer-customize">
             <span>
                 <span><?php echo __('Customize It') ?></span>
             </span>
         </button>
     </div>
+    <div id="dd-designer" style="display:none;">
+        &nbsp;
+    </div>
+    <script type="text/javascript">
+        require([
+            'jquery',
+            'jquery/ui',
+            'Magento_Ui/js/modal/modal',
+            'underscore'
+
+        ], function ($, ui, modal, _) {
+
+            var parentProductId = '<?php echo $this->getProduct()->getId(); ?>';
+
+
+            $('.product-designer-button').on('click', function () {
+                var valid = $('#product_addtocart_form').valid();
+                if (valid) {
+                    var options = {
+                        type: 'popup',
+                        responsive: true,
+                        innerScroll: true,
+                        modalClass: 'dd-designer-modal'
+                    };
+
+                    var selected_options = {};
+
+    <?php if ($this->getProduct()->getTypeId() == 'configurable'): ?>
+
+                        $('div.swatch-attribute').each(function (k, v) {
+                            var attribute_id = $(v).attr('attribute-id');
+                            var option_selected = $(v).attr('option-selected');
+                            //console.log(attribute_id, option_selected);
+                            if (!attribute_id || !option_selected) {
+                                return;
+                            }
+                            console.log(selected_options);
+                            selected_options[attribute_id] = option_selected;
+                        });
+
+                        var product_id_index = $('[data-role=swatch-options]').data('mageSwatchRenderer').options.jsonConfig.index;
+                        var found_ids = [];
+                        $.each(product_id_index, function (product_id, attributes) {
+                            var productIsSelected = function (attributes, selected_options) {
+                                return _.isEqual(attributes, selected_options);
+                            }
+                            if (productIsSelected(attributes, selected_options)) {
+                                found_ids.push(product_id);
+                            }
+                        });
+                        console.log('parentProductId: ');
+                        console.log(found_ids);
+                        parentProductId = found_ids[0];
+
+    <?php else: ?>
+                        console.log('parentProductId: ' + parentProductId);
+
+    <?php endif; ?>
+        
+
+                    var popup = modal(options, $('#dd-designer'));
+                    $('#dd-designer').html('<span class="dd-designer-loading"><?php echo __('Loading') ?>...</span>');
+                    $('#dd-designer').append($('<div />').text('Product ID: ' + parentProductId));
+                    $('#dd-designer').modal('openModal');
+
+
+                }
+                return;
+            });
+
+        });
+    </script>
 <?php endif; ?>

@@ -7,3 +7,13 @@
     font-size:120%;
 }
 .product-designer-button.product-designer-customize{}
+
+
+.dd-designer-modal.modal-popup._inner-scroll .modal-inner-wrap{
+    width:100%;
+    max-width:100%;
+    height:100%;
+    margin: 0px;
+    padding: 0px;
+}
+
