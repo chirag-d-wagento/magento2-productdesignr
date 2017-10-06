@@ -12,52 +12,124 @@ class Designer {
     protected $_loadedProducts = [];
     protected $_linkManagement;
     protected $_productRepo;
+    protected $_fileSystem;
 
     public function __construct(
-    \Develo\Designer\Model\ImageFactory $imageModel, \Develo\Designer\Model\ImagegroupFactory $groupImageModel, LinkManagementInterface $linkManagement, \Magento\Catalog\Api\ProductRepositoryInterface $productRepo, \Magento\Catalog\Model\ProductFactory $productLoader
+        \Develo\Designer\Model\ImageFactory $imageModel, 
+        \Magento\Framework\Filesystem $fileSystem, 
+        \Develo\Designer\Model\ImagegroupFactory $groupImageModel, 
+        LinkManagementInterface $linkManagement, 
+        \Magento\Catalog\Api\ProductRepositoryInterface $productRepo, 
+        \Magento\Catalog\Model\ProductFactory $productLoader
     ) {
         $this->_groupImageModel = $groupImageModel;
         $this->_imageModel = $imageModel;
         $this->_productLoader = $productLoader;
         $this->_linkManagement = $linkManagement;
         $this->_productRepo = $productRepo;
+        $this->_fileSystem = $fileSystem;
     }
 
     public function loadFrontConfiguration($product) {
 
-        $defaultConf = $this->loadConfguration($productId);
+        $defaultConf = $this->loadConfguration($product->getId());
         if ($product->getTypeId() == 'configurable') {
-            return $this->_prepareConfgurableProductConfiguration($product);
+            return $this->_prepareConfgurableProductConfiguration($product, $defaultConf);
         } else {
-            return $this->_prepareSimpleProductConfiguration($product);
+            return $this->_prepareSimpleProductConfiguration($product, $defaultConf);
         }
     }
 
     protected function _prepareSimpleProductConfiguration($product, $defaultConf = []) {
+        if($this->_checkdefaultConfForProductId($defaultConf, $product->getId())) {
+            return $defaultConf;
+        }
         
+        $media = $product->getMediaGalleryImages();
+        $groupId = uniqid();
+        
+        return [
+            [
+                'group_uid' => uniqid(),
+                'imgs' => [$this->_prepareDefaultImg($media, $groupId, $product)],
+                'product_id' => $product->getId()
+            ],
+            
+        ];
     }
 
     protected function _prepareConfgurableProductConfiguration($product, $defaultConf = []) {
+        $out = [];
         $childProducts = $this->_linkManagement
                 ->getChildren($product->getSku());
 
         foreach ($childProducts as $child) {
-            $childProduct = $this->getProduct($child->getSku(), true);
-            if($this->_checkdefaultConfForProductId($defaultConf, $childProduct->getId())) {
+            $childProduct = $this->_getProduct($child->getSku(), true);
+            if($conf = $this->_checkdefaultConfForProductId($defaultConf, $childProduct->getId())) {
+                $out[] = $conf;
                 continue;
             }
+            
+            $media = $childProduct->getMediaGalleryImages();
+            $groupId = uniqid();
+            $imgs = $this->_prepareDefaultImg($media, $groupId, $childProduct);
+            if($imgs) {
+                $out[] = [
+                    'group_uid' => $groupId,
+                    'imgs' => [$this->_prepareDefaultImg($media, $groupId, $childProduct)],
+                    'product_id' => $childProduct->getId()
+                ];
+            }
         }
+        
+        return $out;
     }
 
-    protected function _prepareDefaultImg($medias) {
-        
+    protected function _prepareDefaultImg($medias, $groupId, $product) {
+        foreach($medias as $media) {
+            
+            if(!$this->getMediaSizes($media)) {
+                return;
+            }
+            
+            //$sizes = 
+            return [
+                'conf' => [],
+                'group_index' => $groupId,
+                'media_id' => $media->getId(),
+                'product_id' => $product->getId(),
+                'sku' => $product->getSku(),
+                'src' => $media->getUrl(),
+                'media_id' => $media->getId(),
+                'sizes' => $this->getMediaSizes($media)
+            ];
+        }
     }
     
     protected function _checkdefaultConfForProductId($defaultConf = [], $productId) {
+        
         foreach($defaultConf as $conf) {
-            if($defaultConf['product_id'] == $productId) {
-                return true;
+            if($conf['product_id'] == $productId) {
+                return $conf;
             }
+        }
+        
+        return false;
+    }
+    
+    protected function getMediaSizes($media) {
+        $file = $media->getFile();
+        $mediaPath = $this->_fileSystem->
+                getDirectoryRead(\Magento\Framework\App\Filesystem\DirectoryList::MEDIA)
+                ->getAbsolutePath();
+        $fullPath =  $mediaPath . 'catalog/product' . $file;
+        
+        if(file_exists($fullPath)) {
+            $sizes = getimagesize($fullPath);
+            return [
+                'width' => $sizes[0],
+                'height' => $sizes[1],
+            ];
         }
         
         return false;

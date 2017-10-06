@@ -15,5 +15,6 @@ class InitProducView extends \Magento\Backend\Block\AbstractBlock {
 		/** @var \Magento\Framework\View\Page\Config $page */
 		$page = $om->get('Magento\Framework\View\Page\Config');
 		$page->addPageAsset('Develo_Designer::css/product_view.css');
+		$page->addPageAsset('Develo_Designer::css/dd_productdesigner.css');
 	}
 }

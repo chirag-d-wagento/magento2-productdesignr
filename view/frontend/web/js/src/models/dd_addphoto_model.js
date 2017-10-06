@@ -2,12 +2,18 @@ var DD_AddPhoto_Model = DD_ModelBase.extend({
     idUploaderTab: 'dd-add-photo-tab',
     idMyPhotosTab: 'dd-my-photo-tab',
     uploaderInitiated: false,
+    
+    init: function (obj) {
+        this.obj = obj;
+        this._super(obj);
+    },
+    
     getWindowTitle: function () {
         return this._('add_photo_to_image');
     },
 
     setWindowContent: function (parent) {
-        this.tabs = new DD_windowPhotoTabs(parent);
+        new DD_windowPhotoTabs(parent);
     },
 
     tabActive: function (id, content) {
@@ -25,7 +31,8 @@ var DD_AddPhoto_Model = DD_ModelBase.extend({
         this.content = content;
         var self = this;
         content.html(this._('drop_files_or_upload'));
-        content.dropzone({url: this._s('uploaderPath'),
+        content.dropzone({
+            url: self._s('urlUploadImages') + '?form_key=' + window.FORM_KEY,
             maxFilesize: 2, // MB
             acceptedFiles: '.png, .jpeg, .jpg, .gif',
             init: function () {
@@ -36,10 +43,8 @@ var DD_AddPhoto_Model = DD_ModelBase.extend({
                     }
                 });
                 this.on("success", function (file, responseText) {
-                    console.log(responseText);
                     self.previousFile = $(file.previewElement);
-                    var obj = jQuery.parseJSON(responseText);
-
+                    var obj = responseText;
                     if (!obj) {
                         return processUploaderError(file, responseText);
                     }
@@ -88,15 +93,16 @@ var DD_AddPhoto_Model = DD_ModelBase.extend({
         })
                 .done(function (data) {
                     content.removeClass('tab-loading');
-                    if(!data || data.length == 0) {
+                    if (!data || data.length == 0) {
                         content.html(self._('no_data'))
                         content.addClass('tab-no-data');
                         return;
                     }
                     content.removeClass('tab-no-data');
                     content.html('');
-                    
-                    for(var a in data) {
+
+                    return;
+                    $.each(data, function (a) {
                         var img = data[a];
                         new DD_ImageLinkAdd({
                             'parent': content,
@@ -104,7 +110,8 @@ var DD_AddPhoto_Model = DD_ModelBase.extend({
                             'width': img.width,
                             'height': img.height
                         });
-                    }
+                    });
+
                 });
 
     }

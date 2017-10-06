@@ -1,5 +1,10 @@
 var DD_AddText_Model = DD_ModelBase.extend({
     
+    init: function (obj) {
+        this.obj = obj;
+        this._super(obj);
+    },
+    
     getWindowTitle: function() {
         return this._('add_text_to_image');
     },
@@ -12,8 +17,8 @@ var DD_AddText_Model = DD_ModelBase.extend({
     setSaveTextEvent: function() {
         var textarea = this.form.get().find('textarea');
         var self = this;
+        
         this.form.get().find('button').on('click', function() {
-            //alert(textarea.val());
             var text = textarea.val();
             if(text.trim() == '') {
                 textarea.addClass('empty');

@@ -1,4 +1,5 @@
 var DD_Translator = DD_object.extend({
+
     id: 'dd_translate',
     translateObject: {},
     init: function(translate) {

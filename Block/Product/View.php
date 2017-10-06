@@ -8,16 +8,25 @@ class View extends \Magento\Catalog\Block\Product\AbstractProduct {
     
     protected $_helperUrl;
     
+    protected $_designerModel;
+    
+    protected $_designerFonts;
+    
     public function __construct(
         \Magento\Catalog\Block\Product\Context $context, 
         \Develo\Designer\Helper\Data $designerHelper,    
-        \Develo\Designer\Helper\Url $helperUrl,   
+        \Develo\Designer\Helper\Url $helperUrl,
+        \Develo\Designer\Helper\Fonts $designerFonts,    
+
+        \Develo\Designer\Model\Designer $designerModel,
         array $data = array()
     ) {
         parent::__construct($context, $data);
         
         $this->_designerHelper = $designerHelper;
         $this->_helperUrl = $helperUrl;
+        $this->_designerModel = $designerModel;
+        $this->_designerFonts = $designerFonts;
     }
     
     public function showCustomizeButton() {
@@ -28,5 +37,13 @@ class View extends \Magento\Catalog\Block\Product\AbstractProduct {
     public function getCustomizeUrl() {
         $product = $this->getProduct();
         return $this->_helperUrl->getProductSustomizeUrl($product);
+    }
+    
+    public function getDesignerConfiguration($product) {
+        return json_encode($this->_designerModel->loadFrontConfiguration($product));
+    }
+    
+    public function getFonts()  {
+        return $this->_designerFonts->getFonts();
     }
 }

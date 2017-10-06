@@ -1,4 +1,5 @@
 var DD_Uibase = DD_object.extend({
+    options: {},
 
     init: function (id) {
         this._super(id);
@@ -26,7 +27,11 @@ var DD_Uibase = DD_object.extend({
         if (this._addElements) {
             this._addElements();
         }
-        this._onAfterCreate();
+        var model = this._onAfterCreate();
+        if (model) {
+            model.registerEvents();
+            return model;
+        }
     },
 
     _onBeforeCreate: function () {
@@ -34,29 +39,40 @@ var DD_Uibase = DD_object.extend({
     },
 
     _onAfterCreate: function () {
-        var me = this;
         var model = null;
         if (this.model) {
-            eval("try {model = new " + this.model + "(this); }catch(err) {console.log('ERROR FOR MODEL: " + this.model + "; ERRTXT: ' + err)}");
-        }
-        if (model) {
-            this.model = model;
+            eval("try {model = new " + this.model + "(this); }catch(err) {console.log('ERROR FOR MODEL: " + this.model + "; ERRTXT: ' + err + '; err.lineNumber: ' + err.lineNumber)}");
         }
         if (this.options.windowOpener && model) {
-            this.self.on('click', function () {
-                var window = me.modal.getWindow();
-                var contentElement = me.modal.getContentElement();
-                contentElement.empty();
-                me.model.setWindowContent( contentElement );
-                me.model.setWindow(window);
-                window.setTitle( me.model.getWindowTitle() )
-                window.open({});
-                
-                if(!window.isClosed) {
-                    window.position({target: $('.canvas-container')});
-                }
-            });
+            this.addWindowOpenEvent(this, model, this.modal, this.options);
         }
+        if (model) {
+            return model;
+        }
+    },
+
+    addWindowOpenEvent: function (me, model, modal, options) {
+        var obj = me.get();
+        $(obj).on('click', function () {
+            if (!options.windowPreview) {
+                var window = modal.getWindow();
+                var contentElement = modal.getContentElement();
+            } else {
+                var window = modal.getPreview();
+                var contentElement = modal.getContentElementPreview();
+            }
+
+            contentElement.empty();
+            model.setWindowContent(contentElement);
+            model.setWindow(window);
+
+            window.setTitle(model.getWindowTitle())
+            window.open({});
+
+            if (!window.isClosed && !options.windowPreview) {
+                window.position({target: $('.canvas-container')});
+            }
+        });
     },
 
     windowInit: function () {

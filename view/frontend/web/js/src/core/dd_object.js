@@ -20,7 +20,6 @@ var DD_object = Class.extend({
     getGlobal: function (id) {
         return DD_Global[id];
     },
-    
     createUUID: function () {
         var s = [];
         var hexDigits = "0123456789abcdef";
@@ -33,6 +32,12 @@ var DD_object = Class.extend({
 
         var uuid = s.join("");
         return uuid;
+    },
+    
+    sortArray: function(_array, new_index, old_index) {
+        var record = _array.splice(old_index, 1);
+        _array.splice(new_index, 0, record[0]);
+        return _array;
     },
     
     //translation

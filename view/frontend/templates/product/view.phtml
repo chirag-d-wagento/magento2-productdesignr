@@ -6,20 +6,28 @@
             </span>
         </button>
     </div>
-    <div id="dd-designer" style="display:none;">
-        &nbsp;
+    <div id="dd-designer-container" style="display:none;">
+        
+        <div id="dd-designer">
+            
+        </div>
+        
     </div>
     <script type="text/javascript">
         require([
             'jquery',
             'jquery/ui',
             'Magento_Ui/js/modal/modal',
-            'underscore'
+            'underscore',
+            'desgnerModule'
 
-        ], function ($, ui, modal, _) {
+        ], function ($, ui, modal, _, _designer) {
 
-            var parentProductId = '<?php echo $this->getProduct()->getId(); ?>';
+            var parentProductId = '<?php echo $block->getProduct()->getId(); ?>';
+            var defaultConfiguration = <?php echo $block->getDesignerConfiguration($block->getProduct()); ?>
 
+            console.log('defaultConfiguration');
+            console.log(defaultConfiguration);
 
             $('.product-designer-button').on('click', function () {
                 var valid = $('#product_addtocart_form').valid();
@@ -42,7 +50,6 @@
                             if (!attribute_id || !option_selected) {
                                 return;
                             }
-                            console.log(selected_options);
                             selected_options[attribute_id] = option_selected;
                         });
 
@@ -56,22 +63,64 @@
                                 found_ids.push(product_id);
                             }
                         });
-                        console.log('parentProductId: ');
-                        console.log(found_ids);
                         parentProductId = found_ids[0];
 
     <?php else: ?>
                         console.log('parentProductId: ' + parentProductId);
 
     <?php endif; ?>
-        
 
-                    var popup = modal(options, $('#dd-designer'));
+
+                    var popup = modal(options, $('#dd-designer-container'));
                     $('#dd-designer').html('<span class="dd-designer-loading"><?php echo __('Loading') ?>...</span>');
-                    $('#dd-designer').append($('<div />').text('Product ID: ' + parentProductId));
-                    $('#dd-designer').modal('openModal');
+                    
 
+                    var imgsConfiguration = findConf(defaultConfiguration, parentProductId);
 
+                    if (!imgsConfiguration || !imgsConfiguration.imgs) {
+                        $('#dd-designer').html('<div class="dd-designer-no-config"><?php echo __('No Images found for this product!'); ?></div>');
+                    } else {
+                        console.log(imgsConfiguration);
+                        var defaultImage = imgsConfiguration.imgs[0];
+                        initDesigner(defaultImage);
+                    }
+                    
+                    $('#dd-designer-container').modal('openModal');
+
+                    function findConf(defaultConf, productId) {
+                        var _currConf = false;
+                        $.each(defaultConf, function (i, conf) {
+                            if (conf.product_id == productId) {
+                                _currConf = conf;
+                            }
+                        });
+
+                        return _currConf;
+                    }
+
+                    function initDesigner(img) {
+                        $('#dd-designer').html('');
+                        $('#dd-designer').empty();
+                        var designer = $('#dd-designer').dd_productdesigner({
+                            'src': img.src,
+                            'width': img.sizes.width,
+                            'height': img.sizes.height,
+
+                            'sku': img.sku,
+                            'product_id': img.product_id,
+                            'media_id': img.media_id,
+                            'group_index': img.group_index,
+                            'mask': img.mask,
+                            'conf': img.conf,
+                            'settings': {
+                                'listFonts': <?php echo json_encode($this->getFonts()) ?>
+                            }
+
+                        });
+                        
+                        
+                        designer.init();
+                    }
                 }
                 return;
             });
