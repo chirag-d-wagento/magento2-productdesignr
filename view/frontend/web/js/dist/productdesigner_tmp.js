@@ -1042,12 +1042,12 @@ var DD_AddPhoto_Model = DD_ModelBase.extend({
     idUploaderTab: 'dd-add-photo-tab',
     idMyPhotosTab: 'dd-my-photo-tab',
     uploaderInitiated: false,
-    
+
     init: function (obj) {
         this.obj = obj;
         this._super(obj);
     },
-    
+
     getWindowTitle: function () {
         return this._('add_photo_to_image');
     },

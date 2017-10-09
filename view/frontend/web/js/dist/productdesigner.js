@@ -36035,12 +36035,12 @@ var DD_AddPhoto_Model = DD_ModelBase.extend({
     idUploaderTab: 'dd-add-photo-tab',
     idMyPhotosTab: 'dd-my-photo-tab',
     uploaderInitiated: false,
-    
+
     init: function (obj) {
         this.obj = obj;
         this._super(obj);
     },
-    
+
     getWindowTitle: function () {
         return this._('add_photo_to_image');
     },
@@ -36073,6 +36073,9 @@ var DD_AddPhoto_Model = DD_ModelBase.extend({
                     if (self.previousFile) {
                         self.previousFile.fadeOut();
                         delete self.previousFile;
+                        $(file.previewElement).find('.dz-error-mark').hide();
+                        $(file.previewElement).find('.dz-success-mark').hide();
+                        $(file.previewElement).find('.dz-details').hide();
                     }
                 });
                 this.on("success", function (file, responseText) {
@@ -36562,7 +36565,7 @@ var DD_Main_Model = DD_ModelBase.extend({
             var scaleFactorH = (blockHeight) / (newHeight ? newHeight : this._l().getHeight());
             if (scaleFactorH != 1) {
                 
-            console.log('scaleFactor cals: ' + scaleFactor);
+            console.log('scaleFactor calc: ' + scaleFactor);
                 newHeight = blockHeight;
                 newWidth = (newHeight) * (width / height);
                 scaleFactor = (scaleFactor ? scaleFactor : 1 ) * scaleFactorH;
