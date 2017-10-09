@@ -10,6 +10,8 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper {
     const DESIGNER_FRONT_ENABLE_FOR_ALL = 'develo_productdesigner/frontend/enable_all';
     const DESIGNER_FRONT_PRODUCT_ATTR_SETS = 'develo_productdesigner/frontend/attributes_sets';
     const DESIGNER_FRONT_PRODUCT_LAYER_POSITION = 'develo_productdesigner/frontend/layer_position';
+    
+    const DESIGNER_FRONT_PRODUCT_GOOGLE_FONTS = 'develo_productdesigner/frontend/google_fonts';
 
     public function __construct(\Magento\Framework\App\Helper\Context $context) {
         parent::__construct($context);
@@ -29,6 +31,10 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper {
     
     public function getProductsAttributesSets() {
         return $this->scopeConfig->getValue(self::DESIGNER_FRONT_PRODUCT_ATTR_SETS, \Magento\Store\Model\ScopeInterface::SCOPE_STORE);
+    }
+    
+    public function getGoogleFonts() {
+        return $this->scopeConfig->getValue(self::DESIGNER_FRONT_PRODUCT_GOOGLE_FONTS, \Magento\Store\Model\ScopeInterface::SCOPE_STORE);
     }
     
     

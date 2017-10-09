@@ -9,8 +9,8 @@
             </general>
             <frontend>
                 <enable_all>1</enable_all>
-                <layer_position>center_center</layer_position>
                 <layer_width>20</layer_width>
+                <google_fonts><![CDATA["Roboto", "Open Sans", "Lato", "Raleway", "Source Sans Pro", "Ubuntu", "Titillium Web", "Poppins", "Dosis", "Nunito", "Work Sans", "Cabin", "Josefin Sans", "Merriweather Sans", "Exo 2", "Source Code Pro", "Kanit", "Exo", "Rokkitt", "Martel", "Alegreya Sans SC", "Arima Madurai", "Montserrat Alternates", "Martel Sans", "Expletus Sans", "Inknut Antiqua"]]></google_fonts>
             </frontend>
         </develo_productdesigner>
     </default>

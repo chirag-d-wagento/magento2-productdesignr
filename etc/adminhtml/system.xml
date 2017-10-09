@@ -55,7 +55,7 @@
                     <source_model>Develo\Designer\Model\Config\Source\ProductAttributesSet</source_model>
                 </field>
                 
-                <field id="layer_position" 
+                <!-- field id="layer_position" 
                     translate="label" 
                     type="select" 
                     sortOrder="30" 
@@ -65,7 +65,7 @@
                     <label>Default Layer Position</label>
                     <comment>Specify layer position on product image</comment>
                     <source_model>Develo\Designer\Model\Config\Source\LayerPosition</source_model>
-                </field>
+                </field -->
                 
                 
                 <field id="layer_width" 
@@ -78,6 +78,19 @@
                     <label>Default Layer Width</label>
                     <comment>Percentage from main image</comment>
                 </field>
+                
+                <field id="google_fonts" 
+                    translate="label" 
+                    type="textarea" 
+                    sortOrder="50" 
+                    showInDefault="1" 
+                    showInWebsite="1" 
+                    showInStore="1">
+                    <label>Google Fonts to Load</label>
+                    <comment>visit https://fonts.google.com/</comment>
+                </field>
+                
+                
             </group>
          </section>
        
