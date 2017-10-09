@@ -249,6 +249,7 @@ var DD_Window = DD_object.extend({
             repositionOnOpen: false,
             repositionOnContent: true,
             target: $('.canvas-container'),
+            
             onOpen: function () {
                 self._evnt().doCall('window-showed');
             },
@@ -356,7 +357,7 @@ var DD_Uibase = DD_object.extend({
         if (this.options.windowOpener && model) {
             this.addWindowOpenEvent(this, model, this.modal, this.options);
         }
-        if (this.options.tooltip && this.options.tooltip_text) {
+        if (this.options.tooltip && this.options.tooltip_text && !Modernizr.touchevents) {
             this.addTooltip();
         }
         if (model) {
@@ -905,19 +906,19 @@ var DD_ImageLinkAdd = DD_Uibase.extend({
             "data-width": options.width,
             "data-height": options.height
         });
-        this.add();
+        this._add();
     },
     
-    add: function() {
+    _addElements: function() {
         this.image = $('<img />', {
             src: this.options.src
         });
         this.self.append( this.image );
-        this._add();
-        
-        this.model.setClickEvents(this.self);
-    }
+    },
     
+    _callBackModel: function (model) {
+        model.setClickEvents();
+    }
     
 });
 
@@ -1071,7 +1072,7 @@ var DD_AddPhoto_Model = DD_ModelBase.extend({
         var self = this;
         content.html(this._('drop_files_or_upload'));
         content.dropzone({
-            url: self._s('urlUploadImages') + '?form_key=' + window.FORM_KEY,
+            url: self._s('urlUploadImages') /* + '?form_key=' + window.FORM_KEY */,
             maxFilesize: 2, // MB
             acceptedFiles: '.png, .jpeg, .jpg, .gif',
             init: function () {
@@ -1140,9 +1141,8 @@ var DD_AddPhoto_Model = DD_ModelBase.extend({
                     content.removeClass('tab-no-data');
                     content.html('');
 
-                    return;
-                    $.each(data, function (a) {
-                        var img = data[a];
+                    $.each(data, function (a, img) {
+                        console.log(img);
                         new DD_ImageLinkAdd({
                             'parent': content,
                             'src': img.src,
@@ -1344,9 +1344,13 @@ var DD_Control_Base_Model = DD_ModelBase.extend({
 
 var DD_ImageLink_Model = DD_ModelBase.extend({
 
-    setClickEvents: function (obj) {
+    init: function(obj) {
+        this.obj = obj;
+    },
+
+    setClickEvents: function () {
         var self = this;
-        obj.on('click', function () {
+        this.obj.self.on('click', function () {
             new DD_Layer_Img({
                 src: $(this).attr('data-src'),
                 width: parseInt($(this).attr('data-width')),
@@ -1545,8 +1549,9 @@ var DD_Main_Model = DD_ModelBase.extend({
     resize: function (width, height) {
         var blockWidth = $(window).width(); //magento 2 modal
         var blockHeight = $(window).height() - 40; //magento 2 modal
-        console.log('Modal: ' + blockWidth);
-        console.log('Modal: ' + blockHeight);
+
+        console.log('blockWidth: ' + blockWidth);
+        console.log('blockHeight: ' + blockHeight);
 
         this.obj.get().width(blockWidth);
         this.obj.get().height(blockHeight);
@@ -1554,19 +1559,27 @@ var DD_Main_Model = DD_ModelBase.extend({
         var newWidth, newHeight, scaleFactor;
         var bgCanvas = this.layersObj.getBgCanvas();
         var hoverCanvas = this.layersObj.getHoverCanvas();
-        var skipHeightChanges = false;
         if (blockWidth < width) {
             newWidth = blockWidth;
             newHeight = (height / width) * newWidth;
             scaleFactor = blockWidth / this._l().getWidth();
-            skipHeightChanges = true;
-            //return;
         }
-        if (blockHeight < height && !skipHeightChanges) {
-            var scaleFactor = blockHeight / this._l().getHeight();
-            newHeight = blockHeight;
-            newWidth = blockHeight * (width / height);
+
+        if (blockHeight < (newHeight ? newHeight : height)) {
+            var scaleFactorH = (blockHeight) / (newHeight ? newHeight : this._l().getHeight());
+            if (scaleFactorH != 1) {
+                
+            console.log('scaleFactor calc: ' + scaleFactor);
+                newHeight = blockHeight;
+                newWidth = (newHeight) * (width / height);
+                scaleFactor = (scaleFactor ? scaleFactor : 1 ) * scaleFactorH;
+            }
         }
+        
+        console.log('scaleFactor: ' + scaleFactor);
+        console.log('newHeight: ' + newHeight);
+        console.log('newWidth: ' + newWidth);
+
         if (scaleFactor != 1 && newHeight && newWidth) {
             bgCanvas.setWidth(newWidth);
             bgCanvas.setHeight(newHeight);
@@ -1704,6 +1717,7 @@ var DD_control_text = DD_Control_Base_Model.extend({
                 textarea.removeClass('empty');
                 textarea.addClass('valid');
                 self.setFabricObjVal("text", text.trim());
+                self.obj.contentContainer.get().hide();
             }
         });
     },
@@ -1713,14 +1727,7 @@ var DD_control_text = DD_Control_Base_Model.extend({
         var _selector = new DD_button({
             'parent': this.obj.buttons.get(),
             //'text': this._('save'),
-            'class': 'fa fa-font',
-            'tooltip_outside': 'y',
-            'tooltip': true,
-            'tooltip_text': this._('text_settings'),
-            'tooltip_position': {
-                x: 'center',
-                y: 'bottom'
-            }
+            'class': 'fa fa-font'
         });
         _selector.get().on('click', function () {
             self.showTextSetting();

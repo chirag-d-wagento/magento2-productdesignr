@@ -3459,7 +3459,7 @@ ul.tabs li.current {
 }
 .dd-helper-popup {
   position: absolute;
-  z-index: 1;
+  z-index: 1000000002;
   width: 98%;
   background: #fff;
   top: 0px;
@@ -3468,6 +3468,7 @@ ul.tabs li.current {
   left: 0;
   padding: 1%;
   border-bottom: 1px solid #ccc;
+  border-top: 1px solid #ccc;
 }
 .dd-helper-popup .dd-helper-popup-buttons .fa {
   font-size: 20px;
@@ -3486,6 +3487,8 @@ ul.tabs li.current {
   border-bottom-right-radius: 3px;
   border-bottom-left-radius: 3px;
   padding: 7px 30px;
+  height: 34px;
+  overflow: hidden;
 }
 .dd-helper-popup .dd-helper-popup-content-container {
   padding: 10px;
@@ -3606,6 +3609,29 @@ ul.tabs li.current {
   display: inline-block;
   margin: 0 10px;
 }
+@media only screen and (max-width: 1024px) {
+  .dd-helper-popup {
+    margin-top: -49px;
+    min-height: 40px;
+    background: #fff;
+  }
+  .dd-helper-popup .dd-helper-popup-buttons {
+    text-align: center;
+  }
+  .dd-helper-popup .dd-helper-popup-buttons .fa {
+    font-size: 21px;
+    margin-right: 7px;
+  }
+  .dd-helper-popup .dd-helper-popup-content-container .dd-helper-font-selector-container {
+    width: 100%;
+    padding: 10px 0;
+    margin: 0px;
+  }
+  .dd-helper-popup .dd-helper-popup-content-container .dd-helper-font-selector-container .fontSelect {
+    margin: 0 3px;
+    width: 85%;
+  }
+}
 .dd-designer-topcontrols {
   width: 100px;
   top: 0px;
@@ -3623,12 +3649,19 @@ ul.tabs li.current {
   background: #fff;
   border-radius: 50%;
   padding: 13% 15%;
-  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.15);
+  box-shadow: 0px 7px 7px rgba(0, 0, 0, 0.55);
   transition: box-shadow 0.3s ease-in-out;
   border: 1px solid #ccc;
 }
-.dd-designer-topcontrols button:hover {
-  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+.dd-designer-topcontrols button:hover,
+.dd-designer-topcontrols button:active {
+  box-shadow: 0px 8px 8px rgba(0, 0, 0, 0.75);
+}
+@media only screen and (max-width: 767px) {
+  .dd-designer-topcontrols {
+    bottom: 0px;
+    top: auto;
+  }
 }
 .dd-designer-history-controls {
   position: absolute;
@@ -3640,14 +3673,22 @@ ul.tabs li.current {
   top: 80px;
   z-index: 1000000000;
 }
-.dd-add-text-textarea {
+#dd-add-text-form button {
+  width: 100%;
+  border: 1px solid #ccc;
+  background: #fff;
+  font-size: 120%;
+  font-weight: bold;
+  padding: 15px 0;
+}
+#dd-add-text-form .dd-add-text-textarea {
   width: 100%;
   min-height: 100px;
 }
-.dd-add-text-textarea.empty {
+#dd-add-text-form .dd-add-text-textarea.empty {
   border: 1px solid red;
 }
-.dd-add-text-textarea.valid {
+#dd-add-text-form .dd-add-text-textarea.valid {
   border: 1px solid green;
 }
 #dd-add-photo-tabs {
@@ -3696,9 +3737,8 @@ ul.tabs li.current {
 .dd-designer-container {
   height: 100%;
   min-height: 400px;
-  padding: 49px 0 0;
+  margin: 50px auto 0;
   position: relative;
-  margin: 0 auto;
 }
 .dd-designer-container canvas {
   width: 100%;

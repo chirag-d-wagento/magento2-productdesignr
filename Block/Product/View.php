@@ -46,4 +46,12 @@ class View extends \Magento\Catalog\Block\Product\AbstractProduct {
     public function getFonts()  {
         return $this->_designerFonts->getFonts();
     }
+    
+    public function getUploadFileUrl() {
+        return $this->getUrl('dd_designer/index/upload');
+    }
+    
+    public function getMyFilesUrl() {
+        return $this->getUrl('dd_designer/index/myfiles');
+    }
 }

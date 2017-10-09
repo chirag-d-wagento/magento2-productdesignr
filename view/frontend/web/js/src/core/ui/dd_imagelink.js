@@ -15,18 +15,18 @@ var DD_ImageLinkAdd = DD_Uibase.extend({
             "data-width": options.width,
             "data-height": options.height
         });
-        this.add();
+        this._add();
     },
     
-    add: function() {
+    _addElements: function() {
         this.image = $('<img />', {
             src: this.options.src
         });
         this.self.append( this.image );
-        this._add();
-        
-        this.model.setClickEvents(this.self);
-    }
+    },
     
+    _callBackModel: function (model) {
+        model.setClickEvents();
+    }
     
 });

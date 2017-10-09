@@ -32,7 +32,7 @@ var DD_AddPhoto_Model = DD_ModelBase.extend({
         var self = this;
         content.html(this._('drop_files_or_upload'));
         content.dropzone({
-            url: self._s('urlUploadImages') + '?form_key=' + window.FORM_KEY,
+            url: self._s('urlUploadImages') /* + '?form_key=' + window.FORM_KEY */,
             maxFilesize: 2, // MB
             acceptedFiles: '.png, .jpeg, .jpg, .gif',
             init: function () {
@@ -101,9 +101,8 @@ var DD_AddPhoto_Model = DD_ModelBase.extend({
                     content.removeClass('tab-no-data');
                     content.html('');
 
-                    return;
-                    $.each(data, function (a) {
-                        var img = data[a];
+                    $.each(data, function (a, img) {
+                        console.log(img);
                         new DD_ImageLinkAdd({
                             'parent': content,
                             'src': img.src,

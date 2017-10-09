@@ -45,7 +45,7 @@ class Upload extends \Magento\Backend\App\Action {
             ]);
         } else {
 
-            echo json_encode([
+            return $this->sendResponse([
                 'error' => true,
                 'errMessage' => 'ERROR: UPLOADING FILES!'
             ]);

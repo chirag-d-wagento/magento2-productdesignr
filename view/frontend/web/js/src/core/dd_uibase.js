@@ -46,7 +46,7 @@ var DD_Uibase = DD_object.extend({
         if (this.options.windowOpener && model) {
             this.addWindowOpenEvent(this, model, this.modal, this.options);
         }
-        if (this.options.tooltip && this.options.tooltip_text) {
+        if (this.options.tooltip && this.options.tooltip_text && !Modernizr.touchevents) {
             this.addTooltip();
         }
         if (model) {

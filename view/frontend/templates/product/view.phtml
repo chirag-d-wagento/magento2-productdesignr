@@ -115,7 +115,9 @@
                             'mask': img.mask,
                             'conf': img.conf,
                             'settings': {
-                                'listFonts': <?php echo json_encode($this->getFonts()) ?>
+                                'listFonts': <?php echo json_encode($this->getFonts()); ?>,
+                                'urlUploadImages': '<?php echo $this->getUploadFileUrl(); ?>',
+                                'myFilesPath': '<?php echo $this->getMyFilesUrl() ?>'
                             }
 
                         });

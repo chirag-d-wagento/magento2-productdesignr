@@ -1,6 +1,6 @@
 .dd-helper-popup{
     position: absolute;
-    z-index: 1;
+    z-index: 1000000002;
     width: 98%;
     background: #fff;
     top: 0px;
@@ -9,6 +9,7 @@
     left:0;
     padding:1%;
     border-bottom:1px solid #ccc;
+    border-top:1px solid #ccc;
     .dd-helper-popup-buttons{
 
         .fa{
@@ -30,6 +31,8 @@
         border-bottom-right-radius: 3px;
         border-bottom-left-radius: 3px;
         padding:7px 30px;
+        height:34px;
+        overflow:hidden;
 
     }
     .dd-helper-popup-content-container{
@@ -157,6 +160,33 @@
         .dd-helper-font-selector-container{
             display:inline-block;
             margin:0 10px;
+        }
+    }
+}
+
+
+@media only screen and (max-width: 1024px){
+    .dd-helper-popup{
+        margin-top:-49px;
+        min-height: 40px;
+        background:#fff;
+        .dd-helper-popup-buttons{
+            text-align:center;
+            .fa{
+                font-size: 21px;
+                margin-right:7px;
+            }
+        }
+        .dd-helper-popup-content-container {
+            .dd-helper-font-selector-container{
+                width:100%;
+                padding:10px 0;
+                margin: 0px;
+                .fontSelect{
+                    margin:0 3px;
+                    width: 85%;
+                }
+            }
         }
     }
 }

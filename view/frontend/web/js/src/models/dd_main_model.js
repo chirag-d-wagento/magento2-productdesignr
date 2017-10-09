@@ -186,8 +186,9 @@ var DD_Main_Model = DD_ModelBase.extend({
     resize: function (width, height) {
         var blockWidth = $(window).width(); //magento 2 modal
         var blockHeight = $(window).height() - 40; //magento 2 modal
-        console.log('Modal: ' + blockWidth);
-        console.log('Modal: ' + blockHeight);
+
+        console.log('blockWidth: ' + blockWidth);
+        console.log('blockHeight: ' + blockHeight);
 
         this.obj.get().width(blockWidth);
         this.obj.get().height(blockHeight);
@@ -195,19 +196,27 @@ var DD_Main_Model = DD_ModelBase.extend({
         var newWidth, newHeight, scaleFactor;
         var bgCanvas = this.layersObj.getBgCanvas();
         var hoverCanvas = this.layersObj.getHoverCanvas();
-        var skipHeightChanges = false;
         if (blockWidth < width) {
             newWidth = blockWidth;
             newHeight = (height / width) * newWidth;
             scaleFactor = blockWidth / this._l().getWidth();
-            skipHeightChanges = true;
-            //return;
         }
-        if (blockHeight < height && !skipHeightChanges) {
-            var scaleFactor = blockHeight / this._l().getHeight();
-            newHeight = blockHeight;
-            newWidth = blockHeight * (width / height);
+
+        if (blockHeight < (newHeight ? newHeight : height)) {
+            var scaleFactorH = (blockHeight) / (newHeight ? newHeight : this._l().getHeight());
+            if (scaleFactorH != 1) {
+                
+            console.log('scaleFactor calc: ' + scaleFactor);
+                newHeight = blockHeight;
+                newWidth = (newHeight) * (width / height);
+                scaleFactor = (scaleFactor ? scaleFactor : 1 ) * scaleFactorH;
+            }
         }
+        
+        console.log('scaleFactor: ' + scaleFactor);
+        console.log('newHeight: ' + newHeight);
+        console.log('newWidth: ' + newWidth);
+
         if (scaleFactor != 1 && newHeight && newWidth) {
             bgCanvas.setWidth(newWidth);
             bgCanvas.setHeight(newHeight);
