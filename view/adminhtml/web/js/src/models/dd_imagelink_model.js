@@ -1,8 +1,12 @@
 var DD_ImageLink_Model = DD_ModelBase.extend({
 
-    setClickEvents: function (obj) {
+    init: function(obj) {
+        this.obj = obj;
+    },
+
+    setClickEvents: function () {
         var self = this;
-        obj.on('click', function () {
+        this.obj.self.on('click', function () {
             new DD_Layer_Img({
                 src: $(this).attr('data-src'),
                 width: parseInt($(this).attr('data-width')),

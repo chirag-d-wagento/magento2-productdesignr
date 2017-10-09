@@ -816,19 +816,19 @@ var DD_ImageLinkAdd = DD_Uibase.extend({
             "data-width": options.width,
             "data-height": options.height
         });
-        this.add();
+        this._add();
     },
     
-    add: function() {
+    _addElements: function() {
         this.image = $('<img />', {
             src: this.options.src
         });
         this.self.append( this.image );
-        this._add();
-        
-        this.model.setClickEvents(this.self);
-    }
+    },
     
+    _callBackModel: function (model) {
+        model.setClickEvents();
+    }
     
 });
 
@@ -1390,6 +1390,7 @@ var DD_admin_group_image_model = DD_Admin_ImagesSelected_Model.extend({
         var onUpdate = this.onUpdate.bind(this);
         var group_index = el.attr('data-group');
         var listFonts = this._s('listFonts');
+        var myFilesPath = this._s('myFilesPath');
         
         el.on('click', function () {
             $('#dd_designer').html('');
@@ -1413,7 +1414,8 @@ var DD_admin_group_image_model = DD_Admin_ImagesSelected_Model.extend({
                     'defaultFontSize': defaultFontSize, 
                     'defaultLayerMaskWidth': defaultLayerMaskWidth,
                     'percentSizeFromMask': percentSizeFromMask,
-                    'listFonts': listFonts
+                    'listFonts': listFonts,
+                    'myFilesPath': myFilesPath
                 }
                 
             });

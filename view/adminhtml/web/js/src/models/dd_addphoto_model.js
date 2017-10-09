@@ -88,7 +88,7 @@ var DD_AddPhoto_Model = DD_ModelBase.extend({
                 .addClass('tab-loading');
 
         $.ajax({
-            url: this._s('myFilesPath'),
+            url: this._s('myFilesPath')  + '?form_key=' + window.FORM_KEY,
             type: 'json'
         })
                 .done(function (data) {
@@ -100,8 +100,6 @@ var DD_AddPhoto_Model = DD_ModelBase.extend({
                     }
                     content.removeClass('tab-no-data');
                     content.html('');
-
-                    return;
                     $.each(data, function (a) {
                         var img = data[a];
                         new DD_ImageLinkAdd({

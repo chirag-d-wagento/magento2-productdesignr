@@ -884,19 +884,19 @@ var DD_ImageLinkAdd = DD_Uibase.extend({
             "data-width": options.width,
             "data-height": options.height
         });
-        this.add();
+        this._add();
     },
     
-    add: function() {
+    _addElements: function() {
         this.image = $('<img />', {
             src: this.options.src
         });
         this.self.append( this.image );
-        this._add();
-        
-        this.model.setClickEvents(this.self);
-    }
+    },
     
+    _callBackModel: function (model) {
+        model.setClickEvents();
+    }
     
 });
 
@@ -1106,7 +1106,7 @@ var DD_AddPhoto_Model = DD_ModelBase.extend({
                 .addClass('tab-loading');
 
         $.ajax({
-            url: this._s('myFilesPath'),
+            url: this._s('myFilesPath')  + '?form_key=' + window.FORM_KEY,
             type: 'json'
         })
                 .done(function (data) {
@@ -1118,8 +1118,6 @@ var DD_AddPhoto_Model = DD_ModelBase.extend({
                     }
                     content.removeClass('tab-no-data');
                     content.html('');
-
-                    return;
                     $.each(data, function (a) {
                         var img = data[a];
                         new DD_ImageLinkAdd({
@@ -1323,9 +1321,13 @@ var DD_Control_Base_Model = DD_ModelBase.extend({
 
 var DD_ImageLink_Model = DD_ModelBase.extend({
 
-    setClickEvents: function (obj) {
+    init: function(obj) {
+        this.obj = obj;
+    },
+
+    setClickEvents: function () {
         var self = this;
-        obj.on('click', function () {
+        this.obj.self.on('click', function () {
             new DD_Layer_Img({
                 src: $(this).attr('data-src'),
                 width: parseInt($(this).attr('data-width')),

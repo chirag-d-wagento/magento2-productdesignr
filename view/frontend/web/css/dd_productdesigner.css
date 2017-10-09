@@ -3424,6 +3424,11 @@ ul.tabs li.current {
   background: #ededed;
   color: #222;
 }
+.tab-content.tab-loading {
+  font-weight: bold;
+  text-align: center;
+  padding: 20px 0;
+}
 .tab-content {
   display: none;
 }
@@ -3479,7 +3484,7 @@ ul.tabs li.current {
 }
 .dd-helper-popup .dd-helper-popup-content-close {
   right: 7px;
-  bottom: -34px;
+  bottom: -40px;
   position: absolute;
   /* margin-top: -59px; */
   background: #fff;
