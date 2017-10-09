@@ -375,7 +375,7 @@ var DD_Uibase = DD_object.extend({
         var outside = this.options.tooltip_outside ?
                 this.options.tooltip_outside : 'x';
 
-        $(this.self).jBox('Tooltip', {
+        this.tooltipBox = $(this.self).jBox('Tooltip', {
             content: this.options.tooltip_text,
             position: position,
             outside: outside
@@ -1193,6 +1193,26 @@ var DD_AddText_Model = DD_ModelBase.extend({
     }
 });
 
+var DD_Callback_Model = DD_ModelBase.extend({
+    init: function (obj) {
+        this.obj = obj;
+    },
+
+    _callbackClick: function () {
+        if (this.obj.callback) {
+            var self = this;
+            this.obj.get().on('click', function () {
+                var canvasBg = self._l() ? self._l().getBgCanvas() : null;
+                var canvasHover = self._l() ? self._l().getHoverCanvas() : null;
+                if(self.destroy) {
+                   self.destroy.call(); 
+                }
+                self.obj.callback.call(self.obj, canvasBg, canvasHover);
+            });
+        }
+    }
+})
+
 var DD_Control_Base_Model = DD_ModelBase.extend({
     controlTitleClass: 'control-title',
 
@@ -1374,7 +1394,6 @@ var DD_Main_Model = DD_ModelBase.extend({
 
         if (this._s('loadGoogleFonts')) {
             var fonts = self.prepareFonts();
-            console.log(fonts);
             WebFont.load({
                 google: {
                     families: fonts
@@ -1550,9 +1569,6 @@ var DD_Main_Model = DD_ModelBase.extend({
         var blockWidth = $(window).width(); //magento 2 modal
         var blockHeight = $(window).height() - 40; //magento 2 modal
 
-        console.log('blockWidth: ' + blockWidth);
-        console.log('blockHeight: ' + blockHeight);
-
         this.obj.get().width(blockWidth);
         this.obj.get().height(blockHeight);
 
@@ -1568,17 +1584,11 @@ var DD_Main_Model = DD_ModelBase.extend({
         if (blockHeight < (newHeight ? newHeight : height)) {
             var scaleFactorH = (blockHeight) / (newHeight ? newHeight : this._l().getHeight());
             if (scaleFactorH != 1) {
-                
-            console.log('scaleFactor calc: ' + scaleFactor);
                 newHeight = blockHeight;
                 newWidth = (newHeight) * (width / height);
                 scaleFactor = (scaleFactor ? scaleFactor : 1 ) * scaleFactorH;
             }
         }
-        
-        console.log('scaleFactor: ' + scaleFactor);
-        console.log('newHeight: ' + newHeight);
-        console.log('newWidth: ' + newWidth);
 
         if (scaleFactor != 1 && newHeight && newWidth) {
             bgCanvas.setWidth(newWidth);
@@ -2161,6 +2171,35 @@ var DD_AddtextButton = DD_button.extend({
 })
 
 
+var DD_closeButton = DD_button.extend({
+    object_id: 'dd-main-save-button',
+    class_name: 'dd-main-button-cancel fa fa-times',
+    model: 'DD_Callback_Model',
+
+    init: function (parent, callback) {
+        this.callback = callback;
+        var options = {
+            parent: parent,
+            id: this.object_id,
+            class: this.class_name,
+            tooltip_text: this._('close'),
+            tooltip: true
+        }
+        this._super(options);
+    },
+
+    _callBackModel: function (model) {
+        var self = this;
+        model.destroy = function () {
+            if (self.tooltipBox) {
+                self.tooltipBox.destroy();
+            }
+        }
+        model._callbackClick();
+    }
+});
+
+
 var DD_historyBackButton = DD_button.extend({
     object_id: 'dd-history-back-button',
     class_name: 'dd-history-controls',
@@ -2257,12 +2296,12 @@ var DD_main = DD_panel.extend({
     },
     
     _addElements: function() {
-        new DD_Topcontrols(this.self.parent());
+        new DD_Topcontrols(this.self.parent(), this);
         
         if(this._s('history')) {
             new DD_Historycontrols(this.self);
         }
-        new DD_Maincontrols(this.self);
+        new DD_Maincontrols(this.self.parent());
         
     }
 });
@@ -2352,16 +2391,35 @@ var DD_qrButton = DD_button.extend({
 
 var DD_saveButton = DD_button.extend({
     object_id: 'dd-main-save-button',
-    class_name: 'dd-main-button',
+    class_name: 'dd-main-button fa-check-square fa',
+    model: 'DD_Callback_Model',
 
     init: function (parent) {
         var options = {
             parent: parent,
             id: this.object_id,
             class: this.class_name,
-            text: this._('save')
+            tooltip_text: this._('save'),
+            fa: true,
+            tooltip: true
         }
         this._super(options);
+    },
+
+    _callBackModel: function (model) {
+        var self = this;
+        this.callback = function () {
+            this.self.removeClass('fa-check-square')
+                    .addClass('fa-circle-o-notch')
+                    .addClass('fa-spin');
+        };
+        model.destroy = function () {
+            if (self.tooltipBox) {
+                self.tooltipBox.destroy();
+            }
+        }
+        
+        model._callbackClick();
     }
 });
 
@@ -2370,8 +2428,9 @@ var DD_Topcontrols = DD_panel.extend({
     object_id: 'dd-top-controls',
     class_name: 'dd-designer-topcontrols',
     
-    init: function (parent) {
+    init: function (parent, main) {
         this.parent = parent;
+        this.main = main;
         this._super({
             'id': this.object_id,
             'class': this.class_name,
@@ -2384,6 +2443,16 @@ var DD_Topcontrols = DD_panel.extend({
         this.addPhotoButton();
         this.addTextButton();
         this.addFromLibraryButton();
+        if(this.main.options.onClose) {
+            this.addCloseButton(this.main.options.onClose);
+        }
+    },
+    
+    
+    addCloseButton: function(onClose) {
+        
+        new DD_closeButton(this.self, onClose);
+        
     },
     
     addPhotoButton: function() {
@@ -2478,7 +2547,7 @@ $.fn.dd_productdesigner = function (options) {
         'addfromlibrary': true,
         'history': false,
         'layers': false,
-        'save': false,
+        'save': true,
         'qrcode': false,
         'preview': false,
         'defaultFont': 'Verdana,Geneva,sans-serif',
@@ -2534,35 +2603,21 @@ $.fn.dd_productdesigner = function (options) {
             'resize': 'Resize',
             'text_settings': 'Text Settings',
             'edit': 'Edit',
-
-            //setup
-            'info': 'Image Info',
-            'layer_mask': 'Layer Mask',
-            'images': 'Images',
-            'texts': 'Texts',
-            'qr_code': 'QR Code',
-            'options': 'Options',
-            'image_src': 'Image src',
-            'width': 'Width',
-            'height': 'Height',
-            'media_id': 'Media ID',
-            'product_id': 'Product ID',
-            'product_sku': 'Product SKU',
-            'configure_layer_mask': 'Layer Mask Configuration',
-            'enable_layer_mask': 'Enable Layer Mask',
-            'add_layer_mask': 'Add/Edit Layer Mask',
-            'add_default_images': 'Add Default Images',
-            'add_image': 'Add Image',
-            'add_default_texts': 'Add default texts'
+            'close': 'Close'
         },
         //'settings': settings,
         'afterLoad': null,
-        'onUpdate': null
+        'onUpdate': null,
+        'onClose': null
     }, options);
 
     this.options.settings = settings;
     this.onUpdate = function (callback) {
         this.options.onUpdate = callback;
+    }
+    
+    this.onClose = function (callback) {
+        this.options.onClose = callback;
     }
 
     this.init = function () {

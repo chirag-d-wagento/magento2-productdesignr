@@ -26,11 +26,9 @@
             var parentProductId = '<?php echo $block->getProduct()->getId(); ?>';
             var defaultConfiguration = <?php echo $block->getDesignerConfiguration($block->getProduct()); ?>
 
-            console.log('defaultConfiguration');
-            console.log(defaultConfiguration);
-
             $('.product-designer-button').on('click', function () {
                 var valid = $('#product_addtocart_form').valid();
+                var designer = null;
                 if (valid) {
                     var options = {
                         type: 'popup',
@@ -64,12 +62,8 @@
                             }
                         });
                         parentProductId = found_ids[0];
-
-    <?php else: ?>
-                        console.log('parentProductId: ' + parentProductId);
-
+                  
     <?php endif; ?>
-
 
                     var popup = modal(options, $('#dd-designer-container'));
                     $('#dd-designer').html('<span class="dd-designer-loading"><?php echo __('Loading') ?>...</span>');
@@ -103,7 +97,7 @@
                     function initDesigner(img) {
                         $('#dd-designer').html('');
                         $('#dd-designer').empty();
-                        var designer = $('#dd-designer').dd_productdesigner({
+                        designer = $('#dd-designer').dd_productdesigner({
                             'src': img.src,
                             'width': img.sizes.width,
                             'height': img.sizes.height,
@@ -121,7 +115,11 @@
                             }
 
                         });
-
+                        
+                        designer.onClose(function() {
+                            designer.destroy();
+                            $('#dd-designer-container').modal('closeModal');
+                        });
 
                         designer.init();
                     }

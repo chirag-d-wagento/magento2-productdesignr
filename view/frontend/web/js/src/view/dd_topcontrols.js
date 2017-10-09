@@ -2,8 +2,9 @@ var DD_Topcontrols = DD_panel.extend({
     object_id: 'dd-top-controls',
     class_name: 'dd-designer-topcontrols',
     
-    init: function (parent) {
+    init: function (parent, main) {
         this.parent = parent;
+        this.main = main;
         this._super({
             'id': this.object_id,
             'class': this.class_name,
@@ -16,6 +17,16 @@ var DD_Topcontrols = DD_panel.extend({
         this.addPhotoButton();
         this.addTextButton();
         this.addFromLibraryButton();
+        if(this.main.options.onClose) {
+            this.addCloseButton(this.main.options.onClose);
+        }
+    },
+    
+    
+    addCloseButton: function(onClose) {
+        
+        new DD_closeButton(this.self, onClose);
+        
     },
     
     addPhotoButton: function() {

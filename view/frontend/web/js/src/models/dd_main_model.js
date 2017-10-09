@@ -11,7 +11,6 @@ var DD_Main_Model = DD_ModelBase.extend({
 
         if (this._s('loadGoogleFonts')) {
             var fonts = self.prepareFonts();
-            console.log(fonts);
             WebFont.load({
                 google: {
                     families: fonts
@@ -187,9 +186,6 @@ var DD_Main_Model = DD_ModelBase.extend({
         var blockWidth = $(window).width(); //magento 2 modal
         var blockHeight = $(window).height() - 40; //magento 2 modal
 
-        console.log('blockWidth: ' + blockWidth);
-        console.log('blockHeight: ' + blockHeight);
-
         this.obj.get().width(blockWidth);
         this.obj.get().height(blockHeight);
 
@@ -205,17 +201,11 @@ var DD_Main_Model = DD_ModelBase.extend({
         if (blockHeight < (newHeight ? newHeight : height)) {
             var scaleFactorH = (blockHeight) / (newHeight ? newHeight : this._l().getHeight());
             if (scaleFactorH != 1) {
-                
-            console.log('scaleFactor calc: ' + scaleFactor);
                 newHeight = blockHeight;
                 newWidth = (newHeight) * (width / height);
                 scaleFactor = (scaleFactor ? scaleFactor : 1 ) * scaleFactorH;
             }
         }
-        
-        console.log('scaleFactor: ' + scaleFactor);
-        console.log('newHeight: ' + newHeight);
-        console.log('newWidth: ' + newWidth);
 
         if (scaleFactor != 1 && newHeight && newWidth) {
             bgCanvas.setWidth(newWidth);

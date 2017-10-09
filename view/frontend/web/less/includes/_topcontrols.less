@@ -1,3 +1,9 @@
+body:not(._keyfocus) .dd-designer-topcontrols{
+    button:focus{
+        box-shadow: 0px 8px 8px rgba(0, 0, 0, 0.75);
+    }
+}
+
 .dd-designer-topcontrols{
     width: 100px;
     top: 0px;
@@ -19,9 +25,11 @@
         box-shadow: 0px 7px 7px rgba(0, 0, 0, 0.55);
         transition: box-shadow 0.3s ease-in-out;
         border:1px solid #ccc;
+        width: 60px;
+        height: 60px;
     }    
     
-    button:hover, button:active{
+    button:hover{
         box-shadow: 0px 8px 8px rgba(0, 0, 0, 0.75);
     }
     
@@ -33,6 +41,10 @@
     }
     .dd-add-library-controls{
 
+    }
+    .dd-main-button-cancel{
+        color:red;
+        width: 60px;
     }
 }
 

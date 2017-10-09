@@ -64,7 +64,7 @@ var DD_Uibase = DD_object.extend({
         var outside = this.options.tooltip_outside ?
                 this.options.tooltip_outside : 'x';
 
-        $(this.self).jBox('Tooltip', {
+        this.tooltipBox = $(this.self).jBox('Tooltip', {
             content: this.options.tooltip_text,
             position: position,
             outside: outside

@@ -5,7 +5,7 @@ $.fn.dd_productdesigner = function (options) {
         'addfromlibrary': true,
         'history': false,
         'layers': false,
-        'save': false,
+        'save': true,
         'qrcode': false,
         'preview': false,
         'defaultFont': 'Verdana,Geneva,sans-serif',
@@ -61,35 +61,21 @@ $.fn.dd_productdesigner = function (options) {
             'resize': 'Resize',
             'text_settings': 'Text Settings',
             'edit': 'Edit',
-
-            //setup
-            'info': 'Image Info',
-            'layer_mask': 'Layer Mask',
-            'images': 'Images',
-            'texts': 'Texts',
-            'qr_code': 'QR Code',
-            'options': 'Options',
-            'image_src': 'Image src',
-            'width': 'Width',
-            'height': 'Height',
-            'media_id': 'Media ID',
-            'product_id': 'Product ID',
-            'product_sku': 'Product SKU',
-            'configure_layer_mask': 'Layer Mask Configuration',
-            'enable_layer_mask': 'Enable Layer Mask',
-            'add_layer_mask': 'Add/Edit Layer Mask',
-            'add_default_images': 'Add Default Images',
-            'add_image': 'Add Image',
-            'add_default_texts': 'Add default texts'
+            'close': 'Close'
         },
         //'settings': settings,
         'afterLoad': null,
-        'onUpdate': null
+        'onUpdate': null,
+        'onClose': null
     }, options);
 
     this.options.settings = settings;
     this.onUpdate = function (callback) {
         this.options.onUpdate = callback;
+    }
+    
+    this.onClose = function (callback) {
+        this.options.onClose = callback;
     }
 
     this.init = function () {
