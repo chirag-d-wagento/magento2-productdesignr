@@ -46,9 +46,30 @@ var DD_Uibase = DD_object.extend({
         if (this.options.windowOpener && model) {
             this.addWindowOpenEvent(this, model, this.modal, this.options);
         }
+        if (this.options.tooltip && this.options.tooltip_text) {
+            this.addTooltip();
+        }
         if (model) {
             return model;
         }
+    },
+
+    addTooltip: function () {
+        var position = this.options.tooltip_position ?
+                this.options.tooltip_position : {
+                    x: 'right',
+                    y: 'center'
+                };
+
+        var outside = this.options.tooltip_outside ?
+                this.options.tooltip_outside : 'x';
+
+        $(this.self).jBox('Tooltip', {
+            content: this.options.tooltip_text,
+            position: position,
+            outside: outside
+        });
+
     },
 
     addWindowOpenEvent: function (me, model, modal, options) {

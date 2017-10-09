@@ -356,9 +356,30 @@ var DD_Uibase = DD_object.extend({
         if (this.options.windowOpener && model) {
             this.addWindowOpenEvent(this, model, this.modal, this.options);
         }
+        if (this.options.tooltip && this.options.tooltip_text) {
+            this.addTooltip();
+        }
         if (model) {
             return model;
         }
+    },
+
+    addTooltip: function () {
+        var position = this.options.tooltip_position ?
+                this.options.tooltip_position : {
+                    x: 'right',
+                    y: 'center'
+                };
+
+        var outside = this.options.tooltip_outside ?
+                this.options.tooltip_outside : 'x';
+
+        $(this.self).jBox('Tooltip', {
+            content: this.options.tooltip_text,
+            position: position,
+            outside: outside
+        });
+
     },
 
     addWindowOpenEvent: function (me, model, modal, options) {
@@ -1186,7 +1207,7 @@ var DD_Control_Base_Model = DD_ModelBase.extend({
 
     initPosition: function () {
         this.obj.get().css({
-            left: this.calcLeftosition(),
+            //left: this.calcLeftosition(),
             top: this.calcTopPosition()
         });
         this.obj.get().fadeIn('slow');
@@ -1308,7 +1329,7 @@ var DD_Control_Base_Model = DD_ModelBase.extend({
     },
 
     calcLeftosition: function () {
-        return '0';
+        //return '0';
     },
 
     hide: function () {
@@ -1522,34 +1543,45 @@ var DD_Main_Model = DD_ModelBase.extend({
     },
 
     resize: function (width, height) {
-        var blockWidth = $('.modal-content').width(); //magento 2 modal
-        var blockHeight = $('.modal-content').height(); //magento 2 modal
+        var blockWidth = $(window).width(); //magento 2 modal
+        var blockHeight = $(window).height() - 40; //magento 2 modal
+        console.log('Modal: ' + blockWidth);
+        console.log('Modal: ' + blockHeight);
+
+        this.obj.get().width(blockWidth);
+        this.obj.get().height(blockHeight);
+
         var newWidth, newHeight, scaleFactor;
-        var proportion = height / width;
         var bgCanvas = this.layersObj.getBgCanvas();
         var hoverCanvas = this.layersObj.getHoverCanvas();
+        var skipHeightChanges = false;
         if (blockWidth < width) {
             newWidth = blockWidth;
-            newHeight = proportion * newWidth;
+            newHeight = (height / width) * newWidth;
             scaleFactor = blockWidth / this._l().getWidth();
+            skipHeightChanges = true;
             //return;
         }
-        if (blockHeight < height) {
+        if (blockHeight < height && !skipHeightChanges) {
             var scaleFactor = blockHeight / this._l().getHeight();
             newHeight = blockHeight;
-            newWidth  = blockHeight * proportion;
+            newWidth = blockHeight * (width / height);
         }
         if (scaleFactor != 1 && newHeight && newWidth) {
-            bgCanvas.setWidth(blockWidth);
+            bgCanvas.setWidth(newWidth);
             bgCanvas.setHeight(newHeight);
             bgCanvas.setZoom(scaleFactor);
             bgCanvas.calcOffset();
             bgCanvas.renderAll();
-            hoverCanvas.setWidth(blockWidth);
+            hoverCanvas.setWidth(newWidth);
             hoverCanvas.setHeight(newHeight);
             hoverCanvas.setZoom(scaleFactor);
             hoverCanvas.calcOffset();
             hoverCanvas.renderAll();
+
+            this.obj.get().width(newWidth);
+            this.obj.get().height(newHeight);
+
         }
         return;
     },
@@ -1681,7 +1713,14 @@ var DD_control_text = DD_Control_Base_Model.extend({
         var _selector = new DD_button({
             'parent': this.obj.buttons.get(),
             //'text': this._('save'),
-            'class': 'fa fa-font'
+            'class': 'fa fa-font',
+            'tooltip_outside': 'y',
+            'tooltip': true,
+            'tooltip_text': this._('text_settings'),
+            'tooltip_position': {
+                x: 'center',
+                y: 'bottom'
+            }
         });
         _selector.get().on('click', function () {
             self.showTextSetting();
@@ -2057,7 +2096,7 @@ var DD_Layer_Text = DD_Layer_Base.extend({
 
 var DD_AddfromLibraryButton = DD_button.extend({
     object_id: 'dd-add-library-button',
-    class_name: 'dd-add-library-controls',
+    class_name: 'dd-add-library-controls fa fa-folder',
     
     model: 'DD_AddFromLibrary_Model',
     
@@ -2066,8 +2105,10 @@ var DD_AddfromLibraryButton = DD_button.extend({
             parent: parent,
             id: this.object_id,
             class: this.class_name,
-            text: this._('add_from_library'),
-            windowOpener: true
+            tooltip_text: this._('add_from_library'),
+            windowOpener: true,
+            tooltip: true,
+            fa:true
         }
         this._super(options);
     }
@@ -2075,7 +2116,7 @@ var DD_AddfromLibraryButton = DD_button.extend({
 
 var DD_AddphotoButton = DD_button.extend({
     object_id: 'dd-add-photo-button',
-    class_name: 'dd-add-photo-controls',
+    class_name: 'dd-add-photo-controls fa fa-file-image-o',
     model: 'DD_AddPhoto_Model',
     
     init: function(parent) {
@@ -2083,8 +2124,11 @@ var DD_AddphotoButton = DD_button.extend({
             parent: parent,
             id: this.object_id,
             class: this.class_name,
-            text: this._('add_photo'),
-            windowOpener: true
+            tooltip_text: this._('add_photo'),
+            windowOpener: true,
+            fa: true,
+            
+            tooltip: true
         }
         this._super(options);
     }
@@ -2092,7 +2136,7 @@ var DD_AddphotoButton = DD_button.extend({
 
 var DD_AddtextButton = DD_button.extend({
     object_id: 'dd-add-text-button',
-    class_name: 'dd-add-text-controls',
+    class_name: 'dd-add-text-controls fa-file-text-o fa',
     model: 'DD_AddText_Model',
     
     init: function(parent) {
@@ -2100,8 +2144,10 @@ var DD_AddtextButton = DD_button.extend({
             parent: parent,
             id: this.object_id,
             class: this.class_name,
-            text: this._('add_text'),
-            windowOpener: true
+            tooltip_text: this._('add_text'),
+            windowOpener: true,
+            fa: true,
+            tooltip: true
         }
         this._super(options);
     }
@@ -2204,7 +2250,8 @@ var DD_main = DD_panel.extend({
     },
     
     _addElements: function() {
-        new DD_Topcontrols(this.self);
+        new DD_Topcontrols(this.self.parent());
+        
         if(this._s('history')) {
             new DD_Historycontrols(this.self);
         }
@@ -2477,6 +2524,9 @@ $.fn.dd_productdesigner = function (options) {
             'rotate': 'Rotate',
             'background_color': 'Background',
             'text_color': 'Color',
+            'resize': 'Resize',
+            'text_settings': 'Text Settings',
+            'edit': 'Edit',
 
             //setup
             'info': 'Image Info',

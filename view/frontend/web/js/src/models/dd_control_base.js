@@ -12,7 +12,7 @@ var DD_Control_Base_Model = DD_ModelBase.extend({
 
     initPosition: function () {
         this.obj.get().css({
-            left: this.calcLeftosition(),
+            //left: this.calcLeftosition(),
             top: this.calcTopPosition()
         });
         this.obj.get().fadeIn('slow');
@@ -134,7 +134,7 @@ var DD_Control_Base_Model = DD_ModelBase.extend({
     },
 
     calcLeftosition: function () {
-        return '0';
+        //return '0';
     },
 
     hide: function () {

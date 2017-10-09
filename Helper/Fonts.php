@@ -28,7 +28,6 @@ class Fonts extends \Magento\Framework\App\Helper\AbstractHelper {
         '"Kanit", sans-serif',
         '"Exo", sans-serif',
         '"Rokkitt", serif',
-        '"Changa", sans-serif',
         '"Martel", serif',
         '"Alegreya Sans SC", sans-serif',
         '"Arima Madurai", cursive',

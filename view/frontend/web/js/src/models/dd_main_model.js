@@ -184,34 +184,45 @@ var DD_Main_Model = DD_ModelBase.extend({
     },
 
     resize: function (width, height) {
-        var blockWidth = $('.modal-content').width(); //magento 2 modal
-        var blockHeight = $('.modal-content').height(); //magento 2 modal
+        var blockWidth = $(window).width(); //magento 2 modal
+        var blockHeight = $(window).height() - 40; //magento 2 modal
+        console.log('Modal: ' + blockWidth);
+        console.log('Modal: ' + blockHeight);
+
+        this.obj.get().width(blockWidth);
+        this.obj.get().height(blockHeight);
+
         var newWidth, newHeight, scaleFactor;
-        var proportion = height / width;
         var bgCanvas = this.layersObj.getBgCanvas();
         var hoverCanvas = this.layersObj.getHoverCanvas();
+        var skipHeightChanges = false;
         if (blockWidth < width) {
             newWidth = blockWidth;
-            newHeight = proportion * newWidth;
+            newHeight = (height / width) * newWidth;
             scaleFactor = blockWidth / this._l().getWidth();
+            skipHeightChanges = true;
             //return;
         }
-        if (blockHeight < height) {
+        if (blockHeight < height && !skipHeightChanges) {
             var scaleFactor = blockHeight / this._l().getHeight();
             newHeight = blockHeight;
-            newWidth  = blockHeight * proportion;
+            newWidth = blockHeight * (width / height);
         }
         if (scaleFactor != 1 && newHeight && newWidth) {
-            bgCanvas.setWidth(blockWidth);
+            bgCanvas.setWidth(newWidth);
             bgCanvas.setHeight(newHeight);
             bgCanvas.setZoom(scaleFactor);
             bgCanvas.calcOffset();
             bgCanvas.renderAll();
-            hoverCanvas.setWidth(blockWidth);
+            hoverCanvas.setWidth(newWidth);
             hoverCanvas.setHeight(newHeight);
             hoverCanvas.setZoom(scaleFactor);
             hoverCanvas.calcOffset();
             hoverCanvas.renderAll();
+
+            this.obj.get().width(newWidth);
+            this.obj.get().height(newHeight);
+
         }
         return;
     },

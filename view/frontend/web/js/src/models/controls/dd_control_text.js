@@ -52,7 +52,14 @@ var DD_control_text = DD_Control_Base_Model.extend({
         var _selector = new DD_button({
             'parent': this.obj.buttons.get(),
             //'text': this._('save'),
-            'class': 'fa fa-font'
+            'class': 'fa fa-font',
+            'tooltip_outside': 'y',
+            'tooltip': true,
+            'tooltip_text': this._('text_settings'),
+            'tooltip_position': {
+                x: 'center',
+                y: 'bottom'
+            }
         });
         _selector.get().on('click', function () {
             self.showTextSetting();

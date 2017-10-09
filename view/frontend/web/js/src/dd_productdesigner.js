@@ -58,6 +58,9 @@ $.fn.dd_productdesigner = function (options) {
             'rotate': 'Rotate',
             'background_color': 'Background',
             'text_color': 'Color',
+            'resize': 'Resize',
+            'text_settings': 'Text Settings',
+            'edit': 'Edit',
 
             //setup
             'info': 'Image Info',

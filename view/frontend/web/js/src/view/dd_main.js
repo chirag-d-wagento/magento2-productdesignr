@@ -17,7 +17,8 @@ var DD_main = DD_panel.extend({
     },
     
     _addElements: function() {
-        new DD_Topcontrols(this.self);
+        new DD_Topcontrols(this.self.parent());
+        
         if(this._s('history')) {
             new DD_Historycontrols(this.self);
         }
