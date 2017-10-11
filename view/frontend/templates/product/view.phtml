@@ -24,21 +24,232 @@
         ], function ($, ui, modal, _, _designer) {
 
             var configuredMediaProducts = {};
+            var imgsSaved = {};
+            var designer = null;
             var parentProductId = '<?php echo $block->getProduct()->getId(); ?>';
             var defaultConfiguration = <?php echo $block->getDesignerConfiguration($block->getProduct()); ?>
 
+            var options = {
+                type: 'popup',
+                responsive: true,
+                innerScroll: true,
+                modalClass: 'dd-designer-modal'
+            };
+            var popup = modal(options, $('#dd-designer-container'));
+
+            function findConf(productId) {
+                var _currConf = false;
+                $.each(defaultConfiguration, function (i, conf) {
+                    if (conf.product_id == productId) {
+                        _currConf = conf;
+                    }
+                });
+
+                return _currConf;
+            }
+
+            function findMediaConf(productConf, mediaId) {
+                var mediaConf = {};
+
+                if (!productConf || !productConf.imgs) {
+                    return mediaConf;
+                }
+                $.each(productConf.imgs, function (i, img) {
+                    if (img.media_id == mediaId) {
+                        mediaConf = img;
+                    }
+                });
+
+                return mediaConf;
+            }
+
+            function findConfLayer(media_id, fabricObj) {
+                var conf = {
+                    'index': 0
+                };
+                var allLayers = configuredMediaProducts[media_id];
+                if (typeof (allLayers) === 'undefined') {
+                    return conf;
+                }
+                conf.index = allLayers.length;
+                $.each(allLayers, function (index, layer) {
+                    if (layer.uid == fabricObj.uid) {
+                        conf = {
+                            'index': index,
+                            'layer': layer
+                        }
+                    }
+                });
+
+                return conf;
+            }
+
+            function updateImgFabricConf(fabricObj, group_uid, media_id, type) {
+
+                if (fabricObj.mainBg) {
+                    return;
+                }
+                var conf = findConfLayer(media_id, fabricObj);
+                if (type === 'remove') {
+                    configuredMediaProducts[media_id].splice(conf.index, 1);
+                    return;
+                }
+                if (fabricObj.type === 'image' || fabricObj.type === 'text') {
+                    if (typeof (configuredMediaProducts[media_id]) == 'undefined') {
+                        configuredMediaProducts[media_id] = [];
+                    }
+                    configuredMediaProducts[media_id][conf.index] = fabricObj;
+                }
+
+            }
+
+            function saveImage(media_id, product_id, imgData) {
+                if (typeof (imgsSaved[product_id]) === 'undefined') {
+                    imgsSaved[product_id] = {};
+                }
+
+                imgsSaved[product_id][media_id] = imgData;
+                drawImages(imgsSaved[product_id], product_id, media_id);
+            }
+
+            function editImage(product_id, media_id, skipOpen) {
+                var productConf = findConf(product_id);
+                var img = findMediaConf(productConf, media_id);
+                var designer = initDesigner(img, skipOpen);
+                drawImageSelector(productConf.imgs, designer);
+            }
+
+            function removeImage(media_id, product_id) {
+                delete imgsSaved[product_id][media_id];
+                drawImages(imgsSaved[product_id], product_id, media_id);
+            }
+
+            function drawImages(medias, product_id) {
+                if (Object.keys(medias).length == 0) {
+                    $('.product-options-wrapper').show();
+                    $('#dd-designer-medias').remove();
+                    return;
+                }
+                if (!$('#dd-designer-medias').get(0)) {
+                    drawContainer();
+                }
+
+                $('.product-options-wrapper').hide();
+                $('#dd-designer-medias').empty();
+
+                $.each(medias, function (media_id, media) {
+                    var div = $('<div />').addClass('dd-designer-media');
+                    var img = $('<img>').attr('src', media);
+                    div.append(img);
+                    var remove = $('<a/>').addClass('dd-designer-media-remove fa fa-trash')
+                            .attr('href', 'javascript:void(0)');
+                    remove.on('click', function () {
+                        removeImage(media_id, product_id);
+                    });
+                    var edit = $('<a/>').addClass('dd-designer-media-edit fa fa-edit')
+                            .attr('href', 'javascript:void(0)');
+
+                    edit.on('click', function () {
+                        editImage(product_id, media_id);
+                    });
+                    div.append(remove);
+                    div.append(edit);
+                    $('#dd-designer-medias').append(div);
+                });
+            }
+
+            function drawContainer() {
+                var container = $('<div />').attr('id', 'dd-designer-medias');
+                $('.product-options-wrapper').after(container);
+            }
+
+            function drawImageSelector(imgs, designer) {
+                var container = $('<div />').addClass('dd-designer-image-selector');
+                $.each(imgs, function (i, _img) {
+                    var img = $('<img>').attr('src', _img.src);
+                    container.append(img);
+                    if (designer.getMediaId() == _img.media_id) {
+                        img.addClass('active');
+                    }
+                    img.on('click', function () {
+                        var _designer = initDesigner(_img, true); 
+                        drawImageSelector(imgs, _designer);
+                    });
+                });
+
+                $('#dd-designer').append(container);
+                
+                container.fadeIn('slow');
+                return container;
+            }
+
+            function initDesigner(img, skipOpen) {
+                img.conf = configuredMediaProducts[img.media_id] ? configuredMediaProducts[img.media_id]
+                        : img.conf;
+
+                $('#dd-designer').html('');
+                $('#dd-designer').empty();
+                $('#dd-designer').html('<span class="dd-designer-loading"><?php echo __('Loading') ?>...</span>');
+
+                if (designer) {
+                    designer.destroy();
+                }
+                designer = $('#dd-designer').dd_productdesigner({
+                    'src': img.src,
+                    'width': img.sizes.width,
+                    'height': img.sizes.height,
+
+                    'sku': img.sku,
+                    'product_id': img.product_id,
+                    'media_id': img.media_id,
+                    'group_index': img.group_index,
+                    'mask': img.mask,
+                    'conf': img.conf,
+                    'settings': {
+                        'listFonts': <?php echo json_encode($this->getFonts()); ?>,
+                        'urlUploadImages': '<?php echo $this->getUploadFileUrl(); ?>',
+                        'myFilesPath': '<?php echo $this->getMyFilesUrl() ?>'
+                    }
+
+                });
+
+                designer.onUpdate(updateImgFabricConf);
+
+                designer.onClose(function () {
+                    designer.destroy();
+                    $('#dd-designer-container').modal('closeModal');
+                });
+
+                designer.onSave(function () {
+                    var self = this;
+                    this.showLoading();
+                    var data = designer.getData();
+                    var mediaId = designer.getMediaId();
+                    var productId = designer.getProductId();
+                    saveImage(mediaId, productId, data);
+                    setTimeout(function () {
+                        self.hideLoading();
+                    }, 600);
+
+                });
+                designer.init();
+                if (!skipOpen) {
+                    $('#dd-designer-container').modal('openModal');
+                }
+                /*
+                setTimeout(function() {
+                    var selector = drawImageSelector(imgs, designer);
+                    selector.fadeIn('slow');
+                }, 500);
+                */
+                return designer;
+            }
+
+
             $('.product-designer-button').on('click', function () {
                 var valid = $('#product_addtocart_form').valid();
-                var designer = null;
-
 
                 if (valid) {
-                    var options = {
-                        type: 'popup',
-                        responsive: true,
-                        innerScroll: true,
-                        modalClass: 'dd-designer-modal'
-                    };
 
                     var selected_options = {};
 
@@ -47,7 +258,6 @@
                         $('div.swatch-attribute').each(function (k, v) {
                             var attribute_id = $(v).attr('attribute-id');
                             var option_selected = $(v).attr('option-selected');
-                            //console.log(attribute_id, option_selected);
                             if (!attribute_id || !option_selected) {
                                 return;
                             }
@@ -68,123 +278,16 @@
 
     <?php endif; ?>
 
-                    var popup = modal(options, $('#dd-designer-container'));
-                    $('#dd-designer').html('<span class="dd-designer-loading"><?php echo __('Loading') ?>...</span>');
-
-
-                    var imgsConfiguration = findConf(defaultConfiguration, parentProductId);
+                    var imgsConfiguration = findConf(parentProductId);
 
                     if (!imgsConfiguration || !imgsConfiguration.imgs) {
                         $('#dd-designer').html('<div class="dd-designer-no-config"><?php echo __('No Images found for this product!'); ?></div>');
                     } else {
-                        console.log(imgsConfiguration);
                         var defaultImage = imgsConfiguration.imgs[0];
-                        setTimeout(function () {
-                            initDesigner(defaultImage)
-                        }, 500);
+                        var _designer = initDesigner(defaultImage);
+                        drawImageSelector(imgsConfiguration.imgs, _designer);
                     }
 
-                    $('#dd-designer-container').modal('openModal');
-
-                    function findConf(defaultConf, productId) {
-                        var _currConf = false;
-                        $.each(defaultConf, function (i, conf) {
-                            if (conf.product_id == productId) {
-                                _currConf = conf;
-                            }
-                        });
-
-                        return _currConf;
-                    }
-
-                    function findConfLayer(media_id, fabricObj) {
-                        var conf = {
-                            'index': 0
-                        };
-                        var allLayers = configuredMediaProducts[media_id];
-                        if (typeof (allLayers) === 'undefined') {
-                            return conf;
-                        }
-                        conf.index = allLayers.length;
-                        $.each(allLayers, function (index, layer) {
-                            if (layer.uid == fabricObj.uid) {
-                                conf = {
-                                    'index': index,
-                                    'layer': layer
-                                }
-                            }
-                        });
-
-                        return conf;
-                    }
-
-                    function updateImgFabricConf(fabricObj, group_uid, media_id, type) {
-
-                        if (fabricObj.mainBg) {
-                            return;
-                        }
-                        var conf = findConfLayer(media_id, fabricObj);
-                        if (type === 'remove') {
-                            configuredMediaProducts[media_id].splice(conf.index, 1);
-                            return;
-                        }
-                        if (fabricObj.type === 'image' || fabricObj.type === 'text') {
-                            if(typeof(configuredMediaProducts[media_id]) == 'undefined') {
-                                configuredMediaProducts[media_id] = [];
-                            }
-                            configuredMediaProducts[media_id][conf.index] = fabricObj;
-                        }
-                        
-                    }
-
-                    function initDesigner(img) {
-                        
-                        img.conf = configuredMediaProducts[img.media_id] ? configuredMediaProducts[img.media_id]
-                            : img.conf;
-                        
-                        $('#dd-designer').html('');
-                        $('#dd-designer').empty();
-                        if(designer) {
-                            designer.destroy();
-                        }
-                        designer = $('#dd-designer').dd_productdesigner({
-                            'src': img.src,
-                            'width': img.sizes.width,
-                            'height': img.sizes.height,
-
-                            'sku': img.sku,
-                            'product_id': img.product_id,
-                            'media_id': img.media_id,
-                            'group_index': img.group_index,
-                            'mask': img.mask,
-                            'conf': img.conf,
-                            'settings': {
-                                'listFonts': <?php echo json_encode($this->getFonts()); ?>,
-                                'urlUploadImages': '<?php echo $this->getUploadFileUrl(); ?>',
-                                'myFilesPath': '<?php echo $this->getMyFilesUrl() ?>'
-                            }
-
-                        });
-                        
-                        designer.onUpdate(updateImgFabricConf);
-
-                        designer.onClose(function () {
-                            designer.destroy();
-                            $('#dd-designer-container').modal('closeModal');
-                        });
-
-                        designer.onSave(function () {
-                            var data = designer.getData();
-                            var img = $('<img>');
-                            img.attr('src', data);
-
-                            //$('.product-options-wrapper').empty();
-                            $('.product-options-wrapper').append(img);
-
-                        });
-
-                        designer.init();
-                    }
                 }
                 return;
             });

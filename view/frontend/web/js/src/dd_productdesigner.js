@@ -101,6 +101,14 @@ $.fn.dd_productdesigner = function (options) {
             return app.getDataImg();
         }
         
+        this.getMediaId = function() {
+            return this.options.media_id;
+        }
+        
+        this.getProductId = function() {
+            return this.options.product_id;
+        }
+        
         this.getJson = function() {
             return app.getJsonImg();
         }

@@ -4,7 +4,7 @@ var DD_saveButton = DD_button.extend({
     model: 'DD_Callback_Model',
 
     init: function (parent, callback) {
-        this._callback = callback;
+        this.callback = callback;
         var options = {
             parent: parent,
             id: this.object_id,
@@ -18,21 +18,26 @@ var DD_saveButton = DD_button.extend({
 
     _callBackModel: function (model) {
         var self = this;
-        this.callback = function () {
-            this.self.removeClass('fa-check-square')
-                    .addClass('fa-circle-o-notch')
-                    .addClass('fa-spin');
-            
-            self._callback.call();
-        };
-        
         model.destroy = function () {
             if (self.tooltipBox) {
                 self.tooltipBox.destroy();
             }
         }
-        
+
         model._callbackClick();
+        
+    },
+
+    showLoading: function () {
+        this.self.removeClass('fa-check-square')
+                .addClass('fa-circle-o-notch')
+                .addClass('fa-spin');
+    },
+
+    hideLoading: function () {
+        this.self.removeClass('fa-spin')
+                    .removeClass('fa-circle-o-notch')
+                    .addClass('fa-check-square');
     }
 });
 

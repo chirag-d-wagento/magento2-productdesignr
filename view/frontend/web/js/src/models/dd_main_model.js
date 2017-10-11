@@ -22,6 +22,7 @@ var DD_Main_Model = DD_ModelBase.extend({
             return;
         }
         this.initLayers();
+        
     },
 
     registerEvents: function () {
@@ -81,6 +82,8 @@ var DD_Main_Model = DD_ModelBase.extend({
         $(window).on('resize', function () {
             self.resize(width, height);
         });
+        
+        $('.dd-designer-loading').hide();
         return;
     },
 

@@ -48,6 +48,59 @@
   padding: 20px;
   text-align: center;
 }
+#dd-designer-medias {
+  margin-bottom: 20px;
+}
+#dd-designer-medias .dd-designer-media {
+  max-width: 30%;
+  margin: 1%;
+  display: inline-block;
+  border: 1px solid #ccc;
+}
+#dd-designer-medias .dd-designer-media img {
+  max-width: 100%;
+}
+#dd-designer-medias .dd-designer-media a {
+  margin: 5px;
+  font-size: 20px;
+  color: #333;
+  display: inline-block;
+  text-decoration: none;
+}
+#dd-designer-medias .dd-designer-media a:hover {
+  color: #333;
+  text-decoration: none;
+}
+#dd-designer-medias .dd-designer-media .dd-designer-media-edit {
+  float: left;
+}
+#dd-designer-medias .dd-designer-media .dd-designer-media-remove {
+  float: right;
+}
+.dd-designer-image-selector {
+  position: absolute;
+  top: 50px;
+  right: 10px;
+  width: 70px;
+  display: none;
+}
+.dd-designer-image-selector img {
+  max-width: 100%;
+  margin-top: 10px;
+  border: 1px solid #ccc;
+  cursor: pointer;
+  opacity: 0.7;
+  -webkit-transition: opacity 0.5s ease-in-out;
+  -moz-transition: opacity 0.5s ease-in-out;
+  transition: opacity 0.5s ease-in-out;
+}
+.dd-designer-image-selector img.active {
+  border: 1px solid green;
+  opacity: 1;
+}
+.dd-designer-image-selector img:hover {
+  opacity: 1;
+}
 @media only screen and (max-width: 767px) {
   .dd-designer-modal.modal-popup.modal-slide {
     left: 0px;
