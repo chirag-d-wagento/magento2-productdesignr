@@ -23,12 +23,15 @@
 
         ], function ($, ui, modal, _, _designer) {
 
+            var configuredMediaProducts = {};
             var parentProductId = '<?php echo $block->getProduct()->getId(); ?>';
             var defaultConfiguration = <?php echo $block->getDesignerConfiguration($block->getProduct()); ?>
 
             $('.product-designer-button').on('click', function () {
                 var valid = $('#product_addtocart_form').valid();
                 var designer = null;
+
+
                 if (valid) {
                     var options = {
                         type: 'popup',
@@ -62,7 +65,7 @@
                             }
                         });
                         parentProductId = found_ids[0];
-                  
+
     <?php endif; ?>
 
                     var popup = modal(options, $('#dd-designer-container'));
@@ -94,9 +97,56 @@
                         return _currConf;
                     }
 
+                    function findConfLayer(media_id, fabricObj) {
+                        var conf = {
+                            'index': 0
+                        };
+                        var allLayers = configuredMediaProducts[media_id];
+                        if (typeof (allLayers) === 'undefined') {
+                            return conf;
+                        }
+                        conf.index = allLayers.length;
+                        $.each(allLayers, function (index, layer) {
+                            if (layer.uid == fabricObj.uid) {
+                                conf = {
+                                    'index': index,
+                                    'layer': layer
+                                }
+                            }
+                        });
+
+                        return conf;
+                    }
+
+                    function updateImgFabricConf(fabricObj, group_uid, media_id, type) {
+
+                        if (fabricObj.mainBg) {
+                            return;
+                        }
+                        var conf = findConfLayer(media_id, fabricObj);
+                        if (type === 'remove') {
+                            configuredMediaProducts[media_id].splice(conf.index, 1);
+                            return;
+                        }
+                        if (fabricObj.type === 'image' || fabricObj.type === 'text') {
+                            if(typeof(configuredMediaProducts[media_id]) == 'undefined') {
+                                configuredMediaProducts[media_id] = [];
+                            }
+                            configuredMediaProducts[media_id][conf.index] = fabricObj;
+                        }
+                        
+                    }
+
                     function initDesigner(img) {
+                        
+                        img.conf = configuredMediaProducts[img.media_id] ? configuredMediaProducts[img.media_id]
+                            : img.conf;
+                        
                         $('#dd-designer').html('');
                         $('#dd-designer').empty();
+                        if(designer) {
+                            designer.destroy();
+                        }
                         designer = $('#dd-designer').dd_productdesigner({
                             'src': img.src,
                             'width': img.sizes.width,
@@ -116,9 +166,21 @@
 
                         });
                         
-                        designer.onClose(function() {
+                        designer.onUpdate(updateImgFabricConf);
+
+                        designer.onClose(function () {
                             designer.destroy();
                             $('#dd-designer-container').modal('closeModal');
+                        });
+
+                        designer.onSave(function () {
+                            var data = designer.getData();
+                            var img = $('<img>');
+                            img.attr('src', data);
+
+                            //$('.product-options-wrapper').empty();
+                            $('.product-options-wrapper').append(img);
+
                         });
 
                         designer.init();

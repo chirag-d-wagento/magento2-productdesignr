@@ -64,18 +64,23 @@ $.fn.dd_productdesigner = function (options) {
             'close': 'Close'
         },
         //'settings': settings,
-        'afterLoad': null,
+        'onSave': null,
         'onUpdate': null,
         'onClose': null
     }, options);
 
     this.options.settings = settings;
+    
     this.onUpdate = function (callback) {
         this.options.onUpdate = callback;
     }
     
     this.onClose = function (callback) {
         this.options.onClose = callback;
+    }
+    
+    this.onSave = function (callback) {
+        this.options.onSave = callback;
     }
 
     this.init = function () {
@@ -90,6 +95,14 @@ $.fn.dd_productdesigner = function (options) {
 
         this.destroy = function () {
             app.destroy();
+        }
+        
+        this.getData = function() {
+            return app.getDataImg();
+        }
+        
+        this.getJson = function() {
+            return app.getJsonImg();
         }
 
         return this;

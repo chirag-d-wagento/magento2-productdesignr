@@ -33,16 +33,20 @@ var DD_Main_Model = DD_ModelBase.extend({
     initLayers: function () {
         var self = this;
         this.layersObj = new DD_Layer();
-        var idBgCanvas = 'canvas-' + this.createUUID();
-        var idCanvasHover = 'canvas-hover-' + this.createUUID();
+        this.idBgCanvas = 'canvas-' + this.createUUID();
+        this.idCanvasHover = 'canvas-hover-' + this.createUUID();
         var bgCanvas = $('<canvas/>', {
-            id: idBgCanvas
+            id: this.idBgCanvas
         });
         var hoverCanvas = $('<canvas/>', {
-            id: idCanvasHover
+            id: this.idCanvasHover
         });
         var width = this.obj.options.width;
         var height = this.obj.options.height;
+        
+        console.log( this.obj.options.width );
+        console.log( this.obj.options.height );
+        
         bgCanvas.attr({
             'width': width,
             'height': height
@@ -56,8 +60,8 @@ var DD_Main_Model = DD_ModelBase.extend({
                 .append(hoverCanvas);
         this.obj.self.append(div);
 
-        var bgCanvas = new fabric.Canvas(idBgCanvas);
-        var hoverCanvas = new fabric.Canvas(idCanvasHover);
+        var bgCanvas = new fabric.Canvas(this.idBgCanvas);
+        var hoverCanvas = new fabric.Canvas(this.idCanvasHover);
 
         this.layersObj.setBgCanvas(bgCanvas);
         this.layersObj.setHoverCanvas(hoverCanvas);
@@ -203,7 +207,7 @@ var DD_Main_Model = DD_ModelBase.extend({
             if (scaleFactorH != 1) {
                 newHeight = blockHeight;
                 newWidth = (newHeight) * (width / height);
-                scaleFactor = (scaleFactor ? scaleFactor : 1 ) * scaleFactorH;
+                scaleFactor = (scaleFactor ? scaleFactor : 1) * scaleFactorH;
             }
         }
 
@@ -237,7 +241,6 @@ var DD_Main_Model = DD_ModelBase.extend({
     prepareFonts: function () {
         var listFonts = this._s('listFonts');
         var googleFonts = [];
-        console.log(listFonts);
         $.each(listFonts, function (i, font) {
             if (font.indexOf('"') != -1) { //custom named font
                 var fontArr = font.split(',');
@@ -246,5 +249,39 @@ var DD_Main_Model = DD_ModelBase.extend({
         });
 
         return googleFonts;
+    },
+
+    getDataImg: function () {
+        return this._mergeCanvases();
+    },
+
+    getJsonImg: function () {
+        return this._mergeCanvases(true);
+    },
+
+    _mergeCanvases: function (json) {
+        
+        var _bgCanvas = this.layersObj.getBgCanvas();
+        var _hoverCanvas = this.layersObj.getHoverCanvas()
+        var bgCanvas = $('#' + this.idBgCanvas).get(0);
+        var hoverCanvas = $('#' + this.idCanvasHover).get(0);
+        
+        var sourceBgWidth  = _bgCanvas.lowerCanvasEl.width;
+        var sourceBgHeight = _bgCanvas.lowerCanvasEl.height;
+        var sourceHoverWidth  = _hoverCanvas.lowerCanvasEl.width;
+        var sourceHoverHeight = _hoverCanvas.lowerCanvasEl.height;
+        var output = $('<canvas />')
+                .attr({
+                    'width': this._l().getWidth(),
+                    'height': this._l().getHeight()
+                }).get(0);
+        
+        var octx = output.getContext('2d');
+        
+        octx.drawImage(bgCanvas, 0, 0, sourceBgWidth, sourceBgHeight, 0, 0, output.width, output.height);
+        octx.drawImage(hoverCanvas, 0, 0, sourceHoverWidth, sourceHoverHeight, 0, 0, output.width, output.height);
+        if (!json) {
+            return output.toDataURL('png');
+        }
     }
 });

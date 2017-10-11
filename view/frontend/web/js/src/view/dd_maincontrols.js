@@ -2,8 +2,9 @@ var DD_Maincontrols = DD_panel.extend({
     object_id: 'dd-main-controls',
     class_name: 'dd-designer-maincontrols',
 
-    init: function (parent) {
+    init: function (parent, main) {
         this.parent = parent;
+        this.main = main;
         this._super({
             'id': this.object_id,
             'class': this.class_name,
@@ -27,10 +28,10 @@ var DD_Maincontrols = DD_panel.extend({
     },
     
     addSaveButton: function() {
-        if(!this._s('save')) {
+        if(!this._s('save') || !this.main.options.onSave) {
             return;
         }
-        new DD_saveButton(this.self);
+        new DD_saveButton(this.self, this.main.options.onSave);
     },
     
     addQRCodeButton: function() {

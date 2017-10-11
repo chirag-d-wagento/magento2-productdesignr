@@ -1416,16 +1416,20 @@ var DD_Main_Model = DD_ModelBase.extend({
     initLayers: function () {
         var self = this;
         this.layersObj = new DD_Layer();
-        var idBgCanvas = 'canvas-' + this.createUUID();
-        var idCanvasHover = 'canvas-hover-' + this.createUUID();
+        this.idBgCanvas = 'canvas-' + this.createUUID();
+        this.idCanvasHover = 'canvas-hover-' + this.createUUID();
         var bgCanvas = $('<canvas/>', {
-            id: idBgCanvas
+            id: this.idBgCanvas
         });
         var hoverCanvas = $('<canvas/>', {
-            id: idCanvasHover
+            id: this.idCanvasHover
         });
         var width = this.obj.options.width;
         var height = this.obj.options.height;
+        
+        console.log( this.obj.options.width );
+        console.log( this.obj.options.height );
+        
         bgCanvas.attr({
             'width': width,
             'height': height
@@ -1439,8 +1443,8 @@ var DD_Main_Model = DD_ModelBase.extend({
                 .append(hoverCanvas);
         this.obj.self.append(div);
 
-        var bgCanvas = new fabric.Canvas(idBgCanvas);
-        var hoverCanvas = new fabric.Canvas(idCanvasHover);
+        var bgCanvas = new fabric.Canvas(this.idBgCanvas);
+        var hoverCanvas = new fabric.Canvas(this.idCanvasHover);
 
         this.layersObj.setBgCanvas(bgCanvas);
         this.layersObj.setHoverCanvas(hoverCanvas);
@@ -1586,7 +1590,7 @@ var DD_Main_Model = DD_ModelBase.extend({
             if (scaleFactorH != 1) {
                 newHeight = blockHeight;
                 newWidth = (newHeight) * (width / height);
-                scaleFactor = (scaleFactor ? scaleFactor : 1 ) * scaleFactorH;
+                scaleFactor = (scaleFactor ? scaleFactor : 1) * scaleFactorH;
             }
         }
 
@@ -1620,7 +1624,6 @@ var DD_Main_Model = DD_ModelBase.extend({
     prepareFonts: function () {
         var listFonts = this._s('listFonts');
         var googleFonts = [];
-        console.log(listFonts);
         $.each(listFonts, function (i, font) {
             if (font.indexOf('"') != -1) { //custom named font
                 var fontArr = font.split(',');
@@ -1629,6 +1632,40 @@ var DD_Main_Model = DD_ModelBase.extend({
         });
 
         return googleFonts;
+    },
+
+    getDataImg: function () {
+        return this._mergeCanvases();
+    },
+
+    getJsonImg: function () {
+        return this._mergeCanvases(true);
+    },
+
+    _mergeCanvases: function (json) {
+        
+        var _bgCanvas = this.layersObj.getBgCanvas();
+        var _hoverCanvas = this.layersObj.getHoverCanvas()
+        var bgCanvas = $('#' + this.idBgCanvas).get(0);
+        var hoverCanvas = $('#' + this.idCanvasHover).get(0);
+        
+        var sourceBgWidth  = _bgCanvas.lowerCanvasEl.width;
+        var sourceBgHeight = _bgCanvas.lowerCanvasEl.height;
+        var sourceHoverWidth  = _hoverCanvas.lowerCanvasEl.width;
+        var sourceHoverHeight = _hoverCanvas.lowerCanvasEl.height;
+        var output = $('<canvas />')
+                .attr({
+                    'width': this._l().getWidth(),
+                    'height': this._l().getHeight()
+                }).get(0);
+        
+        var octx = output.getContext('2d');
+        
+        octx.drawImage(bgCanvas, 0, 0, sourceBgWidth, sourceBgHeight, 0, 0, output.width, output.height);
+        octx.drawImage(hoverCanvas, 0, 0, sourceHoverWidth, sourceHoverHeight, 0, 0, output.width, output.height);
+        if (!json) {
+            return output.toDataURL('png');
+        }
     }
 });
 
@@ -2301,7 +2338,7 @@ var DD_main = DD_panel.extend({
         if(this._s('history')) {
             new DD_Historycontrols(this.self);
         }
-        new DD_Maincontrols(this.self.parent());
+        new DD_Maincontrols(this.self.parent(), this);
         
     }
 });
@@ -2310,8 +2347,9 @@ var DD_Maincontrols = DD_panel.extend({
     object_id: 'dd-main-controls',
     class_name: 'dd-designer-maincontrols',
 
-    init: function (parent) {
+    init: function (parent, main) {
         this.parent = parent;
+        this.main = main;
         this._super({
             'id': this.object_id,
             'class': this.class_name,
@@ -2335,10 +2373,10 @@ var DD_Maincontrols = DD_panel.extend({
     },
     
     addSaveButton: function() {
-        if(!this._s('save')) {
+        if(!this._s('save') || !this.main.options.onSave) {
             return;
         }
-        new DD_saveButton(this.self);
+        new DD_saveButton(this.self, this.main.options.onSave);
     },
     
     addQRCodeButton: function() {
@@ -2394,7 +2432,8 @@ var DD_saveButton = DD_button.extend({
     class_name: 'dd-main-button fa-check-square fa',
     model: 'DD_Callback_Model',
 
-    init: function (parent) {
+    init: function (parent, callback) {
+        this._callback = callback;
         var options = {
             parent: parent,
             id: this.object_id,
@@ -2412,7 +2451,10 @@ var DD_saveButton = DD_button.extend({
             this.self.removeClass('fa-check-square')
                     .addClass('fa-circle-o-notch')
                     .addClass('fa-spin');
+            
+            self._callback.call();
         };
+        
         model.destroy = function () {
             if (self.tooltipBox) {
                 self.tooltipBox.destroy();
@@ -2606,18 +2648,23 @@ $.fn.dd_productdesigner = function (options) {
             'close': 'Close'
         },
         //'settings': settings,
-        'afterLoad': null,
+        'onSave': null,
         'onUpdate': null,
         'onClose': null
     }, options);
 
     this.options.settings = settings;
+    
     this.onUpdate = function (callback) {
         this.options.onUpdate = callback;
     }
     
     this.onClose = function (callback) {
         this.options.onClose = callback;
+    }
+    
+    this.onSave = function (callback) {
+        this.options.onSave = callback;
     }
 
     this.init = function () {
@@ -2632,6 +2679,14 @@ $.fn.dd_productdesigner = function (options) {
 
         this.destroy = function () {
             app.destroy();
+        }
+        
+        this.getData = function() {
+            return app.getDataImg();
+        }
+        
+        this.getJson = function() {
+            return app.getJsonImg();
         }
 
         return this;

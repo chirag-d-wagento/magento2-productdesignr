@@ -3,7 +3,8 @@ var DD_saveButton = DD_button.extend({
     class_name: 'dd-main-button fa-check-square fa',
     model: 'DD_Callback_Model',
 
-    init: function (parent) {
+    init: function (parent, callback) {
+        this._callback = callback;
         var options = {
             parent: parent,
             id: this.object_id,
@@ -21,7 +22,10 @@ var DD_saveButton = DD_button.extend({
             this.self.removeClass('fa-check-square')
                     .addClass('fa-circle-o-notch')
                     .addClass('fa-spin');
+            
+            self._callback.call();
         };
+        
         model.destroy = function () {
             if (self.tooltipBox) {
                 self.tooltipBox.destroy();

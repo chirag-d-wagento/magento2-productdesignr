@@ -22,7 +22,7 @@ var DD_main = DD_panel.extend({
         if(this._s('history')) {
             new DD_Historycontrols(this.self);
         }
-        new DD_Maincontrols(this.self.parent());
+        new DD_Maincontrols(this.self.parent(), this);
         
     }
 });
