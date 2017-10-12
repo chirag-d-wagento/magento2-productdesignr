@@ -38,8 +38,86 @@ class UpgradeSchema implements UpgradeSchemaInterface
             $this->initFieldImageSrc($setup);
             
         }
+        
+        if (version_compare($context->getVersion(), '1.0.2') < 0){
+            echo 'Add cart items tables' . "\n";
+            $this->initTmpDesignTable($setup);
+            $this->initDesignCartItemsTable($setup);
+            
+        }
+        $setup->endSetup();
 
-    }    
+    }   
+    
+    protected function initTmpDesignTable($setup) {
+        
+        $table_tmp_designs = $setup->getConnection()
+                ->newTable($setup->getTable('dd_productdesigner_tmp_designs'))
+                ->addColumn(
+                        'design_id', \Magento\Framework\DB\Ddl\Table::TYPE_INTEGER, null, ['identity' => true, 'unsigned' => true, 'nullable' => false, 'primary' => true, 'autoincrement' => true], 'Id'
+                )
+                ->addColumn(
+                        'created_time', \Magento\Framework\DB\Ddl\Table::TYPE_DATETIME, null, ['nullable' => true, 'default' => null], 'Time of creation'
+                )
+                ->addColumn(
+                        'updated_time', \Magento\Framework\DB\Ddl\Table::TYPE_DATETIME, null, ['nullable' => true, 'default' => null], 'Time of last update'
+                )
+                ->addColumn(
+                        'unique_id', \Magento\Framework\DB\Ddl\Table::TYPE_TEXT, null, ['default' => null, 'nullable' => true], 'Unique id of design'
+                )
+                ->addColumn(
+                        'json_text', \Magento\Framework\DB\Ddl\Table::TYPE_TEXT, null, ['default' => null, 'nullable' => true], 'Fabricjs toJson output'
+                )
+                ->addColumn(
+                        'png_blob', \Magento\Framework\DB\Ddl\Table::TYPE_TEXT, null, ['default' => null, 'nullable' => true], 'PNG Image'
+                )
+                ->addColumn(
+                        'conf', \Magento\Framework\DB\Ddl\Table::TYPE_TEXT, null, ['default' => null, 'nullable' => true], 'DD Designer layers configuration'
+                )
+                
+                ;
+        
+        $setup->getConnection()->createTable($table_tmp_designs);
+    }
+    
+    protected function initDesignCartItemsTable($setup) {
+        
+        $table_design_cart_items = $setup->getConnection()
+                ->newTable($setup->getTable('dd_productdesigner_cart_items'))
+                ->addColumn(
+                        '_item_id', \Magento\Framework\DB\Ddl\Table::TYPE_INTEGER, null, ['identity' => true, 'unsigned' => true, 'nullable' => false, 'primary' => true, 'autoincrement' => true], 'Id'
+                )
+                ->addColumn(
+                        'cart_quote_id', \Magento\Framework\DB\Ddl\Table::TYPE_INTEGER, null, ['default' => 0, 'nullable' => false], 'Magento Quote Id'
+                )
+                ->addColumn(
+                        'cart_item_id', \Magento\Framework\DB\Ddl\Table::TYPE_INTEGER, null, ['default' => 0, 'nullable' => false], 'Magento Quote Cart Item Id'
+                )
+                ->addColumn(
+                        'old_cart_quote_id', \Magento\Framework\DB\Ddl\Table::TYPE_INTEGER, null, ['default' => 0, 'nullable' => false], 'Magento Old Quote Id after quote_merge'
+                )
+                ->addColumn(
+                        'old_cart_item_id', \Magento\Framework\DB\Ddl\Table::TYPE_INTEGER, null, ['default' => 0, 'nullable' => false], 'Magento Old Quote Cart Item Id after quote_merge'
+                )
+                ->addColumn(
+                        'created_time', \Magento\Framework\DB\Ddl\Table::TYPE_DATETIME, null, ['nullable' => true, 'default' => null], 'Time of creation'
+                )
+                ->addColumn(
+                        'updated_time', \Magento\Framework\DB\Ddl\Table::TYPE_DATETIME, null, ['nullable' => true, 'default' => null], 'Time of last update'
+                )
+                ->addColumn(
+                        'json_text', \Magento\Framework\DB\Ddl\Table::TYPE_TEXT, null, ['default' => null, 'nullable' => true], 'Fabricjs toJson output'
+                )
+                ->addColumn(
+                        'png_blob', \Magento\Framework\DB\Ddl\Table::TYPE_TEXT, null, ['default' => null, 'nullable' => true], 'PNG Image'
+                )
+                ->addColumn(
+                        'conf', \Magento\Framework\DB\Ddl\Table::TYPE_TEXT, null, ['default' => null, 'nullable' => true], 'DD Designer layers configuration'
+                )
+                ;
+        
+        $setup->getConnection()->createTable($table_design_cart_items);
+    }
     
     protected function initFieldGroupUid($setup){
         $setup->getConnection()->addColumn(
