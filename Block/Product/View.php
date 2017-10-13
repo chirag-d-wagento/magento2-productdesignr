@@ -54,4 +54,8 @@ class View extends \Magento\Catalog\Block\Product\AbstractProduct {
     public function getMyFilesUrl() {
         return $this->getUrl('dd_designer/index/myfiles');
     }
+    
+    public function getSaveDesignUrl() {
+        return $this->getUrl('dd_designer/index/save');
+    }
 }

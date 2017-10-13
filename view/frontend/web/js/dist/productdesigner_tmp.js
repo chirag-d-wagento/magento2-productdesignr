@@ -1644,6 +1644,13 @@ var DD_Main_Model = DD_ModelBase.extend({
     getJsonImg: function () {
         return this._mergeCanvases(true);
     },
+    
+    unselectAll: function() {
+        var _hoverCanvas = this.layersObj.getHoverCanvas();
+        if(_hoverCanvas) {
+            _hoverCanvas.discardActiveObject().renderAll();
+        }
+    },
 
     _mergeCanvases: function (json) {
         
@@ -1656,12 +1663,15 @@ var DD_Main_Model = DD_ModelBase.extend({
         var sourceBgHeight = _bgCanvas.lowerCanvasEl.height;
         var sourceHoverWidth  = _hoverCanvas.lowerCanvasEl.width;
         var sourceHoverHeight = _hoverCanvas.lowerCanvasEl.height;
+        var _id = this.createUUID();
         var output = $('<canvas />')
                 .attr({
                     'width': this._l().getWidth(),
-                    'height': this._l().getHeight()
-                }).get(0);
-        
+                    'height': this._l().getHeight(),
+                    'id' : _id
+                })
+                .get(0);
+                
         var octx = output.getContext('2d');
         
         octx.drawImage(bgCanvas, 0, 0, sourceBgWidth, sourceBgHeight, 0, 0, output.width, output.height);
@@ -1669,6 +1679,8 @@ var DD_Main_Model = DD_ModelBase.extend({
         if (!json) {
             return output.toDataURL('png');
         }
+        
+        return []; //skip this for now!
     }
 });
 
@@ -2611,9 +2623,9 @@ $.fn.dd_productdesigner = function (options) {
         'loadGoogleFonts': true,
         'percentSizeImage': 20 //percentage size from canvas width
     };
-    
+
     settings = $.extend(settings, options.settings);
-    
+
     this.options = $.extend({
         'src': '',
         'debug': false,
@@ -2662,15 +2674,15 @@ $.fn.dd_productdesigner = function (options) {
     }, options);
 
     this.options.settings = settings;
-    
+
     this.onUpdate = function (callback) {
         this.options.onUpdate = callback;
     }
-    
+
     this.onClose = function (callback) {
         this.options.onClose = callback;
     }
-    
+
     this.onSave = function (callback) {
         this.options.onSave = callback;
     }
@@ -2688,20 +2700,24 @@ $.fn.dd_productdesigner = function (options) {
         this.destroy = function () {
             app.destroy();
         }
-        
-        this.getData = function() {
+
+        this.unselectAll = function () {
+            return app.unselectAll();
+        }
+
+        this.getData = function () {
             return app.getDataImg();
         }
-        
-        this.getMediaId = function() {
+
+        this.getMediaId = function () {
             return this.options.media_id;
         }
-        
-        this.getProductId = function() {
+
+        this.getProductId = function () {
             return this.options.product_id;
         }
-        
-        this.getJson = function() {
+
+        this.getJson = function () {
             return app.getJsonImg();
         }
 

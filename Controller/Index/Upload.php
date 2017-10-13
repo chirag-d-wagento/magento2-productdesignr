@@ -2,9 +2,7 @@
 
 namespace Develo\Designer\Controller\Index;
 
-use Magento\Framework\Controller\ResultFactory;
-
-class Upload extends \Magento\Framework\App\Action\Action {
+class Upload extends \Develo\Designer\Controller\Front {
 
     const UPLOADER_PATH = 'dd_front_designer';
 
@@ -14,7 +12,11 @@ class Upload extends \Magento\Framework\App\Action\Action {
     protected $_cataloSession;
 
     public function __construct(
-    \Magento\Framework\App\Action\Context $context, \Magento\Framework\Filesystem $filesystem, \Magento\Store\Model\StoreManagerInterface $storeManager, \Magento\Catalog\Model\Session $catalogSession, \Magento\MediaStorage\Model\File\UploaderFactory $fileUploaderFactory
+        \Magento\Framework\App\Action\Context $context, 
+        \Magento\Framework\Filesystem $filesystem, 
+        \Magento\Store\Model\StoreManagerInterface $storeManager, 
+        \Magento\Catalog\Model\Session $catalogSession, 
+        \Magento\MediaStorage\Model\File\UploaderFactory $fileUploaderFactory
     ) {
         parent::__construct($context);
         $this->_fileUploaderFactory = $fileUploaderFactory;
@@ -25,36 +27,36 @@ class Upload extends \Magento\Framework\App\Action\Action {
     }
 
     public function execute() {
-        $uploader = $this->_fileUploaderFactory->create(['fileId' => 'file']);
-        $uploader->setAllowedExtensions(['jpg', 'jpeg', 'gif', 'png']);
-        $uploader->setAllowRenameFiles(true);
-        $uploader->setFilesDispersion(false);
-        $reader = $this->_filesystem->getDirectoryRead(\Magento\Framework\App\Filesystem\DirectoryList::MEDIA);
-        $path = $reader->getAbsolutePath(self::UPLOADER_PATH . '/');
-        $save = $uploader->save($path);
-        if ($save && !empty($save['name'])) {
-            $sizes = getimagesize($path . $save['name']);
-            $file = $this->_storeManager
-                            ->getStore()
-                            ->getBaseUrl(\Magento\Framework\UrlInterface::URL_TYPE_MEDIA) .
-                    self::UPLOADER_PATH . '/' . $save['name'];
-            $this->saveMyFiles([
-                'width' => $sizes[0],
-                'height' => $sizes[1],
-                'src' => $file
-            ]);
-            return $this->sendResponse([
-                        'success' => true,
-                        'width' => $sizes[0],
-                        'height' => $sizes[1],
-                        'filename' => $file
-            ]);
-        } else {
-
-            return $this->sendResponse([
-                        'error' => true,
-                        'errMessage' => 'ERROR: UPLOADING FILES!'
-            ]);
+        try {
+            $uploader = $this->_fileUploaderFactory->create(['fileId' => 'file']);
+            $uploader->setAllowedExtensions(['jpg', 'jpeg', 'gif', 'png']);
+            $uploader->setAllowRenameFiles(true);
+            $uploader->setFilesDispersion(false);
+            $reader = $this->_filesystem->getDirectoryRead(\Magento\Framework\App\Filesystem\DirectoryList::MEDIA);
+            $path = $reader->getAbsolutePath(self::UPLOADER_PATH . '/');
+            $save = $uploader->save($path);
+            if ($save && !empty($save['name'])) {
+                $sizes = getimagesize($path . $save['name']);
+                $file = $this->_storeManager
+                                ->getStore()
+                                ->getBaseUrl(\Magento\Framework\UrlInterface::URL_TYPE_MEDIA) .
+                        self::UPLOADER_PATH . '/' . $save['name'];
+                $this->saveMyFiles([
+                    'width' => $sizes[0],
+                    'height' => $sizes[1],
+                    'src' => $file
+                ]);
+                return $this->sendResponse([
+                            'success' => true,
+                            'width' => $sizes[0],
+                            'height' => $sizes[1],
+                            'filename' => $file
+                ]);
+            } else {
+                return $this->sendError('ERROR: UPLOADING FILES!');
+            }
+        } catch (Exception $ex) {
+            return $this->sendError(__('Error') . ': ' . $ex->getMessage());
         }
     }
 
@@ -66,14 +68,7 @@ class Upload extends \Magento\Framework\App\Action\Action {
             $myFilesArr = json_decode($myFiles);
         }
         $myFilesArr[] = $_fileData;
-        $myFiles = $this->_catalogSession->setDDDesignerFiles(json_encode($myFilesArr));
-    }
-
-    public function sendResponse($response = array()) {
-
-        $jsonResponse = $this->resultFactory->create(ResultFactory::TYPE_JSON);
-        $jsonResponse->setData($response);
-        return $jsonResponse;
+        $this->_catalogSession->setDDDesignerFiles(json_encode($myFilesArr));
     }
 
 }

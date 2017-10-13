@@ -261,6 +261,13 @@ var DD_Main_Model = DD_ModelBase.extend({
     getJsonImg: function () {
         return this._mergeCanvases(true);
     },
+    
+    unselectAll: function() {
+        var _hoverCanvas = this.layersObj.getHoverCanvas();
+        if(_hoverCanvas) {
+            _hoverCanvas.discardActiveObject().renderAll();
+        }
+    },
 
     _mergeCanvases: function (json) {
         
@@ -273,12 +280,15 @@ var DD_Main_Model = DD_ModelBase.extend({
         var sourceBgHeight = _bgCanvas.lowerCanvasEl.height;
         var sourceHoverWidth  = _hoverCanvas.lowerCanvasEl.width;
         var sourceHoverHeight = _hoverCanvas.lowerCanvasEl.height;
+        var _id = this.createUUID();
         var output = $('<canvas />')
                 .attr({
                     'width': this._l().getWidth(),
-                    'height': this._l().getHeight()
-                }).get(0);
-        
+                    'height': this._l().getHeight(),
+                    'id' : _id
+                })
+                .get(0);
+                
         var octx = output.getContext('2d');
         
         octx.drawImage(bgCanvas, 0, 0, sourceBgWidth, sourceBgHeight, 0, 0, output.width, output.height);
@@ -286,5 +296,7 @@ var DD_Main_Model = DD_ModelBase.extend({
         if (!json) {
             return output.toDataURL('png');
         }
+        
+        return []; //skip this for now!
     }
 });

@@ -23,7 +23,10 @@
 
         ], function ($, ui, modal, _, _designer) {
 
+            var formCartSelector = '#product_addtocart_form';
+
             var configuredMediaProducts = {};
+            var mediaUniqueIds = {};
             var imgsSaved = {};
             var designer = null;
             var parentProductId = '<?php echo $block->getProduct()->getId(); ?>';
@@ -100,7 +103,6 @@
                     }
                     configuredMediaProducts[media_id][conf.index] = fabricObj;
                 }
-
             }
 
             function saveImage(media_id, product_id, imgData) {
@@ -122,6 +124,25 @@
             function removeImage(media_id, product_id) {
                 delete imgsSaved[product_id][media_id];
                 drawImages(imgsSaved[product_id], product_id, media_id);
+                removeHidden(media_id);
+            }
+            
+            function addHidden(media_id, uniqueId) {
+                var uniqueId = uniqueId ? uniqueId : mediaUniqueIds[media_id];
+                if($(formCartSelector).find('input[data-media="' + media_id + '"]').get(0)) {
+                    return;
+                }
+                $(formCartSelector).append($('<input>')
+                        .attr({
+                            'name': 'dd_design[]',
+                            'value': uniqueId,
+                            'data-media': media_id
+                        })); 
+            }
+            
+            function removeHidden(media_id) {
+                $(formCartSelector).find('input[data-media="' + media_id + '"]')
+                        .remove();
             }
 
             function drawImages(medias, product_id) {
@@ -172,15 +193,47 @@
                         img.addClass('active');
                     }
                     img.on('click', function () {
-                        var _designer = initDesigner(_img, true); 
+                        var _designer = initDesigner(_img, true);
                         drawImageSelector(imgs, _designer);
                     });
                 });
 
                 $('#dd-designer').append(container);
-                
+
                 container.fadeIn('slow');
                 return container;
+            }
+
+            function saveDesignedImage(media_id, data, json, obj) {
+                var conf = configuredMediaProducts[media_id] ? configuredMediaProducts[media_id] : {};
+                var json = json ? json : {};
+                $.ajax({
+                    url: '<?php echo $this->getSaveDesignUrl() ?>',
+                    method: 'post',
+                    data: {
+                        'conf': JSON.stringify(conf),
+                        'data': data,
+                        'json': JSON.stringify(json),
+                        'unique_id': mediaUniqueIds[media_id]
+                    },
+                    success: function (data) {
+                        if (data.error) {
+                            alert(data.errorMessage);
+                            return;
+                        }
+                        if (data.success) {
+                            mediaUniqueIds[media_id] = data.design_id;
+                            addHidden(media_id, data.design_id)
+                        }
+                    },
+                    error: function () {
+                        alert("Something went wrong!");
+                    },
+                    complete: function () {
+                        obj.hideLoading();
+                    },
+                    cache: false
+                }, 'json');
             }
 
             function initDesigner(img, skipOpen) {
@@ -221,27 +274,19 @@
                 });
 
                 designer.onSave(function () {
-                    var self = this;
+                    designer.unselectAll();
                     this.showLoading();
                     var data = designer.getData();
-                    var mediaId = designer.getMediaId();
-                    var productId = designer.getProductId();
-                    saveImage(mediaId, productId, data);
-                    setTimeout(function () {
-                        self.hideLoading();
-                    }, 600);
-
+                    var media_id = designer.getMediaId();
+                    var product_id = designer.getProductId();
+                    var json = designer.getJson();
+                    saveImage(media_id, product_id, data);
+                    saveDesignedImage(media_id, data, json, this);
                 });
                 designer.init();
                 if (!skipOpen) {
                     $('#dd-designer-container').modal('openModal');
                 }
-                /*
-                setTimeout(function() {
-                    var selector = drawImageSelector(imgs, designer);
-                    selector.fadeIn('slow');
-                }, 500);
-                */
                 return designer;
             }
 

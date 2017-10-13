@@ -2,32 +2,30 @@
 
 namespace Develo\Designer\Controller\Index;
 
-use Magento\Framework\Controller\ResultFactory;
-
-class Myfiles extends \Magento\Framework\App\Action\Action {
+class Myfiles extends \Develo\Designer\Controller\Front {
 
     protected $_cataloSession;
 
     public function __construct(
-        \Magento\Framework\App\Action\Context $context,
-        \Magento\Catalog\Model\Session $catalogSession    
+        \Magento\Framework\App\Action\Context $context, 
+        \Magento\Catalog\Model\Session $catalogSession
     ) {
         parent::__construct($context);
-        
         $this->_catalogSession = $catalogSession;
     }
-    
+
     public function execute() {
-        
-        $myFiles = $this->_catalogSession->getDDDesignerFiles();
-        if (!$myFiles) {
-            $myFilesArr = [];
-        } else {
-            $myFilesArr = json_decode($myFiles);
+        try {
+            $myFiles = $this->_catalogSession->getDDDesignerFiles();
+            if (!$myFiles) {
+                $myFilesArr = [];
+            } else {
+                $myFilesArr = json_decode($myFiles);
+            }
+            return $this->sendResponse($myFilesArr);
+        } catch (Exception $ex) {
+            return $this->sendError(__('Error') . ': ' . $ex->getMessage());
         }
-        
-        $jsonResponse = $this->resultFactory->create(ResultFactory::TYPE_JSON);
-        $jsonResponse->setData($myFilesArr);
-        return $jsonResponse;
     }
+
 }

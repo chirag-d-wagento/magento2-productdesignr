@@ -19,9 +19,9 @@ $.fn.dd_productdesigner = function (options) {
         'loadGoogleFonts': true,
         'percentSizeImage': 20 //percentage size from canvas width
     };
-    
+
     settings = $.extend(settings, options.settings);
-    
+
     this.options = $.extend({
         'src': '',
         'debug': false,
@@ -70,15 +70,15 @@ $.fn.dd_productdesigner = function (options) {
     }, options);
 
     this.options.settings = settings;
-    
+
     this.onUpdate = function (callback) {
         this.options.onUpdate = callback;
     }
-    
+
     this.onClose = function (callback) {
         this.options.onClose = callback;
     }
-    
+
     this.onSave = function (callback) {
         this.options.onSave = callback;
     }
@@ -96,20 +96,24 @@ $.fn.dd_productdesigner = function (options) {
         this.destroy = function () {
             app.destroy();
         }
-        
-        this.getData = function() {
+
+        this.unselectAll = function () {
+            return app.unselectAll();
+        }
+
+        this.getData = function () {
             return app.getDataImg();
         }
-        
-        this.getMediaId = function() {
+
+        this.getMediaId = function () {
             return this.options.media_id;
         }
-        
-        this.getProductId = function() {
+
+        this.getProductId = function () {
             return this.options.product_id;
         }
-        
-        this.getJson = function() {
+
+        this.getJson = function () {
             return app.getJsonImg();
         }
 
