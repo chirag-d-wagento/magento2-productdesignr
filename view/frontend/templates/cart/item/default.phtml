@@ -1,0 +1,16 @@
+<?php
+if ($this->hasConfigurableDesigns()):
+    $collection = $this->getCollection();
+    ?>
+    <div class="dd-designer-container">
+        <strong>
+            <?php echo __('Custom Designs'); ?> 
+        </strong>
+        <div class="dd-designer-container-images">
+            <?php foreach ($collection as $_item): ?>
+                <img src="<?php echo $_item->getPngBlob(); ?>" id="<?php echo $_item->getId(); ?>"/>     
+            <?php endforeach; ?>
+        </div>
+    </div>
+
+<?php endif; ?>

@@ -69,7 +69,7 @@ class UpgradeSchema implements UpgradeSchemaInterface
                         'json_text', \Magento\Framework\DB\Ddl\Table::TYPE_TEXT, null, ['default' => null, 'nullable' => true], 'Fabricjs toJson output'
                 )
                 ->addColumn(
-                        'png_blob', \Magento\Framework\DB\Ddl\Table::TYPE_TEXT, null, ['default' => null, 'nullable' => true], 'PNG Image'
+                        'png_blob', \Magento\Framework\DB\Ddl\Table::TYPE_BLOB, null, ['default' => null, 'nullable' => true], 'PNG Image'
                 )
                 ->addColumn(
                         'conf', \Magento\Framework\DB\Ddl\Table::TYPE_TEXT, null, ['default' => null, 'nullable' => true], 'DD Designer layers configuration'
@@ -109,7 +109,7 @@ class UpgradeSchema implements UpgradeSchemaInterface
                         'json_text', \Magento\Framework\DB\Ddl\Table::TYPE_TEXT, null, ['default' => null, 'nullable' => true], 'Fabricjs toJson output'
                 )
                 ->addColumn(
-                        'png_blob', \Magento\Framework\DB\Ddl\Table::TYPE_TEXT, null, ['default' => null, 'nullable' => true], 'PNG Image'
+                        'png_blob', \Magento\Framework\DB\Ddl\Table::TYPE_BLOB, null, ['default' => null, 'nullable' => true], 'PNG Image'
                 )
                 ->addColumn(
                         'conf', \Magento\Framework\DB\Ddl\Table::TYPE_TEXT, null, ['default' => null, 'nullable' => true], 'DD Designer layers configuration'

@@ -5,8 +5,20 @@
         <observer name="dd_productdesigner_place_order" instance="Develo\Designer\Observer\OrderObserver" />
     </event>
     
+    <event name="checkout_cart_product_add_after">
+        <observer name="dd_productdesigner_cart_add_after" instance="Develo\Designer\Observer\AddAfter"/>
+    </event>
+    
+    <event name="checkout_cart_product_update_after">
+        <observer name="dd_productdesigner_cart_update_after" instance="Develo\Designer\Observer\AddAfter"/>
+    </event>
+    
     <event name="checkout_cart_add_product_complete">
         <observer name="dd_productdesigner_cart_add_complete" instance="Develo\Designer\Observer\AddComplete"/>
+    </event>
+    
+    <event name="checkout_cart_update_item_complete">
+        <observer name="dd_productdesigner_cart_update_complete" instance="Develo\Designer\Observer\AddComplete"/>
     </event>
     
     <event name="sales_quote_merge_before">
