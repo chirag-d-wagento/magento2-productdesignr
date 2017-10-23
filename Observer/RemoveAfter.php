@@ -7,12 +7,22 @@ use Magento\Framework\Event\ObserverInterface;
 
 class RemoveAfter implements ObserverInterface {
 
-    public function __construct() {
-        ;
+    protected $_designCartItemModel;
+    
+    public function __construct(
+       \Develo\Designer\Model\CartitemFactory $designCartItemModel
+    ) {
+        $this->_designCartItemModel = $designCartItemModel;
     }
 
     public function execute(Observer $observer) {
         $quoteItem = $observer->getQuoteItem();
+        $model = $this->_designCartItemModel->create()
+                ->load($quoteItem->getId(), 'cart_item_id');
+        
+        $model->delete();
     }
+    
+    
 
 }

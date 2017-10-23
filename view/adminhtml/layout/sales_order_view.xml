@@ -1,0 +1,16 @@
+<?xml version="1.0"?>
+
+<page xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" layout="admin-2columns-left" xsi:noNamespaceSchemaLocation="urn:magento:framework:View/Layout/etc/page_configuration.xsd">
+    <body>
+        
+        <referenceBlock name="sales_order_tabs">
+            <block class="Develo\Designer\Block\Adminhtml\Order\View\Tab\Designer" name="dd_productdesigner_tab"/>
+            <action method="addTabAfter">
+                <argument name="name" xsi:type="string">name</argument>
+                <argument name="block" xsi:type="string">dd_productdesigner_tab</argument>
+                <argument name="after" xsi:type="string">order_transactions</argument>
+            </action>
+        </referenceBlock>
+        
+    </body>
+</page>

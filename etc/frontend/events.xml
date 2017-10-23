@@ -1,9 +1,10 @@
 <?xml version="1.0"?>
 
 <config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:Event/etc/events.xsd">
-    <event name="sales_order_place_after">
+    
+    <!-- event name="sales_order_place_after">
         <observer name="dd_productdesigner_place_order" instance="Develo\Designer\Observer\OrderObserver" />
-    </event>
+    </event -->
     
     <event name="checkout_cart_product_add_after">
         <observer name="dd_productdesigner_cart_add_after" instance="Develo\Designer\Observer\AddAfter"/>
@@ -25,13 +26,9 @@
         <observer name="dd_productdesigner_merge_quote_before" instance="Develo\Designer\Observer\QuoteMergeBefore"/>
     </event>
     
-    <event name="sales_quote_merge_after">
-        <observer name="dd_productdesigner_merge_quote_after" instance="Develo\Designer\Observer\QuoteMergeAfter"/>
+    <event name="customer_data_object_login">
+        <observer name="dd_productdesigner_customer_after_login" instance="Develo\Designer\Observer\CustomerAfterLogin"/>
     </event>
-  
-    <!-- event name="sales_quote_collect_totals_after">
-        <observer name="dd_productdesigner_observer_quote_save_after" instance=""/>
-    </event -->
   
     <event name="sales_quote_remove_item">
         <observer name="dd_productdesigner_quote_remove_item" instance="Develo\Designer\Observer\RemoveAfter"/>

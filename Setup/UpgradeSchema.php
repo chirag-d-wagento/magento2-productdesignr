@@ -45,10 +45,28 @@ class UpgradeSchema implements UpgradeSchemaInterface
             $this->initDesignCartItemsTable($setup);
             
         }
+        
+        if (version_compare($context->getVersion(), '1.0.3') < 0){
+            echo 'Add product id field' . "\n";
+            $this->initFeildProductId($setup);
+            
+        }
         $setup->endSetup();
 
     }   
     
+    protected function initFeildProductId($setup) {
+        $setup->getConnection()->addColumn(
+            $setup->getTable('dd_productdesigner_cart_items'),
+            'magento_product_id',
+            [
+                'type' => \Magento\Framework\DB\Ddl\Table::TYPE_INTEGER,
+                'nullable' => true,
+                'comment' => 'Magento product ID'
+            ]
+        );
+    }
+
     protected function initTmpDesignTable($setup) {
         
         $table_tmp_designs = $setup->getConnection()

@@ -34,20 +34,24 @@ class AddComplete implements ObserverInterface {
     public function execute(Observer $observer) {
         $request = $observer->getRequest();
         $designsIds = $request->getParam('dd_design');
-        
-        if (!$designsIds || !is_array($designsIds)) {
-            return;
-        }
-
-        $this->run($designsIds);
-    }
-    
-    public function run($designsIds, $quoteData = null) {
-        
         $product = $this->_registry->registry(\Develo\Designer\Observer\AddAfter::CURRENT_REGISTRATED_PRODUCT);
         $quoteData = $this->getQuoteData($product);
         if (!empty($quoteData['cart_quote_id'])) {
             $this->removeOldDesigns($quoteData['cart_item_id']);
+        }
+        if (!$designsIds || !is_array($designsIds)) {
+            return;
+        }
+
+        $this->run($designsIds, $quoteData);
+    }
+    
+    public function run($designsIds, $quoteData = null) {
+        
+        if (!empty($quoteData['cart_quote_id'])) {
+            
+        $product = $this->_registry->registry(\Develo\Designer\Observer\AddAfter::CURRENT_REGISTRATED_PRODUCT);
+        
             foreach ($designsIds as $designId) {
                 $modelCartItem = $this->_cartItem->create()
                         ->load(null); //new one!
@@ -67,6 +71,7 @@ class AddComplete implements ObserverInterface {
                         ->setCreatedTime($this->_date->gmtDate())
                         ->setJsonText($tmpDesign->getJsonText())
                         ->setPngBlob($tmpDesign->getPngBlob())
+                        ->setMagentoProductId($product->getId())
                         ->setConf($tmpDesign->getConf());
 
                 $modelCartItem->save();
