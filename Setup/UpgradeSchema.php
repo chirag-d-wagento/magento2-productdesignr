@@ -60,7 +60,7 @@ class UpgradeSchema implements UpgradeSchemaInterface
                         'item_id', \Magento\Framework\DB\Ddl\Table::TYPE_INTEGER, null, ['identity' => true, 'unsigned' => true, 'nullable' => false, 'primary' => true, 'autoincrement' => true], 'Id'
                 )
                 ->addColumn(
-                        'magento_order_id', \Magento\Framework\DB\Ddl\Table::TYPE_INTEGER, null, ['default' => 0, 'nullable' => false], 'Magento Order Id'
+                        'magento_order_id', \Magento\Framework\DB\Ddl\Table::TYPE_TEXT, null, ['nullable' => true], 'Magento Order Id'
                 )
                 
         ;

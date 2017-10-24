@@ -7,30 +7,25 @@ use Magento\Framework\Event\ObserverInterface;
 
 class OrderObserver implements ObserverInterface {
 
-    protected $_quoteFactory;
+    protected $_logger;
     
     protected $_designCartItemModel;
     
     protected $_designOrderModel;
 
     public function __construct(
-        \Magento\Quote\Model\QuoteFactory $quoteFactory,    
+        \Psr\Log\LoggerInterface $logger,
         \Develo\Designer\Model\CartitemFactory $designCartItemModel,
         \Develo\Designer\Model\OrderFactory $designOrderModel
     ) {
-        $this->_quoteFactory = $quoteFactory;
+        $this->_logger = $logger;
         $this->_designCartItemModel = $designCartItemModel;
         $this->_designOrderModel = $designOrderModel;
     }
 
     public function execute(Observer $observer) {
         $order = $observer->getEvent()->getOrder();
-        $quoteId = $order->getQuoteId();
-
-        $quote = $this->_quoteFactory->create()
-                ->load($quoteId);
-
-        if ($this->isHaveDesignerProducts($quote)) {
+        if ($this->isHaveDesignerProducts($order->getQuoteId())) {
             $this->createOrderRecord($order);
         }
     }
@@ -39,17 +34,17 @@ class OrderObserver implements ObserverInterface {
         $model = $this->_designOrderModel->create()
                 ->load(null);
         
-        $model->setMagentoOrderId($order->getId());
+        $model->setMagentoOrderId($order->getIncrementId());
         
         $model->save();
     }
 
-    protected function isHaveDesignerProducts($quote) {
+    protected function isHaveDesignerProducts($quoteId) {
         $collection = $this->_designCartItemModel->create()
                 ->getCollection();
         
         $collection->getSelect()
-                ->where('cart_quote_id=?', $quote->getId());
+                ->where('cart_quote_id=?', $quoteId);
         
         if($collection->getSize()) {
             return true;
