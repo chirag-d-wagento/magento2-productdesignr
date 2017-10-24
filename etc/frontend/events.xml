@@ -2,9 +2,9 @@
 
 <config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:Event/etc/events.xsd">
     
-    <!-- event name="sales_order_place_after">
+    <event name="sales_order_place_after">
         <observer name="dd_productdesigner_place_order" instance="Develo\Designer\Observer\OrderObserver" />
-    </event -->
+    </event>
     
     <event name="checkout_cart_product_add_after">
         <observer name="dd_productdesigner_cart_add_after" instance="Develo\Designer\Observer\AddAfter"/>

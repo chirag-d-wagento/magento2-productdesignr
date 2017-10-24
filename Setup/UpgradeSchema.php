@@ -11,12 +11,6 @@ use Magento\Eav\Setup\EavSetupFactory;
 use Magento\Framework\Setup\ModuleDataSetupInterface;
 
 
-/* 
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
-
 class UpgradeSchema implements UpgradeSchemaInterface
 {
     public function __construct(
@@ -49,11 +43,29 @@ class UpgradeSchema implements UpgradeSchemaInterface
         if (version_compare($context->getVersion(), '1.0.3') < 0){
             echo 'Add product id field' . "\n";
             $this->initFeildProductId($setup);
-            
+        }
+        
+        if (version_compare($context->getVersion(), '1.0.4') < 0){
+            echo 'Add order table' . "\n";
+            $this->initOrderTable($setup);
         }
         $setup->endSetup();
 
     }   
+    
+    protected function initOrderTable($setup) {
+        $table_orders = $setup->getConnection()
+                ->newTable($setup->getTable('dd_productdesigner_order'))
+                ->addColumn(
+                        'item_id', \Magento\Framework\DB\Ddl\Table::TYPE_INTEGER, null, ['identity' => true, 'unsigned' => true, 'nullable' => false, 'primary' => true, 'autoincrement' => true], 'Id'
+                )
+                ->addColumn(
+                        'magento_order_id', \Magento\Framework\DB\Ddl\Table::TYPE_INTEGER, null, ['default' => 0, 'nullable' => false], 'Magento Order Id'
+                )
+                
+        ;
+        $setup->getConnection()->createTable($table_orders);
+    }
     
     protected function initFeildProductId($setup) {
         $setup->getConnection()->addColumn(

@@ -17,3 +17,7 @@ priority
 config
 created_time
 updated_time
+
+dd_productdesigner_order
+item_id
+magento_order_id
