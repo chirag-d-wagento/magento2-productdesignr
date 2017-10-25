@@ -1,0 +1,137 @@
+<?php
+$designs = $block->getDesignerData();
+if (!$designs->getSize()):
+    ?>
+    <div class="dd-dessigner-no-data">
+        <?php echo __('No Data Found!') ?>
+    </div>
+<?php else: ?>
+    <div class="dd-dessigner-order-container">
+        <?php foreach ($designs as $design): ?>
+            <?php
+            $_product = $block->getProduct($design->getMagentoProductId());
+            if (!$_product->getId()) {
+                return;
+            }
+            $_designElements = $block->prepareConf($design->getConf());
+            ?>
+            <div class="dd-dessigner-order">
+                <div class="dd-dessigner-order-product">
+                    <?php
+                    echo $_product->getName();
+                    ?>(<?php echo $_product->getSku() ?>)
+                </div>
+                <div class="dd-dessigner-order-img">
+                    <div class="dd-print-button">
+                        <button class="dd-print">
+                            <span>
+                                <?php echo __('Print product Image'); ?>
+                            </span>
+                        </button>
+                        <button class="dd-download">
+                            <span>
+                                <?php echo __('Download'); ?>
+                            </span>
+                        </button>
+                    </div>
+                    <img src="<?php echo $design->getPngBlob() ?>" />
+
+                </div>
+                <div class="dd-designer-order-details">
+                    <?php foreach ($_designElements as $_designElement): ?>
+
+                        <div class="dd-designer-order-design-element">
+                            <?php if ($_designElement->type == 'text'): ?>
+                                <h4><?php echo __('Text'); ?></h4>
+                                <div class="dd-designer-order-design-element-details">
+                                    <ul>
+                                        <li><?php echo __('Added Text') ?>: <?php echo $_designElement->text ?></li>
+                                        <li><?php echo __('Text Color') ?>: <?php echo $_designElement->fill ?></li>
+                                        <li><?php echo __('Background Color') ?>: <?php echo $_designElement->backgroundColor ? $_designElement->backgroundColor : '-' ?></li>
+                                        <li><?php echo __('Font Family') ?>: <?php echo $_designElement->fontFamily ? $_designElement->fontFamily : '-' ?></li>
+                                    </ul>
+                                </div>
+                            <?php elseif ($_designElement->type == 'image'): ?>
+                                <h4><?php echo __('Image'); ?></h4>
+                                <div class="dd-designer-order-design-element-details">
+                                    <div class="dd-designer-order-design-element-details-image">
+                                        <img src="<?php echo $_designElement->src ?>" />
+                                    </div>
+                                    <div class="dd-designer-order-design-element-details-controls">
+                                        <a href="javascript:void(0)" class="dd-download"><?php echo __('Download')?></a>
+                                        <a href="javascript:void(0)" class="dd-print"><?php echo __('Print')?></a>
+                                    </div>
+                                </div>
+
+                            <?php endif; ?>
+                        </div>
+
+                    <?php endforeach; ?>
+                </div>
+            </div>
+        <?php endforeach; ?>
+    </div>
+
+    <script type="text/javascript">
+        require([
+            'jquery'
+        ], function ($) {
+
+            $('.dd-dessigner-order-img button.dd-print').on('click', function () {
+                var source = $(this).parents('.dd-dessigner-order-img').find('img').attr('src');
+                __imgPrint(source);
+            });
+            $('.dd-dessigner-order-img button.dd-download').on('click', function () {
+                var img = $(this).parents('.dd-dessigner-order-img').find('img');
+                __downloadImageBlob(img.get(0));
+            });
+            $('.dd-designer-order-design-element-details-controls .dd-download').on('click', function(){
+                var img = $(this).parents('.dd-designer-order-design-element-details').find('img');
+                __downloadImgBySrc(img.attr('src'));
+            });
+            $('.dd-designer-order-design-element-details-controls .dd-print').on('click', function(){
+                var img = $(this).parents('.dd-designer-order-design-element-details').find('img');
+                __imgPrint(img.attr('src'));
+            });
+
+            function __downloadImageBlob(img) {
+                var image_data = atob(img.src.split(',')[1]);
+                var arraybuffer = new ArrayBuffer(image_data.length);
+                var view = new Uint8Array(arraybuffer);
+                for (var i = 0; i < image_data.length; i++) {
+                    view[i] = image_data.charCodeAt(i) & 0xff;
+                }
+                try {
+                    var blob = new Blob([arraybuffer], {type: 'application/octet-stream'});
+                } catch (e) {
+                    var bb = new (window.WebKitBlobBuilder || window.MozBlobBuilder);
+                    bb.append(arraybuffer);
+                    var blob = bb.getBlob('application/octet-stream');
+                }
+                var url = (window.webkitURL || window.URL).createObjectURL(blob);
+                location.href = url;
+            }
+            function __downloadImgBySrc(src) {
+                var ext = src.substr(src.lastIndexOf('.') + 1);
+                var a = $("<a>").attr("href", src).attr("download", "img." + ext).appendTo("body");
+                a[0].click();
+                a.remove();
+            }
+            function __imgSourcetoPrint(source) {
+                return "<html><head><script>function step1(){\n" +
+                        "setTimeout('step2()', 10);}\n" +
+                        "function step2(){window.print();window.close()}\n" +
+                        "</scri" + "pt></head><body onload='step1()'>\n" +
+                        "<img src='" + source + "' /></body></html>";
+            }
+            function __imgPrint(source) {
+                var Pagelink = "about:blank";
+                var pwa = window.open(Pagelink, "_new");
+                pwa.document.open();
+                pwa.document.write(__imgSourcetoPrint(source));
+                pwa.document.close();
+            }
+        });
+    </script>
+<?php endif; ?>
+

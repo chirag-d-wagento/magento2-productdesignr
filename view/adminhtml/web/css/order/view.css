@@ -1,0 +1,75 @@
+.dd-dessigner-no-data{
+    font-weight:bold;
+    text-align:center;
+    font-size:120%;
+    padding:20px;
+}
+
+.dd-dessigner-order-container{}
+.dd-dessigner-order{
+    margin-bottom:25px;
+}
+
+.dd-dessigner-order-product{
+    font-weight:bold;
+    text-align:center;
+    padding:0 0 10px;
+    font-size:110%;
+}
+.dd-dessigner-order-img{
+    max-width: 70%;
+    text-align: center;
+    display:inline-block;
+}
+
+.dd-dessigner-order-img img{
+    max-width:98%;
+    margin:1%;
+}
+
+.dd-print-button{}
+.dd-print-button button{
+    float:left;
+    margin-right:10px;
+}
+
+.dd-designer-order-details{
+    width: 29%;
+    text-align: center;
+    float:right;
+}
+.dd-designer-order-design-element{
+    width:100%;
+    margin-bottom:20px;
+    border-width: 1px;
+    border-style: solid;
+    -webkit-border-image: 
+        -webkit-gradient(linear, 0 0, 0 100%, from(black), to(rgba(0, 0, 0, 0))) 1 100%;
+    -webkit-border-image: 
+        -webkit-linear-gradient(black, rgba(0, 0, 0, 0)) 1 100%;
+    -moz-border-image:
+        -moz-linear-gradient(black, rgba(0, 0, 0, 0)) 1 100%;    
+    -o-border-image:
+        -o-linear-gradient(black, rgba(0, 0, 0, 0)) 1 100%;
+    border-image:
+        linear-gradient(to bottom, black, rgba(0, 0, 0, 0)) 1 100%;
+}
+.dd-designer-order-design-element-details{
+    text-align:left;
+    padding:10px;
+}
+.dd-designer-order-design-element-details ul{
+    list-style: none;
+}
+.dd-designer-order-design-element-details-image{
+    text-align:center;
+}
+.dd-designer-order-design-element-details-image img{
+    max-width:100%;
+}
+.dd-designer-order-design-element-details-controls{
+    padding:10px;
+}
+.dd-designer-order-design-element-details-controls .dd-print{
+    float:right;
+}
