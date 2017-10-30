@@ -45,6 +45,16 @@ var DD_control = DD_Uibase.extend({
             'class': 'fa fa-angle-double-up dd-helper-popup-content-close'
         });
     },
+    
+    addPaintBase: function() {
+        this._paint = new DD_button({
+            'parent': this.buttons.get(),
+            //'text': this._('delete'),
+            'class': 'fa fa-paint-brush'
+        });
+
+        return this._paint;
+    },
 
     addButtonPanel: function () {
         this.buttons = new DD_panel({
@@ -142,7 +152,6 @@ var DD_control = DD_Uibase.extend({
     },
 
     colorSelector: function (parent, name, color, onUpdate, model) {
-        var self = this;
         var colorSelectorContainer = new DD_panel({
             'parent': parent,
             'class': 'dd-helper-color-selector-container'

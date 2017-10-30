@@ -3442,12 +3442,15 @@ ul.tabs li.current {
 }
 .dd-image-link {
   position: relative;
-}
-.dd-image-link.size-medium {
-  max-width: 50%;
   display: inline-block;
   padding: 5px;
   float: left;
+}
+.dd-image-link.size-medium {
+  width: 50%;
+}
+.dd-image-link.size-small {
+  width: 24%;
 }
 .dd-image-link img {
   max-width: 100%;
@@ -3481,6 +3484,9 @@ ul.tabs li.current {
 }
 .dd-helper-popup .dd-helper-popup-buttons button {
   background: transparent;
+}
+.dd-helper-popup .dd-helper-popup-buttons .dd-helper-color-selector-container {
+  display: inline;
 }
 .dd-helper-popup .dd-helper-popup-content-close {
   right: 7px;
@@ -3772,6 +3778,39 @@ body:not(._keyfocus) .dd-designer-maincontrols button.fa-spin:focus {
 }
 .dz-success-mark svg path {
   fill: green;
+}
+.dd-window-loading {
+  font-weight: bold;
+  text-align: center;
+}
+.dd-designer-category {
+  padding: 13px 0;
+  border-bottom: 1px solid silver;
+}
+.dd-designer-category a {
+  color: #333;
+  cursor: pointer;
+}
+.dd-designer-category a .fa {
+  margin-right: 5px;
+}
+.dd-designer-category:hover a {
+  color: #000;
+}
+.dd-clear-category {
+  font-size: 120%;
+  color: #333;
+  cursor: pointer;
+  display: block;
+  width: 100%;
+  padding: 5px;
+  text-align: center;
+}
+.dd-clear-category .fa {
+  margin-right: 5px;
+}
+.dd-clear-category:hover {
+  color: #000;
 }
 .clearfix:after,
 .clearfix:before {

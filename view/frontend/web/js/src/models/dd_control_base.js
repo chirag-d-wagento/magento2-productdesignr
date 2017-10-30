@@ -120,11 +120,15 @@ var DD_Control_Base_Model = DD_ModelBase.extend({
         this.obj.options.fabricObject.remove();
     },
     
-    setFabricObjVal: function(val, propName) {
+    setFabricObjVal: function(propName, val) {
         var fabricObject = this.obj.options.fabricObject;
         var canvas = this._l().getHoverCanvas();
-        fabricObject.set(val, propName);
-        
+        if(propName === 'fill'){
+            fabricObject.setFill(val ? val : 'transparent');
+            
+        }else{
+            fabricObject.set(propName, val);
+        }
         canvas.renderAll();
         canvas.trigger('object:modified', {target: fabricObject});
     },

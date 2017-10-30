@@ -97,10 +97,12 @@
                     configuredMediaProducts[media_id].splice(conf.index, 1);
                     return;
                 }
-                if (fabricObj.type === 'image' || fabricObj.type === 'text') {
-                    if (typeof (configuredMediaProducts[media_id]) == 'undefined') {
+                console.log('fabricObj.type ' + fabricObj.type);
+                if (fabricObj.type === 'image' || fabricObj.type === 'text' || fabricObj.isSvg) {
+                    if (typeof (configuredMediaProducts[media_id]) === 'undefined') {
                         configuredMediaProducts[media_id] = [];
                     }
+                    console.log('fabricObj.isSvg  ' + fabricObj.isSvg );
                     configuredMediaProducts[media_id][conf.index] = fabricObj;
                 }
             }
@@ -262,7 +264,8 @@
                     'settings': {
                         'listFonts': <?php echo json_encode($this->getFonts()); ?>,
                         'urlUploadImages': '<?php echo $this->getUploadFileUrl(); ?>',
-                        'myFilesPath': '<?php echo $this->getMyFilesUrl() ?>'
+                        'myFilesPath': '<?php echo $this->getMyFilesUrl() ?>',
+                        'libraryPath': '<?php echo $this->getLibraryUrl() ?>'
                     }
 
                 });

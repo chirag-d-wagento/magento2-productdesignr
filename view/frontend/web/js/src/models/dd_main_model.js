@@ -22,7 +22,7 @@ var DD_Main_Model = DD_ModelBase.extend({
             return;
         }
         this.initLayers();
-        
+
     },
 
     registerEvents: function () {
@@ -44,10 +44,10 @@ var DD_Main_Model = DD_ModelBase.extend({
         });
         var width = this.obj.options.width;
         var height = this.obj.options.height;
-        
-        console.log( this.obj.options.width );
-        console.log( this.obj.options.height );
-        
+
+        console.log(this.obj.options.width);
+        console.log(this.obj.options.height);
+
         bgCanvas.attr({
             'width': width,
             'height': height
@@ -82,7 +82,7 @@ var DD_Main_Model = DD_ModelBase.extend({
         $(window).on('resize', function () {
             self.resize(width, height);
         });
-        
+
         $('.dd-designer-loading').hide();
         return;
     },
@@ -155,6 +155,7 @@ var DD_Main_Model = DD_ModelBase.extend({
             mask.save();
         }
         if (options.conf) {
+            var self = this;
             var last = options.conf.length;
             $(options.conf).each(function (i, obj) {
                 var notSelect = (last - 1) == i ? false : true;
@@ -163,6 +164,9 @@ var DD_Main_Model = DD_ModelBase.extend({
                 }
                 if (obj.type === 'text') {
                     new DD_Layer_Text(null, obj, notSelect);
+                }
+                if (obj.isSvg === true) {
+                    new DD_Layer_Svg(obj);
                 }
             });
         }
@@ -177,6 +181,10 @@ var DD_Main_Model = DD_ModelBase.extend({
         }
         if (fabricObj.controlModel) {
             newObject.controlModel = fabricObj.controlModel;
+        }
+        if (fabricObj.isSvg) {
+            newObject.svgString = fabricObj.toSVG();
+            newObject.isSvg = true;
         }
 
         if (this.obj.options.onUpdate) {
@@ -261,42 +269,52 @@ var DD_Main_Model = DD_ModelBase.extend({
     getJsonImg: function () {
         return this._mergeCanvases(true);
     },
-    
-    unselectAll: function() {
+
+    unselectAll: function () {
         var _hoverCanvas = this.layersObj.getHoverCanvas();
-        if(_hoverCanvas) {
+        if (_hoverCanvas) {
             _hoverCanvas.discardActiveObject().renderAll();
         }
     },
 
+    _getSvgLayer: function (obj) {
+        var output = $('<canvas />')
+                .attr({
+                    'width': obj.width,
+                    'height': obj.height
+                })
+                .get(0);
+
+        var octx = output.getContext('2d');
+
+    },
+
     _mergeCanvases: function (json) {
-        
+
         var _bgCanvas = this.layersObj.getBgCanvas();
         var _hoverCanvas = this.layersObj.getHoverCanvas()
         var bgCanvas = $('#' + this.idBgCanvas).get(0);
         var hoverCanvas = $('#' + this.idCanvasHover).get(0);
-        
-        var sourceBgWidth  = _bgCanvas.lowerCanvasEl.width;
+
+        var sourceBgWidth = _bgCanvas.lowerCanvasEl.width;
         var sourceBgHeight = _bgCanvas.lowerCanvasEl.height;
-        var sourceHoverWidth  = _hoverCanvas.lowerCanvasEl.width;
+        var sourceHoverWidth = _hoverCanvas.lowerCanvasEl.width;
         var sourceHoverHeight = _hoverCanvas.lowerCanvasEl.height;
-        var _id = this.createUUID();
         var output = $('<canvas />')
                 .attr({
                     'width': this._l().getWidth(),
-                    'height': this._l().getHeight(),
-                    'id' : _id
+                    'height': this._l().getHeight()
                 })
                 .get(0);
-                
+
         var octx = output.getContext('2d');
-        
+
         octx.drawImage(bgCanvas, 0, 0, sourceBgWidth, sourceBgHeight, 0, 0, output.width, output.height);
         octx.drawImage(hoverCanvas, 0, 0, sourceHoverWidth, sourceHoverHeight, 0, 0, output.width, output.height);
         if (!json) {
             return output.toDataURL('png');
         }
-        
+
         return []; //skip this for now!
     }
 });

@@ -760,6 +760,16 @@ var DD_control = DD_Uibase.extend({
             'class': 'fa fa-angle-double-up dd-helper-popup-content-close'
         });
     },
+    
+    addPaintBase: function() {
+        this._paint = new DD_button({
+            'parent': this.buttons.get(),
+            //'text': this._('delete'),
+            'class': 'fa fa-paint-brush'
+        });
+
+        return this._paint;
+    },
 
     addButtonPanel: function () {
         this.buttons = new DD_panel({
@@ -857,7 +867,6 @@ var DD_control = DD_Uibase.extend({
     },
 
     colorSelector: function (parent, name, color, onUpdate, model) {
-        var self = this;
         var colorSelectorContainer = new DD_panel({
             'parent': parent,
             'class': 'dd-helper-color-selector-container'
@@ -1029,12 +1038,88 @@ var DD_Tabs = DD_Uibase.extend({
 });
 
 var DD_AddFromLibrary_Model = DD_ModelBase.extend({
+
+    currentCategory: null,
+
     getWindowTitle: function () {
         return this._('add_from_library');
     },
 
     setWindowContent: function (parent) {
-        
+        this.loadLibrary(parent);
+    },
+
+    addOnCategoryEvent: function (categoryLink, parent, name) {
+        var self = this;
+        categoryLink.on('click', function () {
+            self.currentCategory = name;
+            self.loadLibrary(parent);
+        });
+    },
+
+    addClearLink: function (parent, name) {
+        var fa = $('<span />').addClass('fa fa-window-close');
+        var link = $('<a />').addClass('dd-clear-category')
+                .append(fa)
+                .append(name)
+        parent.append(link);
+        this.addClearLinkEvent(link, parent);
+    },
+
+    addClearLinkEvent: function (link, parent) {
+        var self = this;
+        link.on('click', function () {
+            self.currentCategory = null;
+            self.loadLibrary(parent);
+        });
+    },
+
+    loadLibrary: function (parent) {
+        var self = this;
+        parent.empty();
+        parent.addClass('dd-window-loading');
+        parent.html(this._('loading') + '...');
+
+        $.ajax({
+            url: this._s('libraryPath'),
+            type: 'json',
+            method: 'post',
+            data: {
+                'category': self.currentCategory
+            }
+        })
+                .done(function (response) {
+                    parent.removeClass('dd-window-loading');
+                    parent.empty();
+                    if (response.error) {
+                        alert(response.errMessage);
+                        return;
+                    }
+                    if (self.currentCategory) {
+                        self.addClearLink(parent, self.currentCategory);
+                    }
+                    $.each(response.data, function (i, element) {
+                        if (element.directory) {
+                            new DD_Category({
+                                'parent': parent,
+                                'data': element,
+                                'model': self
+                            });
+                        }
+                        if (element.file) {
+                            new DD_ImageLinkAdd({
+                                'parent': parent,
+                                'src': element.src,
+                                'width': element.width,
+                                'height': element.height,
+                                'class': 'size-small'
+                            });
+                        }
+                    });
+
+                });
+
+
     }
 });
 
@@ -1142,7 +1227,6 @@ var DD_AddPhoto_Model = DD_ModelBase.extend({
                     content.html('');
 
                     $.each(data, function (a, img) {
-                        console.log(img);
                         new DD_ImageLinkAdd({
                             'parent': content,
                             'src': img.src,
@@ -1335,11 +1419,15 @@ var DD_Control_Base_Model = DD_ModelBase.extend({
         this.obj.options.fabricObject.remove();
     },
     
-    setFabricObjVal: function(val, propName) {
+    setFabricObjVal: function(propName, val) {
         var fabricObject = this.obj.options.fabricObject;
         var canvas = this._l().getHoverCanvas();
-        fabricObject.set(val, propName);
-        
+        if(propName === 'fill'){
+            fabricObject.setFill(val ? val : 'transparent');
+            
+        }else{
+            fabricObject.set(propName, val);
+        }
         canvas.renderAll();
         canvas.trigger('object:modified', {target: fabricObject});
     },
@@ -1405,7 +1493,7 @@ var DD_Main_Model = DD_ModelBase.extend({
             return;
         }
         this.initLayers();
-        
+
     },
 
     registerEvents: function () {
@@ -1427,10 +1515,10 @@ var DD_Main_Model = DD_ModelBase.extend({
         });
         var width = this.obj.options.width;
         var height = this.obj.options.height;
-        
-        console.log( this.obj.options.width );
-        console.log( this.obj.options.height );
-        
+
+        console.log(this.obj.options.width);
+        console.log(this.obj.options.height);
+
         bgCanvas.attr({
             'width': width,
             'height': height
@@ -1465,7 +1553,7 @@ var DD_Main_Model = DD_ModelBase.extend({
         $(window).on('resize', function () {
             self.resize(width, height);
         });
-        
+
         $('.dd-designer-loading').hide();
         return;
     },
@@ -1538,6 +1626,7 @@ var DD_Main_Model = DD_ModelBase.extend({
             mask.save();
         }
         if (options.conf) {
+            var self = this;
             var last = options.conf.length;
             $(options.conf).each(function (i, obj) {
                 var notSelect = (last - 1) == i ? false : true;
@@ -1546,6 +1635,9 @@ var DD_Main_Model = DD_ModelBase.extend({
                 }
                 if (obj.type === 'text') {
                     new DD_Layer_Text(null, obj, notSelect);
+                }
+                if (obj.isSvg === true) {
+                    new DD_Layer_Svg(obj);
                 }
             });
         }
@@ -1560,6 +1652,10 @@ var DD_Main_Model = DD_ModelBase.extend({
         }
         if (fabricObj.controlModel) {
             newObject.controlModel = fabricObj.controlModel;
+        }
+        if (fabricObj.isSvg) {
+            newObject.svgString = fabricObj.toSVG();
+            newObject.isSvg = true;
         }
 
         if (this.obj.options.onUpdate) {
@@ -1644,42 +1740,52 @@ var DD_Main_Model = DD_ModelBase.extend({
     getJsonImg: function () {
         return this._mergeCanvases(true);
     },
-    
-    unselectAll: function() {
+
+    unselectAll: function () {
         var _hoverCanvas = this.layersObj.getHoverCanvas();
-        if(_hoverCanvas) {
+        if (_hoverCanvas) {
             _hoverCanvas.discardActiveObject().renderAll();
         }
     },
 
+    _getSvgLayer: function (obj) {
+        var output = $('<canvas />')
+                .attr({
+                    'width': obj.width,
+                    'height': obj.height
+                })
+                .get(0);
+
+        var octx = output.getContext('2d');
+
+    },
+
     _mergeCanvases: function (json) {
-        
+
         var _bgCanvas = this.layersObj.getBgCanvas();
         var _hoverCanvas = this.layersObj.getHoverCanvas()
         var bgCanvas = $('#' + this.idBgCanvas).get(0);
         var hoverCanvas = $('#' + this.idCanvasHover).get(0);
-        
-        var sourceBgWidth  = _bgCanvas.lowerCanvasEl.width;
+
+        var sourceBgWidth = _bgCanvas.lowerCanvasEl.width;
         var sourceBgHeight = _bgCanvas.lowerCanvasEl.height;
-        var sourceHoverWidth  = _hoverCanvas.lowerCanvasEl.width;
+        var sourceHoverWidth = _hoverCanvas.lowerCanvasEl.width;
         var sourceHoverHeight = _hoverCanvas.lowerCanvasEl.height;
-        var _id = this.createUUID();
         var output = $('<canvas />')
                 .attr({
                     'width': this._l().getWidth(),
-                    'height': this._l().getHeight(),
-                    'id' : _id
+                    'height': this._l().getHeight()
                 })
                 .get(0);
-                
+
         var octx = output.getContext('2d');
-        
+
         octx.drawImage(bgCanvas, 0, 0, sourceBgWidth, sourceBgHeight, 0, 0, output.width, output.height);
         octx.drawImage(hoverCanvas, 0, 0, sourceHoverWidth, sourceHoverHeight, 0, 0, output.width, output.height);
         if (!json) {
             return output.toDataURL('png');
         }
-        
+
         return []; //skip this for now!
     }
 });
@@ -1694,6 +1800,7 @@ var DD_control_image = DD_Control_Base_Model.extend({
         this.obj.addSizeBase();
         
         this.baseEvents();
+        this.addSvgControls();
     },
     
     addDelete: function() {
@@ -1702,6 +1809,21 @@ var DD_control_image = DD_Control_Base_Model.extend({
         _delete.get().on('click', function() {
             self.removeBase();
         });
+    },
+    
+    addSvgControls: function() {
+        var fabricObject = this.obj.options.fabricObject;
+        var content = this.obj.content.get();
+        var color = fabricObject.fill;
+        
+        if(fabricObject.isSvg === true) {
+            this.obj.colorSelector(this.obj.buttons.get(), '', color, this.setColor, this);
+        }
+    },
+
+    setColor: function (color, model) {
+        var setColor = color ? color.toHexString() : null;
+        model.setFabricObjVal("fill", setColor);
     }
 });
 
@@ -1917,7 +2039,7 @@ var DD_Layer_Base = DD_object.extend({
         }
         var newWidth = (width/100)*percentFromParent;
         if(sizes && sizes.width < newWidth) {
-            return sizes;
+            //return sizes;
         }
         if(sizes){
             var prop = sizes.height/sizes.width;
@@ -1965,7 +2087,9 @@ var DD_Layer_Img = DD_Layer_Base.extend({
             this.parent = options.parent;
         }
         var src = fullCnfg ? fullCnfg.src : options.src;
-        fabric.Image.fromURL(src, function (iImg) {
+        var ext = src.substr(src.lastIndexOf('.') + 1);
+
+        function ___callBack(iImg, isSvg) {
             var parent = self.getParent()
             if (!fullCnfg) {
                 var conf = {
@@ -1973,7 +2097,8 @@ var DD_Layer_Img = DD_Layer_Base.extend({
                     hasBorders: options.noborders ? false : true,
                     selectable: options.noselectable ? false : true,
                     controlModel: 'DD_control_image',
-                    centeredScaling: true
+                    centeredScaling: true,
+                    isSvg: isSvg
                 }
                 var mask = self._l().getMask();
                 var percentWidth = !mask ? self._s('defaultLayerMaskWidth') : self._s('percentSizeFromMask');
@@ -1991,11 +2116,27 @@ var DD_Layer_Img = DD_Layer_Base.extend({
             }
 
             conf.notSelect = notSelect;
-
-            iImg
-                    .set(conf);
+            if (!isSvg) {
+                iImg
+                        .set(conf);
+            } else {
+                var _opt =  {
+                    width:options.width, 
+                    height:options.height, 
+                    scaleY: conf.height / options.height, 
+                    scaleX: conf.width / options.width
+                };
+                
+                var object = fabric.util.groupSVGElements(iImg);
+                iImg = new fabric.Group(object.getObjects(), _opt);
+                
+                delete conf.width;
+                delete conf.height;
+                
+                iImg.set(conf);    
+            }
             parent.add(iImg);
-
+            
             if (!options.noChangeSize) {
                 self.setObjAngle(iImg);
             }
@@ -2008,9 +2149,17 @@ var DD_Layer_Img = DD_Layer_Base.extend({
 
             self.object = iImg;
             self.onCreated();
-            //self.setDeselectEvent();
 
-        }, {crossOrigin: 'anonymous'});
+        }
+        if (ext !== 'svg') {
+            fabric.Image.fromURL(src, function (iImg) {
+                ___callBack(iImg);
+            }, {crossOrigin: 'anonymous'});
+        } else {
+            fabric.loadSVGFromURL(src, function (svgobject) {
+                ___callBack(svgobject, true);
+            });
+        }
     }
 });
 
@@ -2112,6 +2261,36 @@ var DD_Layer_Mask = DD_Layer_Base.extend({
         canvas.setBackgroundColor('transparent');
         canvas.renderAll();
     }
+});
+
+var DD_Layer_Svg = DD_Layer_Base.extend({
+    
+    init: function (conf) {
+        var parent = this.getParent();
+        var self = this;
+        var svgString = conf.svgString;
+        var reg = /translate\(.+?\)/g;
+        svgString = svgString.replace(reg, "");
+        var reg2 = /scale\(.+?\)/g;
+        svgString = svgString.replace(reg2, "");
+        var reg3 = /rotate\(.+?\)/g;
+        svgString = svgString.replace(reg3, "");
+        
+        fabric.loadSVGFromString(svgString, function(svg, opt) {
+            delete conf.paths;
+            delete opt.angle;
+            var object = fabric.util.groupSVGElements(svg);
+            var iImg = new fabric.Group(object.getObjects(), opt);
+            iImg.set(conf);
+            parent.add(iImg);
+            parent.calcOffset();
+            parent.renderAll();
+            self.object = iImg;
+            self.onCreated();
+        });
+        
+    }
+    
 });
 
 var DD_Layer_Text = DD_Layer_Base.extend({
@@ -2222,6 +2401,34 @@ var DD_AddtextButton = DD_button.extend({
     }
 })
 
+
+var DD_Category = DD_panel.extend({
+    
+    class_name: 'dd-designer-category',
+    
+    init: function (options) {
+        this.parent = options.parent;
+        this.data = options.data;
+        
+        this._model = options.model;
+        this._super({
+            'class': this.class_name,
+            'parent': this.parent
+        });
+        
+        this.add();
+    },
+    
+    _addElements: function() {
+        this.self.append($('<a />')
+                .append($('<span />').addClass('fa-folder-open fa'))
+                .append(this.data.name));
+        
+        this._model.addOnCategoryEvent(this.self, this.parent, this.data.name);
+        
+    },
+    
+});
 
 var DD_closeButton = DD_button.extend({
     object_id: 'dd-main-save-button',
@@ -2620,6 +2827,7 @@ $.fn.dd_productdesigner = function (options) {
         'defaultLayerMaskWidth': 40,
         'urlUploadImages': '',
         'myFilesPath': '/myfiles.php',
+        'libraryPath': '',
         'loadGoogleFonts': true,
         'percentSizeImage': 20 //percentage size from canvas width
     };
@@ -2665,7 +2873,8 @@ $.fn.dd_productdesigner = function (options) {
             'resize': 'Resize',
             'text_settings': 'Text Settings',
             'edit': 'Edit',
-            'close': 'Close'
+            'close': 'Close',
+            'color': 'Color'
         },
         //'settings': settings,
         'onSave': null,

@@ -102,7 +102,6 @@ var DD_AddPhoto_Model = DD_ModelBase.extend({
                     content.html('');
 
                     $.each(data, function (a, img) {
-                        console.log(img);
                         new DD_ImageLinkAdd({
                             'parent': content,
                             'src': img.src,

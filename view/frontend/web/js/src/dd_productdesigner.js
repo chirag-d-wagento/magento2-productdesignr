@@ -16,6 +16,7 @@ $.fn.dd_productdesigner = function (options) {
         'defaultLayerMaskWidth': 40,
         'urlUploadImages': '',
         'myFilesPath': '/myfiles.php',
+        'libraryPath': '',
         'loadGoogleFonts': true,
         'percentSizeImage': 20 //percentage size from canvas width
     };
@@ -61,7 +62,8 @@ $.fn.dd_productdesigner = function (options) {
             'resize': 'Resize',
             'text_settings': 'Text Settings',
             'edit': 'Edit',
-            'close': 'Close'
+            'close': 'Close',
+            'color': 'Color'
         },
         //'settings': settings,
         'onSave': null,

@@ -80,7 +80,7 @@ var DD_Layer_Base = DD_object.extend({
         }
         var newWidth = (width/100)*percentFromParent;
         if(sizes && sizes.width < newWidth) {
-            return sizes;
+            //return sizes;
         }
         if(sizes){
             var prop = sizes.height/sizes.width;

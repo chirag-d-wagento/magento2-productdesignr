@@ -58,11 +58,23 @@ if (!$designs->getSize()):
                                         <img src="<?php echo $_designElement->src ?>" />
                                     </div>
                                     <div class="dd-designer-order-design-element-details-controls">
-                                        <a href="javascript:void(0)" class="dd-download"><?php echo __('Download')?></a>
-                                        <a href="javascript:void(0)" class="dd-print"><?php echo __('Print')?></a>
+                                        <a href="javascript:void(0)" class="dd-download"><?php echo __('Download') ?></a>
+                                        <a href="javascript:void(0)" class="dd-print"><?php echo __('Print') ?></a>
                                     </div>
                                 </div>
 
+                            <?php elseif ($_designElement->isSvg == true): ?>
+                                <h4><?php echo __('SVG Image'); ?></h4>
+                                <div class="dd-designer-order-design-element-details">
+                                    <div class="dd-designer-order-design-element-details-image">
+                                        <?php echo $block->prepreaSVGOutput($_designElement->svgString, $_designElement) ?> 
+                                    </div>
+
+                                    <div class="dd-designer-order-design-element-details-controls">
+                                        <a href="javascript:void(0)" class="dd-download"><?php echo __('Download') ?></a>
+                                        <a href="javascript:void(0)" class="dd-print"><?php echo __('Print') ?></a>
+                                    </div>
+                                </div>
                             <?php endif; ?>
                         </div>
 
@@ -85,11 +97,22 @@ if (!$designs->getSize()):
                 var img = $(this).parents('.dd-dessigner-order-img').find('img');
                 __downloadImageBlob(img.get(0));
             });
-            $('.dd-designer-order-design-element-details-controls .dd-download').on('click', function(){
+            $('.dd-designer-order-design-element-details-controls .dd-download').on('click', function () {
+                var svg = $(this).parents('.dd-designer-order-design-element-details').find('svg');
+                if (svg.get(0)) {
+                    __downloadSvg(svg.get(0).outerHTML);
+                    return;
+                }
+
                 var img = $(this).parents('.dd-designer-order-design-element-details').find('img');
                 __downloadImgBySrc(img.attr('src'));
             });
-            $('.dd-designer-order-design-element-details-controls .dd-print').on('click', function(){
+            $('.dd-designer-order-design-element-details-controls .dd-print').on('click', function () {
+                var svg = $(this).parents('.dd-designer-order-design-element-details').find('svg');
+                if (svg.get(0)) {
+                    __printSvg(svg.get(0).outerHTML);
+                    return;
+                }
                 var img = $(this).parents('.dd-designer-order-design-element-details').find('img');
                 __imgPrint(img.attr('src'));
             });
@@ -117,6 +140,34 @@ if (!$designs->getSize()):
                 a[0].click();
                 a.remove();
             }
+
+            function __downloadSvg(source) {
+                var a = $('<a>')
+                        .attr('href-lang', 'image/svg+xml')
+                        .attr('href', 'data:image/svg+xml;utf8,' + unescape(source))
+                        .attr("download", "img.svg")
+                        .text('Download')
+                $('body').append(a);
+                a[0].click();
+                a.remove();
+            }
+
+            function __printSvg(source) {
+                var Pagelink = "about:blank";
+                var pwa = window.open(Pagelink, "_new");
+                pwa.document.open();
+                pwa.document.write(__printSvgSource(source));
+                pwa.document.close();
+            }
+
+            function __printSvgSource(source) {
+                return "<html><head><script>function step1(){\n" +
+                        "setTimeout('step2()', 10);}\n" +
+                        "function step2(){window.print();window.close()}\n" +
+                        "</scri" + "pt></head><body style='padding:50px;' onload='step1()'><div>&nbsp;</div>\n"
+                        + source + "<div>&nbsp;</div></body></html>";
+            }
+
             function __imgSourcetoPrint(source) {
                 return "<html><head><script>function step1(){\n" +
                         "setTimeout('step2()', 10);}\n" +
