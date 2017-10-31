@@ -6,11 +6,7 @@ var DD_Layer_Base = DD_object.extend({
 
     positionToBase: function (options, setTo) {
         var parent = this.getParent();
-
         switch (setTo) {
-            case 'top_left':
-
-                break;
             default:
                 options = this.positionCenterCenter(parent, options);  
                 break;
@@ -64,12 +60,10 @@ var DD_Layer_Base = DD_object.extend({
     setSize: function(options, sizes, percentFromParent) {
         options.width  = this.calcObjectSize(sizes, percentFromParent).width;
         options.height = this.calcObjectSize(sizes, percentFromParent).height;
-        
         return options;
     },
 
     calcObjectSize: function (sizes, percentFromParent) {
-        var parent = this.getParent();
         if(this._l().getMask()) {
             var mask = this._l().getMask();
             var width  = mask.get('width') * mask.get('scaleX');
@@ -101,7 +95,7 @@ var DD_Layer_Base = DD_object.extend({
     
     setDeselectEvent: function() {
         this.object.on('deselected', function(e) {
-            if(typeof(this.controlModelCreated)!='undefined') {
+            if(typeof(this.controlModelCreated)!=='undefined') {
                 this.controlModelCreated.hide();
             }
         });
@@ -114,8 +108,13 @@ var DD_Layer_Base = DD_object.extend({
         }
     },
     
+    removeControlsMiddle: function(obj) {
+        obj['setControlVisible']('mb', false);
+        obj['setControlVisible']('mt', false);     
+    },
+    
     onCreated: function() {
         this.setDeselectEvent();
+        //this.removeControlsMiddle();
     }
 });
-

@@ -18,6 +18,7 @@ var DD_Layer_Svg = DD_Layer_Base.extend({
             var iImg = new fabric.Group(object.getObjects(), opt);
             iImg.set(conf);
             parent.add(iImg);
+            self.removeControlsMiddle(iImg);
             parent.calcOffset();
             parent.renderAll();
             self.object = iImg;

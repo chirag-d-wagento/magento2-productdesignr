@@ -55,6 +55,7 @@ var DD_Layer_Img = DD_Layer_Base.extend({
                 iImg.set(conf);    
             }
             parent.add(iImg);
+            self.removeControlsMiddle(iImg);
             
             if (!options.noChangeSize) {
                 self.setObjAngle(iImg);
