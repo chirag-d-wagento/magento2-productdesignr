@@ -246,7 +246,7 @@ var DD_Main_Model = DD_ModelBase.extend({
         this.obj.self.parent().empty();
         this.obj.self.parent().remove();
         this._w().close();
-
+        this._evnt().destroyJBoxes();
         delete this;
     },
 

@@ -75,6 +75,8 @@ var DD_Event = DD_object.extend({
     listEvents: {},
     listEventsBase: {}, //delete all callbacks after run
     listEventsCallbacks: {},
+    jBoxes: [],
+    
     init: function() {
         this._super(this.id);
         this.setGlobal();
@@ -154,6 +156,15 @@ var DD_Event = DD_object.extend({
         $.each(this.listEvents, function(eventName, obj) {
             self.unregister(eventName);
         });
+    },
+    addJBox: function(box) {
+        this.jBoxes.push(box);
+    },
+    
+    destroyJBoxes: function() {
+        $.each(this.jBoxes, function(i, obj) {
+            obj.destroy();
+        });
     }
 });
 
@@ -179,6 +190,7 @@ var DD_Translator = DD_object.extend({
 
 var DD_Settings = DD_object.extend({
     id: 'dd_settings',
+    jBoxes: [],
     init: function(settings) {
         this._super(this.id);
         this.settings = settings;
@@ -380,6 +392,8 @@ var DD_Uibase = DD_object.extend({
             position: position,
             outside: outside
         });
+        
+        this._evnt().addJBox(this.tooltipBox);
 
     },
 
@@ -556,9 +570,11 @@ var DD_ModelBase = DD_object.extend({
     }
 });
 
+/*
 var DD_History = DD_object.extend({
-    
+  
 });
+*/
 
 var DD_Layer = DD_object.extend({
     layers: [],
@@ -1718,7 +1734,7 @@ var DD_Main_Model = DD_ModelBase.extend({
         this.obj.self.parent().empty();
         this.obj.self.parent().remove();
         this._w().close();
-
+        this._evnt().destroyJBoxes();
         delete this;
     },
 

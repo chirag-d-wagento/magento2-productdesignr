@@ -69,6 +69,8 @@ var DD_Uibase = DD_object.extend({
             position: position,
             outside: outside
         });
+        
+        this._evnt().addJBox(this.tooltipBox);
 
     },
 
