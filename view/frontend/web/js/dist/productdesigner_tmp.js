@@ -1155,8 +1155,9 @@ var DD_AddPhoto_Model = DD_ModelBase.extend({
         }
         this.content = content;
         var self = this;
-        content.html(this._('drop_files_or_upload'));
-        content.dropzone({
+        content.html('<form class="dropzone">' +                
+        '</form>');
+        content.find('form').dropzone({
             url: self._s('urlUploadImages') /* + '?form_key=' + window.FORM_KEY */,
             maxFilesize: 2, // MB
             acceptedFiles: '.png, .jpeg, .jpg, .gif',
