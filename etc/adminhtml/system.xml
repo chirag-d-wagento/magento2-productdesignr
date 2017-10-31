@@ -6,8 +6,8 @@
         <tab id="develo_extensions" translate="label" sortOrder="500">
             <label>Develo Extensions</label>
         </tab>
-         <section id="develo_productdesigner" translate="label" type="text" sortOrder="10" showInDefault="1" showInWebsite="1"
-                 showInStore="1">
+        <section id="develo_productdesigner" translate="label" type="text" sortOrder="10" showInDefault="1" showInWebsite="1"
+                  showInStore="1">
             <label>Product Designer</label>
             <tab>develo_extensions</tab>
             <resource>Develo_Productdesigner::configuration</resource>
@@ -44,55 +44,70 @@
                 </field>
                 
                 <field id="attributes_sets" 
-                    translate="label" 
-                    type="multiselect" 
-                    sortOrder="20" 
-                    showInDefault="1" 
-                    showInWebsite="1" 
-                    showInStore="1">
+                       translate="label" 
+                       type="multiselect" 
+                       sortOrder="20" 
+                       showInDefault="1" 
+                       showInWebsite="1" 
+                       showInStore="1">
                     <label>Enable for Attribute sets</label>
                     <comment>Specify existing attribute sets for enable product designer</comment>
                     <source_model>Develo\Designer\Model\Config\Source\ProductAttributesSet</source_model>
                 </field>
                 
-                <!-- field id="layer_position" 
-                    translate="label" 
-                    type="select" 
-                    sortOrder="30" 
-                    showInDefault="1" 
-                    showInWebsite="1" 
-                    showInStore="1">
-                    <label>Default Layer Position</label>
-                    <comment>Specify layer position on product image</comment>
-                    <source_model>Develo\Designer\Model\Config\Source\LayerPosition</source_model>
-                </field -->
-                
-                
                 <field id="layer_width" 
-                    translate="label" 
-                    type="text" 
-                    sortOrder="40" 
-                    showInDefault="1" 
-                    showInWebsite="1" 
-                    showInStore="1">
+                       translate="label" 
+                       type="text" 
+                       sortOrder="40" 
+                       showInDefault="1" 
+                       showInWebsite="1" 
+                       showInStore="1">
                     <label>Default Layer Width</label>
                     <comment>Percentage from main image</comment>
                 </field>
                 
                 <field id="google_fonts" 
-                    translate="label" 
-                    type="textarea" 
-                    sortOrder="50" 
-                    showInDefault="1" 
-                    showInWebsite="1" 
-                    showInStore="1">
+                       translate="label" 
+                       type="textarea" 
+                       sortOrder="50" 
+                       showInDefault="1" 
+                       showInWebsite="1" 
+                       showInStore="1">
                     <label>Google Fonts to Load</label>
                     <comment>visit https://fonts.google.com/</comment>
                 </field>
                 
                 
             </group>
-         </section>
+            
+            <group id="prices" translate="label" type="text" sortOrder="30" showInDefault="1" showInWebsite="0"
+                   showInStore="1">
+                <label>Prices</label>
+            
+                
+                <field id="layer_image_price" 
+                       translate="label" 
+                       type="text" 
+                       sortOrder="40" 
+                       showInDefault="1" 
+                       showInWebsite="1" 
+                       showInStore="1">
+                    <label>Layer Image Price</label>
+                    
+                </field>
+                
+                <field id="layer_text_price" 
+                       translate="label" 
+                       type="text" 
+                       sortOrder="50" 
+                       showInDefault="1" 
+                       showInWebsite="1" 
+                       showInStore="1">
+                    <label>Layer Text Price</label>
+                    
+                </field>
+            </group>
+        </section>
        
     </system>
     

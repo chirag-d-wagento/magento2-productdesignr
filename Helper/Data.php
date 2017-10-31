@@ -12,6 +12,9 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper {
     /* const DESIGNER_FRONT_PRODUCT_LAYER_POSITION = 'develo_productdesigner/frontend/layer_position'; */
     
     const DESIGNER_FRONT_PRODUCT_GOOGLE_FONTS = 'develo_productdesigner/frontend/google_fonts';
+    
+    const DESIGNER_PRICE_LAYER_IMAGE = 'develo_productdesigner/prices/layer_image_price';
+    const DESIGNER_PRICE_LAYER_TEXT  = 'develo_productdesigner/prices/layer_text_price';
 
     public function __construct(\Magento\Framework\App\Helper\Context $context) {
         parent::__construct($context);
@@ -37,6 +40,13 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper {
         return $this->scopeConfig->getValue(self::DESIGNER_FRONT_PRODUCT_GOOGLE_FONTS, \Magento\Store\Model\ScopeInterface::SCOPE_STORE);
     }
     
+    public function getLayerImgPrice() {
+        return $this->scopeConfig->getValue(self::DESIGNER_PRICE_LAYER_IMAGE, \Magento\Store\Model\ScopeInterface::SCOPE_STORE);
+    }
+    
+    public function getLayerTextPrice() {
+        return $this->scopeConfig->getValue(self::DESIGNER_PRICE_LAYER_TEXT, \Magento\Store\Model\ScopeInterface::SCOPE_STORE);
+    }
     
     public function getProductsAttributesSetsArray() {
         $attributeSets = $this->getProductsAttributesSets();
