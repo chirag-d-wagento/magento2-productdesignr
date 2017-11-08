@@ -61,6 +61,7 @@ var DD_Window = DD_object.extend({
             repositionOnOpen: false,
             repositionOnContent: true,
             target: $('.canvas-container'),
+            
             onOpen: function () {
                 self._evnt().doCall('window-showed');
             },

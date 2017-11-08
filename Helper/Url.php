@@ -20,7 +20,7 @@ class Url extends \Magento\Framework\App\Helper\AbstractHelper{
         $this->_storeManager = $storeManage;
     }
     
-    public function getProductSustomizeUrl($_product) {
+    public function getProductCustomizeUrl($_product) {
         $router = $this->_dataHelper->getDesignerFrontEndRoute();
         return $this->getBaseUrl() .
                     $router . 

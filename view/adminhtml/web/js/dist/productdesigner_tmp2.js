@@ -75,6 +75,8 @@ var DD_Event = DD_object.extend({
     listEvents: {},
     listEventsBase: {}, //delete all callbacks after run
     listEventsCallbacks: {},
+    jBoxes: [],
+    
     init: function() {
         this._super(this.id);
         this.setGlobal();
@@ -154,6 +156,15 @@ var DD_Event = DD_object.extend({
         $.each(this.listEvents, function(eventName, obj) {
             self.unregister(eventName);
         });
+    },
+    addJBox: function(box) {
+        this.jBoxes.push(box);
+    },
+    
+    destroyJBoxes: function() {
+        $.each(this.jBoxes, function(i, obj) {
+            obj.destroy();
+        });
     }
 });
 
@@ -179,6 +190,7 @@ var DD_Translator = DD_object.extend({
 
 var DD_Settings = DD_object.extend({
     id: 'dd_settings',
+    jBoxes: [],
     init: function(settings) {
         this._super(this.id);
         this.settings = settings;
@@ -249,6 +261,7 @@ var DD_Window = DD_object.extend({
             repositionOnOpen: false,
             repositionOnContent: true,
             target: $('.canvas-container'),
+            
             onOpen: function () {
                 self._evnt().doCall('window-showed');
             },
@@ -356,9 +369,32 @@ var DD_Uibase = DD_object.extend({
         if (this.options.windowOpener && model) {
             this.addWindowOpenEvent(this, model, this.modal, this.options);
         }
+        if (this.options.tooltip && this.options.tooltip_text && !Modernizr.touchevents) {
+            this.addTooltip();
+        }
         if (model) {
             return model;
         }
+    },
+
+    addTooltip: function () {
+        var position = this.options.tooltip_position ?
+                this.options.tooltip_position : {
+                    x: 'right',
+                    y: 'center'
+                };
+
+        var outside = this.options.tooltip_outside ?
+                this.options.tooltip_outside : 'x';
+
+        this.tooltipBox = $(this.self).jBox('Tooltip', {
+            content: this.options.tooltip_text,
+            position: position,
+            outside: outside
+        });
+        
+        this._evnt().addJBox(this.tooltipBox);
+
     },
 
     addWindowOpenEvent: function (me, model, modal, options) {
@@ -574,19 +610,18 @@ var DD_checkbox = DD_Uibase.extend({
         if (this.options.model) {
             this.model = this.options.model;
         }
-        this._super(this.options.id);
+        this._super();
         this.selfBase();
         this._add();
     },
 
     _addElements: function () {
-
         this._checkbox = $('<input />', {
-            id: this.createUUID(),
+            id: this.options.id ? this.options.id : this.createUUID(),
             class: this.mainClass + ' ' + (this.options.class ? this.options.class : ''),
             type: 'checkbox'
         });
-        if (this.checked) {
+        if (this.options.checked) {
             this._checkbox.attr({
                 'checked': true
             }).prop('checked');
@@ -1142,6 +1177,12 @@ var DD_Admin_ImagesSelected_Model = DD_ModelBase.extend({
         var newImgConf = imgConf.splice(layer.index, 1);
         this.updateImageConf(group_uid, media_id, 'conf', imgConf);
     },
+    
+    updateExtraConf: function(group_uid, media_id, key, value) {
+        var extraConf = this.getImgConf(group_uid, media_id, 'extra_conf');
+        extraConf[key] = value;
+        this.updateImageConf(group_uid, media_id, 'extra_conf', extraConf);
+    },
 
     updateMask: function (group_uid, media_id, fabricObj) {
         this.updateImageConf(group_uid, media_id, 'mask', fabricObj);
@@ -1151,10 +1192,18 @@ var DD_Admin_ImagesSelected_Model = DD_ModelBase.extend({
         this.updateImageConf(group_uid, media_id, 'mask', null);
     },
 
-    getImgConf: function (group_uid, media_id) {
+    getImgConf: function (group_uid, media_id, indexConf) {
         var groups = this.getGroups();
         var index = this.getImgIndex(group_uid, media_id);
         var img = groups[this.getGroupIndexByUid(group_uid)]['imgs'][index];
+        if(indexConf) {
+            if(!img[indexConf]) {
+                img[indexConf] = {};
+            }
+            
+            return img[indexConf];
+        }
+        
         if (!img['conf']) {
             img['conf'] = [];
         }
@@ -1374,6 +1423,10 @@ var DD_admin_group_image_model = DD_Admin_ImagesSelected_Model.extend({
     },
     
     onUpdate: function(fabricObj, group_uid, media_id, type) {
+        if(type === 'extra_conf') {
+            this.updateExtraConf(group_uid, media_id, fabricObj.key, fabricObj.value);
+            return;
+        }
         this.updateImgFabricConf(group_uid, media_id, fabricObj, type);
     },
 
@@ -1391,6 +1444,11 @@ var DD_admin_group_image_model = DD_Admin_ImagesSelected_Model.extend({
         var group_index = el.attr('data-group');
         var listFonts = this._s('listFonts');
         var myFilesPath = this._s('myFilesPath');
+        var defaultImgEnabled = this._s('defaultImgEnabled');
+        var defaultTextEnabled = this._s('defaultTextEnabled');
+        var defaultLibraryEnabled = this._s('defaultLibraryEnabled');
+        var defaultTextPrice = this._s('defaultTextPrice');
+        var defaultImgPrice = this._s('defaultImgPrice');
         
         el.on('click', function () {
             $('#dd_designer').html('');
@@ -1399,13 +1457,13 @@ var DD_admin_group_image_model = DD_Admin_ImagesSelected_Model.extend({
                 'src': options.src,
                 'width': options.sizes.width,
                 'height': options.sizes.height,
-
                 'sku': options.sku,
                 'product_id': options.product_id,
                 'media_id': options.media_id,
                 'group_index': group_index,
                 'mask': options.mask,
                 'conf': options.conf,
+                'extra_config': (options.extra_config ? options.extra_config : {}),
                 'settings': {
                     'urlUploadImages': urlUploadImages,
                     'percentSizeImage': percentSizeImage,
@@ -1415,7 +1473,13 @@ var DD_admin_group_image_model = DD_Admin_ImagesSelected_Model.extend({
                     'defaultLayerMaskWidth': defaultLayerMaskWidth,
                     'percentSizeFromMask': percentSizeFromMask,
                     'listFonts': listFonts,
-                    'myFilesPath': myFilesPath
+                    'myFilesPath': myFilesPath,
+                    
+                    'defaultImgEnabled': defaultImgEnabled,
+                    'defaultTextEnabled': defaultTextEnabled,
+                    'defaultLibraryEnabled': defaultLibraryEnabled,
+                    'defaultTextPrice': defaultTextPrice,
+                    'defaultImgPrice': defaultImgPrice
                 }
                 
             });

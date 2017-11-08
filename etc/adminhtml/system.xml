@@ -22,13 +22,13 @@
                         Enable "Product Designer" for frontend.
                     </comment>
                 </field>
-                <field id="product_designer_route" translate="label" type="text" sortOrder="20" showInDefault="1"
+                <!--field id="product_designer_route" translate="label" type="text" sortOrder="20" showInDefault="1"
                        showInWebsite="1" showInStore="1">
                     <label>Product Designer route</label>
                     <comment>
                         Default "develodesigner".
                     </comment>
-                </field>
+                </field -->
             </group>
             
             <group id="frontend" translate="label" type="text" sortOrder="20" showInDefault="1" showInWebsite="0"
@@ -75,6 +75,42 @@
                        showInStore="1">
                     <label>Google Fonts to Load</label>
                     <comment>visit https://fonts.google.com/</comment>
+                </field>
+                
+                <field id="enable_add_image" 
+                       translate="label comment" 
+                       type="select" 
+                       sortOrder="60" 
+                       showInDefault="1"
+                       showInWebsite="1" 
+                       showInStore="1">
+                    <label>Enable Add Image</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                    
+                </field>
+                
+                <field id="enable_add_text" 
+                       translate="label comment" 
+                       type="select" 
+                       sortOrder="70" 
+                       showInDefault="1"
+                       showInWebsite="1" 
+                       showInStore="1">
+                    <label>Enable Add Text</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                    
+                </field>
+                
+                <field id="enable_add_from_library" 
+                       translate="label comment" 
+                       type="select" 
+                       sortOrder="80" 
+                       showInDefault="1"
+                       showInWebsite="1" 
+                       showInStore="1">
+                    <label>Enable Add From Library</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                    
                 </field>
                 
                 

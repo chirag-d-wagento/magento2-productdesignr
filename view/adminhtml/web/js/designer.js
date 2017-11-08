@@ -44,7 +44,13 @@ define([
                     'defaultFont': 'Verdana,Geneva,sans-serif',
                     'defualtFontColor': '#ffffff',
                     'defaultFontSizePercent': 20,
-                    'defaultLayerMaskWidth': 70
+                    'defaultLayerMaskWidth': 70,
+                    
+                    'defaultImgEnabled': data.defaultImgEnabled,
+                    'defaultTextEnabled': data.defaultTextEnabled,
+                    'defaultLibraryEnabled': data.defaultLibraryEnabled,
+                    'defaultTextPrice': data.defaultTextPrice,
+                    'defaultImgPrice': data.defaultImgPrice
                     
                 }
             });

@@ -36,6 +36,8 @@ var DD_Layer_Text = DD_Layer_Base.extend({
         }else{
             text.setCoords();
         }
+        
+        this.removeControlsMiddle(text);
 
         parent.renderAll();
         if (!options.noselectable && !conf.notSelect) {

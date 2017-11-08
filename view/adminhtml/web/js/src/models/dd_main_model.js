@@ -141,6 +141,16 @@ var DD_Main_Model = DD_ModelBase.extend({
                 e.target.controlModelCreated.remove();
             }
         });
+        
+        hoverCanvas.on('object:extra_config', function (e) {
+            e.type = 'extra_conf';
+            self.obj.options.onUpdate.call(
+                    null,
+                    e,
+                    self.obj.options.group_index,
+                    self.obj.options.media_id,
+                    'extra_conf');
+        });
     },
 
     _addObjects: function (options) {
@@ -221,7 +231,6 @@ var DD_Main_Model = DD_ModelBase.extend({
     prepareFonts: function () {
         var listFonts = this._s('listFonts');
         var googleFonts = [];
-        console.log(listFonts);
         $.each(listFonts, function (i, font) {
             if (font.indexOf('"') != -1) { //custom named font
                 var fontArr = font.split(',');

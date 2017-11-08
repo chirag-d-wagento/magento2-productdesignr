@@ -6,19 +6,18 @@ var DD_checkbox = DD_Uibase.extend({
         if (this.options.model) {
             this.model = this.options.model;
         }
-        this._super(this.options.id);
+        this._super();
         this.selfBase();
         this._add();
     },
 
     _addElements: function () {
-
         this._checkbox = $('<input />', {
-            id: this.createUUID(),
+            id: this.options.id ? this.options.id : this.createUUID(),
             class: this.mainClass + ' ' + (this.options.class ? this.options.class : ''),
             type: 'checkbox'
         });
-        if (this.checked) {
+        if (this.options.checked) {
             this._checkbox.attr({
                 'checked': true
             }).prop('checked');

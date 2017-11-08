@@ -6,7 +6,9 @@ var DD_Layer_Img = DD_Layer_Base.extend({
             this.parent = options.parent;
         }
         var src = fullCnfg ? fullCnfg.src : options.src;
-        fabric.Image.fromURL(src, function (iImg) {
+        var ext = src.substr(src.lastIndexOf('.') + 1);
+
+        function ___callBack(iImg, isSvg) {
             var parent = self.getParent()
             if (!fullCnfg) {
                 var conf = {
@@ -14,7 +16,8 @@ var DD_Layer_Img = DD_Layer_Base.extend({
                     hasBorders: options.noborders ? false : true,
                     selectable: options.noselectable ? false : true,
                     controlModel: 'DD_control_image',
-                    centeredScaling: true
+                    centeredScaling: true,
+                    isSvg: isSvg
                 }
                 var mask = self._l().getMask();
                 var percentWidth = !mask ? self._s('defaultLayerMaskWidth') : self._s('percentSizeFromMask');
@@ -32,11 +35,28 @@ var DD_Layer_Img = DD_Layer_Base.extend({
             }
 
             conf.notSelect = notSelect;
-
-            iImg
-                    .set(conf);
+            if (!isSvg) {
+                iImg
+                        .set(conf);
+            } else {
+                var _opt =  {
+                    width:options.width, 
+                    height:options.height, 
+                    scaleY: conf.height / options.height, 
+                    scaleX: conf.width / options.width
+                };
+                
+                var object = fabric.util.groupSVGElements(iImg);
+                iImg = new fabric.Group(object.getObjects(), _opt);
+                
+                delete conf.width;
+                delete conf.height;
+                
+                iImg.set(conf);    
+            }
             parent.add(iImg);
-
+            self.removeControlsMiddle(iImg);
+            
             if (!options.noChangeSize) {
                 self.setObjAngle(iImg);
             }
@@ -49,9 +69,17 @@ var DD_Layer_Img = DD_Layer_Base.extend({
 
             self.object = iImg;
             self.onCreated();
-            //self.setDeselectEvent();
 
-        }, {crossOrigin: 'anonymous'});
+        }
+        if (ext !== 'svg') {
+            fabric.Image.fromURL(src, function (iImg) {
+                ___callBack(iImg);
+            }, {crossOrigin: 'anonymous'});
+        } else {
+            fabric.loadSVGFromURL(src, function (svgobject) {
+                ___callBack(svgobject, true);
+            });
+        }
     }
 });
 

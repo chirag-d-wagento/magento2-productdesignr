@@ -49,9 +49,26 @@ class UpgradeSchema implements UpgradeSchemaInterface
             echo 'Add order table' . "\n";
             $this->initOrderTable($setup);
         }
+        
+        if (version_compare($context->getVersion(), '1.0.5') < 0){
+            echo 'Add extra config field' . "\n";
+            $this->initExtraConfField($setup);
+        }
         $setup->endSetup();
 
     }   
+    
+    protected function initExtraConfField($setup) {
+        $setup->getConnection()->addColumn(
+            $setup->getTable('dd_productdesigner_image'),
+            'extra_config',
+            [
+                'type' => \Magento\Framework\DB\Ddl\Table::TYPE_TEXT,
+                'nullable' => true,
+                'comment' => 'Extra Configuration'
+            ]
+        );
+    }
     
     protected function initOrderTable($setup) {
         $table_orders = $setup->getConnection()

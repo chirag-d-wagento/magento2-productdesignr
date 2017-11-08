@@ -8,6 +8,7 @@ var DD_control_image = DD_Control_Base_Model.extend({
         this.obj.addSizeBase();
         
         this.baseEvents();
+        this.addSvgControls();
     },
     
     addDelete: function() {
@@ -16,5 +17,20 @@ var DD_control_image = DD_Control_Base_Model.extend({
         _delete.get().on('click', function() {
             self.removeBase();
         });
+    },
+    
+    addSvgControls: function() {
+        var fabricObject = this.obj.options.fabricObject;
+        var content = this.obj.content.get();
+        var color = fabricObject.fill;
+        
+        if(fabricObject.isSvg === true) {
+            this.obj.colorSelector(this.obj.buttons.get(), '', color, this.setColor, this);
+        }
+    },
+
+    setColor: function (color, model) {
+        var setColor = color ? color.toHexString() : null;
+        model.setFabricObjVal("fill", setColor);
     }
 });

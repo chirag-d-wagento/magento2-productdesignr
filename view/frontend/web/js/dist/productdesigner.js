@@ -35673,19 +35673,18 @@ var DD_checkbox = DD_Uibase.extend({
         if (this.options.model) {
             this.model = this.options.model;
         }
-        this._super(this.options.id);
+        this._super();
         this.selfBase();
         this._add();
     },
 
     _addElements: function () {
-
         this._checkbox = $('<input />', {
-            id: this.createUUID(),
+            id: this.options.id ? this.options.id : this.createUUID(),
             class: this.mainClass + ' ' + (this.options.class ? this.options.class : ''),
             type: 'checkbox'
         });
-        if (this.checked) {
+        if (this.options.checked) {
             this._checkbox.attr({
                 'checked': true
             }).prop('checked');
@@ -36342,7 +36341,7 @@ var DD_Control_Base_Model = DD_ModelBase.extend({
         var canvas = this._l().getHoverCanvas();
 
         this.obj._size.get().on('click', function () {
-            
+
             var defaultScale = self.obj.options.fabricObject.defaultScale
                     ? self.obj.options.fabricObject.defaultScale
                     : self.obj.options.fabricObject.scaleX;
@@ -36352,7 +36351,7 @@ var DD_Control_Base_Model = DD_ModelBase.extend({
                 self.obj.options.fabricObject.defaultScale = defaultScale;
             }
             var currentScale = self.obj.options.fabricObject.scaleX;
-            
+
             self.obj.content.get().empty();
             self.titleControl(self._('change_size'));
             self.obj.addControlBase({
@@ -36377,7 +36376,7 @@ var DD_Control_Base_Model = DD_ModelBase.extend({
             self.obj.control.on('mouseup', function () {
                 canvas.trigger('object:modified', {target: fabricObj});
             });
-            
+
         });
     },
 
@@ -36386,7 +36385,7 @@ var DD_Control_Base_Model = DD_ModelBase.extend({
         var fabricObj = this.obj.options.fabricObject;
         var canvas = this._l().getHoverCanvas();
         this.obj._rotate.get().on('click', function () {
-            
+
             self.obj.content.get().empty();
             self.titleControl(self._('rotate'));
             self.obj.addControlBase({
@@ -36405,7 +36404,7 @@ var DD_Control_Base_Model = DD_ModelBase.extend({
             self.obj.control.on('mouseup', function () {
                 canvas.trigger('object:modified', {target: fabricObj});
             });
-            
+
         });
     },
 
@@ -36417,25 +36416,34 @@ var DD_Control_Base_Model = DD_ModelBase.extend({
             this.rotateBase();
         }
     },
-    
-    hideContentEvent: function() {
+
+    hideContentEvent: function () {
         var self = this;
-        this.obj._closeContent.get().on('click', function() {
+        this.obj._closeContent.get().on('click', function () {
             self.obj.contentContainer.get().hide();
         });
     },
 
     removeBase: function () {
+        if (this.obj.options.fabricObject.isSvg === true) {
+            var canvas =  this._l().getHoverCanvas();
+            this.obj.options.fabricObject.forEachObject(function (a) {
+                canvas.remove(a);
+            });
+            canvas.remove(this.obj.options.fabricObject);
+            return;
+        }
+        
         this.obj.options.fabricObject.remove();
     },
-    
-    setFabricObjVal: function(propName, val) {
+
+    setFabricObjVal: function (propName, val) {
         var fabricObject = this.obj.options.fabricObject;
         var canvas = this._l().getHoverCanvas();
-        if(propName === 'fill'){
+        if (propName === 'fill') {
             fabricObject.setFill(val ? val : 'transparent');
-            
-        }else{
+
+        } else {
             fabricObject.set(propName, val);
         }
         canvas.renderAll();
@@ -37730,32 +37738,35 @@ var DD_Topcontrols = DD_panel.extend({
         }
     },
     
-    
     addCloseButton: function(onClose) {
-        
         new DD_closeButton(this.self, onClose);
-        
     },
     
     addPhotoButton: function() {
-        if(!this._s('addphoto')) {
+        if(this.main.options.extra_config.photos_enabled === false) {
             return;
         }
-        new DD_AddphotoButton(this.self);
+        if(this._s('addphoto') || this.main.options.extra_config.photos_enabled === true) {
+            return new DD_AddphotoButton(this.self);
+        }
     },
     
     addTextButton: function() {
-        if(!this._s('addtext')) {
+        if(this.main.options.extra_config.text_enabled === false) {
             return;
         }
-        new DD_AddtextButton(this.self);
+        if(this._s('addtext') || this.main.options.extra_config.text_enabled === true) {
+            return new DD_AddtextButton(this.self);
+        }
     },
     
     addFromLibraryButton: function(){
-        if(!this._s('addfromlibrary')) {
+        if(this.main.options.extra_config.library_enabled === false) {
             return;
         }
-        new DD_AddfromLibraryButton(this.self);
+        if(this._s('addfromlibrary') || this.main.options.extra_config.library_enabled === true) {
+            return new DD_AddfromLibraryButton(this.self);
+        }
     }
     
 });

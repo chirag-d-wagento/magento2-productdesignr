@@ -28,16 +28,21 @@ class Designer extends AbstractModifier {
     
     protected $_designerFonts;
 
+    protected $_designerHelper;
+
     public function __construct(
         LocatorInterface $locator, 
         \Magento\Framework\View\Asset\Repository $assetRepo,  
-        \Develo\Designer\Helper\Fonts $designerFonts,    
+        \Develo\Designer\Helper\Fonts $designerFonts,
+        \Develo\Designer\Helper\Data $designerHelper,    
         UrlInterface $urlBuilder
     ) {
         $this->locator    = $locator;
         $this->urlBuilder = $urlBuilder;
         $this->_assetRepo = $assetRepo;
         $this->_designerFonts = $designerFonts;
+        
+        $this->_designerHelper = $designerHelper;
     }
 
     public function modifyMeta(array $meta) {
@@ -67,7 +72,14 @@ class Designer extends AbstractModifier {
                                 'urlUploadImages' => $this->urlBuilder->getUrl('dd_productdesigner/image/upload'),
                                 'urlSaveData' => $this->urlBuilder->getUrl('dd_productdesigner/group/save'),
                                 'fonts' => $this->_designerFonts->getFonts(),
-                                'myFilesPath' => $this->urlBuilder->getUrl('dd_productdesigner/product/myfiles')
+                                'myFilesPath' => $this->urlBuilder->getUrl('dd_productdesigner/product/myfiles'),
+                                
+                                'defaultImgEnabled' => $this->_designerHelper->getIsAddImageEnabled(),
+                                'defaultTextEnabled' => $this->_designerHelper->getIsAddTextEnabled(),
+                                'defaultLibraryEnabled' => $this->_designerHelper->getIsAddFromLibraryEnabled(),
+                                
+                                'defaultTextPrice' => $this->_designerHelper->getLayerTextPrice(),
+                                'defaultImgPrice' => $this->_designerHelper->getLayerImgPrice()
                             ],
                         ],
                     ],

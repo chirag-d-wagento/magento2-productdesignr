@@ -202,6 +202,12 @@ var DD_Admin_ImagesSelected_Model = DD_ModelBase.extend({
         var newImgConf = imgConf.splice(layer.index, 1);
         this.updateImageConf(group_uid, media_id, 'conf', imgConf);
     },
+    
+    updateExtraConf: function(group_uid, media_id, key, value) {
+        var extraConf = this.getImgConf(group_uid, media_id, 'extra_conf');
+        extraConf[key] = value;
+        this.updateImageConf(group_uid, media_id, 'extra_conf', extraConf);
+    },
 
     updateMask: function (group_uid, media_id, fabricObj) {
         this.updateImageConf(group_uid, media_id, 'mask', fabricObj);
@@ -211,10 +217,18 @@ var DD_Admin_ImagesSelected_Model = DD_ModelBase.extend({
         this.updateImageConf(group_uid, media_id, 'mask', null);
     },
 
-    getImgConf: function (group_uid, media_id) {
+    getImgConf: function (group_uid, media_id, indexConf) {
         var groups = this.getGroups();
         var index = this.getImgIndex(group_uid, media_id);
         var img = groups[this.getGroupIndexByUid(group_uid)]['imgs'][index];
+        if(indexConf) {
+            if(!img[indexConf]) {
+                img[indexConf] = {};
+            }
+            
+            return img[indexConf];
+        }
+        
         if (!img['conf']) {
             img['conf'] = [];
         }

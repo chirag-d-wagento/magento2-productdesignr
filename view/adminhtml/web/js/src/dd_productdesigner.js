@@ -77,7 +77,12 @@ $.fn.dd_productdesigner = function (options) {
             'add_layer_mask': 'Add/Edit Layer Mask',
             'add_default_images': 'Add Default Images',
             'add_image': 'Add Image',
-            'add_default_texts': 'Add default texts'
+            'add_default_texts': 'Add default texts',
+            'configuration': 'Configuration',
+            'enable_photos': 'Enable Photos',
+            'enable_text': 'Enable Texts',
+            'enable_add_from_library': 'Enable Add From Library'
+            
         },
         //'settings': settings,
         'afterLoad': null,

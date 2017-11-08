@@ -3,6 +3,8 @@ var DD_Event = DD_object.extend({
     listEvents: {},
     listEventsBase: {}, //delete all callbacks after run
     listEventsCallbacks: {},
+    jBoxes: [],
+    
     init: function() {
         this._super(this.id);
         this.setGlobal();
@@ -81,6 +83,15 @@ var DD_Event = DD_object.extend({
         var self = this;
         $.each(this.listEvents, function(eventName, obj) {
             self.unregister(eventName);
+        });
+    },
+    addJBox: function(box) {
+        this.jBoxes.push(box);
+    },
+    
+    destroyJBoxes: function() {
+        $.each(this.jBoxes, function(i, obj) {
+            obj.destroy();
         });
     }
 });

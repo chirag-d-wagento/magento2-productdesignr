@@ -7,7 +7,6 @@ var DD_setup_model = DD_ModelBase.extend({
     },
 
     tabActive: function (id) {
-        console.log(id);
         var content = $('#content-' + id + '');
         content.html('');
         switch (id) {
@@ -23,6 +22,9 @@ var DD_setup_model = DD_ModelBase.extend({
             case 'dd-setup-layer-texts':
                     this.tabTexts(content);
                 break;
+            case 'dd-setup-options':
+                    this.tabOptions(content);
+                break;
                 /*
             case 'dd-setup-layer-qrcode':
 
@@ -32,6 +34,10 @@ var DD_setup_model = DD_ModelBase.extend({
 
                 break;
         }
+    },
+    
+    tabOptions: function(content) {
+        new DD_setup_options(content, this.imgOptions);
     },
     
     tabTexts: function(content) {

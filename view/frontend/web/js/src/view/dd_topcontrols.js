@@ -22,32 +22,35 @@ var DD_Topcontrols = DD_panel.extend({
         }
     },
     
-    
     addCloseButton: function(onClose) {
-        
         new DD_closeButton(this.self, onClose);
-        
     },
     
     addPhotoButton: function() {
-        if(!this._s('addphoto')) {
+        if(this.main.options.extra_config.photos_enabled === false) {
             return;
         }
-        new DD_AddphotoButton(this.self);
+        if(this._s('addphoto') || this.main.options.extra_config.photos_enabled === true) {
+            return new DD_AddphotoButton(this.self);
+        }
     },
     
     addTextButton: function() {
-        if(!this._s('addtext')) {
+        if(this.main.options.extra_config.text_enabled === false) {
             return;
         }
-        new DD_AddtextButton(this.self);
+        if(this._s('addtext') || this.main.options.extra_config.text_enabled === true) {
+            return new DD_AddtextButton(this.self);
+        }
     },
     
     addFromLibraryButton: function(){
-        if(!this._s('addfromlibrary')) {
+        if(this.main.options.extra_config.library_enabled === false) {
             return;
         }
-        new DD_AddfromLibraryButton(this.self);
+        if(this._s('addfromlibrary') || this.main.options.extra_config.library_enabled === true) {
+            return new DD_AddfromLibraryButton(this.self);
+        }
     }
     
 });

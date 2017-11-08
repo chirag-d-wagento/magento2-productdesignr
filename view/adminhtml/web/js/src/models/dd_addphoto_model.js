@@ -2,12 +2,12 @@ var DD_AddPhoto_Model = DD_ModelBase.extend({
     idUploaderTab: 'dd-add-photo-tab',
     idMyPhotosTab: 'dd-my-photo-tab',
     uploaderInitiated: false,
-    
+
     init: function (obj) {
         this.obj = obj;
         this._super(obj);
     },
-    
+
     getWindowTitle: function () {
         return this._('add_photo_to_image');
     },
@@ -30,9 +30,10 @@ var DD_AddPhoto_Model = DD_ModelBase.extend({
         }
         this.content = content;
         var self = this;
-        content.html(this._('drop_files_or_upload'));
-        content.dropzone({
-            url: self._s('urlUploadImages') + '?form_key=' + window.FORM_KEY,
+        content.html('<form class="dropzone">' +                
+        '</form>');
+        content.find('form').dropzone({
+            url: self._s('urlUploadImages') /* + '?form_key=' + window.FORM_KEY */,
             maxFilesize: 2, // MB
             acceptedFiles: '.png, .jpeg, .jpg, .gif',
             init: function () {
@@ -88,7 +89,7 @@ var DD_AddPhoto_Model = DD_ModelBase.extend({
                 .addClass('tab-loading');
 
         $.ajax({
-            url: this._s('myFilesPath')  + '?form_key=' + window.FORM_KEY,
+            url: this._s('myFilesPath'),
             type: 'json'
         })
                 .done(function (data) {
@@ -100,8 +101,8 @@ var DD_AddPhoto_Model = DD_ModelBase.extend({
                     }
                     content.removeClass('tab-no-data');
                     content.html('');
-                    $.each(data, function (a) {
-                        var img = data[a];
+
+                    $.each(data, function (a, img) {
                         new DD_ImageLinkAdd({
                             'parent': content,
                             'src': img.src,

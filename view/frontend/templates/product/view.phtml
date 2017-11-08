@@ -88,7 +88,6 @@
             }
 
             function updateImgFabricConf(fabricObj, group_uid, media_id, type) {
-
                 if (fabricObj.mainBg) {
                     return;
                 }
@@ -97,12 +96,10 @@
                     configuredMediaProducts[media_id].splice(conf.index, 1);
                     return;
                 }
-                console.log('fabricObj.type ' + fabricObj.type);
                 if (fabricObj.type === 'image' || fabricObj.type === 'text' || fabricObj.isSvg) {
                     if (typeof (configuredMediaProducts[media_id]) === 'undefined') {
                         configuredMediaProducts[media_id] = [];
                     }
-                    console.log('fabricObj.isSvg  ' + fabricObj.isSvg );
                     configuredMediaProducts[media_id][conf.index] = fabricObj;
                 }
             }
@@ -261,11 +258,15 @@
                     'group_index': img.group_index,
                     'mask': img.mask,
                     'conf': img.conf,
+                    'extra_config': img.extra_config,
                     'settings': {
                         'listFonts': <?php echo json_encode($this->getFonts()); ?>,
                         'urlUploadImages': '<?php echo $this->getUploadFileUrl(); ?>',
                         'myFilesPath': '<?php echo $this->getMyFilesUrl() ?>',
-                        'libraryPath': '<?php echo $this->getLibraryUrl() ?>'
+                        'libraryPath': '<?php echo $this->getLibraryUrl() ?>',
+                        'addphoto': <?php echo $this->getIsAddImageEnabled() ? 'true' : 'false' ?>,
+                        'addtext': <?php echo $this->getIsAddTextEnabled() ? 'true' : 'false' ?>,
+                        'addfromlibrary': <?php echo $this->getIsAddFromLibraryEnabled() ? 'true' : 'false' ?>
                     }
 
                 });
@@ -324,6 +325,7 @@
                             }
                         });
                         parentProductId = found_ids[0];
+                        
 
     <?php endif; ?>
 

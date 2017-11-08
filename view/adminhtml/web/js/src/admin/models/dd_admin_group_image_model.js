@@ -37,6 +37,10 @@ var DD_admin_group_image_model = DD_Admin_ImagesSelected_Model.extend({
     },
     
     onUpdate: function(fabricObj, group_uid, media_id, type) {
+        if(type === 'extra_conf') {
+            this.updateExtraConf(group_uid, media_id, fabricObj.key, fabricObj.value);
+            return;
+        }
         this.updateImgFabricConf(group_uid, media_id, fabricObj, type);
     },
 
@@ -54,6 +58,11 @@ var DD_admin_group_image_model = DD_Admin_ImagesSelected_Model.extend({
         var group_index = el.attr('data-group');
         var listFonts = this._s('listFonts');
         var myFilesPath = this._s('myFilesPath');
+        var defaultImgEnabled = this._s('defaultImgEnabled');
+        var defaultTextEnabled = this._s('defaultTextEnabled');
+        var defaultLibraryEnabled = this._s('defaultLibraryEnabled');
+        var defaultTextPrice = this._s('defaultTextPrice');
+        var defaultImgPrice = this._s('defaultImgPrice');
         
         el.on('click', function () {
             $('#dd_designer').html('');
@@ -62,13 +71,13 @@ var DD_admin_group_image_model = DD_Admin_ImagesSelected_Model.extend({
                 'src': options.src,
                 'width': options.sizes.width,
                 'height': options.sizes.height,
-
                 'sku': options.sku,
                 'product_id': options.product_id,
                 'media_id': options.media_id,
                 'group_index': group_index,
                 'mask': options.mask,
                 'conf': options.conf,
+                'extra_config': (options.extra_config ? options.extra_config : {}),
                 'settings': {
                     'urlUploadImages': urlUploadImages,
                     'percentSizeImage': percentSizeImage,
@@ -78,7 +87,13 @@ var DD_admin_group_image_model = DD_Admin_ImagesSelected_Model.extend({
                     'defaultLayerMaskWidth': defaultLayerMaskWidth,
                     'percentSizeFromMask': percentSizeFromMask,
                     'listFonts': listFonts,
-                    'myFilesPath': myFilesPath
+                    'myFilesPath': myFilesPath,
+                    
+                    'defaultImgEnabled': defaultImgEnabled,
+                    'defaultTextEnabled': defaultTextEnabled,
+                    'defaultLibraryEnabled': defaultLibraryEnabled,
+                    'defaultTextPrice': defaultTextPrice,
+                    'defaultImgPrice': defaultImgPrice
                 }
                 
             });

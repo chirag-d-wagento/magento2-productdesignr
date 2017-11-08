@@ -43,6 +43,7 @@ var DD_control_text = DD_Control_Base_Model.extend({
                 textarea.removeClass('empty');
                 textarea.addClass('valid');
                 self.setFabricObjVal("text", text.trim());
+                self.obj.contentContainer.get().hide();
             }
         });
     },

@@ -36,7 +36,7 @@ class View extends \Magento\Catalog\Block\Product\AbstractProduct {
     
     public function getCustomizeUrl() {
         $product = $this->getProduct();
-        return $this->_helperUrl->getProductSustomizeUrl($product);
+        return $this->_helperUrl->getProductCustomizeUrl($product);
     }
     
     public function getDesignerConfiguration($product) {
@@ -61,5 +61,17 @@ class View extends \Magento\Catalog\Block\Product\AbstractProduct {
     
     public function getLibraryUrl() {
         return $this->getUrl('dd_designer/index/library');
+    }
+    
+    public function getIsAddImageEnabled() {
+        return $this->_designerHelper->getIsAddImageEnabled();
+    }
+    
+    public function getIsAddTextEnabled() {
+        return $this->_designerHelper->getIsAddTextEnabled();
+    }
+    
+    public function getIsAddFromLibraryEnabled() {
+        return $this->_designerHelper->getIsAddFromLibraryEnabled();
     }
 }

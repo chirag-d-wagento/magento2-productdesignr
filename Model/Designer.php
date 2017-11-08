@@ -172,10 +172,21 @@ class Designer {
                     'group_index' => $group->getGroupUid(),
                     'sku' => $product->getSku(),
                     'product_id' => $product->getId(),
+                    'extra_config' => $this->getImgExtraConf($image)
                 ];
                 $imgConf = $this->getImgConf($image);
                 $out[] = array_merge($imgArr, $imgConf);
             }
+        }
+
+        return $out;
+    }
+    
+    protected function getImgExtraConf($image) {
+        $out = [];
+        $extraConf = $image->getExtraConfig();
+        if ($extraConf) {
+            $out = json_decode($extraConf, true);
         }
 
         return $out;

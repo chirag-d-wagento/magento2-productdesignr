@@ -35068,6 +35068,8 @@ var DD_Event = DD_object.extend({
     listEvents: {},
     listEventsBase: {}, //delete all callbacks after run
     listEventsCallbacks: {},
+    jBoxes: [],
+    
     init: function() {
         this._super(this.id);
         this.setGlobal();
@@ -35147,6 +35149,15 @@ var DD_Event = DD_object.extend({
         $.each(this.listEvents, function(eventName, obj) {
             self.unregister(eventName);
         });
+    },
+    addJBox: function(box) {
+        this.jBoxes.push(box);
+    },
+    
+    destroyJBoxes: function() {
+        $.each(this.jBoxes, function(i, obj) {
+            obj.destroy();
+        });
     }
 });
 
@@ -35172,6 +35183,7 @@ var DD_Translator = DD_object.extend({
 
 var DD_Settings = DD_object.extend({
     id: 'dd_settings',
+    jBoxes: [],
     init: function(settings) {
         this._super(this.id);
         this.settings = settings;
@@ -35242,6 +35254,7 @@ var DD_Window = DD_object.extend({
             repositionOnOpen: false,
             repositionOnContent: true,
             target: $('.canvas-container'),
+            
             onOpen: function () {
                 self._evnt().doCall('window-showed');
             },
@@ -35349,9 +35362,32 @@ var DD_Uibase = DD_object.extend({
         if (this.options.windowOpener && model) {
             this.addWindowOpenEvent(this, model, this.modal, this.options);
         }
+        if (this.options.tooltip && this.options.tooltip_text && !Modernizr.touchevents) {
+            this.addTooltip();
+        }
         if (model) {
             return model;
         }
+    },
+
+    addTooltip: function () {
+        var position = this.options.tooltip_position ?
+                this.options.tooltip_position : {
+                    x: 'right',
+                    y: 'center'
+                };
+
+        var outside = this.options.tooltip_outside ?
+                this.options.tooltip_outside : 'x';
+
+        this.tooltipBox = $(this.self).jBox('Tooltip', {
+            content: this.options.tooltip_text,
+            position: position,
+            outside: outside
+        });
+        
+        this._evnt().addJBox(this.tooltipBox);
+
     },
 
     addWindowOpenEvent: function (me, model, modal, options) {
@@ -35527,9 +35563,11 @@ var DD_ModelBase = DD_object.extend({
     }
 });
 
+/*
 var DD_History = DD_object.extend({
-    
+  
 });
+*/
 
 var DD_Layer = DD_object.extend({
     layers: [],
@@ -35635,19 +35673,18 @@ var DD_checkbox = DD_Uibase.extend({
         if (this.options.model) {
             this.model = this.options.model;
         }
-        this._super(this.options.id);
+        this._super();
         this.selfBase();
         this._add();
     },
 
     _addElements: function () {
-
         this._checkbox = $('<input />', {
-            id: this.createUUID(),
+            id: this.options.id ? this.options.id : this.createUUID(),
             class: this.mainClass + ' ' + (this.options.class ? this.options.class : ''),
             type: 'checkbox'
         });
-        if (this.checked) {
+        if (this.options.checked) {
             this._checkbox.attr({
                 'checked': true
             }).prop('checked');
@@ -36000,12 +36037,88 @@ var DD_Tabs = DD_Uibase.extend({
 });
 
 var DD_AddFromLibrary_Model = DD_ModelBase.extend({
+
+    currentCategory: null,
+
     getWindowTitle: function () {
         return this._('add_from_library');
     },
 
     setWindowContent: function (parent) {
-        
+        this.loadLibrary(parent);
+    },
+
+    addOnCategoryEvent: function (categoryLink, parent, name) {
+        var self = this;
+        categoryLink.on('click', function () {
+            self.currentCategory = name;
+            self.loadLibrary(parent);
+        });
+    },
+
+    addClearLink: function (parent, name) {
+        var fa = $('<span />').addClass('fa fa-window-close');
+        var link = $('<a />').addClass('dd-clear-category')
+                .append(fa)
+                .append(name)
+        parent.append(link);
+        this.addClearLinkEvent(link, parent);
+    },
+
+    addClearLinkEvent: function (link, parent) {
+        var self = this;
+        link.on('click', function () {
+            self.currentCategory = null;
+            self.loadLibrary(parent);
+        });
+    },
+
+    loadLibrary: function (parent) {
+        var self = this;
+        parent.empty();
+        parent.addClass('dd-window-loading');
+        parent.html(this._('loading') + '...');
+
+        $.ajax({
+            url: this._s('libraryPath'),
+            type: 'json',
+            method: 'post',
+            data: {
+                'category': self.currentCategory
+            }
+        })
+                .done(function (response) {
+                    parent.removeClass('dd-window-loading');
+                    parent.empty();
+                    if (response.error) {
+                        alert(response.errMessage);
+                        return;
+                    }
+                    if (self.currentCategory) {
+                        self.addClearLink(parent, self.currentCategory);
+                    }
+                    $.each(response.data, function (i, element) {
+                        if (element.directory) {
+                            new DD_Category({
+                                'parent': parent,
+                                'data': element,
+                                'model': self
+                            });
+                        }
+                        if (element.file) {
+                            new DD_ImageLinkAdd({
+                                'parent': parent,
+                                'src': element.src,
+                                'width': element.width,
+                                'height': element.height,
+                                'class': 'size-small'
+                            });
+                        }
+                    });
+
+                });
+
+
     }
 });
 
@@ -36013,12 +36126,12 @@ var DD_AddPhoto_Model = DD_ModelBase.extend({
     idUploaderTab: 'dd-add-photo-tab',
     idMyPhotosTab: 'dd-my-photo-tab',
     uploaderInitiated: false,
-    
+
     init: function (obj) {
         this.obj = obj;
         this._super(obj);
     },
-    
+
     getWindowTitle: function () {
         return this._('add_photo_to_image');
     },
@@ -36041,9 +36154,10 @@ var DD_AddPhoto_Model = DD_ModelBase.extend({
         }
         this.content = content;
         var self = this;
-        content.html(this._('drop_files_or_upload'));
-        content.dropzone({
-            url: self._s('urlUploadImages') + '?form_key=' + window.FORM_KEY,
+        content.html('<form class="dropzone">' +                
+        '</form>');
+        content.find('form').dropzone({
+            url: self._s('urlUploadImages') /* + '?form_key=' + window.FORM_KEY */,
             maxFilesize: 2, // MB
             acceptedFiles: '.png, .jpeg, .jpg, .gif',
             init: function () {
@@ -36099,7 +36213,7 @@ var DD_AddPhoto_Model = DD_ModelBase.extend({
                 .addClass('tab-loading');
 
         $.ajax({
-            url: this._s('myFilesPath')  + '?form_key=' + window.FORM_KEY,
+            url: this._s('myFilesPath'),
             type: 'json'
         })
                 .done(function (data) {
@@ -36111,8 +36225,8 @@ var DD_AddPhoto_Model = DD_ModelBase.extend({
                     }
                     content.removeClass('tab-no-data');
                     content.html('');
-                   $.each(data, function (a) {
-                        var img = data[a];
+
+                    $.each(data, function (a, img) {
                         new DD_ImageLinkAdd({
                             'parent': content,
                             'src': img.src,
@@ -36163,6 +36277,26 @@ var DD_AddText_Model = DD_ModelBase.extend({
     }
 });
 
+var DD_Callback_Model = DD_ModelBase.extend({
+    init: function (obj) {
+        this.obj = obj;
+    },
+
+    _callbackClick: function () {
+        if (this.obj.callback) {
+            var self = this;
+            this.obj.get().on('click', function () {
+                var canvasBg = self._l() ? self._l().getBgCanvas() : null;
+                var canvasHover = self._l() ? self._l().getHoverCanvas() : null;
+                if(self.destroy) {
+                   self.destroy.call(); 
+                }
+                self.obj.callback.call(self.obj, canvasBg, canvasHover);
+            });
+        }
+    }
+})
+
 var DD_Control_Base_Model = DD_ModelBase.extend({
     controlTitleClass: 'control-title',
 
@@ -36177,7 +36311,7 @@ var DD_Control_Base_Model = DD_ModelBase.extend({
 
     initPosition: function () {
         this.obj.get().css({
-            left: this.calcLeftosition(),
+            //left: this.calcLeftosition(),
             top: this.calcTopPosition()
         });
         this.obj.get().fadeIn('slow');
@@ -36198,7 +36332,7 @@ var DD_Control_Base_Model = DD_ModelBase.extend({
         var canvas = this._l().getHoverCanvas();
 
         this.obj._size.get().on('click', function () {
-            
+
             var defaultScale = self.obj.options.fabricObject.defaultScale
                     ? self.obj.options.fabricObject.defaultScale
                     : self.obj.options.fabricObject.scaleX;
@@ -36208,7 +36342,7 @@ var DD_Control_Base_Model = DD_ModelBase.extend({
                 self.obj.options.fabricObject.defaultScale = defaultScale;
             }
             var currentScale = self.obj.options.fabricObject.scaleX;
-            
+
             self.obj.content.get().empty();
             self.titleControl(self._('change_size'));
             self.obj.addControlBase({
@@ -36233,7 +36367,7 @@ var DD_Control_Base_Model = DD_ModelBase.extend({
             self.obj.control.on('mouseup', function () {
                 canvas.trigger('object:modified', {target: fabricObj});
             });
-            
+
         });
     },
 
@@ -36242,7 +36376,7 @@ var DD_Control_Base_Model = DD_ModelBase.extend({
         var fabricObj = this.obj.options.fabricObject;
         var canvas = this._l().getHoverCanvas();
         this.obj._rotate.get().on('click', function () {
-            
+
             self.obj.content.get().empty();
             self.titleControl(self._('rotate'));
             self.obj.addControlBase({
@@ -36261,7 +36395,7 @@ var DD_Control_Base_Model = DD_ModelBase.extend({
             self.obj.control.on('mouseup', function () {
                 canvas.trigger('object:modified', {target: fabricObj});
             });
-            
+
         });
     },
 
@@ -36273,23 +36407,36 @@ var DD_Control_Base_Model = DD_ModelBase.extend({
             this.rotateBase();
         }
     },
-    
-    hideContentEvent: function() {
+
+    hideContentEvent: function () {
         var self = this;
-        this.obj._closeContent.get().on('click', function() {
+        this.obj._closeContent.get().on('click', function () {
             self.obj.contentContainer.get().hide();
         });
     },
 
     removeBase: function () {
+        if (this.obj.options.fabricObject.isSvg === true) {
+            var canvas =  this._l().getHoverCanvas();
+            this.obj.options.fabricObject.forEachObject(function (a) {
+                canvas.remove(a);
+            });
+            canvas.remove(this.obj.options.fabricObject);
+            return;
+        }
+        
         this.obj.options.fabricObject.remove();
     },
-    
-    setFabricObjVal: function(val, propName) {
+
+    setFabricObjVal: function (propName, val) {
         var fabricObject = this.obj.options.fabricObject;
         var canvas = this._l().getHoverCanvas();
-        fabricObject.set(val, propName);
-        
+        if (propName === 'fill') {
+            fabricObject.setFill(val ? val : 'transparent');
+
+        } else {
+            fabricObject.set(propName, val);
+        }
         canvas.renderAll();
         canvas.trigger('object:modified', {target: fabricObject});
     },
@@ -36299,7 +36446,7 @@ var DD_Control_Base_Model = DD_ModelBase.extend({
     },
 
     calcLeftosition: function () {
-        return '0';
+        //return '0';
     },
 
     hide: function () {
@@ -36474,6 +36621,16 @@ var DD_Main_Model = DD_ModelBase.extend({
                 e.target.controlModelCreated.remove();
             }
         });
+        
+        hoverCanvas.on('object:extra_config', function (e) {
+            e.type = 'extra_conf';
+            self.obj.options.onUpdate.call(
+                    null,
+                    e,
+                    self.obj.options.group_index,
+                    self.obj.options.media_id,
+                    'extra_conf');
+        });
     },
 
     _addObjects: function (options) {
@@ -36554,7 +36711,6 @@ var DD_Main_Model = DD_ModelBase.extend({
     prepareFonts: function () {
         var listFonts = this._s('listFonts');
         var googleFonts = [];
-        console.log(listFonts);
         $.each(listFonts, function (i, font) {
             if (font.indexOf('"') != -1) { //custom named font
                 var fontArr = font.split(',');
@@ -36576,6 +36732,7 @@ var DD_control_image = DD_Control_Base_Model.extend({
         this.obj.addSizeBase();
         
         this.baseEvents();
+        this.addSvgControls();
     },
     
     addDelete: function() {
@@ -36584,6 +36741,21 @@ var DD_control_image = DD_Control_Base_Model.extend({
         _delete.get().on('click', function() {
             self.removeBase();
         });
+    },
+    
+    addSvgControls: function() {
+        var fabricObject = this.obj.options.fabricObject;
+        var content = this.obj.content.get();
+        var color = fabricObject.fill;
+        
+        if(fabricObject.isSvg === true) {
+            this.obj.colorSelector(this.obj.buttons.get(), '', color, this.setColor, this);
+        }
+    },
+
+    setColor: function (color, model) {
+        var setColor = color ? color.toHexString() : null;
+        model.setFabricObjVal("fill", setColor);
     }
 });
 
@@ -36661,6 +36833,7 @@ var DD_control_text = DD_Control_Base_Model.extend({
                 textarea.removeClass('empty');
                 textarea.addClass('valid');
                 self.setFabricObjVal("text", text.trim());
+                self.obj.contentContainer.get().hide();
             }
         });
     },
@@ -36724,11 +36897,7 @@ var DD_Layer_Base = DD_object.extend({
 
     positionToBase: function (options, setTo) {
         var parent = this.getParent();
-
         switch (setTo) {
-            case 'top_left':
-
-                break;
             default:
                 options = this.positionCenterCenter(parent, options);  
                 break;
@@ -36782,12 +36951,10 @@ var DD_Layer_Base = DD_object.extend({
     setSize: function(options, sizes, percentFromParent) {
         options.width  = this.calcObjectSize(sizes, percentFromParent).width;
         options.height = this.calcObjectSize(sizes, percentFromParent).height;
-        
         return options;
     },
 
     calcObjectSize: function (sizes, percentFromParent) {
-        var parent = this.getParent();
         if(this._l().getMask()) {
             var mask = this._l().getMask();
             var width  = mask.get('width') * mask.get('scaleX');
@@ -36798,7 +36965,7 @@ var DD_Layer_Base = DD_object.extend({
         }
         var newWidth = (width/100)*percentFromParent;
         if(sizes && sizes.width < newWidth) {
-            return sizes;
+            //return sizes;
         }
         if(sizes){
             var prop = sizes.height/sizes.width;
@@ -36819,7 +36986,7 @@ var DD_Layer_Base = DD_object.extend({
     
     setDeselectEvent: function() {
         this.object.on('deselected', function(e) {
-            if(typeof(this.controlModelCreated)!='undefined') {
+            if(typeof(this.controlModelCreated)!=='undefined') {
                 this.controlModelCreated.hide();
             }
         });
@@ -36832,12 +36999,16 @@ var DD_Layer_Base = DD_object.extend({
         }
     },
     
+    removeControlsMiddle: function(obj) {
+        obj['setControlVisible']('mb', false);
+        obj['setControlVisible']('mt', false);     
+    },
+    
     onCreated: function() {
         this.setDeselectEvent();
+        //this.removeControlsMiddle();
     }
 });
-
-
 var DD_Layer_Img = DD_Layer_Base.extend({
     init: function (options, fullCnfg, notSelect) {
         var self = this;
@@ -36846,7 +37017,9 @@ var DD_Layer_Img = DD_Layer_Base.extend({
             this.parent = options.parent;
         }
         var src = fullCnfg ? fullCnfg.src : options.src;
-        fabric.Image.fromURL(src, function (iImg) {
+        var ext = src.substr(src.lastIndexOf('.') + 1);
+
+        function ___callBack(iImg, isSvg) {
             var parent = self.getParent()
             if (!fullCnfg) {
                 var conf = {
@@ -36854,7 +37027,8 @@ var DD_Layer_Img = DD_Layer_Base.extend({
                     hasBorders: options.noborders ? false : true,
                     selectable: options.noselectable ? false : true,
                     controlModel: 'DD_control_image',
-                    centeredScaling: true
+                    centeredScaling: true,
+                    isSvg: isSvg
                 }
                 var mask = self._l().getMask();
                 var percentWidth = !mask ? self._s('defaultLayerMaskWidth') : self._s('percentSizeFromMask');
@@ -36872,11 +37046,28 @@ var DD_Layer_Img = DD_Layer_Base.extend({
             }
 
             conf.notSelect = notSelect;
-
-            iImg
-                    .set(conf);
+            if (!isSvg) {
+                iImg
+                        .set(conf);
+            } else {
+                var _opt =  {
+                    width:options.width, 
+                    height:options.height, 
+                    scaleY: conf.height / options.height, 
+                    scaleX: conf.width / options.width
+                };
+                
+                var object = fabric.util.groupSVGElements(iImg);
+                iImg = new fabric.Group(object.getObjects(), _opt);
+                
+                delete conf.width;
+                delete conf.height;
+                
+                iImg.set(conf);    
+            }
             parent.add(iImg);
-
+            self.removeControlsMiddle(iImg);
+            
             if (!options.noChangeSize) {
                 self.setObjAngle(iImg);
             }
@@ -36889,9 +37080,17 @@ var DD_Layer_Img = DD_Layer_Base.extend({
 
             self.object = iImg;
             self.onCreated();
-            //self.setDeselectEvent();
 
-        }, {crossOrigin: 'anonymous'});
+        }
+        if (ext !== 'svg') {
+            fabric.Image.fromURL(src, function (iImg) {
+                ___callBack(iImg);
+            }, {crossOrigin: 'anonymous'});
+        } else {
+            fabric.loadSVGFromURL(src, function (svgobject) {
+                ___callBack(svgobject, true);
+            });
+        }
     }
 });
 
@@ -36995,6 +37194,37 @@ var DD_Layer_Mask = DD_Layer_Base.extend({
     }
 });
 
+var DD_Layer_Svg = DD_Layer_Base.extend({
+    
+    init: function (conf) {
+        var parent = this.getParent();
+        var self = this;
+        var svgString = conf.svgString;
+        var reg = /translate\(.+?\)/g;
+        svgString = svgString.replace(reg, "");
+        var reg2 = /scale\(.+?\)/g;
+        svgString = svgString.replace(reg2, "");
+        var reg3 = /rotate\(.+?\)/g;
+        svgString = svgString.replace(reg3, "");
+        
+        fabric.loadSVGFromString(svgString, function(svg, opt) {
+            delete conf.paths;
+            delete opt.angle;
+            var object = fabric.util.groupSVGElements(svg);
+            var iImg = new fabric.Group(object.getObjects(), opt);
+            iImg.set(conf);
+            parent.add(iImg);
+            self.removeControlsMiddle(iImg);
+            parent.calcOffset();
+            parent.renderAll();
+            self.object = iImg;
+            self.onCreated();
+        });
+        
+    }
+    
+});
+
 var DD_Layer_Text = DD_Layer_Base.extend({
     init: function (options, fullCnfg, notSelect) {
         console.log('notSelect: ' + notSelect);
@@ -37033,6 +37263,8 @@ var DD_Layer_Text = DD_Layer_Base.extend({
         }else{
             text.setCoords();
         }
+        
+        this.removeControlsMiddle(text);
 
         parent.renderAll();
         if (!options.noselectable && !conf.notSelect) {
@@ -37046,7 +37278,7 @@ var DD_Layer_Text = DD_Layer_Base.extend({
 
 var DD_AddfromLibraryButton = DD_button.extend({
     object_id: 'dd-add-library-button',
-    class_name: 'dd-add-library-controls',
+    class_name: 'dd-add-library-controls fa fa-folder',
     
     model: 'DD_AddFromLibrary_Model',
     
@@ -37055,8 +37287,10 @@ var DD_AddfromLibraryButton = DD_button.extend({
             parent: parent,
             id: this.object_id,
             class: this.class_name,
-            text: this._('add_from_library'),
-            windowOpener: true
+            tooltip_text: this._('add_from_library'),
+            windowOpener: true,
+            tooltip: true,
+            fa:true
         }
         this._super(options);
     }
@@ -37064,7 +37298,7 @@ var DD_AddfromLibraryButton = DD_button.extend({
 
 var DD_AddphotoButton = DD_button.extend({
     object_id: 'dd-add-photo-button',
-    class_name: 'dd-add-photo-controls',
+    class_name: 'dd-add-photo-controls fa fa-file-image-o',
     model: 'DD_AddPhoto_Model',
     
     init: function(parent) {
@@ -37072,8 +37306,11 @@ var DD_AddphotoButton = DD_button.extend({
             parent: parent,
             id: this.object_id,
             class: this.class_name,
-            text: this._('add_photo'),
-            windowOpener: true
+            tooltip_text: this._('add_photo'),
+            windowOpener: true,
+            fa: true,
+            
+            tooltip: true
         }
         this._super(options);
     }
@@ -37081,7 +37318,7 @@ var DD_AddphotoButton = DD_button.extend({
 
 var DD_AddtextButton = DD_button.extend({
     object_id: 'dd-add-text-button',
-    class_name: 'dd-add-text-controls',
+    class_name: 'dd-add-text-controls fa-file-text-o fa',
     model: 'DD_AddText_Model',
     
     init: function(parent) {
@@ -37089,74 +37326,43 @@ var DD_AddtextButton = DD_button.extend({
             parent: parent,
             id: this.object_id,
             class: this.class_name,
-            text: this._('add_text'),
-            windowOpener: true
+            tooltip_text: this._('add_text'),
+            windowOpener: true,
+            fa: true,
+            tooltip: true
         }
         this._super(options);
     }
 })
 
 
-var DD_historyBackButton = DD_button.extend({
-    object_id: 'dd-history-back-button',
-    class_name: 'dd-history-controls',
+var DD_Category = DD_panel.extend({
     
-    init: function(parent) {
-        var options = {
-            parent: parent,
-            id: this.object_id,
-            class: this.class_name,
-            text: this._('back')
-        }
-        this._super(options);
-    }
-});
-
-
-var DD_Historycontrols = DD_panel.extend({
-    object_id: 'dd-history-controls',
-    class_name: 'dd-designer-history-controls',
+    class_name: 'dd-designer-category',
     
-    init: function (parent) {
-        this.parent = parent;
+    init: function (options) {
+        this.parent = options.parent;
+        this.data = options.data;
+        
+        this._model = options.model;
         this._super({
-            'id': this.object_id,
             'class': this.class_name,
-            'parent': parent
+            'parent': this.parent
         });
+        
         this.add();
     },
     
     _addElements: function() {
-        this.addBackButton();
-        this.addNextButton();
+        this.self.append($('<a />')
+                .append($('<span />').addClass('fa-folder-open fa'))
+                .append(this.data.name));
+        
+        this._model.addOnCategoryEvent(this.self, this.parent, this.data.name);
+        
     },
     
-    addNextButton: function() {
-        new DD_historyNextButton(this.self);
-    },
-    
-    addBackButton: function() {
-        new DD_historyBackButton(this.self);
-    }
 });
-
-var DD_historyNextButton = DD_button.extend({
-    object_id: 'dd-history-next-button',
-    class_name: 'dd-history-controls',
-    
-    init: function(parent) {
-        var options = {
-            parent: parent,
-            id: this.object_id,
-            class: this.class_name,
-            text: this._('next')
-        }
-        this._super(options);
-    }
-});
-
-
 
 var DD_layerButton = DD_button.extend({
     object_id: 'dd-main-layer-button',
@@ -37194,81 +37400,9 @@ var DD_main = DD_panel.extend({
     },
     
     _addElements: function() {
-        new DD_Topcontrols(this.self);
-        if(this._s('history')) {
-            new DD_Historycontrols(this.self);
-        }
-        new DD_Maincontrols(this.self);
         new DD_setup(this.getParent(), this.options);
     }
 });
-
-var DD_Maincontrols = DD_panel.extend({
-    object_id: 'dd-main-controls',
-    class_name: 'dd-designer-maincontrols',
-
-    init: function (parent) {
-        this.parent = parent;
-        this._super({
-            'id': this.object_id,
-            'class': this.class_name,
-            'parent': parent
-        });
-        this.add();
-    },
-
-    _addElements: function () {
-        this.addLayersButton();
-        this.addSaveButton();
-        this.addQRCodeButton();
-        this.addPreviewButton();
-    },
-    
-    addLayersButton: function() {
-        if(!this._s('layers')) {
-            return;
-        }
-        new DD_layerButton(this.self);
-    },
-    
-    addSaveButton: function() {
-        if(!this._s('save')) {
-            return;
-        }
-        new DD_saveButton(this.self);
-    },
-    
-    addQRCodeButton: function() {
-        if(!this._s('qrcode')) {
-            return;
-        }
-        new DD_qrButton(this.self);
-    },
-    
-    addPreviewButton: function() {
-        if(!this._s('preview')) {
-            return;
-        }
-        new DD_previewButton(this.self);
-        
-    }
-});
-
-var DD_previewButton = DD_button.extend({
-    object_id: 'dd-main-preview-button',
-    class_name: 'dd-main-button',
-    
-    init: function(parent) {
-        var options = {
-            parent: parent,
-            id: this.object_id,
-            class: this.class_name,
-            text: this._('preview')
-        }
-        this._super(options);
-    }
-});
-
 
 var DD_qrButton = DD_button.extend({
     object_id: 'dd-main-qrcode-button',
@@ -37285,65 +37419,6 @@ var DD_qrButton = DD_button.extend({
     }
 });
 
-
-var DD_saveButton = DD_button.extend({
-    object_id: 'dd-main-save-button',
-    class_name: 'dd-main-button',
-
-    init: function (parent) {
-        var options = {
-            parent: parent,
-            id: this.object_id,
-            class: this.class_name,
-            text: this._('save')
-        }
-        this._super(options);
-    }
-});
-
-
-var DD_Topcontrols = DD_panel.extend({
-    object_id: 'dd-top-controls',
-    class_name: 'dd-designer-topcontrols',
-    
-    init: function (parent) {
-        this.parent = parent;
-        this._super({
-            'id': this.object_id,
-            'class': this.class_name,
-            'parent': parent
-        });
-        this.add();
-    },
-    
-    _addElements: function() {
-        this.addPhotoButton();
-        this.addTextButton();
-        this.addFromLibraryButton();
-    },
-    
-    addPhotoButton: function() {
-        if(!this._s('addphoto')) {
-            return;
-        }
-        new DD_AddphotoButton(this.self);
-    },
-    
-    addTextButton: function() {
-        if(!this._s('addtext')) {
-            return;
-        }
-        new DD_AddtextButton(this.self);
-    },
-    
-    addFromLibraryButton: function(){
-        if(!this._s('addfromlibrary')) {
-            return;
-        }
-        new DD_AddfromLibraryButton(this.self);
-    }
-    
-});
 
 var DD_windowPhotoTabs = DD_Tabs.extend({
     object_id: 'dd-add-photo-tabs',
@@ -37416,7 +37491,6 @@ var DD_setup_model = DD_ModelBase.extend({
     },
 
     tabActive: function (id) {
-        console.log(id);
         var content = $('#content-' + id + '');
         content.html('');
         switch (id) {
@@ -37432,6 +37506,9 @@ var DD_setup_model = DD_ModelBase.extend({
             case 'dd-setup-layer-texts':
                     this.tabTexts(content);
                 break;
+            case 'dd-setup-options':
+                    this.tabOptions(content);
+                break;
                 /*
             case 'dd-setup-layer-qrcode':
 
@@ -37441,6 +37518,10 @@ var DD_setup_model = DD_ModelBase.extend({
 
                 break;
         }
+    },
+    
+    tabOptions: function(content) {
+        new DD_setup_options(content, this.imgOptions);
     },
     
     tabTexts: function(content) {
@@ -37499,6 +37580,26 @@ var DD_setup_layer_model = DD_ModelBase.extend({
             self._l().getMask().eventRestore.call();
 
         });
+    }
+
+});
+
+var DD_setup_options_model = DD_ModelBase.extend({
+
+    hoverCanvas: null,
+
+    init: function (obj) {
+        this.obj = obj;
+        this.hoverCanvas = this._l().getHoverCanvas();
+        this._super();
+    },
+    
+    checkedAction: function (checkbox) {
+        this.hoverCanvas.fire('object:extra_config', { key: $(checkbox).attr('id'), value: true });
+    },
+
+    uncheckedAction: function (checkbox, view) {
+        this.hoverCanvas.fire('object:extra_config', { key: $(checkbox).attr('id'), value: false });
     }
 
 });
@@ -37621,6 +37722,59 @@ var DD_setup_layer = DD_panel.extend({
         model.addEditLayerEvent(this.button, this);
     }
     
+});
+
+var DD_setup_options = DD_panel.extend({
+    class_name: 'dd-setup-options',
+    checkboxModel: 'DD_setup_options_model',
+
+    init: function (parent, imgOptions) {
+        this.parent = parent;
+        this.imgOptions = imgOptions;
+        this._super({
+            'class': this.class_name,
+            'parent': parent
+        });
+        this.add();
+    },
+    
+    _addElements: function() {
+        this.self
+                .append($('<h3 />').text(this._('configuration')));
+        console.log(this.imgOptions);
+        this.checkbox = new DD_checkbox({
+            parent: this.self, 
+            text: this._('enable_photos'), 
+            model: this.checkboxModel, 
+            view: this,
+            id: 'photos_enabled',
+            checked : (this._('defaultImgEnabled') && this.imgOptions.extra_config.photos_enabled !== false
+                    || this.imgOptions.extra_config.photos_enabled  ? true 
+            : false)
+        });
+        this.checkbox = new DD_checkbox({
+            parent: this.self, 
+            text: this._('enable_text'), 
+            model: this.checkboxModel, 
+            view: this,
+            id: 'text_enabled',
+            checked : (this._('defaultTextEnabled') && this.imgOptions.extra_config.text_enabled !== false 
+                    || this.imgOptions.extra_config.text_enabled ? true 
+            : false)
+        });
+        this.checkbox = new DD_checkbox({
+            parent: this.self, 
+            text: this._('enable_add_from_library'), 
+            model: this.checkboxModel, 
+            view: this,
+            id: 'library_enabled',
+            checked : (this._('defaultLibraryEnabled') && this.imgOptions.extra_config.library_enabled !== false 
+                    || this.imgOptions.extra_config.library_enabled ? true 
+            : false)
+        });
+        
+        this.self.append($('<hr>'));
+    }
 });
 
 var DD_setup_tabs = DD_Tabs.extend({
@@ -37776,7 +37930,12 @@ $.fn.dd_productdesigner = function (options) {
             'add_layer_mask': 'Add/Edit Layer Mask',
             'add_default_images': 'Add Default Images',
             'add_image': 'Add Image',
-            'add_default_texts': 'Add default texts'
+            'add_default_texts': 'Add default texts',
+            'configuration': 'Configuration',
+            'enable_photos': 'Enable Photos',
+            'enable_text': 'Enable Texts',
+            'enable_add_from_library': 'Enable Add From Library'
+            
         },
         //'settings': settings,
         'afterLoad': null,
@@ -37885,6 +38044,8 @@ var DD_Event = DD_object.extend({
     listEvents: {},
     listEventsBase: {}, //delete all callbacks after run
     listEventsCallbacks: {},
+    jBoxes: [],
+    
     init: function() {
         this._super(this.id);
         this.setGlobal();
@@ -37964,6 +38125,15 @@ var DD_Event = DD_object.extend({
         $.each(this.listEvents, function(eventName, obj) {
             self.unregister(eventName);
         });
+    },
+    addJBox: function(box) {
+        this.jBoxes.push(box);
+    },
+    
+    destroyJBoxes: function() {
+        $.each(this.jBoxes, function(i, obj) {
+            obj.destroy();
+        });
     }
 });
 
@@ -37989,6 +38159,7 @@ var DD_Translator = DD_object.extend({
 
 var DD_Settings = DD_object.extend({
     id: 'dd_settings',
+    jBoxes: [],
     init: function(settings) {
         this._super(this.id);
         this.settings = settings;
@@ -38059,6 +38230,7 @@ var DD_Window = DD_object.extend({
             repositionOnOpen: false,
             repositionOnContent: true,
             target: $('.canvas-container'),
+            
             onOpen: function () {
                 self._evnt().doCall('window-showed');
             },
@@ -38166,9 +38338,32 @@ var DD_Uibase = DD_object.extend({
         if (this.options.windowOpener && model) {
             this.addWindowOpenEvent(this, model, this.modal, this.options);
         }
+        if (this.options.tooltip && this.options.tooltip_text && !Modernizr.touchevents) {
+            this.addTooltip();
+        }
         if (model) {
             return model;
         }
+    },
+
+    addTooltip: function () {
+        var position = this.options.tooltip_position ?
+                this.options.tooltip_position : {
+                    x: 'right',
+                    y: 'center'
+                };
+
+        var outside = this.options.tooltip_outside ?
+                this.options.tooltip_outside : 'x';
+
+        this.tooltipBox = $(this.self).jBox('Tooltip', {
+            content: this.options.tooltip_text,
+            position: position,
+            outside: outside
+        });
+        
+        this._evnt().addJBox(this.tooltipBox);
+
     },
 
     addWindowOpenEvent: function (me, model, modal, options) {
@@ -38384,19 +38579,18 @@ var DD_checkbox = DD_Uibase.extend({
         if (this.options.model) {
             this.model = this.options.model;
         }
-        this._super(this.options.id);
+        this._super();
         this.selfBase();
         this._add();
     },
 
     _addElements: function () {
-
         this._checkbox = $('<input />', {
-            id: this.createUUID(),
+            id: this.options.id ? this.options.id : this.createUUID(),
             class: this.mainClass + ' ' + (this.options.class ? this.options.class : ''),
             type: 'checkbox'
         });
-        if (this.checked) {
+        if (this.options.checked) {
             this._checkbox.attr({
                 'checked': true
             }).prop('checked');
@@ -38952,6 +39146,12 @@ var DD_Admin_ImagesSelected_Model = DD_ModelBase.extend({
         var newImgConf = imgConf.splice(layer.index, 1);
         this.updateImageConf(group_uid, media_id, 'conf', imgConf);
     },
+    
+    updateExtraConf: function(group_uid, media_id, key, value) {
+        var extraConf = this.getImgConf(group_uid, media_id, 'extra_conf');
+        extraConf[key] = value;
+        this.updateImageConf(group_uid, media_id, 'extra_conf', extraConf);
+    },
 
     updateMask: function (group_uid, media_id, fabricObj) {
         this.updateImageConf(group_uid, media_id, 'mask', fabricObj);
@@ -38961,10 +39161,18 @@ var DD_Admin_ImagesSelected_Model = DD_ModelBase.extend({
         this.updateImageConf(group_uid, media_id, 'mask', null);
     },
 
-    getImgConf: function (group_uid, media_id) {
+    getImgConf: function (group_uid, media_id, indexConf) {
         var groups = this.getGroups();
         var index = this.getImgIndex(group_uid, media_id);
         var img = groups[this.getGroupIndexByUid(group_uid)]['imgs'][index];
+        if(indexConf) {
+            if(!img[indexConf]) {
+                img[indexConf] = {};
+            }
+            
+            return img[indexConf];
+        }
+        
         if (!img['conf']) {
             img['conf'] = [];
         }
@@ -39184,6 +39392,10 @@ var DD_admin_group_image_model = DD_Admin_ImagesSelected_Model.extend({
     },
     
     onUpdate: function(fabricObj, group_uid, media_id, type) {
+        if(type === 'extra_conf') {
+            this.updateExtraConf(group_uid, media_id, fabricObj.key, fabricObj.value);
+            return;
+        }
         this.updateImgFabricConf(group_uid, media_id, fabricObj, type);
     },
 
@@ -39201,6 +39413,11 @@ var DD_admin_group_image_model = DD_Admin_ImagesSelected_Model.extend({
         var group_index = el.attr('data-group');
         var listFonts = this._s('listFonts');
         var myFilesPath = this._s('myFilesPath');
+        var defaultImgEnabled = this._s('defaultImgEnabled');
+        var defaultTextEnabled = this._s('defaultTextEnabled');
+        var defaultLibraryEnabled = this._s('defaultLibraryEnabled');
+        var defaultTextPrice = this._s('defaultTextPrice');
+        var defaultImgPrice = this._s('defaultImgPrice');
         
         el.on('click', function () {
             $('#dd_designer').html('');
@@ -39209,13 +39426,13 @@ var DD_admin_group_image_model = DD_Admin_ImagesSelected_Model.extend({
                 'src': options.src,
                 'width': options.sizes.width,
                 'height': options.sizes.height,
-
                 'sku': options.sku,
                 'product_id': options.product_id,
                 'media_id': options.media_id,
                 'group_index': group_index,
                 'mask': options.mask,
                 'conf': options.conf,
+                'extra_config': (options.extra_config ? options.extra_config : {}),
                 'settings': {
                     'urlUploadImages': urlUploadImages,
                     'percentSizeImage': percentSizeImage,
@@ -39225,7 +39442,13 @@ var DD_admin_group_image_model = DD_Admin_ImagesSelected_Model.extend({
                     'defaultLayerMaskWidth': defaultLayerMaskWidth,
                     'percentSizeFromMask': percentSizeFromMask,
                     'listFonts': listFonts,
-                    'myFilesPath': myFilesPath
+                    'myFilesPath': myFilesPath,
+                    
+                    'defaultImgEnabled': defaultImgEnabled,
+                    'defaultTextEnabled': defaultTextEnabled,
+                    'defaultLibraryEnabled': defaultLibraryEnabled,
+                    'defaultTextPrice': defaultTextPrice,
+                    'defaultImgPrice': defaultImgPrice
                 }
                 
             });
