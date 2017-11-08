@@ -4,7 +4,6 @@ var DD_main = DD_panel.extend({
     model: 'DD_Main_Model',
 
     init: function (parent, options) {
-        var self = this;
         this.options = options;
         this._super({
             'id': this.object_id,

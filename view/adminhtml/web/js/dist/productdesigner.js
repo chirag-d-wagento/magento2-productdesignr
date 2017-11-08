@@ -35712,7 +35712,7 @@ var DD_checkbox = DD_Uibase.extend({
             }
         });
         setTimeout(function () {
-            if (self.checked) {
+            if (self.options.checked) {
                 model.checkedAction.call(model, self._checkbox, self.options.view);
                 return;
             }
@@ -37386,7 +37386,6 @@ var DD_main = DD_panel.extend({
     model: 'DD_Main_Model',
 
     init: function (parent, options) {
-        var self = this;
         this.options = options;
         this._super({
             'id': this.object_id,
@@ -38618,7 +38617,7 @@ var DD_checkbox = DD_Uibase.extend({
             }
         });
         setTimeout(function () {
-            if (self.checked) {
+            if (self.options.checked) {
                 model.checkedAction.call(model, self._checkbox, self.options.view);
                 return;
             }
@@ -39148,9 +39147,9 @@ var DD_Admin_ImagesSelected_Model = DD_ModelBase.extend({
     },
     
     updateExtraConf: function(group_uid, media_id, key, value) {
-        var extraConf = this.getImgConf(group_uid, media_id, 'extra_conf');
+        var extraConf = this.getImgConf(group_uid, media_id, 'extra_config');
         extraConf[key] = value;
-        this.updateImageConf(group_uid, media_id, 'extra_conf', extraConf);
+        this.updateImageConf(group_uid, media_id, 'extra_config', extraConf);
     },
 
     updateMask: function (group_uid, media_id, fabricObj) {

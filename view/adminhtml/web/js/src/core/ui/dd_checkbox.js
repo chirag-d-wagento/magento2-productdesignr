@@ -45,7 +45,7 @@ var DD_checkbox = DD_Uibase.extend({
             }
         });
         setTimeout(function () {
-            if (self.checked) {
+            if (self.options.checked) {
                 model.checkedAction.call(model, self._checkbox, self.options.view);
                 return;
             }

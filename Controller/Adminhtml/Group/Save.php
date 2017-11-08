@@ -85,7 +85,7 @@ class Save extends \Magento\Backend\App\Action {
         
         $config = $this->_designerModel->prepareConfig($image);
         $imageModel->setConfig($config);
-        $imageModel->setExtraConfig($image->extra_conf ? json_encode($image->extra_conf) : json_encode([]));
+        $imageModel->setExtraConfig($image->extra_config ? json_encode($image->extra_config) : json_encode([]));
         $imageModel->save();
     }
     
