@@ -11,7 +11,6 @@ var DD_AddphotoButton = DD_button.extend({
             tooltip_text: this._('add_photo'),
             windowOpener: true,
             fa: true,
-            
             tooltip: true
         }
         this._super(options);

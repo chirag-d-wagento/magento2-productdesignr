@@ -937,6 +937,41 @@ var DD_ImageLinkAdd = DD_Uibase.extend({
     
 });
 
+var DD_inputText = DD_Uibase.extend({
+    
+    mainClass: 'dd-input-text-container',
+    labelClass: 'dd-label',
+    defaultType: 'text',
+    
+    init: function (options) {
+        this.options = $.extend((options ? options : {}), this.options);
+        this._super();
+        this.selfBase();
+        this._add();
+    },
+    
+    _addElements: function () {
+        this._label = $('<div />').addClass(this.labelClass);
+        this._label.html(this.options.label);
+        this._input = $('<input />', {
+            id: this.options.id ? this.options.id : this.createUUID(),
+            class: this.mainClass + ' ' + (this.options.class ? this.options.class : ''),
+            type: this.options.type ? this.options.type : this.defaultType
+        });
+        if(this.options.value) {
+            this._input.val(this.options.value);
+        }
+        if(this.options['data-type']) {
+            this._input.attr({
+                'data-type': this.options['data-type']
+            });
+        }
+        this.self.append(this._label);
+        this.self.append(this._input);
+    }
+    
+});
+
 var DD_panel = DD_Uibase.extend({
     mainClass: 'panel',
     init: function (options) {
@@ -2316,7 +2351,6 @@ var DD_AddphotoButton = DD_button.extend({
             tooltip_text: this._('add_photo'),
             windowOpener: true,
             fa: true,
-            
             tooltip: true
         }
         this._super(options);
@@ -2606,6 +2640,24 @@ var DD_setup_options_model = DD_ModelBase.extend({
 
     uncheckedAction: function (checkbox, view) {
         this.hoverCanvas.fire('object:extra_config', { key: $(checkbox).attr('id'), value: false });
+    },
+    
+    initInputEvents: function(input) {
+        this.parseFloat(input);
+        var self = this;
+        input.on('keyup', function() {
+            var value = self.parseFloat(input);
+            self.hoverCanvas.fire('object:extra_config', { key: input.attr('id'), value: value });
+        });
+    },
+    
+    parseFloat: function(input) {
+        var val = parseFloat(input.val(), 2);
+        if(!val){
+            val = '';
+        }
+        input.val(val);
+        return val;
     }
 
 });
@@ -2732,11 +2784,12 @@ var DD_setup_layer = DD_panel.extend({
 
 var DD_setup_options = DD_panel.extend({
     class_name: 'dd-setup-options',
-    checkboxModel: 'DD_setup_options_model',
+    setupModel: 'DD_setup_options_model',
 
     init: function (parent, imgOptions) {
         this.parent = parent;
         this.imgOptions = imgOptions;
+        this.model = this.setupModel;
         this._super({
             'class': this.class_name,
             'parent': parent
@@ -2747,11 +2800,11 @@ var DD_setup_options = DD_panel.extend({
     _addElements: function() {
         this.self
                 .append($('<h3 />').text(this._('configuration')));
-        console.log(this.imgOptions);
+        
         this.checkbox = new DD_checkbox({
             parent: this.self, 
             text: this._('enable_photos'), 
-            model: this.checkboxModel, 
+            model: this.setupModel, 
             view: this,
             id: 'photos_enabled',
             checked : (this._('defaultImgEnabled') && this.imgOptions.extra_config.photos_enabled !== false
@@ -2761,7 +2814,7 @@ var DD_setup_options = DD_panel.extend({
         this.checkbox = new DD_checkbox({
             parent: this.self, 
             text: this._('enable_text'), 
-            model: this.checkboxModel, 
+            model: this.setupModel, 
             view: this,
             id: 'text_enabled',
             checked : (this._('defaultTextEnabled') && this.imgOptions.extra_config.text_enabled !== false 
@@ -2771,7 +2824,7 @@ var DD_setup_options = DD_panel.extend({
         this.checkbox = new DD_checkbox({
             parent: this.self, 
             text: this._('enable_add_from_library'), 
-            model: this.checkboxModel, 
+            model: this.setupModel, 
             view: this,
             id: 'library_enabled',
             checked : (this._('defaultLibraryEnabled') && this.imgOptions.extra_config.library_enabled !== false 
@@ -2780,7 +2833,38 @@ var DD_setup_options = DD_panel.extend({
         });
         
         this.self.append($('<hr>'));
+        
+        this.self
+                .append($('<h3 />').text(this._('prices_configuration')));
+        
+        this.layerImgPrice = new DD_inputText({
+            parent: this.self, 
+            label: this._('layer_img_price'),
+            value: this.imgOptions.extra_config.layer_img_price 
+                ? this.imgOptions.extra_config.layer_img_price 
+                : this._s('defaultImgPrice'),
+            id: 'layer_img_price',
+            'data-type': 'price'
+        });
+        
+        this.layerTxtPrice = new DD_inputText({
+            parent: this.self, 
+            label: this._('layer_txt_price'),
+            value: this.imgOptions.extra_config.layer_txt_price 
+                ? this.imgOptions.extra_config.layer_txt_price 
+                :  this._s('defaultTextPrice'),
+            id: 'layer_txt_price',
+            'data-type': 'price'
+        });
+    },
+    
+    _callBackModel: function (model) {
+        this.self.find('input[type="text"]').each(function() {
+            var input = $(this);
+            model.initInputEvents(input);
+        });
     }
+    
 });
 
 var DD_setup_tabs = DD_Tabs.extend({
@@ -2940,8 +3024,10 @@ $.fn.dd_productdesigner = function (options) {
             'configuration': 'Configuration',
             'enable_photos': 'Enable Photos',
             'enable_text': 'Enable Texts',
-            'enable_add_from_library': 'Enable Add From Library'
-            
+            'enable_add_from_library': 'Enable Add From Library',
+            'prices_configuration': 'Prices Configuration',
+            'layer_img_price' : 'Image Price',
+            'layer_txt_price': 'Text Price'
         },
         //'settings': settings,
         'afterLoad': null,
