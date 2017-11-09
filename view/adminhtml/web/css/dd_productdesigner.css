@@ -3426,6 +3426,11 @@ ul.tabs li.current {
 .tab-content {
   display: none;
 }
+.tab-content.tab-loading {
+  font-weight: bold;
+  text-align: center;
+  padding: 20px 0;
+}
 .tab-content.current {
   display: inherit;
 }
@@ -3715,6 +3720,23 @@ ul.tabs li.current {
 .dd-setup-image .dd-setup-layer button {
   margin: 20px 0px;
 }
+.dd-setup-options hr {
+  margin: 20px 0;
+}
+.dd-setup-options .dd-checkbox-container {
+  margin: 5px 0;
+}
+.dd-setup-options .dd-input-text-container {
+  margin: 0 0 10px;
+}
+.dd-setup-options .dd-input-text-container .dd-label {
+  margin: 3px 0;
+}
+.dd-setup-options .dd-input-text-container input {
+  width: 100%;
+  height: 35px;
+  font-size: unset;
+}
 .dd-admin-main-container {
   position: relative;
   border: 1px solid silver;
@@ -3898,5 +3920,11 @@ body[class*=" jBox-blockScroll-"] {
 }
 .sp-container button:after {
   content: "\f00c";
+}
+/* uploader */
+.dz-error-mark,
+.dz-success-mark,
+.dz-details {
+  display: none;
 }
 /*# sourceMappingURL=dd_productdesigner.css.map */

@@ -17,7 +17,7 @@ var DD_setup_options = DD_panel.extend({
         this.self
                 .append($('<h3 />').text(this._('configuration')));
         
-        this.checkbox = new DD_checkbox({
+        new DD_checkbox({
             parent: this.self, 
             text: this._('enable_photos'), 
             model: this.setupModel, 
@@ -27,7 +27,7 @@ var DD_setup_options = DD_panel.extend({
                     || this.imgOptions.extra_config.photos_enabled  ? true 
             : false)
         });
-        this.checkbox = new DD_checkbox({
+        new DD_checkbox({
             parent: this.self, 
             text: this._('enable_text'), 
             model: this.setupModel, 
@@ -37,7 +37,7 @@ var DD_setup_options = DD_panel.extend({
                     || this.imgOptions.extra_config.text_enabled ? true 
             : false)
         });
-        this.checkbox = new DD_checkbox({
+        new DD_checkbox({
             parent: this.self, 
             text: this._('enable_add_from_library'), 
             model: this.setupModel, 
@@ -56,17 +56,18 @@ var DD_setup_options = DD_panel.extend({
         this.layerImgPrice = new DD_inputText({
             parent: this.self, 
             label: this._('layer_img_price'),
-            value: this.imgOptions.extra_config.layer_img_price 
+            value: (typeof(this.imgOptions.extra_config.layer_img_price) !== 'undefined') 
                 ? this.imgOptions.extra_config.layer_img_price 
                 : this._s('defaultImgPrice'),
             id: 'layer_img_price',
             'data-type': 'price'
         });
         
+        
         this.layerTxtPrice = new DD_inputText({
             parent: this.self, 
             label: this._('layer_txt_price'),
-            value: this.imgOptions.extra_config.layer_txt_price 
+            value: (typeof(this.imgOptions.extra_config.layer_txt_price) !== 'undefined') 
                 ? this.imgOptions.extra_config.layer_txt_price 
                 :  this._s('defaultTextPrice'),
             id: 'layer_txt_price',

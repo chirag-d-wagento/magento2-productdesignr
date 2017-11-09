@@ -26,11 +26,14 @@ var DD_setup_options_model = DD_ModelBase.extend({
     },
     
     parseFloat: function(input) {
-        var val = parseFloat(input.val(), 2);
-        if(!val){
-            val = '';
+        var val = input.val();
+        var regex = /\d*\.?\d*/g;
+        if(val) {
+            var match = val.match(regex);
+            val = match[0];
         }
         input.val(val);
+        
         return val;
     }
 

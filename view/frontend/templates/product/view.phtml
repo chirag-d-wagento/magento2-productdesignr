@@ -25,12 +25,19 @@
 
             var formCartSelector = '#product_addtocart_form';
 
+            var priceAddonSelectorAfter = '.price-box.price-final_price';
+
             var configuredMediaProducts = {};
             var mediaUniqueIds = {};
             var imgsSaved = {};
             var designer = null;
             var parentProductId = '<?php echo $block->getProduct()->getId(); ?>';
-            var defaultConfiguration = <?php echo $block->getDesignerConfiguration($block->getProduct()); ?>
+            var defaultConfiguration = <?php echo $block->getDesignerConfiguration($block->getProduct()); ?>;
+            var defaultLayerPrices = <?php echo $block->getLayerPrices(); ?>;
+            
+            var customPriceTrans = '<?php echo __('Design Price') ?>';
+
+            var configuredPrices = {};
 
             var options = {
                 type: 'popup',
@@ -125,10 +132,10 @@
                 drawImages(imgsSaved[product_id], product_id, media_id);
                 removeHidden(media_id);
             }
-            
+
             function addHidden(media_id, uniqueId) {
                 var uniqueId = uniqueId ? uniqueId : mediaUniqueIds[media_id];
-                if($(formCartSelector).find('input[data-media="' + media_id + '"]').get(0)) {
+                if ($(formCartSelector).find('input[data-media="' + media_id + '"]').get(0)) {
                     return;
                 }
                 $(formCartSelector).append($('<input>')
@@ -137,9 +144,9 @@
                             'value': uniqueId,
                             'data-media': media_id,
                             'type': 'hidden'
-                        })); 
+                        }));
             }
-            
+
             function removeHidden(media_id) {
                 $(formCartSelector).find('input[data-media="' + media_id + '"]')
                         .remove();
@@ -166,6 +173,8 @@
                             .attr('href', 'javascript:void(0)');
                     remove.on('click', function () {
                         removeImage(media_id, product_id);
+                        removePrice(media_id);
+                        showPrice();
                     });
                     var edit = $('<a/>').addClass('dd-designer-media-edit fa fa-edit')
                             .attr('href', 'javascript:void(0)');
@@ -177,6 +186,45 @@
                     div.append(edit);
                     $('#dd-designer-medias').append(div);
                 });
+            }
+
+            function setPrices(mediaId, json) {
+                if (!defaultLayerPrices[mediaId]['layer_img_price'] && !defaultLayerPrices[mediaId]['layer_txt_price']) {
+                    return;
+                }
+                configuredPrices[mediaId] = 0;
+                $.each(json, function (i, obj) {
+                    if (obj.type === 'image' || obj.isSvg) { //image price
+                        configuredPrices[mediaId] += defaultLayerPrices[mediaId]['layer_img_price'];
+                    }
+                    if (obj.type === 'text') {
+                        configuredPrices[mediaId] += defaultLayerPrices[mediaId]['layer_txt_price'];
+                    }
+                });
+            }
+
+            function removePrice(mediaId) {
+                configuredPrices[mediaId] = 0;
+            }
+
+            function showPrice() {
+                var totalPrice = 0;
+                var currency = null;
+                $.each(configuredPrices, function (media_id, price) {
+                    totalPrice += price;
+                    if (!currency) {
+                        currency = defaultLayerPrices[media_id]['currency'];
+                    }
+                });
+                $('.dd-product-designer-price').remove();
+                if (totalPrice > 0) {
+                    var spanPrice = $('<span />').addClass('dd-product-designer-price').html(
+                            ' +' + currency + '' + totalPrice.toFixed(2) + ' '
+                                 + '(' + customPriceTrans + ')'
+                            );
+                    
+                    $('' + priceAddonSelectorAfter).after(spanPrice);
+                }
             }
 
             function drawContainer() {
@@ -223,7 +271,10 @@
                         }
                         if (data.success) {
                             mediaUniqueIds[media_id] = data.design_id;
-                            addHidden(media_id, data.design_id)
+                            addHidden(media_id, data.design_id);
+
+                            setPrices(media_id, conf);
+                            showPrice();
                         }
                     },
                     error: function () {
@@ -325,7 +376,7 @@
                             }
                         });
                         parentProductId = found_ids[0];
-                        
+
 
     <?php endif; ?>
 
