@@ -262,7 +262,8 @@
                         'conf': JSON.stringify(conf),
                         'data': data,
                         'json': JSON.stringify(json),
-                        'unique_id': mediaUniqueIds[media_id]
+                        'unique_id': mediaUniqueIds[media_id],
+                        'media_id': media_id
                     },
                     success: function (data) {
                         if (data.error) {

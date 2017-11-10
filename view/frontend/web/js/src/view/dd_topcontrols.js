@@ -10,7 +10,11 @@ var DD_Topcontrols = DD_panel.extend({
             'class': this.class_name,
             'parent': parent
         });
+        if(typeof(this.main.options.extra_config) === 'undefined') {
+            this.main.options.extra_config = {};
+        }
         this.add();
+        
     },
     
     _addElements: function() {

@@ -54,9 +54,27 @@ class UpgradeSchema implements UpgradeSchemaInterface
             echo 'Add extra config field' . "\n";
             $this->initExtraConfField($setup);
         }
+        
+        if (version_compare($context->getVersion(), '1.0.6') < 0){
+            echo 'Add media id field to tmp designs' . "\n";
+            $this->initMediaIdField($setup);
+        }
+        
         $setup->endSetup();
 
     }   
+    
+    protected function initMediaIdField($setup) {
+        $setup->getConnection()->addColumn(
+            $setup->getTable('dd_productdesigner_tmp_designs'),
+            'media_id',
+            [
+                'type' => \Magento\Framework\DB\Ddl\Table::TYPE_INTEGER,
+                'nullable' => true,
+                'comment' => 'Media ID magento field'
+            ]
+        );
+    }
     
     protected function initExtraConfField($setup) {
         $setup->getConnection()->addColumn(

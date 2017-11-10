@@ -13,7 +13,14 @@ class View extends \Magento\Catalog\Block\Product\AbstractProduct {
     protected $_currency;
 
     public function __construct(
-    \Magento\Catalog\Block\Product\Context $context, \Develo\Designer\Helper\Data $designerHelper, \Develo\Designer\Helper\Url $helperUrl, \Develo\Designer\Helper\Fonts $designerFonts, \Magento\Store\Model\StoreManagerInterface $storeManager, \Magento\Directory\Model\Currency $currency, \Develo\Designer\Model\Designer $designerModel, array $data = array()
+        \Magento\Catalog\Block\Product\Context $context, 
+        \Develo\Designer\Helper\Data $designerHelper, 
+        \Develo\Designer\Helper\Url $helperUrl, 
+        \Develo\Designer\Helper\Fonts $designerFonts, 
+        \Magento\Store\Model\StoreManagerInterface $storeManager, 
+        \Magento\Directory\Model\Currency $currency, 
+        \Develo\Designer\Model\Designer $designerModel, 
+        array $data = array()
     ) {
         parent::__construct($context, $data);
 

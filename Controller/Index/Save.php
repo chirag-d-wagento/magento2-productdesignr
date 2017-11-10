@@ -39,6 +39,7 @@ class Save extends \Develo\Designer\Controller\Front {
             $model->setJsonText($post['json']);
             $model->setPngBlob($post['data']);
             $model->setConf($post['conf']);
+            $model->setMediaId($post['media_id']);
 
             $model->save();
 
