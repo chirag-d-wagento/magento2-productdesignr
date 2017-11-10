@@ -2459,7 +2459,7 @@ var DD_Category = DD_panel.extend({
 });
 
 var DD_closeButton = DD_button.extend({
-    object_id: 'dd-main-save-button',
+    object_id: 'dd-main-close-button',
     class_name: 'dd-main-button-cancel fa fa-times',
     model: 'DD_Callback_Model',
 
@@ -2609,10 +2609,18 @@ var DD_Maincontrols = DD_panel.extend({
     },
 
     _addElements: function () {
+        if(this.main.options.onClose) {
+            this.addCloseButton(this.main.options.onClose);
+        }
         this.addLayersButton();
         this.addSaveButton();
         this.addQRCodeButton();
         this.addPreviewButton();
+    },
+    
+    
+    addCloseButton: function(onClose) {
+        new DD_closeButton(this.self, onClose);
     },
     
     addLayersButton: function() {
@@ -2744,13 +2752,6 @@ var DD_Topcontrols = DD_panel.extend({
         this.addPhotoButton();
         this.addTextButton();
         this.addFromLibraryButton();
-        if(this.main.options.onClose) {
-            this.addCloseButton(this.main.options.onClose);
-        }
-    },
-    
-    addCloseButton: function(onClose) {
-        new DD_closeButton(this.self, onClose);
     },
     
     addPhotoButton: function() {

@@ -1,5 +1,5 @@
 var DD_closeButton = DD_button.extend({
-    object_id: 'dd-main-save-button',
+    object_id: 'dd-main-close-button',
     class_name: 'dd-main-button-cancel fa fa-times',
     model: 'DD_Callback_Model',
 

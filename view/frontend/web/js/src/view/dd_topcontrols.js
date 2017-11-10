@@ -21,13 +21,6 @@ var DD_Topcontrols = DD_panel.extend({
         this.addPhotoButton();
         this.addTextButton();
         this.addFromLibraryButton();
-        if(this.main.options.onClose) {
-            this.addCloseButton(this.main.options.onClose);
-        }
-    },
-    
-    addCloseButton: function(onClose) {
-        new DD_closeButton(this.self, onClose);
     },
     
     addPhotoButton: function() {

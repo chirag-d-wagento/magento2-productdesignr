@@ -14,10 +14,18 @@ var DD_Maincontrols = DD_panel.extend({
     },
 
     _addElements: function () {
+        if(this.main.options.onClose) {
+            this.addCloseButton(this.main.options.onClose);
+        }
         this.addLayersButton();
         this.addSaveButton();
         this.addQRCodeButton();
         this.addPreviewButton();
+    },
+    
+    
+    addCloseButton: function(onClose) {
+        new DD_closeButton(this.self, onClose);
     },
     
     addLayersButton: function() {

@@ -10,7 +10,9 @@ class Designer extends \Magento\Sales\Block\Adminhtml\Order\AbstractOrder implem
     protected $_productModel;
 
     public function __construct(
-    \Magento\Backend\Block\Template\Context $context, \Magento\Framework\Registry $registry, \Magento\Sales\Helper\Admin $adminHelper, \Magento\Catalog\Model\ProductFactory $productModel, \Develo\Designer\Model\OrderFactory $designerOrder, \Develo\Designer\Model\CartitemFactory $designCartItemModel, array $data = array()
+    \Magento\Backend\Block\Template\Context $context, \Magento\Framework\Registry $registry, \Magento\Sales\Helper\Admin $adminHelper, \Magento\Catalog\Model\ProductFactory $productModel,
+            \Develo\Designer\Model\OrderFactory $designerOrder, 
+            \Develo\Designer\Model\CartitemFactory $designCartItemModel, array $data = array()
     ) {
         parent::__construct($context, $registry, $adminHelper, $data);
 
