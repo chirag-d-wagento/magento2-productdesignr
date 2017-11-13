@@ -24,5 +24,6 @@ var DD_main = DD_panel.extend({
         }
         new DD_Maincontrols(this.self.parent(), this);
         
+        new DD_Bottomcontrols(this.self.parent(), this);
     }
 });

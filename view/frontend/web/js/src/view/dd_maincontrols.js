@@ -17,22 +17,11 @@ var DD_Maincontrols = DD_panel.extend({
         if(this.main.options.onClose) {
             this.addCloseButton(this.main.options.onClose);
         }
-        this.addLayersButton();
         this.addSaveButton();
-        this.addQRCodeButton();
-        this.addPreviewButton();
-    },
-    
+    },    
     
     addCloseButton: function(onClose) {
         new DD_closeButton(this.self, onClose);
-    },
-    
-    addLayersButton: function() {
-        if(!this._s('layers')) {
-            return;
-        }
-        new DD_layerButton(this.self);
     },
     
     addSaveButton: function() {
@@ -40,20 +29,5 @@ var DD_Maincontrols = DD_panel.extend({
             return;
         }
         new DD_saveButton(this.self, this.main.options.onSave);
-    },
-    
-    addQRCodeButton: function() {
-        if(!this._s('qrcode')) {
-            return;
-        }
-        new DD_qrButton(this.self);
-    },
-    
-    addPreviewButton: function() {
-        if(!this._s('preview')) {
-            return;
-        }
-        new DD_previewButton(this.self);
-        
     }
 });

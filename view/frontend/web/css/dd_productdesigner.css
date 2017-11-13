@@ -3718,7 +3718,7 @@ body:not(._keyfocus) .dd-designer-maincontrols button.fa-spin:focus {
   color: red;
   /* width: 30px; */
   height: 58px;
-  margin: 9px;
+  margin: 11px;
 }
 .dd-designer-maincontrols button:hover {
   box-shadow: 0px 8px 8px rgba(0, 0, 0, 0.75);
@@ -3733,6 +3733,21 @@ body:not(._keyfocus) .dd-designer-maincontrols button.fa-spin:focus {
   width: 80px;
   height: 80px;
   color: green;
+}
+#dd-bottom-controls {
+  position: absolute;
+  bottom: 0px;
+  padding: 20px;
+  width: 100%;
+  text-align: center;
+}
+#dd-bottom-controls button {
+  font-size: 20px;
+  margin: 10px;
+  background: #fff;
+  box-shadow: 0px 7px 7px rgba(0, 0, 0, 0.55);
+  transition: box-shadow 0.3s ease-in-out;
+  border: 1px solid #ccc;
 }
 #dd-add-text-form button {
   width: 100%;

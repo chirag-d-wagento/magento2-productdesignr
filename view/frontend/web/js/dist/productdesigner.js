@@ -37423,6 +37423,66 @@ var DD_AddtextButton = DD_button.extend({
 })
 
 
+var DD_Bottomcontrols = DD_panel.extend({
+    object_id: 'dd-bottom-controls',
+    class_name: 'dd-designer-bottomcontrols',
+
+    init: function (parent, main) {
+        this.parent = parent;
+        this.main = main;
+        this._super({
+            'id': this.object_id,
+            'class': this.class_name,
+            'parent': parent
+        });
+        this.add();
+    },
+    
+    _addElements: function () {
+        this.addLayersButton();
+        this.addPreviewButton();
+        this.addDownloadButton();
+        this.addPrintButton();
+        this.addClearAllButton();
+    },
+    
+    addLayersButton: function() {
+        if(!this._s('layers')) {
+            return;
+        }
+        new DD_layerButton(this.self);
+    },
+    
+    addDownloadButton: function() {
+        if(!this._s('download')) {
+            return;
+        }
+        new DD_downloadButton(this.self);
+    },
+    
+    addPrintButton: function() {
+        if(!this._s('print')) {
+            return;
+        }
+        new DD_printButton(this.self);
+    },
+    
+    addClearAllButton: function() {
+        if(!this._s('clear_all')) {
+            return;
+        }
+        new DD_clearAllButton(this.self);
+    },
+    
+    addPreviewButton: function() {
+        if(!this._s('preview')) {
+            return;
+        }
+        new DD_previewButton(this.self);
+        
+    }
+});
+
 var DD_Category = DD_panel.extend({
     
     class_name: 'dd-designer-category',
@@ -37449,6 +37509,28 @@ var DD_Category = DD_panel.extend({
         
     },
     
+});
+
+var DD_clearAllButton = DD_button.extend({
+    class_name: 'dd-main-button fa-scissors fa',
+    
+    init: function (parent) {
+        var options = {
+            parent: parent,
+            id: this.object_id,
+            class: this.class_name,
+            tooltip_text: this._('clear_all'),
+            fa: true,
+            tooltip: true,
+            tooltip_position: {
+                x: 'center',
+                y: 'top'
+            },
+            tooltip_outside: 'y'
+        }
+        this._super(options);
+    }
+
 });
 
 var DD_closeButton = DD_button.extend({
@@ -37479,6 +37561,28 @@ var DD_closeButton = DD_button.extend({
     }
 });
 
+
+var DD_downloadButton = DD_button.extend({
+    class_name: 'dd-main-button fa-download fa',
+    
+    init: function (parent) {
+        var options = {
+            parent: parent,
+            id: this.object_id,
+            class: this.class_name,
+            tooltip_text: this._('download'),
+            fa: true,
+            tooltip: true,
+            tooltip_position: {
+                x: 'center',
+                y: 'top'
+            },
+            tooltip_outside: 'y'
+        }
+        this._super(options);
+    }
+
+});
 
 var DD_historyBackButton = DD_button.extend({
     object_id: 'dd-history-back-button',
@@ -37543,14 +37647,21 @@ var DD_historyNextButton = DD_button.extend({
 
 var DD_layerButton = DD_button.extend({
     object_id: 'dd-main-layer-button',
-    class_name: 'dd-main-button',
+    class_name: 'dd-main-button fa-database fa',
     
     init: function(parent) {
         var options = {
             parent: parent,
             id: this.object_id,
             class: this.class_name,
-            text: this._('layers')
+            tooltip_text: this._('layers'),
+            tooltip_position: {
+                x: 'center',
+                y: 'top'
+            },
+            tooltip_outside: 'y',
+            fa: true,
+            tooltip: true
         }
         this._super(options);
     }
@@ -37583,6 +37694,7 @@ var DD_main = DD_panel.extend({
         }
         new DD_Maincontrols(this.self.parent(), this);
         
+        new DD_Bottomcontrols(this.self.parent(), this);
     }
 });
 
@@ -37605,22 +37717,11 @@ var DD_Maincontrols = DD_panel.extend({
         if(this.main.options.onClose) {
             this.addCloseButton(this.main.options.onClose);
         }
-        this.addLayersButton();
         this.addSaveButton();
-        this.addQRCodeButton();
-        this.addPreviewButton();
-    },
-    
+    },    
     
     addCloseButton: function(onClose) {
         new DD_closeButton(this.self, onClose);
-    },
-    
-    addLayersButton: function() {
-        if(!this._s('layers')) {
-            return;
-        }
-        new DD_layerButton(this.self);
     },
     
     addSaveButton: function() {
@@ -37628,39 +37729,53 @@ var DD_Maincontrols = DD_panel.extend({
             return;
         }
         new DD_saveButton(this.self, this.main.options.onSave);
-    },
-    
-    addQRCodeButton: function() {
-        if(!this._s('qrcode')) {
-            return;
-        }
-        new DD_qrButton(this.self);
-    },
-    
-    addPreviewButton: function() {
-        if(!this._s('preview')) {
-            return;
-        }
-        new DD_previewButton(this.self);
-        
     }
 });
 
 var DD_previewButton = DD_button.extend({
     object_id: 'dd-main-preview-button',
-    class_name: 'dd-main-button',
+    class_name: 'dd-main-button fa fa-eye',
     
     init: function(parent) {
         var options = {
             parent: parent,
             id: this.object_id,
             class: this.class_name,
-            text: this._('preview')
+            tooltip_text: this._('preview'),
+            fa: true,
+            tooltip: true,
+            tooltip_position: {
+                x: 'center',
+                y: 'top'
+            },
+            tooltip_outside: 'y'
         }
         this._super(options);
     }
 });
 
+
+var DD_printButton = DD_button.extend({
+    class_name: 'dd-main-button fa-print fa',
+    
+    init: function (parent) {
+        var options = {
+            parent: parent,
+            id: this.object_id,
+            class: this.class_name,
+            tooltip_text: this._('print'),
+            fa: true,
+            tooltip: true,
+            tooltip_position: {
+                x: 'center',
+                y: 'top'
+            },
+            tooltip_outside: 'y'
+        }
+        this._super(options);
+    }
+
+});
 
 var DD_qrButton = DD_button.extend({
     object_id: 'dd-main-qrcode-button',
@@ -37844,10 +37959,12 @@ $.fn.dd_productdesigner = function (options) {
         'addtext': true,
         'addfromlibrary': true,
         'history': false,
-        'layers': false,
+        'layers': true,
         'save': true,
-        'qrcode': false,
-        'preview': false,
+        'print': true,
+        'clear_all': true,
+        'preview': true,
+        'download': true,
         'defaultFont': 'Verdana,Geneva,sans-serif',
         'defualtFontColor': '#ffffff',
         'defaultFontSize': 25,
@@ -37903,7 +38020,10 @@ $.fn.dd_productdesigner = function (options) {
             'text_settings': 'Text Settings',
             'edit': 'Edit',
             'close': 'Close',
-            'color': 'Color'
+            'color': 'Color',
+            'download': 'Download',
+            'print': 'Print',
+            'clear_all': 'Clear All'
         },
         //'settings': settings,
         'onSave': null,

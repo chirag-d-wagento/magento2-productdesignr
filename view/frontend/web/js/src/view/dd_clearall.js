@@ -1,13 +1,12 @@
-var DD_previewButton = DD_button.extend({
-    object_id: 'dd-main-preview-button',
-    class_name: 'dd-main-button fa fa-eye',
+var DD_clearAllButton = DD_button.extend({
+    class_name: 'dd-main-button fa-scissors fa',
     
-    init: function(parent) {
+    init: function (parent) {
         var options = {
             parent: parent,
             id: this.object_id,
             class: this.class_name,
-            tooltip_text: this._('preview'),
+            tooltip_text: this._('clear_all'),
             fa: true,
             tooltip: true,
             tooltip_position: {
@@ -18,5 +17,5 @@ var DD_previewButton = DD_button.extend({
         }
         this._super(options);
     }
-});
 
+});
