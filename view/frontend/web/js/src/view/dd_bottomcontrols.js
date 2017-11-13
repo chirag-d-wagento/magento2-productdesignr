@@ -2,9 +2,10 @@ var DD_Bottomcontrols = DD_panel.extend({
     object_id: 'dd-bottom-controls',
     class_name: 'dd-designer-bottomcontrols',
 
-    init: function (parent, main) {
+    init: function (parent, main, mainModel) {
         this.parent = parent;
         this.main = main;
+        this.mainModel = mainModel;
         this._super({
             'id': this.object_id,
             'class': this.class_name,
@@ -14,7 +15,6 @@ var DD_Bottomcontrols = DD_panel.extend({
     },
     
     _addElements: function () {
-        this.addLayersButton();
         this.addPreviewButton();
         this.addDownloadButton();
         this.addPrintButton();
@@ -32,7 +32,7 @@ var DD_Bottomcontrols = DD_panel.extend({
         if(!this._s('download')) {
             return;
         }
-        new DD_downloadButton(this.self);
+        new DD_downloadButton(this.self, this.mainModel);
     },
     
     addPrintButton: function() {

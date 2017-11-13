@@ -21,6 +21,14 @@ var DD_Topcontrols = DD_panel.extend({
         this.addPhotoButton();
         this.addTextButton();
         this.addFromLibraryButton();
+        this.addLayersButton();
+    },
+    
+    addLayersButton: function() {
+        if(!this._s('layers')) {
+            return;
+        }
+        new DD_layerButton(this.self);
     },
     
     addPhotoButton: function() {

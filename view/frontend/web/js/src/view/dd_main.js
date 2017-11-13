@@ -23,7 +23,9 @@ var DD_main = DD_panel.extend({
             new DD_Historycontrols(this.self);
         }
         new DD_Maincontrols(this.self.parent(), this);
-        
-        new DD_Bottomcontrols(this.self.parent(), this);
+    },
+    
+    _callBackModel: function(model) {
+        new DD_Bottomcontrols(this.self.parent(), this, model);
     }
 });

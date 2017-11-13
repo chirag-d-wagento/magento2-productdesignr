@@ -1475,6 +1475,33 @@ var DD_Control_Base_Model = DD_ModelBase.extend({
     }
 });
 
+var DD_Download_Model = DD_ModelBase.extend({
+    init: function (obj) {
+        this.obj = obj;
+    },
+
+    addDownloadEvent: function (mainModel) {
+        this.obj.get().on('click', function () {
+            mainModel.unselectAll();
+            var data = mainModel.getDataImg();
+            var image_data = atob(data.split(',')[1]);
+            var arraybuffer = new ArrayBuffer(image_data.length);
+            var view = new Uint8Array(arraybuffer);
+            for (var i = 0; i < image_data.length; i++) {
+                view[i] = image_data.charCodeAt(i) & 0xff;
+            }
+            try {
+                var blob = new Blob([arraybuffer], {type: 'application/octet-stream'});
+            } catch (e) {
+                var bb = new (window.WebKitBlobBuilder || window.MozBlobBuilder);
+                bb.append(arraybuffer);
+                var blob = bb.getBlob('application/octet-stream');
+            }
+            var url = (window.webkitURL || window.URL).createObjectURL(blob);
+            location.href = url;
+        });
+    }
+});
 var DD_ImageLink_Model = DD_ModelBase.extend({
 
     init: function(obj) {
@@ -1525,6 +1552,8 @@ var DD_Main_Model = DD_ModelBase.extend({
         this._evnt().register(this.eventClick, this.obj);
         this._evnt().register(this.eventObjectChanged, this.obj);
         this._evnt().register(this.eventObjectAdded, this.obj);
+        
+        this.callBackObject();
     },
 
     initLayers: function () {
@@ -2434,9 +2463,10 @@ var DD_Bottomcontrols = DD_panel.extend({
     object_id: 'dd-bottom-controls',
     class_name: 'dd-designer-bottomcontrols',
 
-    init: function (parent, main) {
+    init: function (parent, main, mainModel) {
         this.parent = parent;
         this.main = main;
+        this.mainModel = mainModel;
         this._super({
             'id': this.object_id,
             'class': this.class_name,
@@ -2446,7 +2476,6 @@ var DD_Bottomcontrols = DD_panel.extend({
     },
     
     _addElements: function () {
-        this.addLayersButton();
         this.addPreviewButton();
         this.addDownloadButton();
         this.addPrintButton();
@@ -2464,7 +2493,7 @@ var DD_Bottomcontrols = DD_panel.extend({
         if(!this._s('download')) {
             return;
         }
-        new DD_downloadButton(this.self);
+        new DD_downloadButton(this.self, this.mainModel);
     },
     
     addPrintButton: function() {
@@ -2571,12 +2600,15 @@ var DD_closeButton = DD_button.extend({
 
 var DD_downloadButton = DD_button.extend({
     class_name: 'dd-main-button fa-download fa',
+    model: 'DD_Download_Model',
     
-    init: function (parent) {
+    init: function (parent, mainModel) {
+        this.mainModel = mainModel;
         var options = {
             parent: parent,
             id: this.object_id,
             class: this.class_name,
+            
             tooltip_text: this._('download'),
             fa: true,
             tooltip: true,
@@ -2587,6 +2619,10 @@ var DD_downloadButton = DD_button.extend({
             tooltip_outside: 'y'
         }
         this._super(options);
+    },
+    
+    _callBackModel: function(model) {
+        model.addDownloadEvent(this.mainModel);
     }
 
 });
@@ -2662,11 +2698,6 @@ var DD_layerButton = DD_button.extend({
             id: this.object_id,
             class: this.class_name,
             tooltip_text: this._('layers'),
-            tooltip_position: {
-                x: 'center',
-                y: 'top'
-            },
-            tooltip_outside: 'y',
             fa: true,
             tooltip: true
         }
@@ -2700,8 +2731,10 @@ var DD_main = DD_panel.extend({
             new DD_Historycontrols(this.self);
         }
         new DD_Maincontrols(this.self.parent(), this);
-        
-        new DD_Bottomcontrols(this.self.parent(), this);
+    },
+    
+    _callBackModel: function(model) {
+        new DD_Bottomcontrols(this.self.parent(), this, model);
     }
 });
 
@@ -2867,6 +2900,14 @@ var DD_Topcontrols = DD_panel.extend({
         this.addPhotoButton();
         this.addTextButton();
         this.addFromLibraryButton();
+        this.addLayersButton();
+    },
+    
+    addLayersButton: function() {
+        if(!this._s('layers')) {
+            return;
+        }
+        new DD_layerButton(this.self);
     },
     
     addPhotoButton: function() {

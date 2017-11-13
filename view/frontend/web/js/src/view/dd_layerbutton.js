@@ -8,11 +8,6 @@ var DD_layerButton = DD_button.extend({
             id: this.object_id,
             class: this.class_name,
             tooltip_text: this._('layers'),
-            tooltip_position: {
-                x: 'center',
-                y: 'top'
-            },
-            tooltip_outside: 'y',
             fa: true,
             tooltip: true
         }

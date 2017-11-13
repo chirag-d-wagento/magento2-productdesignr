@@ -29,6 +29,8 @@ var DD_Main_Model = DD_ModelBase.extend({
         this._evnt().register(this.eventClick, this.obj);
         this._evnt().register(this.eventObjectChanged, this.obj);
         this._evnt().register(this.eventObjectAdded, this.obj);
+        
+        this.callBackObject();
     },
 
     initLayers: function () {
