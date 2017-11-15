@@ -7,6 +7,8 @@ var DD_RemoveAll_model = DD_ModelBase.extend({
         this.obj.get().on('click', function () {
             var canvas = self._l().getHoverCanvas();
             canvas.clear();
+            canvas.renderAll();
+            canvas.trigger('object:clear_all', {});
         });
     }
 });

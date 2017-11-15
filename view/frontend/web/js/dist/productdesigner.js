@@ -36665,6 +36665,10 @@ var DD_Main_Model = DD_ModelBase.extend({
                 e.target.controlModelCreated.remove();
             }
         });
+        hoverCanvas.on('object:clear_all', function (e) {
+            console.log('trigger object:clear_all!');
+            self.obj.options.onClearAll.call(null, self.obj.options.media_id)
+        });
     },
 
     _addObjects: function (options) {
@@ -36901,6 +36905,8 @@ var DD_RemoveAll_model = DD_ModelBase.extend({
         this.obj.get().on('click', function () {
             var canvas = self._l().getHoverCanvas();
             canvas.clear();
+            canvas.renderAll();
+            canvas.trigger('object:clear_all', {});
         });
     }
 });
@@ -38150,13 +38156,18 @@ $.fn.dd_productdesigner = function (options) {
         //'settings': settings,
         'onSave': null,
         'onUpdate': null,
-        'onClose': null
+        'onClose': null,
+        'onClearAll': null
     }, options);
 
     this.options.settings = settings;
 
     this.onUpdate = function (callback) {
         this.options.onUpdate = callback;
+    }
+    
+    this.onClearAll = function (callback) {
+        this.options.onClearAll = callback;
     }
 
     this.onClose = function (callback) {

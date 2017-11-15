@@ -93,6 +93,10 @@
 
                 return conf;
             }
+            
+            function clearAll(media_id) {
+                configuredMediaProducts[media_id] = [];
+            }
 
             function updateImgFabricConf(fabricObj, group_uid, media_id, type) {
                 if (fabricObj.mainBg) {
@@ -324,6 +328,7 @@
                 });
 
                 designer.onUpdate(updateImgFabricConf);
+                designer.onClearAll(clearAll);
 
                 designer.onClose(function () {
                     designer.destroy();

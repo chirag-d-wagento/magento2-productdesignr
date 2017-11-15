@@ -149,6 +149,10 @@ var DD_Main_Model = DD_ModelBase.extend({
                 e.target.controlModelCreated.remove();
             }
         });
+        hoverCanvas.on('object:clear_all', function (e) {
+            console.log('trigger object:clear_all!');
+            self.obj.options.onClearAll.call(null, self.obj.options.media_id)
+        });
     },
 
     _addObjects: function (options) {

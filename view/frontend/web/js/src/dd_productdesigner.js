@@ -73,13 +73,18 @@ $.fn.dd_productdesigner = function (options) {
         //'settings': settings,
         'onSave': null,
         'onUpdate': null,
-        'onClose': null
+        'onClose': null,
+        'onClearAll': null
     }, options);
 
     this.options.settings = settings;
 
     this.onUpdate = function (callback) {
         this.options.onUpdate = callback;
+    }
+    
+    this.onClearAll = function (callback) {
+        this.options.onClearAll = callback;
     }
 
     this.onClose = function (callback) {
