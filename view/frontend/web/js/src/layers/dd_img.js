@@ -8,7 +8,7 @@ var DD_Layer_Img = DD_Layer_Base.extend({
         var src = fullCnfg ? fullCnfg.src : options.src;
         var ext = src.substr(src.lastIndexOf('.') + 1);
 
-        function ___callBack(iImg, isSvg) {
+        function ___callBack(iImg, isSvg, src_orig) {
             var parent = self.getParent()
             if (!fullCnfg) {
                 var conf = {
@@ -17,6 +17,7 @@ var DD_Layer_Img = DD_Layer_Base.extend({
                     selectable: options.noselectable ? false : true,
                     controlModel: 'DD_control_image',
                     centeredScaling: true,
+                    src_orig: src_orig,
                     isSvg: isSvg
                 }
                 var mask = self._l().getMask();
@@ -77,7 +78,7 @@ var DD_Layer_Img = DD_Layer_Base.extend({
             }, {crossOrigin: 'anonymous'});
         } else {
             fabric.loadSVGFromURL(src, function (svgobject) {
-                ___callBack(svgobject, true);
+                ___callBack(svgobject, true, src);
             });
         }
     }

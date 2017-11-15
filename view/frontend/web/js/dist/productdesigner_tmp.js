@@ -1521,6 +1521,94 @@ var DD_ImageLink_Model = DD_ModelBase.extend({
     }
 });
 
+var DD_Layers_Model = DD_ModelBase.extend({
+
+    init: function (obj) {
+        this.obj = obj;
+        this._super(obj);
+    },
+
+    getWindowTitle: function () {
+        return this._('layers');
+    },
+
+    setWindowContent: function (parent) {
+        var canvas = this._l().getHoverCanvas();
+        var objs = canvas.getObjects();
+        var self = this;
+        
+        parent.html('');
+
+        $.each(objs, function () {
+            var object = this;
+            self.drawElement(object, parent, canvas);
+        });
+    },
+
+    drawElement: function (object, parent, canvas) {
+        if (typeof (object) === 'undefined') {
+            return;
+        }
+        if (object.layerMask) {
+            return;
+        }
+
+        var panel = new DD_panel({
+            parent: parent,
+            class: 'dd-control-layer'
+        });
+
+        panel.add();
+        var type = object.isSvg ? 'svg' : object.type;
+        var innerHtml = '';
+        switch (type) {
+            case "image":
+                innerHtml += '<img src="' + object.src + '" class="dd-control-layer-image" />'
+                break;
+            case "svg":
+                innerHtml += '<img src="' + object.src_orig + '" class="dd-control-layer-image" />'
+                break;
+            case "text":
+                innerHtml += '<span class="dd-control-layer-text">'
+                        + object.text
+                        + '</span>';
+                break;
+        }
+
+        panel.get().html(innerHtml);
+
+        this.attachPanelClick( panel, object, canvas );
+        this.drawControls( panel, object, canvas, parent );
+    },
+
+    drawControls: function (panel, object, canvas, parent) {
+        var self = this;
+        var remove = new DD_button({
+            'parent': panel.get(),
+            'class': 'fa fa-trash'
+        });
+
+        remove.get().on('click', function (e) {
+            e.preventDefault();
+            if (object.isSvg === true) {
+                object.forEachObject(function (a) {
+                    canvas.remove(a);
+                });
+            }
+            canvas.remove(object);
+            canvas.renderAll();
+            self.setWindowContent(parent);
+        });
+    },
+
+    attachPanelClick: function (panel, object, canvas) {
+        panel.get().on('click', function () {
+            canvas.setActiveObject(object);
+        });
+    }
+
+});
+
 var DD_Main_Model = DD_ModelBase.extend({
     eventBase: 'main-panel-created',
     eventClick: 'panel-click',
@@ -2217,7 +2305,7 @@ var DD_Layer_Img = DD_Layer_Base.extend({
         var src = fullCnfg ? fullCnfg.src : options.src;
         var ext = src.substr(src.lastIndexOf('.') + 1);
 
-        function ___callBack(iImg, isSvg) {
+        function ___callBack(iImg, isSvg, src_orig) {
             var parent = self.getParent()
             if (!fullCnfg) {
                 var conf = {
@@ -2226,6 +2314,7 @@ var DD_Layer_Img = DD_Layer_Base.extend({
                     selectable: options.noselectable ? false : true,
                     controlModel: 'DD_control_image',
                     centeredScaling: true,
+                    src_orig: src_orig,
                     isSvg: isSvg
                 }
                 var mask = self._l().getMask();
@@ -2286,7 +2375,7 @@ var DD_Layer_Img = DD_Layer_Base.extend({
             }, {crossOrigin: 'anonymous'});
         } else {
             fabric.loadSVGFromURL(src, function (svgobject) {
-                ___callBack(svgobject, true);
+                ___callBack(svgobject, true, src);
             });
         }
     }
@@ -2767,6 +2856,7 @@ var DD_historyNextButton = DD_button.extend({
 var DD_layerButton = DD_button.extend({
     object_id: 'dd-main-layer-button',
     class_name: 'dd-main-button fa-database fa',
+    model: 'DD_Layers_Model',
     
     init: function(parent) {
         var options = {
@@ -2775,7 +2865,8 @@ var DD_layerButton = DD_button.extend({
             class: this.class_name,
             tooltip_text: this._('layers'),
             fa: true,
-            tooltip: true
+            tooltip: true,
+            windowOpener: true
         }
         this._super(options);
     }
