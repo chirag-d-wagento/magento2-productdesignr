@@ -1,8 +1,10 @@
 var DD_previewButton = DD_button.extend({
     object_id: 'dd-main-preview-button',
     class_name: 'dd-main-button fa fa-eye',
+    model: 'DD_Privew_Model',
     
-    init: function(parent) {
+    init: function(parent, mainModel) {
+        this.mainModel = mainModel;
         var options = {
             parent: parent,
             id: this.object_id,
@@ -17,6 +19,10 @@ var DD_previewButton = DD_button.extend({
             tooltip_outside: 'y'
         }
         this._super(options);
+    },
+    
+    _callBackModel: function(model) {
+        model.addPreviewEvent(this.mainModel);
     }
 });
 

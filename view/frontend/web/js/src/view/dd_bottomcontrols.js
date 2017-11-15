@@ -47,7 +47,7 @@ var DD_Bottomcontrols = DD_panel.extend({
         if(!this._s('preview')) {
             return;
         }
-        new DD_previewButton(this.self);
+        new DD_previewButton(this.self, this.mainModel);
         
     }
 });

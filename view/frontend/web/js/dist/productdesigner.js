@@ -36838,6 +36838,32 @@ var DD_Main_Model = DD_ModelBase.extend({
     }
 });
 
+var DD_Privew_Model = DD_ModelBase.extend({
+    init: function (obj) {
+        this.obj = obj;
+    },
+
+    addPreviewEvent: function (mainModel) {
+        var self = this;
+        this.obj.get().on('click', function () {
+            mainModel.unselectAll();
+            var data = mainModel.getDataImg();
+            var Pagelink = "about:blank";
+            var pwa = window.open(Pagelink, "_new");
+            pwa.document.open();
+            pwa.document.write(self.__imgSourcetoShow(data));
+            pwa.document.close();
+
+        });
+    },
+
+    __imgSourcetoShow: function (data) {
+        return "<html><head>/head><body>" +
+                "<img src='" + data + "' style='max-width:100%;' /></body></html>";
+    }
+});
+
+
 var DD_Print_model = DD_ModelBase.extend({
     init: function (obj) {
         this.obj = obj;
@@ -36862,7 +36888,7 @@ var DD_Print_model = DD_ModelBase.extend({
                 "setTimeout('step2()', 10);}\n" +
                 "function step2(){window.print();window.close()}\n" +
                 "</scri" + "pt></head><body onload='step1()'>\n" +
-                "<img src='" + data + "' />I AM WINDOW?</body></html>";
+                "<img src='" + data + "' /></body></html>";
     }
 });
 
@@ -37529,7 +37555,7 @@ var DD_Bottomcontrols = DD_panel.extend({
         if(!this._s('preview')) {
             return;
         }
-        new DD_previewButton(this.self);
+        new DD_previewButton(this.self, this.mainModel);
         
     }
 });
@@ -37790,8 +37816,10 @@ var DD_Maincontrols = DD_panel.extend({
 var DD_previewButton = DD_button.extend({
     object_id: 'dd-main-preview-button',
     class_name: 'dd-main-button fa fa-eye',
+    model: 'DD_Privew_Model',
     
-    init: function(parent) {
+    init: function(parent, mainModel) {
+        this.mainModel = mainModel;
         var options = {
             parent: parent,
             id: this.object_id,
@@ -37806,6 +37834,10 @@ var DD_previewButton = DD_button.extend({
             tooltip_outside: 'y'
         }
         this._super(options);
+    },
+    
+    _callBackModel: function(model) {
+        model.addPreviewEvent(this.mainModel);
     }
 });
 

@@ -22,6 +22,6 @@ var DD_Print_model = DD_ModelBase.extend({
                 "setTimeout('step2()', 10);}\n" +
                 "function step2(){window.print();window.close()}\n" +
                 "</scri" + "pt></head><body onload='step1()'>\n" +
-                "<img src='" + data + "' />I AM WINDOW?</body></html>";
+                "<img src='" + data + "' /></body></html>";
     }
 });
