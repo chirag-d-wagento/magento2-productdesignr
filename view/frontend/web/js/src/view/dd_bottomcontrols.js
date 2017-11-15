@@ -21,13 +21,6 @@ var DD_Bottomcontrols = DD_panel.extend({
         this.addClearAllButton();
     },
     
-    addLayersButton: function() {
-        if(!this._s('layers')) {
-            return;
-        }
-        new DD_layerButton(this.self);
-    },
-    
     addDownloadButton: function() {
         if(!this._s('download')) {
             return;
@@ -39,7 +32,7 @@ var DD_Bottomcontrols = DD_panel.extend({
         if(!this._s('print')) {
             return;
         }
-        new DD_printButton(this.self);
+        new DD_printButton(this.self, this.mainModel);
     },
     
     addClearAllButton: function() {
@@ -48,6 +41,7 @@ var DD_Bottomcontrols = DD_panel.extend({
         }
         new DD_clearAllButton(this.self);
     },
+    
     
     addPreviewButton: function() {
         if(!this._s('preview')) {

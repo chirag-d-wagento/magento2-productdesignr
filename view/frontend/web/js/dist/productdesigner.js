@@ -36838,6 +36838,34 @@ var DD_Main_Model = DD_ModelBase.extend({
     }
 });
 
+var DD_Print_model = DD_ModelBase.extend({
+    init: function (obj) {
+        this.obj = obj;
+    },
+
+    addPrintEvent: function (mainModel) {
+        var self = this;
+        this.obj.get().on('click', function () {
+            mainModel.unselectAll();
+            var data = mainModel.getDataImg();
+            var Pagelink = "about:blank";
+            var pwa = window.open(Pagelink, "_new");
+            pwa.document.open();
+            pwa.document.write(self.__imgSourcetoPrint(data));
+            pwa.document.close();
+
+        });
+    },
+
+    __imgSourcetoPrint: function (data) {
+        return "<html><head><script>function step1(){\n" +
+                "setTimeout('step2()', 10);}\n" +
+                "function step2(){window.print();window.close()}\n" +
+                "</scri" + "pt></head><body onload='step1()'>\n" +
+                "<img src='" + data + "' />I AM WINDOW?</body></html>";
+    }
+});
+
 var DD_control_image = DD_Control_Base_Model.extend({
     init: function (obj) {
         this._super(obj);
@@ -37475,13 +37503,6 @@ var DD_Bottomcontrols = DD_panel.extend({
         this.addClearAllButton();
     },
     
-    addLayersButton: function() {
-        if(!this._s('layers')) {
-            return;
-        }
-        new DD_layerButton(this.self);
-    },
-    
     addDownloadButton: function() {
         if(!this._s('download')) {
             return;
@@ -37493,7 +37514,7 @@ var DD_Bottomcontrols = DD_panel.extend({
         if(!this._s('print')) {
             return;
         }
-        new DD_printButton(this.self);
+        new DD_printButton(this.self, this.mainModel);
     },
     
     addClearAllButton: function() {
@@ -37502,6 +37523,7 @@ var DD_Bottomcontrols = DD_panel.extend({
         }
         new DD_clearAllButton(this.self);
     },
+    
     
     addPreviewButton: function() {
         if(!this._s('preview')) {
@@ -37790,8 +37812,9 @@ var DD_previewButton = DD_button.extend({
 
 var DD_printButton = DD_button.extend({
     class_name: 'dd-main-button fa-print fa',
-    
-    init: function (parent) {
+    model: 'DD_Print_model',
+    init: function (parent, mainModel) {
+        this.mainModel = mainModel;
         var options = {
             parent: parent,
             id: this.object_id,
@@ -37806,6 +37829,10 @@ var DD_printButton = DD_button.extend({
             tooltip_outside: 'y'
         }
         this._super(options);
+    },
+    
+    _callBackModel: function(model) {
+        model.addPrintEvent(this.mainModel);
     }
 
 });
