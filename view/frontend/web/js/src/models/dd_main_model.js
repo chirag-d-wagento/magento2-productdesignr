@@ -190,6 +190,7 @@ var DD_Main_Model = DD_ModelBase.extend({
         }
         if (fabricObj.isSvg) {
             newObject.svgString = fabricObj.toSVG();
+            newObject.src_orig = fabricObj.src_orig;
             newObject.isSvg = true;
         }
 
