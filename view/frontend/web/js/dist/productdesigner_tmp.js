@@ -1899,6 +1899,21 @@ var DD_Print_model = DD_ModelBase.extend({
     }
 });
 
+var DD_RemoveAll_model = DD_ModelBase.extend({
+    init: function (obj) {
+        this.obj = obj;
+    },
+    addClearAllEvent: function (mainModel) {
+        var self = this;
+        this.obj.get().on('click', function () {
+            var canvas = self._l().getHoverCanvas();
+            canvas.clear();
+        });
+    }
+});
+
+
+
 var DD_control_image = DD_Control_Base_Model.extend({
     init: function (obj) {
         this._super(obj);
@@ -2554,7 +2569,7 @@ var DD_Bottomcontrols = DD_panel.extend({
         if(!this._s('clear_all')) {
             return;
         }
-        new DD_clearAllButton(this.self);
+        new DD_clearAllButton(this.self, this.mainModel);
     },
     
     
@@ -2597,8 +2612,10 @@ var DD_Category = DD_panel.extend({
 
 var DD_clearAllButton = DD_button.extend({
     class_name: 'dd-main-button fa-scissors fa',
+    model: 'DD_RemoveAll_model',
     
-    init: function (parent) {
+    init: function (parent, mainModel) {
+        this.mainModel = mainModel;
         var options = {
             parent: parent,
             id: this.object_id,
@@ -2613,6 +2630,11 @@ var DD_clearAllButton = DD_button.extend({
             tooltip_outside: 'y'
         }
         this._super(options);
+    },
+    
+    
+    _callBackModel: function(model) {
+        model.addClearAllEvent(this.mainModel);
     }
 
 });

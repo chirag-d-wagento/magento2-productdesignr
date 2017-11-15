@@ -39,7 +39,7 @@ var DD_Bottomcontrols = DD_panel.extend({
         if(!this._s('clear_all')) {
             return;
         }
-        new DD_clearAllButton(this.self);
+        new DD_clearAllButton(this.self, this.mainModel);
     },
     
     
