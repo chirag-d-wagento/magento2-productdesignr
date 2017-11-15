@@ -13,7 +13,6 @@ var DD_Layer_Mask = DD_Layer_Base.extend({
         var parent = this.getParent();
         if (!conf) {
             var conf = {
-                fill: 'white',
                 opacity: 0.4,
                 layerMask: true,
                 controlModel: 'DD_control_mask',
@@ -26,6 +25,7 @@ var DD_Layer_Mask = DD_Layer_Base.extend({
         }
         var rect = new fabric.Rect(conf);
         parent.add(rect);
+        
         rect.notSelect = notSelect;
         if(!notSelect) {
             parent.setActiveObject(rect);
@@ -45,7 +45,7 @@ var DD_Layer_Mask = DD_Layer_Base.extend({
         var canvas = this._l().getHoverCanvas();
         canvas.clipTo = function (ctx) {
             var oCoords = object.oCoords;
-            ctx.strokeStyle = '#ccc';
+            ctx.strokeStyle = 'transparent';
             ctx.beginPath();
             ctx.moveTo(oCoords.tl.x, oCoords.tl.y);
             ctx.lineTo(oCoords.tr.x, oCoords.tr.y);
@@ -55,7 +55,7 @@ var DD_Layer_Mask = DD_Layer_Base.extend({
             ctx.stroke();
             ctx.save();
         }
-        canvas.setBackgroundColor('rgba(255, 255, 153, 0.6)');
+        canvas.setBackgroundColor('transparent');
         object.hasControls = false;
         object.selectable = false;
         if(object.controlModelCreated) {
