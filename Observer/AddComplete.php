@@ -14,11 +14,13 @@ class AddComplete implements ObserverInterface {
     protected $_logger;
     protected $_date;
     protected $_registry;
+    protected $_designerHelper;
 
     public function __construct(
         \Magento\Checkout\Model\Cart $cart, 
         \Develo\Designer\Model\TmpdesignFactory $tmpDesignModel, 
         \Develo\Designer\Model\CartitemFactory $cartItem, 
+        \Develo\Designer\Helper\Data $designerHelper,     
         DateTime $date, 
         \Psr\Log\LoggerInterface $logger, 
         \Magento\Framework\Registry $registry
@@ -29,9 +31,15 @@ class AddComplete implements ObserverInterface {
         $this->_logger = $logger;
         $this->_date = $date;
         $this->_registry = $registry;
+        
+        $this->_designerHelper = $designerHelper;
     }
 
     public function execute(Observer $observer) {
+        if(!$this->_designerHelper->getIsDesignerEnabled()) {
+            return;
+        }
+        
         $request = $observer->getRequest();
         $designsIds = $request->getParam('dd_design');
         $product = $this->_registry->registry(\Develo\Designer\Observer\AddAfter::CURRENT_REGISTRATED_PRODUCT);

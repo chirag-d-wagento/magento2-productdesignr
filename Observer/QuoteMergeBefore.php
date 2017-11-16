@@ -15,17 +15,26 @@ class QuoteMergeBefore implements ObserverInterface {
     
     protected $_designCartItemModel;
     
+    protected $_designerHelper;
+    
     public function __construct(
         \Psr\Log\LoggerInterface $logger,
         \Magento\Framework\Registry $registry,
+        \Develo\Designer\Helper\Data $designerHelper,     
         \Develo\Designer\Model\CartitemFactory $designCartItemModel
     ) {
         $this->_logger = $logger;
         $this->_registry = $registry;
         $this->_designCartItemModel = $designCartItemModel;
+        
+        $this->_designerHelper = $designerHelper;
     }
 
     public function execute(Observer $observer) {
+        if(!$this->_designerHelper->getIsDesignerEnabled()) {
+            return;
+        }
+        
         $oldQuote = $observer->getSource();
         if(!$this->checkIsQuoteRecordExists($oldQuote->getId())) {
             return;

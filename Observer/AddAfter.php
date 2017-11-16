@@ -41,6 +41,10 @@ class AddAfter implements ObserverInterface {
     }
 
     public function execute(Observer $observer) {
+        if(!$this->_designerHelper->getIsDesignerEnabled()) {
+            return;
+        }
+        
         $quoteItem = $observer->getQuoteItem();
         $product = $this->_productRepo->get($quoteItem->getProduct()->getSku());
         $this->_registry->register(self::CURRENT_REGISTRATED_PRODUCT, $product);

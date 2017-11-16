@@ -12,18 +12,27 @@ class OrderObserver implements ObserverInterface {
     protected $_designCartItemModel;
     
     protected $_designOrderModel;
+    
+    protected $_designerHelper;
 
     public function __construct(
         \Psr\Log\LoggerInterface $logger,
         \Develo\Designer\Model\CartitemFactory $designCartItemModel,
+        \Develo\Designer\Helper\Data $designerHelper,      
         \Develo\Designer\Model\OrderFactory $designOrderModel
     ) {
         $this->_logger = $logger;
         $this->_designCartItemModel = $designCartItemModel;
         $this->_designOrderModel = $designOrderModel;
+        
+        $this->_designerHelper = $designerHelper;
     }
 
     public function execute(Observer $observer) {
+        if(!$this->_designerHelper->getIsDesignerEnabled()) {
+            return;
+        }
+        
         $order = $observer->getEvent()->getOrder();
         if ($this->isHaveDesignerProducts($order->getQuoteId())) {
             $this->createOrderRecord($order);

@@ -55,7 +55,7 @@
                     <source_model>Develo\Designer\Model\Config\Source\ProductAttributesSet</source_model>
                 </field>
                 
-                <field id="layer_width" 
+                <!-- field id="layer_width" 
                        translate="label" 
                        type="text" 
                        sortOrder="40" 
@@ -64,7 +64,7 @@
                        showInStore="1">
                     <label>Default Layer Width</label>
                     <comment>Percentage from main image</comment>
-                </field>
+                </field -->
                 
                 <field id="google_fonts" 
                        translate="label" 

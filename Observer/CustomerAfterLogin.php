@@ -15,19 +15,28 @@ class CustomerAfterLogin implements ObserverInterface {
     
     protected $_checkoutSession;
     
+    protected $_designerHelper;
+    
     public function __construct(
         \Psr\Log\LoggerInterface $logger,
         \Magento\Framework\Registry $registry,
         \Magento\Checkout\Model\Session $checkoutSession,    
+        \Develo\Designer\Helper\Data $designerHelper,     
         \Develo\Designer\Model\CartitemFactory $designCartItemModel    
     ) {
         $this->_logger = $logger;
         $this->_registry = $registry;
         $this->_checkoutSession = $checkoutSession;
         $this->_designCartItemModel = $designCartItemModel;
+        
+        $this->_designerHelper = $designerHelper;
     }
 
     public function execute(Observer $observer) {
+        if(!$this->_designerHelper->getIsDesignerEnabled()) {
+            return;
+        }
+        
         $oldQuoteId = $this->_registry->registry(\Develo\Designer\Observer\QuoteMergeBefore::OLD_QUOTE);
         if(!$oldQuoteId) {
             return;

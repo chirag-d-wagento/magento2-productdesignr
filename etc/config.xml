@@ -9,7 +9,7 @@
             </general>
             <frontend>
                 <enable_all>1</enable_all>
-                <layer_width>20</layer_width>
+                <layer_width>80</layer_width>
                 <google_fonts><![CDATA["Roboto", "Open Sans", "Lato", "Raleway", "Source Sans Pro", "Ubuntu", "Titillium Web", "Poppins", "Dosis", "Nunito", "Work Sans", "Cabin", "Josefin Sans", "Merriweather Sans", "Exo 2", "Source Code Pro", "Kanit", "Exo", "Rokkitt", "Martel", "Alegreya Sans SC", "Arima Madurai", "Montserrat Alternates", "Martel Sans", "Expletus Sans", "Inknut Antiqua"]]></google_fonts>
                 <enable_add_image>1</enable_add_image>
                 <enable_add_text>1</enable_add_text>
