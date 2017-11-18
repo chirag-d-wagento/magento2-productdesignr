@@ -31,7 +31,8 @@ $.fn.dd_productdesigner_admin = function (options) {
             'defaultFontSize': 20,
             'listFonts': [],
             'defaultLayerMaskWidth': 50
-        }
+        },
+        'onUpdate': null
     }, options);
     
     new DD_Translator(this.options.translator);

@@ -25,8 +25,10 @@ var DD_admin_main = DD_panel.extend({
         this.modelSelectedImages = new DD_admin_selected_images({
             'parent': this.self,
             'urlImages': this.options.urlImages,
-            'product_sku': this.options.psku
+            'product_sku': this.options.psku,
+            'onUpdate': this.options.onUpdate
         });
+        
     },
     
     addLoader: function() {

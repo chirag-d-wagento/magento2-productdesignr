@@ -15,7 +15,6 @@ var DD_admin_groups_panel = DD_panel.extend({
         this.addEditImgButton();
         this.addClearButton();
         this.addCancelButton();
-        this.addSaveButton();
     },
    
     addEditImgButton: function(){

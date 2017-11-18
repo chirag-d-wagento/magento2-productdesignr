@@ -6,6 +6,7 @@ define([
     return uiComponent.extend({
         defaults: {
             template: 'designer/designer',
+            config: '',
             links: {
                 psku: '${ $.provider }:data.product.sku',
                 product_id: '${ $.provider }:data.product.current_product_id'
@@ -28,6 +29,7 @@ define([
         },
 
         initDesigner: function (elems, data) {
+            
             $('#dd_designer_admin').dd_productdesigner_admin({
                 'urlImages': data.urlImages,
                 'settings': {
@@ -52,6 +54,10 @@ define([
                     'defaultTextPrice': data.defaultTextPrice,
                     'defaultImgPrice': data.defaultImgPrice
                     
+                },
+                
+                'onUpdate': function(conf) {
+                    data.source.data["product"]['dd-designer-conf'] = JSON.stringify(conf);
                 }
             });
         }

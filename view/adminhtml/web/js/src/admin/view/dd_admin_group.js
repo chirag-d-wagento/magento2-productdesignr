@@ -3,9 +3,6 @@ var DD_admin_group = DD_panel.extend({
     class_name_remove: 'dd-admin-group-remove fa fa-trash-o',
     class_name_select_img: 'dd-admin-select-img fa fa-picture-o',
     class_img_container: 'dd-admin-group-img-container',
-    class_sorting_container: 'dd-admin-group-sorting-container sortable',
-    class_sorting_icon: 'dd-admin-group-sorting-icon fa fa-arrows',
-
     model: 'DD_Admin_ImagesSelected_Model',
     //modelLoadImages: 'DD_Admin_loadimages_model',
 
@@ -19,22 +16,11 @@ var DD_admin_group = DD_panel.extend({
 
     _addElements: function () {
         this.addRemove();
-        /*this.addSelectImage();*/
-        this.addSortingPanel();
         this.addImages();
     },
     
     _callBackModel: function (model) {
         model.removeGroupClick(this.remove.get(0));
-    },
-
-    addSortingPanel: function () {
-        var sorting = new DD_panel({
-            class: this.class_sorting_container,
-            parent: this.self
-        });
-        sorting.add();
-        sorting.get().append($('<span />').addClass(this.class_sorting_icon));
     },
 
     addImages: function () {
@@ -49,10 +35,6 @@ var DD_admin_group = DD_panel.extend({
             img.group_index = index;
             new DD_admin_group_image(imgContainer.get(), img);
         });
-
-        new Sortable(imgContainer.get().get(0), {
-
-        });
     },
 
     addRemove: function () {
@@ -65,23 +47,5 @@ var DD_admin_group = DD_panel.extend({
         this.remove.get(0).attr({
             'data-remove': this.options.index
         });
-    },
-
-    /*
-    addSelectImage: function () {
-        var selectImg = new DD_button({
-            'class': this.class_name_select_img,
-            'text': this._('image'),
-            'parent': this.self,
-            'fa': true,
-            'windowOpener': true,
-            'windowPreview': true,
-            'model': this.modelLoadImages
-
-        });
-        selectImg.get(0).attr({
-            'data-group': this.options.index
-        });
     }
-    */
 });

@@ -5,6 +5,7 @@ var DD_Admin_ImagesSelected_Model = DD_ModelBase.extend({
     groupCancelEvent: 'image-group-cancel',
     addGroupEvent: 'image-group-add',
     removeGroupEvent: 'image-group-remove',
+    updateExtraConfEvent: 'image-group-extra-conf',
 
     init: function (obj) {
         this.obj = obj;
@@ -20,6 +21,7 @@ var DD_Admin_ImagesSelected_Model = DD_ModelBase.extend({
         this._evnt().register(this.addGroupEvent, this.obj);
         this._evnt().register(this.groupCancelEvent, this.obj);
         this._evnt().register(this.removeGroupEvent, this.obj);
+        this._evnt().register(this.updateExtraConfEvent, this.obj);
     },
 
     _registerCalls: function () {
@@ -27,6 +29,13 @@ var DD_Admin_ImagesSelected_Model = DD_ModelBase.extend({
             return;
         }
         var self = this;
+        
+        this._evnt().registerCallback(this.updateExtraConfEvent, function (obj, eventName, data) {
+            if(obj.options.onUpdate) {
+                obj.options.onUpdate.call(obj, obj.groups);
+            }
+        });
+        
         this._evnt().registerCallback(this.groupChangedEvent, function (obj) {
             if (!obj.groupContainer) {
                 return;
@@ -42,19 +51,13 @@ var DD_Admin_ImagesSelected_Model = DD_ModelBase.extend({
                 });
                 c++;
             });
-
-            if (this.sortable) {
-                this.sortable.destroy();
-            }
-            this.sortable = new Sortable(obj.groupContainer.get(0), {
-                handle: ".sortable",
-                onEnd: function (evt) {
-                    self.updateGroupsOrder(evt.oldIndex, evt.newIndex);
-                }
-            });
+            
+            self._evnt().doCall(self.updateExtraConfEvent);
+            
         });
         this._evnt().registerCallback(this.groupSetEvent, function (obj, eventName, data) {
             obj.groups = data;
+            self._evnt().doCall(self.updateExtraConfEvent);
         });
 
         this._evnt().registerCallback(this.removeGroupEvent, function (obj, eventName, group_index) {
@@ -62,6 +65,7 @@ var DD_Admin_ImagesSelected_Model = DD_ModelBase.extend({
             var index = self.getGroupIndexByUid(group_index);
             tmpGroups.splice(index, 1);
             obj.groups = tmpGroups;
+            self._evnt().doCall(self.updateExtraConfEvent);
         });
 
         this._evnt().registerCallback(this.addGroupEvent, function (obj, eventName, data) {
@@ -70,6 +74,7 @@ var DD_Admin_ImagesSelected_Model = DD_ModelBase.extend({
 
         this._evnt().registerCallback(this.groupCancelEvent, function (obj, eventName, data) {
             obj.drawNoImagesSelected();
+            self._evnt().doCall(self.updateExtraConfEvent);
         });
     },
 
@@ -347,14 +352,6 @@ var DD_Admin_ImagesSelected_Model = DD_ModelBase.extend({
             self.updateGroups([]);
         });
     },
-    /*
-     addEmptyGroupClick: function (obj) {
-     var self = this;
-     obj.on('click', function () {
-     self.addGroup({'group_uid': self.createUUID(), 'imgs': []});
-     });
-     },
-     */
 
     removeGroupClick: function (obj) {
         var self = this;
@@ -374,36 +371,6 @@ var DD_Admin_ImagesSelected_Model = DD_ModelBase.extend({
                 delete self.getObject().designerGroupId;
             }
             self.cancelGroups();
-        });
-    },
-
-    addGroupSaveClick: function (obj) {
-        var self = this;
-        obj.on('click', function () {
-            var groups = self.getGroups();
-            console.log(groups);
-            var jsonStr = JSON.stringify(groups);
-
-            self._evnt().doCall('show-admin-loader');
-            $.ajax({
-                url: self._s('urlSaveData')
-                        + '?form_key=' + window.FORM_KEY,
-                data: {
-                    'data': jsonStr,
-                    'product_id': self._s('product_id')
-                },
-                success: function (data) {
-                    console.log(data);
-                },
-                error: function () {
-                    alert("Something went wrong!");
-                },
-                complete: function () {
-                    self._evnt().doCall('hide-admin-loader');
-                },
-                cache: false
-            }, 'json');
-
         });
     }
 

@@ -1015,6 +1015,7 @@ var DD_Admin_ImagesSelected_Model = DD_ModelBase.extend({
     groupCancelEvent: 'image-group-cancel',
     addGroupEvent: 'image-group-add',
     removeGroupEvent: 'image-group-remove',
+    updateExtraConfEvent: 'image-group-extra-conf',
 
     init: function (obj) {
         this.obj = obj;
@@ -1030,6 +1031,7 @@ var DD_Admin_ImagesSelected_Model = DD_ModelBase.extend({
         this._evnt().register(this.addGroupEvent, this.obj);
         this._evnt().register(this.groupCancelEvent, this.obj);
         this._evnt().register(this.removeGroupEvent, this.obj);
+        this._evnt().register(this.updateExtraConfEvent, this.obj);
     },
 
     _registerCalls: function () {
@@ -1037,6 +1039,13 @@ var DD_Admin_ImagesSelected_Model = DD_ModelBase.extend({
             return;
         }
         var self = this;
+        
+        this._evnt().registerCallback(this.updateExtraConfEvent, function (obj, eventName, data) {
+            if(obj.options.onUpdate) {
+                obj.options.onUpdate.call(obj, obj.groups);
+            }
+        });
+        
         this._evnt().registerCallback(this.groupChangedEvent, function (obj) {
             if (!obj.groupContainer) {
                 return;
@@ -1052,19 +1061,13 @@ var DD_Admin_ImagesSelected_Model = DD_ModelBase.extend({
                 });
                 c++;
             });
-
-            if (this.sortable) {
-                this.sortable.destroy();
-            }
-            this.sortable = new Sortable(obj.groupContainer.get(0), {
-                handle: ".sortable",
-                onEnd: function (evt) {
-                    self.updateGroupsOrder(evt.oldIndex, evt.newIndex);
-                }
-            });
+            
+            self._evnt().doCall(self.updateExtraConfEvent);
+            
         });
         this._evnt().registerCallback(this.groupSetEvent, function (obj, eventName, data) {
             obj.groups = data;
+            self._evnt().doCall(self.updateExtraConfEvent);
         });
 
         this._evnt().registerCallback(this.removeGroupEvent, function (obj, eventName, group_index) {
@@ -1072,6 +1075,7 @@ var DD_Admin_ImagesSelected_Model = DD_ModelBase.extend({
             var index = self.getGroupIndexByUid(group_index);
             tmpGroups.splice(index, 1);
             obj.groups = tmpGroups;
+            self._evnt().doCall(self.updateExtraConfEvent);
         });
 
         this._evnt().registerCallback(this.addGroupEvent, function (obj, eventName, data) {
@@ -1080,6 +1084,7 @@ var DD_Admin_ImagesSelected_Model = DD_ModelBase.extend({
 
         this._evnt().registerCallback(this.groupCancelEvent, function (obj, eventName, data) {
             obj.drawNoImagesSelected();
+            self._evnt().doCall(self.updateExtraConfEvent);
         });
     },
 
@@ -1357,14 +1362,6 @@ var DD_Admin_ImagesSelected_Model = DD_ModelBase.extend({
             self.updateGroups([]);
         });
     },
-    /*
-     addEmptyGroupClick: function (obj) {
-     var self = this;
-     obj.on('click', function () {
-     self.addGroup({'group_uid': self.createUUID(), 'imgs': []});
-     });
-     },
-     */
 
     removeGroupClick: function (obj) {
         var self = this;
@@ -1384,36 +1381,6 @@ var DD_Admin_ImagesSelected_Model = DD_ModelBase.extend({
                 delete self.getObject().designerGroupId;
             }
             self.cancelGroups();
-        });
-    },
-
-    addGroupSaveClick: function (obj) {
-        var self = this;
-        obj.on('click', function () {
-            var groups = self.getGroups();
-            console.log(groups);
-            var jsonStr = JSON.stringify(groups);
-
-            self._evnt().doCall('show-admin-loader');
-            $.ajax({
-                url: self._s('urlSaveData')
-                        + '?form_key=' + window.FORM_KEY,
-                data: {
-                    'data': jsonStr,
-                    'product_id': self._s('product_id')
-                },
-                success: function (data) {
-                    console.log(data);
-                },
-                error: function () {
-                    alert("Something went wrong!");
-                },
-                complete: function () {
-                    self._evnt().doCall('hide-admin-loader');
-                },
-                cache: false
-            }, 'json');
-
         });
     }
 
@@ -1682,9 +1649,6 @@ var DD_admin_group = DD_panel.extend({
     class_name_remove: 'dd-admin-group-remove fa fa-trash-o',
     class_name_select_img: 'dd-admin-select-img fa fa-picture-o',
     class_img_container: 'dd-admin-group-img-container',
-    class_sorting_container: 'dd-admin-group-sorting-container sortable',
-    class_sorting_icon: 'dd-admin-group-sorting-icon fa fa-arrows',
-
     model: 'DD_Admin_ImagesSelected_Model',
     //modelLoadImages: 'DD_Admin_loadimages_model',
 
@@ -1698,22 +1662,11 @@ var DD_admin_group = DD_panel.extend({
 
     _addElements: function () {
         this.addRemove();
-        /*this.addSelectImage();*/
-        this.addSortingPanel();
         this.addImages();
     },
     
     _callBackModel: function (model) {
         model.removeGroupClick(this.remove.get(0));
-    },
-
-    addSortingPanel: function () {
-        var sorting = new DD_panel({
-            class: this.class_sorting_container,
-            parent: this.self
-        });
-        sorting.add();
-        sorting.get().append($('<span />').addClass(this.class_sorting_icon));
     },
 
     addImages: function () {
@@ -1728,10 +1681,6 @@ var DD_admin_group = DD_panel.extend({
             img.group_index = index;
             new DD_admin_group_image(imgContainer.get(), img);
         });
-
-        new Sortable(imgContainer.get().get(0), {
-
-        });
     },
 
     addRemove: function () {
@@ -1744,25 +1693,7 @@ var DD_admin_group = DD_panel.extend({
         this.remove.get(0).attr({
             'data-remove': this.options.index
         });
-    },
-
-    /*
-    addSelectImage: function () {
-        var selectImg = new DD_button({
-            'class': this.class_name_select_img,
-            'text': this._('image'),
-            'parent': this.self,
-            'fa': true,
-            'windowOpener': true,
-            'windowPreview': true,
-            'model': this.modelLoadImages
-
-        });
-        selectImg.get(0).attr({
-            'data-group': this.options.index
-        });
     }
-    */
 });
 
 var DD_admin_loader_images = DD_panel.extend({
@@ -1809,8 +1740,10 @@ var DD_admin_main = DD_panel.extend({
         this.modelSelectedImages = new DD_admin_selected_images({
             'parent': this.self,
             'urlImages': this.options.urlImages,
-            'product_sku': this.options.psku
+            'product_sku': this.options.psku,
+            'onUpdate': this.options.onUpdate
         });
+        
     },
     
     addLoader: function() {
@@ -1899,7 +1832,6 @@ var DD_admin_groups_panel = DD_panel.extend({
         this.addEditImgButton();
         this.addClearButton();
         this.addCancelButton();
-        this.addSaveButton();
     },
    
     addEditImgButton: function(){
@@ -2063,27 +1995,6 @@ var DD_admin_groupcancel_button= DD_button.extend({
 });
 
 
-var DD_admin_groupsave_button= DD_button.extend({
-    class_name: 'dd-admin-groupsave-button',
-    model: 'DD_Admin_ImagesSelected_Model',
-
-    init: function (parent) {
-        var options = {
-            parent: parent,
-            class: this.class_name,
-            text: this._('save'),
-            fa_addon: 'fa fa-floppy-o'
-        }
-        this._super(options);
-    },
-
-    _callBackModel: function (model) {
-        model.addGroupSaveClick(this.self);
-    }
-
-});
-
-
 var DD_admin_image_button = DD_button.extend({
     model: 'DD_Admin_loadimages_model',
     class_name: 'dd-admin-image-button',
@@ -2208,7 +2119,8 @@ $.fn.dd_productdesigner_admin = function (options) {
             'defaultFontSize': 20,
             'listFonts': [],
             'defaultLayerMaskWidth': 50
-        }
+        },
+        'onUpdate': null
     }, options);
     
     new DD_Translator(this.options.translator);

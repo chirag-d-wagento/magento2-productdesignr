@@ -1,44 +1,60 @@
 <?php
 
-namespace Develo\Designer\Controller\Adminhtml\Group;
+namespace Develo\Designer\Observer\Adminhtml;
+
+use \Magento\Framework\Event\ObserverInterface;
+use \Magento\Framework\Event\Observer as EventObserver;
+use \Develo\Designer\Ui\DataProvider\Product\Form\Modifier\Designer;
 
 use Magento\Framework\Stdlib\DateTime\DateTime;
 
-class Save extends \Magento\Backend\App\Action {
-    
+class ProductSaveAfter implements ObserverInterface {
+
     protected $_productLoader;
     protected $_groupImageModel;
     protected $_imageModel;
     protected $_designerModel;
     protected $_date;
-    
+    protected $_request;
+
     public function __construct(
-        \Magento\Backend\App\Action\Context $context,
         \Develo\Designer\Model\ImageFactory $imageFactory,
         \Develo\Designer\Model\ImagegroupFactory $imagegroupFactory , 
-        \Develo\Designer\Model\Designer $designerModel,    
+        \Develo\Designer\Model\Designer $designerModel, 
+        \Magento\Framework\App\RequestInterface $request,    
         DateTime $date   
     ) {
-        parent::__construct($context);
+        
         $this->_groupImageModel = $imagegroupFactory;
         $this->_imageModel      = $imageFactory;
         $this->_date = $date;
         $this->_designerModel = $designerModel;
+        $this->_request = $request;
     }
     
-    
-    public function execute() {
-        $data = $this->getRequest()->getParam('data');
-        $productId = $this->getRequest()->getParam('product_id');
+    /**
+     * @param EventObserver $observer
+     */
+    public function execute(\Magento\Framework\Event\Observer $observer) {
+        /** @var \Magento\Catalog\Model\Product $product */
+        $product = $observer->getEvent()->getProduct();
+        if (!$product) {
+            return;
+        }
+
+        $productId = $product->getId();
+        $posts = $this->_request->getParams();
+        $postsProduct = !empty($posts['product']) ? $posts['product'] : null;
+        if(!$postsProduct) {
+            return;
+        }
+        if(array_key_exists(Designer::FIELD_NAME_TEXT, $postsProduct)) {
+            $data = $postsProduct[Designer::FIELD_NAME_TEXT];
+            $this->_saveData($data, $productId);
+        }
         
-        $this->_saveData($data, $productId);
-        
-        return;
-        
-        $this->sendResponse([
-            'success' => true
-        ]);
     }
+    
     
     protected function _saveData($data, $productId) {
         $this->_clearGroups($productId);
@@ -82,7 +98,7 @@ class Save extends \Magento\Backend\App\Action {
         
         $config = $this->_designerModel->prepareConfig($image);
         $imageModel->setConfig($config);
-        $imageModel->setExtraConfig($image->extra_config ? json_encode($image->extra_config) : json_encode([]));
+        $imageModel->setExtraConfig(!empty($image->extra_config) ? json_encode($image->extra_config) : json_encode([]));
         $imageModel->save();
     }
     
@@ -106,10 +122,5 @@ class Save extends \Magento\Backend\App\Action {
             $image->delete();
         }
     }
-    
-    public function sendResponse($response = array()) {
-        $jsonResponse = $this->resultFactory->create(ResultFactory::TYPE_JSON);
-        $jsonResponse->setData($response);
-        return $jsonResponse;
-    }
+
 }
