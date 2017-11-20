@@ -143,6 +143,25 @@
                     
                 </field>
             </group>
+            
+            
+            
+            <group id="help" translate="label" type="text" sortOrder="40" showInDefault="1" showInWebsite="0"
+                   showInStore="1">
+                <label>Help Configuration</label>
+                
+                <field id="customize_button_block" 
+                       translate="label" 
+                       type="text" 
+                       sortOrder="40" 
+                       showInDefault="1" 
+                       showInWebsite="1" 
+                       showInStore="1">
+                    <label>Customize button block ID</label>
+                    <comment>Leave empty for not showing</comment>
+                    
+                </field>
+            </group>    
         </section>
        
     </system>

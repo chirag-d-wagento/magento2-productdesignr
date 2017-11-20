@@ -30,6 +30,7 @@ var jsFiles = [
     'js/src/setup/models/*.js',
     'js/src/setup/models/includes/*.js',
     'js/src/setup/view/*.js',
+    'js/src/dd_help.js',
     'js/src/dd_productdesigner.js',
 ],
         jsDest = 'js/dist',

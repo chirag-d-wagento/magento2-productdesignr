@@ -1,4 +1,7 @@
-<?php if ($block->showCustomizeButton()): ?>
+<?php 
+    if ($block->showCustomizeButton()): 
+        $helpCustomizeButtonText = $block->getCustomizeButtonHelpText();
+?>
     <div class="product-designer-button-container">
         <button type="button" class="action primary product-designer-button product-designer-customize">
             <span>
@@ -38,6 +41,20 @@
             var customPriceTrans = '<?php echo __('Design Price') ?>';
 
             var configuredPrices = {};
+            <?php if($helpCustomizeButtonText !== ''): ?>
+                var helpCustomizeButton = [
+                    {
+                        'content': '<?php echo $helpCustomizeButtonText ?>',
+                        'selector': ".product-designer-customize"
+                    }
+                ];
+                var _customize = $('body').dd_help({
+                    'data': helpCustomizeButton
+                });
+                
+                _customize.show();
+                
+            <?php endif; ?>
 
             var options = {
                 type: 'popup',

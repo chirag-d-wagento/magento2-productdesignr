@@ -1427,9 +1427,9 @@ var DD_admin_group_image_model = DD_Admin_ImagesSelected_Model.extend({
 
         });
     },
-    
-    onUpdate: function(fabricObj, group_uid, media_id, type) {
-        if(type === 'extra_conf') {
+
+    onUpdate: function (fabricObj, group_uid, media_id, type) {
+        if (type === 'extra_conf') {
             this.updateExtraConf(group_uid, media_id, fabricObj.key, fabricObj.value);
             return;
         }
@@ -1438,7 +1438,7 @@ var DD_admin_group_image_model = DD_Admin_ImagesSelected_Model.extend({
 
     clickEdit: function (el, options) {
         var self = this;
-        
+
         var urlUploadImages = this._s('urlUploadImages');
         var percentSizeImage = this._s('percentSizeImage');
         var defaultFontSize = this._s('defaultFontSize');
@@ -1455,7 +1455,7 @@ var DD_admin_group_image_model = DD_Admin_ImagesSelected_Model.extend({
         var defaultLibraryEnabled = this._s('defaultLibraryEnabled');
         var defaultTextPrice = this._s('defaultTextPrice');
         var defaultImgPrice = this._s('defaultImgPrice');
-        
+
         el.on('click', function () {
             $('#dd_designer').html('');
             $('#dd_designer').empty();
@@ -1475,23 +1475,27 @@ var DD_admin_group_image_model = DD_Admin_ImagesSelected_Model.extend({
                     'percentSizeImage': percentSizeImage,
                     'defualtFontColor': defualtFontColor,
                     'defaultFont': defaultFont,
-                    'defaultFontSize': defaultFontSize, 
+                    'defaultFontSize': defaultFontSize,
                     'defaultLayerMaskWidth': defaultLayerMaskWidth,
                     'percentSizeFromMask': percentSizeFromMask,
                     'listFonts': listFonts,
                     'myFilesPath': myFilesPath,
-                    
+
                     'defaultImgEnabled': defaultImgEnabled,
                     'defaultTextEnabled': defaultTextEnabled,
                     'defaultLibraryEnabled': defaultLibraryEnabled,
                     'defaultTextPrice': defaultTextPrice,
                     'defaultImgPrice': defaultImgPrice
                 }
-                
+
             });
+            $('html, body').animate({
+                scrollTop: $("#dd_designer").offset().top - 100
+            }, 2000);
+
             designer.onUpdate(onUpdate);
             self.getObject().designer = designer.init();
-            
+
             self.getObject().designerMediaId = options.media_id;
             self.getObject().designerGroupId = group_index;
         });

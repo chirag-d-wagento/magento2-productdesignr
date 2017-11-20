@@ -3852,6 +3852,17 @@ body:not(._keyfocus) .dd-designer-maincontrols button.fa-spin:focus {
 .dd-control-layer button {
   float: right;
 }
+.dd-help-container {
+  padding: 10px;
+}
+.dd-help-container .dd-help-buttons {
+  margin-top: 10px;
+  border-top: 1px solid silver;
+  padding-top: 10px;
+}
+.dd-help-container .dd-help-buttons button {
+  float: right;
+}
 .clearfix:after,
 .clearfix:before {
   visibility: hidden;

@@ -19,6 +19,9 @@
                 <layer_image_price>0</layer_image_price>
                 <layer_text_price>0</layer_text_price>
             </prices>
+            <help>
+                <customize_button_block>customize-button-help-default</customize_button_block>
+            </help>
         </develo_productdesigner>
     </default>
 </config>

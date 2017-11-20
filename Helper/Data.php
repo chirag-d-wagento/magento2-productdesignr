@@ -15,9 +15,15 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper {
     const DESIGNER_FRONT_PRODUCT_GOOGLE_FONTS = 'develo_productdesigner/frontend/google_fonts';
     const DESIGNER_PRICE_LAYER_IMAGE = 'develo_productdesigner/prices/layer_image_price';
     const DESIGNER_PRICE_LAYER_TEXT = 'develo_productdesigner/prices/layer_text_price';
+    
+    const DESIGNER_HELP_CUSTOMIZE_BUTTON = 'develo_productdesigner/help/customize_button_block';
 
     public function __construct(\Magento\Framework\App\Helper\Context $context) {
         parent::__construct($context);
+    }
+    
+    public function getHelpCustomizeButton() {
+        return $this->scopeConfig->getValue(self::DESIGNER_HELP_CUSTOMIZE_BUTTON, \Magento\Store\Model\ScopeInterface::SCOPE_STORE);
     }
 
     public function getIsDesignerEnabled() {

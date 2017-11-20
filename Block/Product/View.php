@@ -11,6 +11,9 @@ class View extends \Magento\Catalog\Block\Product\AbstractProduct {
     protected $_pricesLayers = [];
     protected $_storeManager;
     protected $_currency;
+    
+    protected $_filterProvider;
+    protected $_blockFactory;
 
     public function __construct(
         \Magento\Catalog\Block\Product\Context $context, 
@@ -20,6 +23,8 @@ class View extends \Magento\Catalog\Block\Product\AbstractProduct {
         \Magento\Store\Model\StoreManagerInterface $storeManager, 
         \Magento\Directory\Model\Currency $currency, 
         \Develo\Designer\Model\Designer $designerModel, 
+        \Magento\Cms\Model\BlockFactory $blockFactory,
+        \Magento\Cms\Model\Template\FilterProvider $filterProvider,    
         array $data = array()
     ) {
         parent::__construct($context, $data);
@@ -30,6 +35,9 @@ class View extends \Magento\Catalog\Block\Product\AbstractProduct {
         $this->_designerFonts = $designerFonts;
         $this->_currency = $currency;
         $this->_storeManager = $storeManager;
+        
+        $this->_filterProvider = $filterProvider;
+        $this->_blockFactory = $blockFactory;
     }
 
     public function showCustomizeButton() {
@@ -82,6 +90,23 @@ class View extends \Magento\Catalog\Block\Product\AbstractProduct {
 
     public function getLayerPrices() {
         return json_encode($this->_pricesLayers);
+    }
+    
+    public function getCustomizeButtonHelpText() {
+        $html = '';
+        $blockId = $this->_designerHelper->getHelpCustomizeButton();
+        if($blockId) {
+            $storeId = $this->_storeManager->getStore()->getId();
+            /** @var \Magento\Cms\Model\Block $block */
+            $block = $this->_blockFactory->create();
+            $block->setStoreId($storeId)->load($blockId);
+            $html = $this->_filterProvider
+                    ->getBlockFilter()
+                    ->setStoreId($storeId)
+                    ->filter($block->getContent());
+        }
+        
+        return $html;
     }
 
     protected function setLayerPrices($config) {
