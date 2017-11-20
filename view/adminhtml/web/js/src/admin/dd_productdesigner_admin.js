@@ -13,7 +13,8 @@ $.fn.dd_productdesigner_admin = function (options) {
             'select_images': 'Select Images',
             'edit': 'Edit',
             'add_edit_image': 'Add/Edit Image',
-            'configure_images': 'Configure Images'
+            'configure_images': 'Configure Images',
+            'select_all': 'Select/Unselect All'
         },
         
         'settings': {

@@ -34261,6 +34261,9 @@ var DD_checkbox = DD_Uibase.extend({
                 model.uncheckedAction.call(model, this, self.options.view);
             }
         });
+        if(this.options.noInit) {
+            return;
+        }
         setTimeout(function () {
             if (self.options.checked) {
                 model.checkedAction.call(model, self._checkbox, self.options.view);
@@ -37256,6 +37259,9 @@ var DD_checkbox = DD_Uibase.extend({
                 model.uncheckedAction.call(model, this, self.options.view);
             }
         });
+        if(this.options.noInit) {
+            return;
+        }
         setTimeout(function () {
             if (self.options.checked) {
                 model.checkedAction.call(model, self._checkbox, self.options.view);
@@ -37691,8 +37697,8 @@ var DD_Admin_ImagesSelected_Model = DD_ModelBase.extend({
         });
 
         this._evnt().registerCallback(this.groupCancelEvent, function (obj, eventName, data) {
-            obj.drawNoImagesSelected();
-            
+            var button = obj.drawNoImagesSelected();
+            self.attachCustomizeButtonEvents(button);
             self._evnt().doCall(self.updateExtraConfEvent);
         });
     },
@@ -38170,6 +38176,7 @@ var DD_Admin_loadimages_model = DD_Admin_ImagesSelected_Model.extend({
 
     class_container: 'dd-admin-loadimages-container',
     class_loading: 'dd-admin-loadimages-loading',
+    modelCheckbox: 'DD_Admin_loadimages_model',
 
     init: function (obj) {
         this.obj = obj;
@@ -38203,6 +38210,33 @@ var DD_Admin_loadimages_model = DD_Admin_ImagesSelected_Model.extend({
         }
         return dataGroups;
     },
+    
+    checkedAction: function(checkbox) {
+        var parent = $(checkbox).parent().parent();
+        parent.find('.dd-admin-product-image').each(function() {
+            if(!$(this).hasClass('selected')) {
+                $(this).trigger('click');
+            }
+        });
+    },
+    
+    uncheckedAction: function(checkbox) {
+        var parent = $(checkbox).parent().parent();
+        parent.find('.dd-admin-product-image').each(function() {
+            if($(this).hasClass('selected')) {
+                $(this).trigger('click');
+            }
+        });
+    },
+    
+    appendSelectAll: function() {
+        var checkBox = new DD_checkbox({
+            'model': this.modelCheckbox,
+            'text': this._('select_all'),
+            'parent': this.container,
+            'noInit': true
+        });
+    },
 
     loadImages: function () {
         this.showLoading();
@@ -38222,6 +38256,7 @@ var DD_Admin_loadimages_model = DD_Admin_ImagesSelected_Model.extend({
                 }
                 if (data.success && data.parent) {
                     self.container.append($('<h2 />').html(self._('configure_images') + ' ' + data.parent.product_name + '(' + data.parent.psku + ')'));
+                    self.appendSelectAll();
                     $.each(data.data, function (i, row) {
                         new DD_admin_image_row(self.container, row.imgs, row.extra);
                     });
@@ -38258,6 +38293,7 @@ var DD_admin_group = DD_panel.extend({
     class_name_remove: 'dd-admin-group-remove fa fa-trash-o',
     class_name_select_img: 'dd-admin-select-img fa fa-picture-o',
     class_img_container: 'dd-admin-group-img-container',
+    class_header: 'dd-admin-group-hreader',
     model: 'DD_Admin_ImagesSelected_Model',
     //modelLoadImages: 'DD_Admin_loadimages_model',
 
@@ -38270,12 +38306,24 @@ var DD_admin_group = DD_panel.extend({
     },
 
     _addElements: function () {
+        this.addHeader();
         this.addRemove();
         this.addImages();
     },
     
     _callBackModel: function (model) {
         model.removeGroupClick(this.remove.get(0));
+    },
+
+    addHeader: function() {
+        var header = new DD_panel({
+            class: this.class_header,
+            parent: this.self
+        });
+        header.add();
+        if(this.options && this.options.data && this.options.data.imgs) {
+            header.get().html(this.options.data.imgs[0].sku);
+        }
     },
 
     addImages: function () {
@@ -38445,12 +38493,6 @@ var DD_admin_groups_panel = DD_panel.extend({
    
     addEditImgButton: function(){
         new DD_admin_image_button(
-            this.self
-        );
-    },
-    
-    addSaveButton: function(){
-        new DD_admin_groupsave_button(
             this.self
         );
     },
@@ -38710,7 +38752,8 @@ $.fn.dd_productdesigner_admin = function (options) {
             'select_images': 'Select Images',
             'edit': 'Edit',
             'add_edit_image': 'Add/Edit Image',
-            'configure_images': 'Configure Images'
+            'configure_images': 'Configure Images',
+            'select_all': 'Select/Unselect All'
         },
         
         'settings': {

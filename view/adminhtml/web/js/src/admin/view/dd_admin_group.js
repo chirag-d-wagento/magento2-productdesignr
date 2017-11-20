@@ -3,6 +3,7 @@ var DD_admin_group = DD_panel.extend({
     class_name_remove: 'dd-admin-group-remove fa fa-trash-o',
     class_name_select_img: 'dd-admin-select-img fa fa-picture-o',
     class_img_container: 'dd-admin-group-img-container',
+    class_header: 'dd-admin-group-hreader',
     model: 'DD_Admin_ImagesSelected_Model',
     //modelLoadImages: 'DD_Admin_loadimages_model',
 
@@ -15,12 +16,24 @@ var DD_admin_group = DD_panel.extend({
     },
 
     _addElements: function () {
+        this.addHeader();
         this.addRemove();
         this.addImages();
     },
     
     _callBackModel: function (model) {
         model.removeGroupClick(this.remove.get(0));
+    },
+
+    addHeader: function() {
+        var header = new DD_panel({
+            class: this.class_header,
+            parent: this.self
+        });
+        header.add();
+        if(this.options && this.options.data && this.options.data.imgs) {
+            header.get().html(this.options.data.imgs[0].sku);
+        }
     },
 
     addImages: function () {

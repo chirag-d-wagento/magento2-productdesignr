@@ -26,6 +26,12 @@
         position:relative;
         padding-bottom:42px;
         float:left;
+        .dd-admin-group-hreader{
+            width:100%;
+            border-bottom:1px solid silver;
+            padding:5px;
+            font-weight: bold;
+        }
         .dd-admin-group-remove{
             position:absolute;
             bottom:0px;
@@ -36,36 +42,43 @@
             bottom:0px;
             left:0px;
         }
+        &:nth-child(3n):after {
+            clear:both;
+            content: ' ';
+            display:block;
+            width:100%;
+            height: 1px;
+        }
         .dd-admin-group-img-container{
 
             .dd-admin-group-image{
-                
+
                 border:3px solid transparent;
                 max-width: 76px;
                 margin: 14px;
                 display: inline-grid;
                 cursor:pointer;
-                
+
                 &:hover{
                     border:3px solid #ccc;
                 }
-                
+
                 .dd-admin-image-edit{
                     cursor:pointer;
                 }
-                
+
                 .dd-admin-image-remove{
                     cursor:pointer;
                 }
-                
+
             }
-            
+
             .dd-admin-group-image:nth-child(3n+4){
                 clear:left;
             }
         }
         .dd-admin-group-sorting-container{
-            
+
             width:100%;
             padding:3px;
             cursor:pointer;

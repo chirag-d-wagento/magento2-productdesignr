@@ -718,6 +718,9 @@ var DD_checkbox = DD_Uibase.extend({
                 model.uncheckedAction.call(model, this, self.options.view);
             }
         });
+        if(this.options.noInit) {
+            return;
+        }
         setTimeout(function () {
             if (self.options.checked) {
                 model.checkedAction.call(model, self._checkbox, self.options.view);

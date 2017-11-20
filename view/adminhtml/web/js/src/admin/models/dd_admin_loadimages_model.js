@@ -2,6 +2,7 @@ var DD_Admin_loadimages_model = DD_Admin_ImagesSelected_Model.extend({
 
     class_container: 'dd-admin-loadimages-container',
     class_loading: 'dd-admin-loadimages-loading',
+    modelCheckbox: 'DD_Admin_loadimages_model',
 
     init: function (obj) {
         this.obj = obj;
@@ -35,6 +36,33 @@ var DD_Admin_loadimages_model = DD_Admin_ImagesSelected_Model.extend({
         }
         return dataGroups;
     },
+    
+    checkedAction: function(checkbox) {
+        var parent = $(checkbox).parent().parent();
+        parent.find('.dd-admin-product-image').each(function() {
+            if(!$(this).hasClass('selected')) {
+                $(this).trigger('click');
+            }
+        });
+    },
+    
+    uncheckedAction: function(checkbox) {
+        var parent = $(checkbox).parent().parent();
+        parent.find('.dd-admin-product-image').each(function() {
+            if($(this).hasClass('selected')) {
+                $(this).trigger('click');
+            }
+        });
+    },
+    
+    appendSelectAll: function() {
+        var checkBox = new DD_checkbox({
+            'model': this.modelCheckbox,
+            'text': this._('select_all'),
+            'parent': this.container,
+            'noInit': true
+        });
+    },
 
     loadImages: function () {
         this.showLoading();
@@ -54,6 +82,7 @@ var DD_Admin_loadimages_model = DD_Admin_ImagesSelected_Model.extend({
                 }
                 if (data.success && data.parent) {
                     self.container.append($('<h2 />').html(self._('configure_images') + ' ' + data.parent.product_name + '(' + data.parent.psku + ')'));
+                    self.appendSelectAll();
                     $.each(data.data, function (i, row) {
                         new DD_admin_image_row(self.container, row.imgs, row.extra);
                     });

@@ -73,7 +73,8 @@ var DD_Admin_ImagesSelected_Model = DD_ModelBase.extend({
         });
 
         this._evnt().registerCallback(this.groupCancelEvent, function (obj, eventName, data) {
-            obj.drawNoImagesSelected();
+            var button = obj.drawNoImagesSelected();
+            self.attachCustomizeButtonEvents(button);
             self._evnt().doCall(self.updateExtraConfEvent);
         });
     },

@@ -23,12 +23,6 @@ var DD_admin_groups_panel = DD_panel.extend({
         );
     },
     
-    addSaveButton: function(){
-        new DD_admin_groupsave_button(
-            this.self
-        );
-    },
-    
     addClearButton: function() {
         new DD_admin_clear_button(
             this.self
