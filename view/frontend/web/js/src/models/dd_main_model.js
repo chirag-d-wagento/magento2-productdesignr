@@ -17,11 +17,24 @@ var DD_Main_Model = DD_ModelBase.extend({
                 },
                 active: function () {
                     self.initLayers();
+                    if (obj.options.help) {
+                        self.help = $('body').dd_help({
+                            'data': obj.options.help
+                        });
+                        self.help.show();
+                        
+                    }
                 }
             });
             return;
         }
         this.initLayers();
+        if (obj.options.help) {
+            self.help = $('body').dd_help({
+                'data': obj.options.help
+            });
+            self.help.show();
+        }
 
     },
 
@@ -29,7 +42,7 @@ var DD_Main_Model = DD_ModelBase.extend({
         this._evnt().register(this.eventClick, this.obj);
         this._evnt().register(this.eventObjectChanged, this.obj);
         this._evnt().register(this.eventObjectAdded, this.obj);
-        
+
         this.callBackObject();
     },
 
@@ -46,10 +59,7 @@ var DD_Main_Model = DD_ModelBase.extend({
         });
         var width = this.obj.options.width;
         var height = this.obj.options.height;
-
-        console.log(this.obj.options.width);
-        console.log(this.obj.options.height);
-
+        
         bgCanvas.attr({
             'width': width,
             'height': height
@@ -254,6 +264,9 @@ var DD_Main_Model = DD_ModelBase.extend({
         this.obj.self.parent().remove();
         this._w().close();
         this._evnt().destroyJBoxes();
+        if(this.help) {
+            this.help.destroy();
+        }
         delete this;
     },
 

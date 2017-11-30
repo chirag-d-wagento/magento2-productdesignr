@@ -14,6 +14,42 @@ class View extends \Magento\Catalog\Block\Product\AbstractProduct {
     
     protected $_filterProvider;
     protected $_blockFactory;
+    
+    protected $_confHelpOneBlock = [
+        'selector' => '#dd-top-controls',
+        'position' => [
+            'x' => 'left',
+            'y' => 'center'
+        ],
+        'outside' => 'x'
+    ];
+    
+    protected $_confHelpTwoBlock = [
+        'selector' => '#dd-bottom-controls',
+        'position' => [
+            'x' => 'center',
+            'y' => 'top'
+        ],
+        'outside' => 'y'
+    ];
+    
+    protected $_confHelpThreeBlock = [
+        'selector' => '#dd-main-controls',
+        'position' => [
+            'x' => 'left',
+            'y' => 'center'
+        ],
+        'outside' => 'x'
+    ];
+    
+    protected $_confHelpSwitchBlock = [
+        'selector' => '.dd-designer-image-selector',
+        'position' => [
+            'x' => 'left',
+            'y' => 'center'
+        ],
+        'outside' => 'x'
+    ];
 
     public function __construct(
         \Magento\Catalog\Block\Product\Context $context, 
@@ -75,6 +111,10 @@ class View extends \Magento\Catalog\Block\Product\AbstractProduct {
     public function getLibraryUrl() {
         return $this->getUrl('dd_designer/index/library');
     }
+    
+    public function getShareUrl() {
+        return $this->getUrl('dd_designer/index/share');
+    }
 
     public function getIsAddImageEnabled() {
         return $this->_designerHelper->getIsAddImageEnabled();
@@ -92,9 +132,99 @@ class View extends \Magento\Catalog\Block\Product\AbstractProduct {
         return json_encode($this->_pricesLayers);
     }
     
+    public function getIsFbShareEnabled() {
+        return $this->_designerHelper->getIsFbEnabled();
+    }
+    
+    public function getIsInstagramShareEnabled() {
+        return $this->_designerHelper->getIsInstagramEnabled();
+    }
+    
+    public function getHelpDesigner() {
+        $out = [];
+        $switchBlock = $this->getSwitchHelpBlockConf();
+        if($switchBlock !== null) {
+            $out[] = [
+                'selector' => $this->_confHelpSwitchBlock['selector'],
+                'outside' => $this->_confHelpSwitchBlock['outside'],
+                'position' => $this->_confHelpSwitchBlock['position'],
+                'content' => $switchBlock
+            ];
+        }
+        
+        $helpOneBlock = $this->getHelpOneBlockContent();
+        
+        if($helpOneBlock !== null) {
+            $out[] = [
+                'selector' => $this->_confHelpOneBlock['selector'],
+                'outside' => $this->_confHelpOneBlock['outside'],
+                'position' => $this->_confHelpOneBlock['position'],
+                'content' => $helpOneBlock
+            ];
+        }
+        
+        $helpTwoBlock = $this->getHelpTwoBlockContent();
+        
+        if($helpTwoBlock !== null) {
+            $out[] = [
+                'selector' => $this->_confHelpTwoBlock['selector'],
+                'outside' => $this->_confHelpTwoBlock['outside'],
+                'position' => $this->_confHelpTwoBlock['position'],
+                'content' => $helpTwoBlock
+            ];
+        }
+        
+        $helpThreeBlock = $this->getHelpThreeBlockContent();
+        
+        if($helpThreeBlock !== null) {
+            $out[] = [
+                'selector' => $this->_confHelpThreeBlock['selector'],
+                'outside' => $this->_confHelpThreeBlock['outside'],
+                'position' => $this->_confHelpThreeBlock['position'],
+                'content' => $helpThreeBlock
+            ];
+        }
+        
+        return (count($out) > 0 ? $out : null);
+    }
+    
+    protected function getHelpOneBlockContent() {
+        $html = '';
+        $blockId = $this->_designerHelper->getHelpFirstBlock();
+        $html .= $this->getCmsContentBlock($blockId);
+        return $html;
+    }
+    
+    protected function getHelpTwoBlockContent() {
+        $html = '';
+        $blockId = $this->_designerHelper->getHelpSecondBlock();
+        $html .= $this->getCmsContentBlock($blockId);
+        return $html;
+    }
+    
+    protected function getHelpThreeBlockContent() {
+        $html = '';
+        $blockId = $this->_designerHelper->getHelpThirdBlock();
+        $html .= $this->getCmsContentBlock($blockId);
+        return $html;
+    }
+    
+    protected function getSwitchHelpBlockConf() {
+        $html = '';
+        $blockId = $this->_designerHelper->getHelpSwitchBlock();
+        $html .= $this->getCmsContentBlock($blockId);
+        return $html;
+    }
+    
     public function getCustomizeButtonHelpText() {
         $html = '';
         $blockId = $this->_designerHelper->getHelpCustomizeButton();
+        $html .= $this->getCmsContentBlock($blockId);
+        return $html;
+    }
+    
+    protected function getCmsContentBlock($blockId = '') {
+        $html = '';
         if($blockId) {
             $storeId = $this->_storeManager->getStore()->getId();
             /** @var \Magento\Cms\Model\Block $block */

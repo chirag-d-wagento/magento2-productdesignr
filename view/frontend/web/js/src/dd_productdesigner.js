@@ -19,8 +19,10 @@ $.fn.dd_productdesigner = function (options) {
         'urlUploadImages': '',
         'myFilesPath': '/myfiles.php',
         'libraryPath': '',
+        'shareFb': false,
+        'shareInst': false,
         'loadGoogleFonts': true,
-        'percentSizeImage': 20 //percentage size from canvas width
+        'percentSizeImage': 20 //percentage size from canvas width,
     };
 
     settings = $.extend(settings, options.settings);
@@ -68,7 +70,9 @@ $.fn.dd_productdesigner = function (options) {
             'color': 'Color',
             'download': 'Download',
             'print': 'Print',
-            'clear_all': 'Clear All'
+            'clear_all': 'Clear All',
+            'share_facebook': 'Share Facebook',
+            'share_instagram': 'Share Instagram'
         },
         //'settings': settings,
         'onSave': null,

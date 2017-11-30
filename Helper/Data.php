@@ -17,9 +17,41 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper {
     const DESIGNER_PRICE_LAYER_TEXT = 'develo_productdesigner/prices/layer_text_price';
     
     const DESIGNER_HELP_CUSTOMIZE_BUTTON = 'develo_productdesigner/help/customize_button_block';
+    const DESIGNER_HELP_FIRST_BLOCK = 'develo_productdesigner/help/designer_control_main_block';
+    const DESIGNER_HELP_SECOND_BLOCK = 'develo_productdesigner/help/designer_control_second_block';
+    const DESIGNER_HELP_THIRD_BLOCK = 'develo_productdesigner/help/designer_control_third_block';
+    const DESIGNER_HELP_SWITCH_BLOCK = 'develo_productdesigner/help/designer_control_switch_images_block';
+    
+    const DESIGNER_SOCIAL_SHARE_INSTAGRAM = 'develo_productdesigner/social/enable_instagram_share';
+    const DESIGNER_SOCIAL_SHARE_FACEBOOK = 'develo_productdesigner/social/enable_facebook_share';
+    
 
     public function __construct(\Magento\Framework\App\Helper\Context $context) {
         parent::__construct($context);
+    }
+    
+    public function getIsFbEnabled() {
+        return $this->scopeConfig->getValue(self::DESIGNER_SOCIAL_SHARE_FACEBOOK , \Magento\Store\Model\ScopeInterface::SCOPE_STORE);
+    }
+    
+    public function getIsInstagramEnabled() {
+        return $this->scopeConfig->getValue(self::DESIGNER_SOCIAL_SHARE_INSTAGRAM, \Magento\Store\Model\ScopeInterface::SCOPE_STORE);
+    }
+    
+    public function getHelpSwitchBlock() {
+        return $this->scopeConfig->getValue(self::DESIGNER_HELP_SWITCH_BLOCK, \Magento\Store\Model\ScopeInterface::SCOPE_STORE);
+    }
+    
+    public function getHelpThirdBlock() {
+        return $this->scopeConfig->getValue(self::DESIGNER_HELP_THIRD_BLOCK, \Magento\Store\Model\ScopeInterface::SCOPE_STORE);
+    }
+    
+    public function getHelpSecondBlock() {
+        return $this->scopeConfig->getValue(self::DESIGNER_HELP_SECOND_BLOCK, \Magento\Store\Model\ScopeInterface::SCOPE_STORE);
+    }
+    
+    public function getHelpFirstBlock() {
+        return $this->scopeConfig->getValue(self::DESIGNER_HELP_FIRST_BLOCK, \Magento\Store\Model\ScopeInterface::SCOPE_STORE);
     }
     
     public function getHelpCustomizeButton() {

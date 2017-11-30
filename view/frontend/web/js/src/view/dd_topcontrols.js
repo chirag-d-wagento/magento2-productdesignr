@@ -2,14 +2,16 @@ var DD_Topcontrols = DD_panel.extend({
     object_id: 'dd-top-controls',
     class_name: 'dd-designer-topcontrols',
     
-    init: function (parent, main) {
+    init: function (parent, main, mainModel) {
         this.parent = parent;
         this.main = main;
+        this.mainModel = mainModel;
         this._super({
             'id': this.object_id,
             'class': this.class_name,
             'parent': parent
         });
+        
         if(typeof(this.main.options.extra_config) === 'undefined') {
             this.main.options.extra_config = {};
         }
@@ -22,6 +24,14 @@ var DD_Topcontrols = DD_panel.extend({
         this.addTextButton();
         this.addFromLibraryButton();
         this.addLayersButton();
+        this.addShareFbButton();
+    },
+    
+    addShareFbButton: function() {
+        if(!this._s('shareFb')) {
+            return;
+        }
+        new DD_shareFbButton(this.self, this.mainModel, this.main.options.settings.shareUrl);
     },
     
     addLayersButton: function() {

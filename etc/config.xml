@@ -21,7 +21,14 @@
             </prices>
             <help>
                 <customize_button_block>customize-button-help-default</customize_button_block>
+                <designer_control_main_block>customize-help-first-block-default</designer_control_main_block>
+                <designer_control_second_block>customize-help-second-block-default</designer_control_second_block>
+                <designer_control_third_block>customize-help-third-block-default</designer_control_third_block>
+                <designer_control_switch_images_block>customize-help-switch-images-block-default</designer_control_switch_images_block>
             </help>
+            <social>
+                <enable_facebook_share>1</enable_facebook_share>
+            </social>
         </develo_productdesigner>
     </default>
 </config>

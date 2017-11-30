@@ -161,8 +161,77 @@
                     <comment>Leave empty for not showing</comment>
                     
                 </field>
+                
+                <field id="designer_control_main_block" 
+                       translate="label" 
+                       type="text" 
+                       sortOrder="50" 
+                       showInDefault="1" 
+                       showInWebsite="1" 
+                       showInStore="1">
+                    <label>Designer help 1 block</label>
+                    <comment>Add text, add image, add from library help block. Leave empty for not showing</comment>
+                    
+                </field>
+                
+                <field id="designer_control_second_block" 
+                       translate="label" 
+                       type="text" 
+                       sortOrder="60" 
+                       showInDefault="1" 
+                       showInWebsite="1" 
+                       showInStore="1">
+                    <label>Designer help 2 block</label>
+                    <comment>Download, print, view preview and clear all help block. Leave empty for not showing</comment>
+                    
+                </field>
+                
+                <field id="designer_control_third_block" 
+                       translate="label" 
+                       type="text" 
+                       sortOrder="70" 
+                       showInDefault="1" 
+                       showInWebsite="1" 
+                       showInStore="1">
+                    <label>Designer help 3 block</label>
+                    <comment>Save, close help block. Leave empty for not showing</comment>
+                    
+                </field>
+                
+                <field id="designer_control_switch_images_block" 
+                       translate="label" 
+                       type="text" 
+                       sortOrder="80" 
+                       showInDefault="1" 
+                       showInWebsite="1" 
+                       showInStore="1">
+                    <label>Designer help switch images block</label>
+                    <comment>Switch images help block. Leave empty for not showing</comment>
+                    
+                </field>
             </group>    
+            
+            <group id="social" translate="label" type="text" sortOrder="50" showInDefault="1" showInWebsite="0"
+                   showInStore="1">
+                <label>Social Configuration</label>
+                
+                <field id="enable_facebook_share" 
+                       translate="label comment" 
+                       type="select" 
+                       sortOrder="10" 
+                       showInDefault="1"
+                       showInWebsite="1" 
+                       showInStore="1">
+                    <label>Enable Facebook Share</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                    
+                </field>
+                
+            </group>
+            
         </section>
+        
+        
        
     </system>
     

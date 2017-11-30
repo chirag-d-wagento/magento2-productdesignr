@@ -3653,7 +3653,6 @@ body:not(._keyfocus) .dd-designer-topcontrols button:focus {
   z-index: 1000000000;
   position: absolute;
   padding-top: 5rem;
-  bottom: 0px;
 }
 .dd-designer-topcontrols .fa {
   font-size: 30px;
@@ -3748,6 +3747,13 @@ body:not(._keyfocus) .dd-designer-maincontrols button.fa-spin:focus {
   box-shadow: 0px 7px 7px rgba(0, 0, 0, 0.55);
   transition: box-shadow 0.3s ease-in-out;
   border: 1px solid #ccc;
+}
+@media only screen and (max-width: 450px) {
+  #dd-bottom-controls {
+    padding-left: 69px;
+    margin-right: 62px;
+    width: auto;
+  }
 }
 #dd-add-text-form button {
   width: 100%;

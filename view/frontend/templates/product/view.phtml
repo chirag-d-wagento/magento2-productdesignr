@@ -339,8 +339,14 @@
                         'libraryPath': '<?php echo $this->getLibraryUrl() ?>',
                         'addphoto': <?php echo $this->getIsAddImageEnabled() ? 'true' : 'false' ?>,
                         'addtext': <?php echo $this->getIsAddTextEnabled() ? 'true' : 'false' ?>,
+                        'shareFb': <?php echo $this->getIsFbShareEnabled() ? 'true' : 'false' ?>,
+                        'shareUrl': '<?php echo $block->getShareUrl() ?>',
+                        'shareInst': <?php echo $this->getIsInstagramShareEnabled() ? 'true' : 'false' ?>,
                         'addfromlibrary': <?php echo $this->getIsAddFromLibraryEnabled() ? 'true' : 'false' ?>
                     }
+                    <?php if($helpConf = $block->getHelpDesigner()): ?>
+                    ,help: <?php echo json_encode($helpConf); ?>
+                    <?php endif; ?>
 
                 });
 

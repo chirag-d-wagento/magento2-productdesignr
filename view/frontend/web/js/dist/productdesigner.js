@@ -35276,11 +35276,24 @@ var DD_Main_Model = DD_ModelBase.extend({
                 },
                 active: function () {
                     self.initLayers();
+                    if (obj.options.help) {
+                        self.help = $('body').dd_help({
+                            'data': obj.options.help
+                        });
+                        self.help.show();
+                        
+                    }
                 }
             });
             return;
         }
         this.initLayers();
+        if (obj.options.help) {
+            self.help = $('body').dd_help({
+                'data': obj.options.help
+            });
+            self.help.show();
+        }
 
     },
 
@@ -35288,7 +35301,7 @@ var DD_Main_Model = DD_ModelBase.extend({
         this._evnt().register(this.eventClick, this.obj);
         this._evnt().register(this.eventObjectChanged, this.obj);
         this._evnt().register(this.eventObjectAdded, this.obj);
-        
+
         this.callBackObject();
     },
 
@@ -35305,10 +35318,7 @@ var DD_Main_Model = DD_ModelBase.extend({
         });
         var width = this.obj.options.width;
         var height = this.obj.options.height;
-
-        console.log(this.obj.options.width);
-        console.log(this.obj.options.height);
-
+        
         bgCanvas.attr({
             'width': width,
             'height': height
@@ -35513,6 +35523,9 @@ var DD_Main_Model = DD_ModelBase.extend({
         this.obj.self.parent().remove();
         this._w().close();
         this._evnt().destroyJBoxes();
+        if(this.help) {
+            this.help.destroy();
+        }
         delete this;
     },
 
@@ -35656,6 +35669,66 @@ var DD_RemoveAll_model = DD_ModelBase.extend({
 });
 
 
+
+var DD_Share_Model = DD_ModelBase.extend({
+
+    init: function (obj) {
+        this.obj = obj;
+        this._super(obj);
+    },
+
+    initShareFb: function (mainModel) {
+        this.mainModel = mainModel;
+        var self = this;
+        this.obj.get().on('click', function () {
+            self.sendData('facebook');
+        });
+    },
+
+    sendData: function (type) { //fb or instagram
+        var self = this;
+        switch (type) {
+            case 'facebook':
+                var _class = 'fa-facebook';
+                break;
+
+        }
+        var img = this.mainModel;
+        this.showLoading(_class);
+        this.mainModel.unselectAll();
+        $.ajax({
+            url: this.mainModel.shareUrl,
+            type: 'json',
+            method: 'post',
+            data: {
+                'type': type,
+                'img': this.mainModel.getDataImg()
+            }
+        })
+                .done(function (response) {
+                    self.hideLoading(_class);
+                    if(response.error) {
+                        alert(response.errMessage);
+                        return;
+                    }
+                    if(response.share_url) {
+                        window.open(response.share_url);
+                    }
+                });
+    },
+
+    showLoading: function (_class) {
+        this.obj.get().removeClass(_class)
+                .addClass('fa-circle-o-notch')
+                .addClass('fa-spin');
+    },
+
+    hideLoading: function (_class) {
+        this.obj.get().removeClass('fa-spin')
+                .removeClass('fa-circle-o-notch')
+                .addClass(_class);
+    }
+});
 
 var DD_control_image = DD_Control_Base_Model.extend({
     init: function (obj) {
@@ -36541,8 +36614,6 @@ var DD_main = DD_panel.extend({
     },
     
     _addElements: function() {
-        new DD_Topcontrols(this.self.parent(), this);
-        
         if(this._s('history')) {
             new DD_Historycontrols(this.self);
         }
@@ -36550,6 +36621,7 @@ var DD_main = DD_panel.extend({
     },
     
     _callBackModel: function(model) {
+        new DD_Topcontrols(this.self.parent(), this, model);
         new DD_Bottomcontrols(this.self.parent(), this, model);
     }
 });
@@ -36704,18 +36776,46 @@ var DD_saveButton = DD_button.extend({
 });
 
 
+var DD_shareFbButton = DD_button.extend({
+    object_id: 'dd-main-layer-button',
+    class_name: 'dd-main-button fa-facebook fa',
+    model: 'DD_Share_Model',
+    
+    init: function(parent, mainModel, shareUrl) {
+        this.mainModel = mainModel;
+        this.mainModel.shareUrl = shareUrl;
+        var options = {
+            parent: parent,
+            id: this.object_id,
+            class: this.class_name,
+            tooltip_text: this._('share_facebook'),
+            fa: true,
+            tooltip: true
+        }
+        this._super(options);
+    },
+    
+    _callBackModel: function(model) {
+        model.initShareFb(this.mainModel);
+    }
+});
+
+
+
 var DD_Topcontrols = DD_panel.extend({
     object_id: 'dd-top-controls',
     class_name: 'dd-designer-topcontrols',
     
-    init: function (parent, main) {
+    init: function (parent, main, mainModel) {
         this.parent = parent;
         this.main = main;
+        this.mainModel = mainModel;
         this._super({
             'id': this.object_id,
             'class': this.class_name,
             'parent': parent
         });
+        
         if(typeof(this.main.options.extra_config) === 'undefined') {
             this.main.options.extra_config = {};
         }
@@ -36728,6 +36828,14 @@ var DD_Topcontrols = DD_panel.extend({
         this.addTextButton();
         this.addFromLibraryButton();
         this.addLayersButton();
+        this.addShareFbButton();
+    },
+    
+    addShareFbButton: function() {
+        if(!this._s('shareFb')) {
+            return;
+        }
+        new DD_shareFbButton(this.self, this.mainModel, this.main.options.settings.shareUrl);
     },
     
     addLayersButton: function() {
@@ -36829,7 +36937,6 @@ var DD_windowTextForm = DD_panel.extend({
 });
 
 $.fn.dd_help = function (options) {
-
     this.options = $.extend({
         'delay': 7000,
         'defaultOutside': 'y',
@@ -36840,8 +36947,12 @@ $.fn.dd_help = function (options) {
         data: [
             /* 
              * {
+             * 
              'selector': 'jquerySelector',
              'content' : '{content}'
+             'position': null,
+             'outside' : null
+            
              }
              */
         ]
@@ -36851,23 +36962,40 @@ $.fn.dd_help = function (options) {
 
         var options = this.options;
         var firstEl = options.data[0];
+        var index   = 0;
+        
+        var self = this;
 
         function showHelpElement(data) {
+            var cookieName = 'help-' + data.selector;
+            if($.cookie(cookieName)) {
+                index++;
+                var newEl = options['data'][index];
+                if(newEl) {
+                    showHelpElement(newEl);
+                }
+                return;
+            }
+            $.cookie(cookieName, true);
             var divContainer = $('<div />').addClass('dd-help-container')
                     .html(data.content);
             var buttonContainer = $('<div />').addClass('dd-help-buttons');
             
             var help = new jBox('Tooltip', {
                 target: data.selector,
-                //content: divContainer,
-                position: options.defaultPosition,
-                outside: options.defaultOutside,
+                position: data.position ? data.position : options.defaultPosition,
+                outside: data.outside ? data.outside :options.defaultOutside,
                 closeOnMouseleave: true           
             });
             
             var _close = $('<button />').text('OK');
             _close.on('click', function() {
                 help.destroy();
+                index++;
+                var newEl = options['data'][index];
+                if(newEl) {
+                    showHelpElement(newEl);
+                }
             });
             
             
@@ -36875,12 +37003,20 @@ $.fn.dd_help = function (options) {
             divContainer.append(buttonContainer);
             help.setContent(divContainer);
             help.open();
+            
+            self.showed = help;
         }
 
 
         setTimeout(showHelpElement(firstEl), options.delay);
 
     };
+    
+    this.destroy = function() {
+        if(this.showed){
+            this.showed.destroy();
+        }
+    }
 
     return this;
 };
@@ -36905,8 +37041,10 @@ $.fn.dd_productdesigner = function (options) {
         'urlUploadImages': '',
         'myFilesPath': '/myfiles.php',
         'libraryPath': '',
+        'shareFb': false,
+        'shareInst': false,
         'loadGoogleFonts': true,
-        'percentSizeImage': 20 //percentage size from canvas width
+        'percentSizeImage': 20 //percentage size from canvas width,
     };
 
     settings = $.extend(settings, options.settings);
@@ -36954,7 +37092,9 @@ $.fn.dd_productdesigner = function (options) {
             'color': 'Color',
             'download': 'Download',
             'print': 'Print',
-            'clear_all': 'Clear All'
+            'clear_all': 'Clear All',
+            'share_facebook': 'Share Facebook',
+            'share_instagram': 'Share Instagram'
         },
         //'settings': settings,
         'onSave': null,

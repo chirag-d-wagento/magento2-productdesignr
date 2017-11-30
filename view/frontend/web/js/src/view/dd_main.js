@@ -17,8 +17,6 @@ var DD_main = DD_panel.extend({
     },
     
     _addElements: function() {
-        new DD_Topcontrols(this.self.parent(), this);
-        
         if(this._s('history')) {
             new DD_Historycontrols(this.self);
         }
@@ -26,6 +24,7 @@ var DD_main = DD_panel.extend({
     },
     
     _callBackModel: function(model) {
+        new DD_Topcontrols(this.self.parent(), this, model);
         new DD_Bottomcontrols(this.self.parent(), this, model);
     }
 });

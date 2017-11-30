@@ -46,3 +46,11 @@ Design Price, Design Price
 Help Configuration, Help Configuration
 Customize button block ID, Customize button block ID
 Leave empty for not showing, Leave empty for not showing
+"Add text, add image, add from library help block. Leave empty for not showing", "Add text, add image, add from library help block. Leave empty for not showing"
+Designer help 1 block, Designer help 1 block
+"Save, close help block. Leave empty for not showing", "Save, close help block. Leave empty for not showing"
+Designer help 3 block, Designer help 3 block
+Designer help 2 block, Designer help 2 block
+"Download, print, view preview and clear all help block. Leave empty for not showing", "Download, print, view preview and clear all help block. Leave empty for not showing"
+Social Configuration, Social Configuration
+Enable Facebook Share, Enable Facebook Share
