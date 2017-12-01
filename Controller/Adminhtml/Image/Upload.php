@@ -32,8 +32,8 @@ class Upload extends \Magento\Backend\App\Action {
         $reader = $this->_filesystem->getDirectoryRead(\Magento\Framework\App\Filesystem\DirectoryList::MEDIA);
         $path = $reader->getAbsolutePath(self::ADMIN_UPLOADER_PATH . '/');
         $save = $uploader->save($path);
-        if ($save && !empty($save['name'])) {
-            $sizes = getimagesize($path . $save['name']);
+        if ($save && !empty($save['file'])) {
+            $sizes = getimagesize($path . $save['file']);
             return $this->sendResponse([
                         'success' => true,
                         'width' => $sizes[0],
@@ -41,7 +41,7 @@ class Upload extends \Magento\Backend\App\Action {
                         'filename' => $this->_storeManager
                                 ->getStore()
                                 ->getBaseUrl(\Magento\Framework\UrlInterface::URL_TYPE_MEDIA) .
-                        self::ADMIN_UPLOADER_PATH . '/' . $save['name']
+                        self::ADMIN_UPLOADER_PATH . '/' . $save['file']
             ]);
         } else {
 

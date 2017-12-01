@@ -35,12 +35,12 @@ class Upload extends \Develo\Designer\Controller\Front {
             $reader = $this->_filesystem->getDirectoryRead(\Magento\Framework\App\Filesystem\DirectoryList::MEDIA);
             $path = $reader->getAbsolutePath(self::UPLOADER_PATH . '/');
             $save = $uploader->save($path);
-            if ($save && !empty($save['name'])) {
-                $sizes = getimagesize($path . $save['name']);
+            if ($save && !empty($save['file'])) {
+                $sizes = getimagesize($path . $save['file']);
                 $file = $this->_storeManager
                                 ->getStore()
                                 ->getBaseUrl(\Magento\Framework\UrlInterface::URL_TYPE_MEDIA) .
-                        self::UPLOADER_PATH . '/' . $save['name'];
+                        self::UPLOADER_PATH . '/' . $save['file'];
                 $this->saveMyFiles([
                     'width' => $sizes[0],
                     'height' => $sizes[1],
