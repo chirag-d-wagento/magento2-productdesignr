@@ -36976,7 +36976,7 @@ $.fn.dd_help = function (options) {
                 }
                 return;
             }
-            $.cookie(cookieName, true);
+            $.cookie(cookieName, true, { expires: 30 });
             var divContainer = $('<div />').addClass('dd-help-container')
                     .html(data.content);
             var buttonContainer = $('<div />').addClass('dd-help-buttons');
