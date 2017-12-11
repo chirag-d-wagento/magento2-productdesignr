@@ -3,9 +3,6 @@
         <develo_productdesigner>
             <general>
                 <enable>1</enable>
-                <product_designer_route>
-                    <![CDATA[develodesigner]]>
-                </product_designer_route>
             </general>
             <frontend>
                 <enable_all>1</enable_all>
@@ -20,11 +17,11 @@
                 <layer_text_price>0</layer_text_price>
             </prices>
             <help>
-                <customize_button_block>customize-button-help-default</customize_button_block>
-                <designer_control_main_block>customize-help-first-block-default</designer_control_main_block>
-                <designer_control_second_block>customize-help-second-block-default</designer_control_second_block>
-                <designer_control_third_block>customize-help-third-block-default</designer_control_third_block>
-                <designer_control_switch_images_block>customize-help-switch-images-block-default</designer_control_switch_images_block>
+                <customize_button_block><![CDATA[customize-button-help-default]]></customize_button_block>
+                <designer_control_main_block><![CDATA[customize-help-first-block-default]]></designer_control_main_block>
+                <designer_control_second_block><![CDATA[customize-help-second-block-default]]></designer_control_second_block>
+                <designer_control_third_block><![CDATA[customize-help-third-block-default]]></designer_control_third_block>
+                <designer_control_switch_images_block><![CDATA[customize-help-switch-images-block-default]]></designer_control_switch_images_block>
             </help>
             <social>
                 <enable_facebook_share>1</enable_facebook_share>
