@@ -117,6 +117,10 @@ var DD_Window = DD_object.extend({
         this._evnt().registerCallback('window-closed', function(window) {
             window.isClosed = true;
         }, 'no-reposition');
+        
+        this._evnt().registerCallback('window-destroyed', function(window) {
+            window.isClosed = false;
+        }, 'no-reposition');
     }
 });
 

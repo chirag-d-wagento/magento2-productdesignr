@@ -33965,6 +33965,10 @@ var DD_Window = DD_object.extend({
         this._evnt().registerCallback('window-closed', function(window) {
             window.isClosed = true;
         }, 'no-reposition');
+        
+        this._evnt().registerCallback('window-destroyed', function(window) {
+            window.isClosed = false;
+        }, 'no-reposition');
     }
 });
 
@@ -35523,6 +35527,7 @@ var DD_Main_Model = DD_ModelBase.extend({
         this.obj.self.parent().remove();
         this._w().close();
         this._evnt().destroyJBoxes();
+        this._evnt().doCall('window-destroyed');
         if(this.help) {
             this.help.destroy();
         }

@@ -36,4 +36,8 @@ class Renderer extends Generic
     public function getCollection() {
         return $this->_collection;
     }
+    
+    protected function getImgSrc($imgBlob) {
+        
+    }
 }
