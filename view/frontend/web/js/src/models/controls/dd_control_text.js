@@ -46,6 +46,10 @@ var DD_control_text = DD_Control_Base_Model.extend({
                 self.obj.contentContainer.get().hide();
             }
         });
+        
+        setTimeout(function () {
+            $(textarea).focus();
+        }, 0);
     },
 
     addFontSelector: function () {

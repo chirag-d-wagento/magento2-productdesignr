@@ -34910,30 +34910,30 @@ var DD_AddPhoto_Model = DD_ModelBase.extend({
 });
 
 var DD_AddText_Model = DD_ModelBase.extend({
-    
+
     init: function (obj) {
         this.obj = obj;
         this._super(obj);
     },
-    
-    getWindowTitle: function() {
+
+    getWindowTitle: function () {
         return this._('add_text_to_image');
     },
-    
-    setWindowContent: function(parent) {
+
+    setWindowContent: function (parent) {
         this.form = new DD_windowTextForm(parent);
         this.setSaveTextEvent();
     },
-    
-    setSaveTextEvent: function() {
+
+    setSaveTextEvent: function () {
         var textarea = this.form.get().find('textarea');
         var self = this;
-        
-        this.form.get().find('button').on('click', function() {
+
+        this.form.get().find('button').on('click', function () {
             var text = textarea.val();
-            if(text.trim() == '') {
+            if (text.trim() == '') {
                 textarea.addClass('empty');
-            }else{
+            } else {
                 textarea.removeClass('empty');
                 textarea.addClass('valid');
                 new DD_Layer_Text({
@@ -34942,6 +34942,9 @@ var DD_AddText_Model = DD_ModelBase.extend({
                 self.closeWindow();
             }
         });
+        setTimeout(function () {
+            $(textarea).focus();
+        }, 0);
     }
 });
 
@@ -35849,6 +35852,11 @@ var DD_control_text = DD_Control_Base_Model.extend({
                 self.obj.contentContainer.get().hide();
             }
         });
+        
+        
+        setTimeout(function () {
+            $(textarea).focus();
+        }, 0);
     },
 
     addFontSelector: function () {
