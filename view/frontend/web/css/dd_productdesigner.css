@@ -3757,11 +3757,26 @@ body:not(._keyfocus) .dd-designer-maincontrols button.fa-spin:focus {
 }
 #dd-add-text-form button {
   width: 100%;
-  border: 1px solid #ccc;
-  background: #fff;
-  font-size: 120%;
-  font-weight: bold;
   padding: 15px 0;
+  background: #3498db;
+  background-image: -webkit-linear-gradient(top, #3498db, #2980b9);
+  background-image: -moz-linear-gradient(top, #3498db, #2980b9);
+  background-image: -ms-linear-gradient(top, #3498db, #2980b9);
+  background-image: -o-linear-gradient(top, #3498db, #2980b9);
+  background-image: linear-gradient(to bottom, #3498db, #2980b9);
+  font-family: Arial;
+  color: #ffffff;
+  font-size: 120%;
+  text-decoration: none;
+}
+#dd-add-text-form button:hover {
+  background: #3cb0fd;
+  background-image: -webkit-linear-gradient(top, #3cb0fd, #3498db);
+  background-image: -moz-linear-gradient(top, #3cb0fd, #3498db);
+  background-image: -ms-linear-gradient(top, #3cb0fd, #3498db);
+  background-image: -o-linear-gradient(top, #3cb0fd, #3498db);
+  background-image: linear-gradient(to bottom, #3cb0fd, #3498db);
+  text-decoration: none;
 }
 #dd-add-text-form .dd-add-text-textarea {
   width: 100%;
@@ -3898,152 +3913,6 @@ body:not(._keyfocus) .dd-designer-maincontrols button.fa-spin:focus {
   position: absolute;
   top: 0px;
   left: 0px;
-}
-.dd-admin-main-container {
-  position: relative;
-  border: 1px solid silver;
-  width: 100%;
-  min-height: 100px;
-}
-.dd-admin-main-container .dd-admin-no-selected {
-  padding: 10px;
-  text-align: center;
-  font-weight: bold;
-}
-.dd-admin-main-container .dd-admin-images-customize {
-  display: block;
-  padding: 10px;
-  margin: 0 auto;
-}
-.dd-admin-main-container .dd-admin-groups-panel {
-  display: blodk;
-  border-bottom: 1px solid silver;
-  padding: 7px;
-  margin: 5px;
-}
-.dd-admin-main-container .dd-admin-groups-panel .button {
-  margin: 3px;
-}
-.dd-admin-designer-container {
-  position: absolute;
-  top: 4px;
-  width: 40px;
-  height: 40px;
-  display: none;
-  border: 1px solid silver;
-  right: 4px;
-  background: url(../images/loading.gif) no-repeat center center;
-}
-.dd-admin-group-container {
-  position: relative;
-}
-.dd-admin-group-container:after {
-  clear: both;
-  display: block;
-  width: 100%;
-  content: ' ';
-  float: none;
-  height: 1px;
-}
-.dd-admin-group-container:before {
-  clear: both;
-  display: block;
-  width: 100%;
-  content: ' ';
-  float: none;
-  height: 1px;
-}
-.dd-admin-group-container .dd-admin-group {
-  min-width: 300px;
-  max-width: 325px;
-  min-height: 150px;
-  border: 1px solid #cdcdcd;
-  display: inline-block;
-  margin: 15px;
-  position: relative;
-  padding-bottom: 42px;
-  float: left;
-}
-.dd-admin-group-container .dd-admin-group .dd-admin-group-remove {
-  position: absolute;
-  bottom: 0px;
-  right: 0px;
-}
-.dd-admin-group-container .dd-admin-group .dd-admin-select-img {
-  position: absolute;
-  bottom: 0px;
-  left: 0px;
-}
-.dd-admin-group-container .dd-admin-group .dd-admin-group-img-container .dd-admin-group-image {
-  border: 3px solid transparent;
-  max-width: 76px;
-  margin: 14px;
-  display: inline-grid;
-  cursor: pointer;
-}
-.dd-admin-group-container .dd-admin-group .dd-admin-group-img-container .dd-admin-group-image:hover {
-  border: 3px solid #ccc;
-}
-.dd-admin-group-container .dd-admin-group .dd-admin-group-img-container .dd-admin-group-image .dd-admin-image-edit {
-  cursor: pointer;
-}
-.dd-admin-group-container .dd-admin-group .dd-admin-group-img-container .dd-admin-group-image .dd-admin-image-remove {
-  cursor: pointer;
-}
-.dd-admin-group-container .dd-admin-group .dd-admin-group-img-container .dd-admin-group-image:nth-child(3n+4) {
-  clear: left;
-}
-.dd-admin-group-container .dd-admin-group .dd-admin-group-sorting-container {
-  width: 100%;
-  padding: 3px;
-  cursor: pointer;
-  border-bottom: 1px solid #ccc;
-  margin-bottom: 10px;
-  text-align: right;
-}
-.dd-admin-group-container .dd-admin-group .dd-admin-group-sorting-container .dd-admin-group-sorting-icon {
-  display: inline-block;
-}
-.dd-admin-loadimages-container .dd-admin-loadimages-loading {
-  width: 100%;
-  padding: 50px;
-  background: url('../images/loading-horizontal.gif') no-repeat center center;
-}
-.dd-admin-loadimages-container .dd-admin-product-image {
-  width: 100px;
-  border: 1px solid #ccc;
-  padding: 5px;
-  float: left;
-  margin: 5px;
-  display: inline-grid;
-  cursor: pointer;
-  position: relative;
-}
-.dd-admin-loadimages-container .dd-admin-product-image img {
-  border: 1px solid #ccc;
-}
-.dd-admin-loadimages-container .dd-admin-product-image.selected {
-  border: 1px solid #009900;
-}
-.dd-admin-loadimages-container .dd-admin-product-image.selected img {
-  border: 1px solid #009900;
-}
-.dd-admin-loadimages-container .dd-admin-product-image.selected .fa-square-o {
-  display: none;
-}
-.dd-admin-loadimages-container .dd-admin-product-image.selected .fa-check-square-o {
-  display: block;
-}
-.dd-admin-loadimages-container .dd-admin-product-image .fa {
-  position: absolute;
-  right: 10px;
-  top: 10px;
-}
-.dd-admin-loadimages-container .dd-admin-product-image .fa-square-o {
-  display: block;
-}
-.dd-admin-loadimages-container .dd-admin-product-image .fa-check-square-o {
-  display: none;
 }
 /* jBox */
 /* color selector */
