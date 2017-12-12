@@ -34828,7 +34828,7 @@ var DD_AddPhoto_Model = DD_ModelBase.extend({
             url: self._s('urlUploadImages') /* + '?form_key=' + window.FORM_KEY */,
             maxFilesize: 5, // MB
             maxFiles: 1,
-            acceptedFiles: '.png, .jpeg, .jpg, .gif',
+            acceptedFiles: '.png, .jpeg, .jpg, .gif, image/*',
             init: function () {
                 this.on("addedfile", function (file) {
                     if (self.previousFile) {
