@@ -1,12 +1,33 @@
 {
-    "name": "develodesign/product_designer",
+    "name": "develo/designer",
     "description": "Magento 2 Design products frontent, backend",
+    "type": "magento2-module",
+    "version": "1.1.1",
     "authors": [
         {
-            "name": "Yaroslav Trokhlibov",
-            "email": "yaro.tr@gmail.com"
+            "name": "www.develodesign.co.uk",
+            "email": "info@develodesign.co.uk"
         }
     ],
-    "minimum-stability": "beta",
-    "require": {}
+    "license": [
+        "OSL-3.0"
+    ],
+    "require": {
+        "php": "~5.5.0|~5.6.0|~7.0.0",
+        "magento/framework": "~100.0.4"
+    },
+    "autoload": {
+        "files": ["registration.php"],
+        "psr-4": {
+            "Magento\\SampleNewPage\\": ""
+        }
+    },
+    "extra": {
+        "map": [
+            [
+                "pub/media/dd_library",
+                "pub/media/dd_library"
+            ]
+        ]
+    }
 }

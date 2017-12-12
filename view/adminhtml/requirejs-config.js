@@ -4,7 +4,7 @@ var config = {
     },
     map: {
         '*': {
-            desgnerAll: 'Develo_Designer/js/dist/productdesigner'
+            desgnerAll: 'Develo_Designer/js/dist/productdesigner.min'
         }
     }
 };
