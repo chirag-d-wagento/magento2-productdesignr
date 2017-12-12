@@ -214,13 +214,13 @@ var DD_Window = DD_object.extend({
         this.registerModal();
         this.registerPreview();
         this.setGlobal();
-        
+
         return this.modal;
     },
-    
-    registerPreview: function() {
+
+    registerPreview: function () {
         var self = this;
-        
+
         this.preview = new jBox('Modal', {
             title: '-',
             draggable: false,
@@ -242,13 +242,13 @@ var DD_Window = DD_object.extend({
         });
 
 
-        this._evnt().register('preview-showed', this.modal);
-        this._evnt().register('preview-closed', this.modal, true);
+        this._evnt().register('preview-showed', this.preview);
+        this._evnt().register('preview-closed', this.preview, true);
     },
-    
-    registerModal: function() {
+
+    registerModal: function () {
         var self = this;
-        
+
         this.modal = new jBox('Modal', {
             title: '-',
             draggable: 'title',
@@ -261,7 +261,7 @@ var DD_Window = DD_object.extend({
             repositionOnOpen: false,
             repositionOnContent: true,
             target: $('.canvas-container'),
-            
+
             onOpen: function () {
                 self._evnt().doCall('window-showed');
             },
@@ -271,7 +271,7 @@ var DD_Window = DD_object.extend({
         });
 
 
-        this._evnt().register('window-showed', this.modal);
+        this._evnt().register('window-destroyed', this.modal, true);
         this._evnt().register('window-closed', this.modal, true);
         this.registerCloseWinEventCall();
     },
@@ -297,10 +297,10 @@ var DD_Window = DD_object.extend({
     },
 
     createContentElement: function (id) {
-        if(!this.contentElement) {
+        if (!this.contentElement) {
             this.contentElement = {};
         }
-        if($('#' + id).get(0)) {
+        if ($('#' + id).get(0)) {
             this.contentElement[id] = $('#' + id);
             return;
         }
@@ -312,14 +312,16 @@ var DD_Window = DD_object.extend({
 
         $('body').append(this.contentElement[id]);
     },
-    
-    registerCloseWinEventCall: function() {
-        this._evnt().registerCallback('window-closed', function(window) {
+
+    registerCloseWinEventCall: function () {
+        this._evnt().registerCallback('window-closed', function (window) {
             window.isClosed = true;
         }, 'no-reposition');
-        
-        this._evnt().registerCallback('window-destroyed', function(window) {
-            window.isClosed = false;
+
+        this._evnt().registerCallback('window-destroyed', function (window) {
+            setTimeout(function () {
+                window.isClosed = false;
+            }, 1000);
         }, 'no-reposition');
     }
 });
@@ -1880,12 +1882,13 @@ var DD_Main_Model = DD_ModelBase.extend({
     },
 
     destroy: function () {
+        this._evnt().doCall('window-destroyed');
         this._evnt().unregisterAll();
         this.obj.self.parent().empty();
         this.obj.self.parent().remove();
+        
         this._w().close();
         this._evnt().destroyJBoxes();
-        this._evnt().doCall('window-destroyed');
         if(this.help) {
             this.help.destroy();
         }
