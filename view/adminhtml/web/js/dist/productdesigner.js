@@ -38730,6 +38730,7 @@ var DD_admin_image_row = DD_panel.extend({
 })
 
 $.fn.dd_productdesigner_admin = function (options) {
+    
     this.options = $.extend({
         'urlImages': '',
         'translator': {

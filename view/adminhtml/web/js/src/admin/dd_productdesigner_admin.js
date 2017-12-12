@@ -1,4 +1,5 @@
 $.fn.dd_productdesigner_admin = function (options) {
+    
     this.options = $.extend({
         'urlImages': '',
         'translator': {
