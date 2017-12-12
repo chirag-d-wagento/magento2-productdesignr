@@ -1176,6 +1176,7 @@ var DD_AddPhoto_Model = DD_ModelBase.extend({
         var self = this;
         content.html('<form class="dropzone">' +                
         '</form>');
+        Dropzone.autoDiscover = false;
         content.find('form').dropzone({
             url: self._s('urlUploadImages') /* + '?form_key=' + window.FORM_KEY */,
             maxFilesize: 5, // MB
