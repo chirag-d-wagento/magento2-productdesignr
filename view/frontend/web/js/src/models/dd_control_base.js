@@ -145,10 +145,11 @@ var DD_Control_Base_Model = DD_ModelBase.extend({
     calcTopPosition: function () {
         return '0';
     },
-
+    /*
     calcLeftosition: function () {
         //return '0';
     },
+    */
 
     hide: function () {
         this.obj.contentContainer.get().hide()

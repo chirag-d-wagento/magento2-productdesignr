@@ -3497,9 +3497,12 @@ ul.tabs li.current {
   border-top: 0px;
   border-bottom-right-radius: 3px;
   border-bottom-left-radius: 3px;
-  padding: 7px 30px;
+  padding: 5px 15px;
   height: 34px;
   overflow: hidden;
+  font-size: 24px;
+  font-weight: 100;
+  color: red;
 }
 .dd-helper-popup .dd-helper-popup-content-container {
   padding: 10px;

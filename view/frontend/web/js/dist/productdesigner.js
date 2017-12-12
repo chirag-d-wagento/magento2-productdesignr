@@ -34424,7 +34424,7 @@ var DD_control = DD_Uibase.extend({
         this._closeContent = new DD_button({
             'parent': this.contentContainer.get(),
             //'text': this._('delete'),
-            'class': 'fa fa-angle-double-up dd-helper-popup-content-close'
+            'class': 'fa fa-caret-square-o-up dd-helper-popup-content-close'
         });
     },
     
@@ -34826,7 +34826,8 @@ var DD_AddPhoto_Model = DD_ModelBase.extend({
         '</form>');
         content.find('form').dropzone({
             url: self._s('urlUploadImages') /* + '?form_key=' + window.FORM_KEY */,
-            maxFilesize: 2, // MB
+            maxFilesize: 5, // MB
+            maxFiles: 1,
             acceptedFiles: '.png, .jpeg, .jpg, .gif',
             init: function () {
                 this.on("addedfile", function (file) {
@@ -35115,10 +35116,11 @@ var DD_Control_Base_Model = DD_ModelBase.extend({
     calcTopPosition: function () {
         return '0';
     },
-
+    /*
     calcLeftosition: function () {
         //return '0';
     },
+    */
 
     hide: function () {
         this.obj.contentContainer.get().hide()
@@ -35852,7 +35854,6 @@ var DD_control_text = DD_Control_Base_Model.extend({
                 self.obj.contentContainer.get().hide();
             }
         });
-        
         
         setTimeout(function () {
             $(textarea).focus();

@@ -42,7 +42,7 @@ var DD_control = DD_Uibase.extend({
         this._closeContent = new DD_button({
             'parent': this.contentContainer.get(),
             //'text': this._('delete'),
-            'class': 'fa fa-angle-double-up dd-helper-popup-content-close'
+            'class': 'fa fa-caret-square-o-up dd-helper-popup-content-close'
         });
     },
     
