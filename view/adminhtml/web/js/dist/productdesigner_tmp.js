@@ -115,18 +115,13 @@ var DD_Event = DD_object.extend({
     
     doCall: function(eventName, data) {
         var self = this;
-        console.log('should doCall: ' + eventName);
-        
         if(!this.listEvents[eventName] || !this.listEventsCallbacks[eventName]) {
             return;
         }
-        console.log( this.listEventsCallbacks[eventName] );
         $.each(this.listEventsCallbacks[eventName], function (i, eventCall) {
             eventCall.call(self, self.listEvents[eventName], eventName, data);
-            console.log('doCall real: ' + i + ' - ' + eventName);
         });
         if(this.listEventsBase[eventName]) {
-            console.log('doCall real DELETE: ' +  ' - ' + eventName);
             delete this.listEventsCallbacks[eventName];
         }
     },
@@ -1535,8 +1530,8 @@ var DD_Main_Model = DD_ModelBase.extend({
         var self = this;
 
         if (this._s('loadGoogleFonts')) {
+            
             var fonts = self.prepareFonts();
-            console.log(fonts);
             WebFont.load({
                 google: {
                     families: fonts
@@ -2272,14 +2267,12 @@ var DD_Layer_Svg = DD_Layer_Base.extend({
 
 var DD_Layer_Text = DD_Layer_Base.extend({
     init: function (options, fullCnfg, notSelect) {
-        console.log('notSelect: ' + notSelect);
         var parent = this.getParent();
 
         var options = options ? options : {};
         var text = fullCnfg ? fullCnfg.text : options.text;
         
         if (!fullCnfg) {
-            console.log(this._s('defaultFont'));
             var conf = {
                 fontSize: this.calcFontSize(),
                 fontFamily: options.fontFamily ? options.fontFamily : this._s('defaultFont'),

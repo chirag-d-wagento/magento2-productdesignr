@@ -1,13 +1,11 @@
 var DD_Layer_Text = DD_Layer_Base.extend({
     init: function (options, fullCnfg, notSelect) {
-        console.log('notSelect: ' + notSelect);
         var parent = this.getParent();
 
         var options = options ? options : {};
         var text = fullCnfg ? fullCnfg.text : options.text;
         
         if (!fullCnfg) {
-            console.log(this._s('defaultFont'));
             var conf = {
                 fontSize: this.calcFontSize(),
                 fontFamily: options.fontFamily ? options.fontFamily : this._s('defaultFont'),

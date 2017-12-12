@@ -10,8 +10,8 @@ var DD_Main_Model = DD_ModelBase.extend({
         var self = this;
 
         if (this._s('loadGoogleFonts')) {
+            
             var fonts = self.prepareFonts();
-            console.log(fonts);
             WebFont.load({
                 google: {
                     families: fonts
