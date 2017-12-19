@@ -1,6 +1,6 @@
 <?php
 
-namespace Develo\Designer\Observer;
+namespace Develodesign\Designer\Observer;
 
 use Magento\Framework\Event\Observer;
 use Magento\Framework\Event\ObserverInterface;
@@ -21,8 +21,8 @@ class CustomerAfterLogin implements ObserverInterface {
         \Psr\Log\LoggerInterface $logger,
         \Magento\Framework\Registry $registry,
         \Magento\Checkout\Model\Session $checkoutSession,    
-        \Develo\Designer\Helper\Data $designerHelper,     
-        \Develo\Designer\Model\CartitemFactory $designCartItemModel    
+        \Develodesign\Designer\Helper\Data $designerHelper,     
+        \Develodesign\Designer\Model\CartitemFactory $designCartItemModel    
     ) {
         $this->_logger = $logger;
         $this->_registry = $registry;
@@ -37,7 +37,7 @@ class CustomerAfterLogin implements ObserverInterface {
             return;
         }
         
-        $oldQuoteId = $this->_registry->registry(\Develo\Designer\Observer\QuoteMergeBefore::OLD_QUOTE);
+        $oldQuoteId = $this->_registry->registry(\Develodesign\Designer\Observer\QuoteMergeBefore::OLD_QUOTE);
         if(!$oldQuoteId) {
             return;
         }
@@ -67,7 +67,7 @@ class CustomerAfterLogin implements ObserverInterface {
             $this->updateNewQuoteItem($updateDesignId, $quote->getId(), $cartItemId);
         }
         
-        $this->_registry->unregister(\Develo\Designer\Observer\QuoteMergeBefore::OLD_QUOTE);
+        $this->_registry->unregister(\Develodesign\Designer\Observer\QuoteMergeBefore::OLD_QUOTE);
     }
     
     protected function updateNewQuoteItem($updateDesignId, $quoteId, $quoteItemId) {

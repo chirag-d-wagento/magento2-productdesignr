@@ -1,6 +1,6 @@
 <?php
 
-namespace Develo\Designer\Observer;
+namespace Develodesign\Designer\Observer;
 
 use Magento\Framework\Event\Observer;
 use Magento\Framework\Event\ObserverInterface;
@@ -12,8 +12,8 @@ class RemoveAfter implements ObserverInterface {
     protected $_designerHelper;
     
     public function __construct(
-       \Develo\Designer\Helper\Data $designerHelper,     
-       \Develo\Designer\Model\CartitemFactory $designCartItemModel
+       \Develodesign\Designer\Helper\Data $designerHelper,     
+       \Develodesign\Designer\Model\CartitemFactory $designCartItemModel
     ) {
         $this->_designerHelper = $designerHelper;
         $this->_designCartItemModel = $designCartItemModel;

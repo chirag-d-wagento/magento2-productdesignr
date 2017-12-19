@@ -4,25 +4,25 @@
     <body>
         <referenceContainer name='root'>
             <block
-                class='Develo\Designer\Block\InitProducView'
-                name='Develo_Designer_Block_InitProducView'
+                class='Develodesign\Designer\Block\InitProducView'
+                name='Develodesign_Designer_Block_InitProducView'
                 ifconfig='develo_productdesigner/general/enable'
             />
         </referenceContainer>
         <referenceBlock name="product.info.addtocart">
             <block 
-                class="Develo\Designer\Block\Product\View" 
+                class="Develodesign\Designer\Block\Product\View" 
                 name="product.info.designer" 
-                template="Develo_Designer::product/view.phtml" 
+                template="Develodesign_Designer::product/view.phtml" 
                 after="-"
             />
         </referenceBlock>
         <!-- for config products -->
         <referenceBlock name="product.info.addtocart.additional">
             <block 
-                class="Develo\Designer\Block\Product\View" 
+                class="Develodesign\Designer\Block\Product\View" 
                 name="product.info.designer.configurable" 
-                template="Develo_Designer::product/view.phtml" 
+                template="Develodesign_Designer::product/view.phtml" 
                 after="-"
             />
         </referenceBlock>

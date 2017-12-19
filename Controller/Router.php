@@ -1,6 +1,6 @@
 <?php
 
-namespace Develo\Designer\Controller;
+namespace Develodesign\Designer\Controller;
 
 class Router implements \Magento\Framework\App\RouterInterface {
 
@@ -11,7 +11,7 @@ class Router implements \Magento\Framework\App\RouterInterface {
     protected $_modelProduct;
 
     public function __construct(
-        \Develo\Designer\Helper\Data $designerHelper, 
+        \Develodesign\Designer\Helper\Data $designerHelper, 
         \Magento\Framework\App\ActionFactory $actionFactory,    
         \Magento\Catalog\Model\Product $modelProduct
     ) {
@@ -31,7 +31,7 @@ class Router implements \Magento\Framework\App\RouterInterface {
             return;
         }
 
-        $pid = $request->getParam(\Develo\Designer\Helper\Url::PRODUCT_ID_VAR_NAME);
+        $pid = $request->getParam(\Develodesign\Designer\Helper\Url::PRODUCT_ID_VAR_NAME);
         if (!$pid) {
             return;
         }
@@ -45,7 +45,7 @@ class Router implements \Magento\Framework\App\RouterInterface {
                 ->setModuleName('dd_designer')
                 ->setControllerName('index')
                 ->setActionName('view')
-                ->setParam(\Develo\Designer\Helper\Url::PRODUCT_ID_VAR_NAME, $pid);
+                ->setParam(\Develodesign\Designer\Helper\Url::PRODUCT_ID_VAR_NAME, $pid);
         
         $request->setAlias(\Magento\Framework\Url::REWRITE_REQUEST_PATH_ALIAS, $identifier);
         return $this->actionFactory->create('Magento\Framework\App\Action\Forward');

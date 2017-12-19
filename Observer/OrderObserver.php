@@ -1,6 +1,6 @@
 <?php
 
-namespace Develo\Designer\Observer;
+namespace Develodesign\Designer\Observer;
 
 use Magento\Framework\Event\Observer;
 use Magento\Framework\Event\ObserverInterface;
@@ -17,9 +17,9 @@ class OrderObserver implements ObserverInterface {
 
     public function __construct(
         \Psr\Log\LoggerInterface $logger,
-        \Develo\Designer\Model\CartitemFactory $designCartItemModel,
-        \Develo\Designer\Helper\Data $designerHelper,      
-        \Develo\Designer\Model\OrderFactory $designOrderModel
+        \Develodesign\Designer\Model\CartitemFactory $designCartItemModel,
+        \Develodesign\Designer\Helper\Data $designerHelper,      
+        \Develodesign\Designer\Model\OrderFactory $designOrderModel
     ) {
         $this->_logger = $logger;
         $this->_designCartItemModel = $designCartItemModel;

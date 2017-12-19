@@ -1,6 +1,6 @@
 <?php
 
-namespace Develo\Designer\Block\Adminhtml\Order\View\Tab;
+namespace Develodesign\Designer\Block\Adminhtml\Order\View\Tab;
 
 class Designer extends \Magento\Sales\Block\Adminhtml\Order\AbstractOrder implements
 \Magento\Backend\Block\Widget\Tab\TabInterface {
@@ -11,8 +11,8 @@ class Designer extends \Magento\Sales\Block\Adminhtml\Order\AbstractOrder implem
 
     public function __construct(
     \Magento\Backend\Block\Template\Context $context, \Magento\Framework\Registry $registry, \Magento\Sales\Helper\Admin $adminHelper, \Magento\Catalog\Model\ProductFactory $productModel,
-            \Develo\Designer\Model\OrderFactory $designerOrder, 
-            \Develo\Designer\Model\CartitemFactory $designCartItemModel, array $data = array()
+            \Develodesign\Designer\Model\OrderFactory $designerOrder, 
+            \Develodesign\Designer\Model\CartitemFactory $designCartItemModel, array $data = array()
     ) {
         parent::__construct($context, $registry, $adminHelper, $data);
 

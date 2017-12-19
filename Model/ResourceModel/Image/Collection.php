@@ -1,6 +1,6 @@
 <?php
 
-namespace Develo\Designer\Model\ResourceModel\Image;
+namespace Develodesign\Designer\Model\ResourceModel\Image;
 
 class Collection extends \Magento\Framework\Model\ResourceModel\Db\Collection\AbstractCollection {
 
@@ -15,7 +15,7 @@ class Collection extends \Magento\Framework\Model\ResourceModel\Db\Collection\Ab
      * @return void
      */
     protected function _construct() {
-        $this->_init('Develo\Designer\Model\Image', 'Develo\Designer\Model\ResourceModel\Image');
+        $this->_init('Develodesign\Designer\Model\Image', 'Develodesign\Designer\Model\ResourceModel\Image');
         /* $this->_map['fields']['store'] = 'store_table.store_id'; */
     }
 

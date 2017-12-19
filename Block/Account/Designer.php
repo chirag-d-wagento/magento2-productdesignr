@@ -1,6 +1,6 @@
 <?php
 
-namespace Develo\Designer\Block\Account;
+namespace Develodesign\Designer\Block\Account;
 
 class Designer extends \Magento\Framework\View\Element\Template {
 
@@ -10,7 +10,7 @@ class Designer extends \Magento\Framework\View\Element\Template {
     protected $_productModel;
 
     public function __construct(
-    \Magento\Framework\View\Element\Template\Context $context, \Magento\Framework\Registry $registry, \Develo\Designer\Model\OrderFactory $designerOrder, \Develo\Designer\Model\CartitemFactory $designCartItemModel, \Magento\Catalog\Model\ProductFactory $productModel, array $data = array()
+    \Magento\Framework\View\Element\Template\Context $context, \Magento\Framework\Registry $registry, \Develodesign\Designer\Model\OrderFactory $designerOrder, \Develodesign\Designer\Model\CartitemFactory $designCartItemModel, \Magento\Catalog\Model\ProductFactory $productModel, array $data = array()
     ) {
         parent::__construct($context, $data);
         $this->_coreRegistry = $registry;

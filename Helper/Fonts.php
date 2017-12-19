@@ -1,6 +1,6 @@
 <?php
 
-namespace Develo\Designer\Helper;
+namespace Develodesign\Designer\Helper;
 
 class Fonts extends \Magento\Framework\App\Helper\AbstractHelper {
 
@@ -12,7 +12,7 @@ class Fonts extends \Magento\Framework\App\Helper\AbstractHelper {
     
     public function __construct(
         \Magento\Framework\App\Helper\Context $context,
-        \Develo\Designer\Helper\Data $dataHelper    
+        \Develodesign\Designer\Helper\Data $dataHelper    
     ) {
         $this->_dataHelper = $dataHelper;
         parent::__construct($context);

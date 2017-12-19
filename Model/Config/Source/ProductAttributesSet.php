@@ -1,6 +1,6 @@
 <?php
 
-namespace Develo\Designer\Model\Config\Source;
+namespace Develodesign\Designer\Model\Config\Source;
 
 class ProductAttributesSet implements \Magento\Framework\Option\ArrayInterface{
 

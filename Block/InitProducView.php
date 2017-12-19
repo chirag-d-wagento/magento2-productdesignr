@@ -1,6 +1,6 @@
 <?php
 
-namespace Develo\Designer\Block;
+namespace Develodesign\Designer\Block;
 
 class InitProducView extends \Magento\Backend\Block\AbstractBlock {
 	/**
@@ -14,7 +14,7 @@ class InitProducView extends \Magento\Backend\Block\AbstractBlock {
 		$om = \Magento\Framework\App\ObjectManager::getInstance();
 		/** @var \Magento\Framework\View\Page\Config $page */
 		$page = $om->get('Magento\Framework\View\Page\Config');
-		$page->addPageAsset('Develo_Designer::css/product_view.css');
-		$page->addPageAsset('Develo_Designer::css/dd_productdesigner.css');
+		$page->addPageAsset('Develodesign_Designer::css/product_view.css');
+		$page->addPageAsset('Develodesign_Designer::css/dd_productdesigner.css');
 	}
 }

@@ -1,8 +1,10 @@
 <?php
 
-namespace Develo\Designer\Controller\Index;
+namespace Develodesign\Designer\Controller\Index;
 
-class Library extends \Develo\Designer\Controller\Front {
+use Magento\Framework\Controller\ResultFactory;
+
+class Library extends \Magento\Framework\App\Action\Action{
 
     const DEFAULT_PATH = 'default';
     const LIBRARY_PATH = 'dd_library';
@@ -11,7 +13,9 @@ class Library extends \Develo\Designer\Controller\Front {
     protected $_storeManager;
 
     public function __construct(
-    \Magento\Framework\App\Action\Context $context, \Magento\Framework\Filesystem $filesystem, \Magento\Store\Model\StoreManagerInterface $storeManager
+        \Magento\Framework\App\Action\Context $context, 
+        \Magento\Framework\Filesystem $filesystem, 
+        \Magento\Store\Model\StoreManagerInterface $storeManager
     ) {
         parent::__construct($context);
         $this->_filesystem = $filesystem;
@@ -54,7 +58,7 @@ class Library extends \Develo\Designer\Controller\Front {
                         'success' => true,
                         'data' => $out
             ]);
-        } catch (Exception $ex) {
+        } catch (\Exception $ex) {
             return $this->sendError(__('Error') . ': ' . $ex->getMessage());
         }
     }
@@ -112,4 +116,17 @@ class Library extends \Develo\Designer\Controller\Front {
         return $_pathCategory;
     }
 
+    protected function sendError($errMessage) {
+        return $this->sendResponse([
+            'error' => true,
+            'errMessage' => $errMessage
+        ]);
+    }
+    
+    protected function sendResponse($response = array()) {
+
+        $jsonResponse = $this->resultFactory->create(ResultFactory::TYPE_JSON);
+        $jsonResponse->setData($response);
+        return $jsonResponse;
+    }
 }

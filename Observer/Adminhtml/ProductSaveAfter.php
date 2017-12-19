@@ -1,10 +1,10 @@
 <?php
 
-namespace Develo\Designer\Observer\Adminhtml;
+namespace Develodesign\Designer\Observer\Adminhtml;
 
 use \Magento\Framework\Event\ObserverInterface;
 use \Magento\Framework\Event\Observer as EventObserver;
-use \Develo\Designer\Ui\DataProvider\Product\Form\Modifier\Designer;
+use \Develodesign\Designer\Ui\DataProvider\Product\Form\Modifier\Designer;
 
 use Magento\Framework\Stdlib\DateTime\DateTime;
 
@@ -18,9 +18,9 @@ class ProductSaveAfter implements ObserverInterface {
     protected $_request;
 
     public function __construct(
-        \Develo\Designer\Model\ImageFactory $imageFactory,
-        \Develo\Designer\Model\ImagegroupFactory $imagegroupFactory , 
-        \Develo\Designer\Model\Designer $designerModel, 
+        \Develodesign\Designer\Model\ImageFactory $imageFactory,
+        \Develodesign\Designer\Model\ImagegroupFactory $imagegroupFactory , 
+        \Develodesign\Designer\Model\Designer $designerModel, 
         \Magento\Framework\App\RequestInterface $request,    
         DateTime $date   
     ) {

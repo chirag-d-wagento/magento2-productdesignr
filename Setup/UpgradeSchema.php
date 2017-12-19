@@ -1,6 +1,6 @@
 <?php
 
-namespace Develo\Designer\Setup;
+namespace Develodesign\Designer\Setup;
 
 use Magento\Framework\Setup\UpgradeSchemaInterface;
 use Magento\Framework\Setup\ModuleContextInterface;
@@ -25,39 +25,32 @@ class UpgradeSchema implements UpgradeSchemaInterface {
 
         $setup->startSetup();
         if (version_compare($context->getVersion(), '1.0.1') < 0) {
-            echo 'Add unque_id and image_src fields' . "\n";
             $this->initFieldGroupUid($setup);
             $this->initFieldImageSrc($setup);
         }
 
         if (version_compare($context->getVersion(), '1.0.2') < 0) {
-            echo 'Add cart items tables' . "\n";
             $this->initTmpDesignTable($setup);
             $this->initDesignCartItemsTable($setup);
         }
 
         if (version_compare($context->getVersion(), '1.0.3') < 0) {
-            echo 'Add product id field' . "\n";
             $this->initFeildProductId($setup);
         }
 
         if (version_compare($context->getVersion(), '1.0.4') < 0) {
-            echo 'Add order table' . "\n";
             $this->initOrderTable($setup);
         }
 
         if (version_compare($context->getVersion(), '1.0.5') < 0) {
-            echo 'Add extra config field' . "\n";
             $this->initExtraConfField($setup);
         }
 
         if (version_compare($context->getVersion(), '1.0.6') < 0) {
-            echo 'Add media id field to tmp designs' . "\n";
             $this->initMediaIdField($setup);
         }
 
         if (version_compare($context->getVersion(), '1.1.1') < 0) {
-            echo 'Change fields types to mediumblob' . "\n";
             $this->changeColumnToLongBlob($setup);
         }
 

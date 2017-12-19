@@ -1,6 +1,6 @@
 <?php
 
-namespace Develo\Designer\Controller\Adminhtml\Quide;
+namespace Develodesign\Designer\Controller\Adminhtml\Quide;
 
 use Magento\Framework\Stdlib\DateTime\DateTime;
 

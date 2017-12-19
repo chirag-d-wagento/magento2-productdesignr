@@ -1,6 +1,6 @@
 <?php
 
-namespace Develo\Designer\Observer;
+namespace Develodesign\Designer\Observer;
 
 use Magento\Framework\Event\Observer;
 use Magento\Framework\Event\ObserverInterface;
@@ -20,8 +20,8 @@ class QuoteMergeBefore implements ObserverInterface {
     public function __construct(
         \Psr\Log\LoggerInterface $logger,
         \Magento\Framework\Registry $registry,
-        \Develo\Designer\Helper\Data $designerHelper,     
-        \Develo\Designer\Model\CartitemFactory $designCartItemModel
+        \Develodesign\Designer\Helper\Data $designerHelper,     
+        \Develodesign\Designer\Model\CartitemFactory $designCartItemModel
     ) {
         $this->_logger = $logger;
         $this->_registry = $registry;

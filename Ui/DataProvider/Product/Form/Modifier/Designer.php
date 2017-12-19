@@ -1,6 +1,6 @@
 <?php
 
-namespace Develo\Designer\Ui\DataProvider\Product\Form\Modifier;
+namespace Develodesign\Designer\Ui\DataProvider\Product\Form\Modifier;
 
 use Magento\Catalog\Model\Locator\LocatorInterface;
 use Magento\Catalog\Ui\DataProvider\Product\Form\Modifier\AbstractModifier;
@@ -33,7 +33,7 @@ class Designer extends AbstractModifier {
     protected $_designerHelper;
 
     public function __construct(
-    LocatorInterface $locator, \Magento\Framework\View\Asset\Repository $assetRepo, \Develo\Designer\Helper\Fonts $designerFonts, \Develo\Designer\Helper\Data $designerHelper, UrlInterface $urlBuilder
+    LocatorInterface $locator, \Magento\Framework\View\Asset\Repository $assetRepo, \Develodesign\Designer\Helper\Fonts $designerFonts, \Develodesign\Designer\Helper\Data $designerHelper, UrlInterface $urlBuilder
     ) {
         $this->locator = $locator;
         $this->urlBuilder = $urlBuilder;
@@ -61,12 +61,12 @@ class Designer extends AbstractModifier {
                                 'componentType' => Fieldset::NAME,
                                 'dataScope' => static::DATA_SCOPE_PRODUCT,
                                 
-                                'component' => 'Develo_Designer/js/designer',
+                                'component' => 'Develodesign_Designer/js/designer',
                                 'provider' => 'product_form.product_form_data_source',
                                 'title' => __('Set Default'),
                                 'label' => __('Default'),
                                 'saveUrl' => $this->urlBuilder->getUrl('dd_productdesigner/save'),
-                                'cssUrl' => $this->_assetRepo->getUrl("Develo_Designer::css/dd_productdesigner.css"),
+                                'cssUrl' => $this->_assetRepo->getUrl("Develodesign_Designer::css/dd_productdesigner.css"),
                                 'urlImages' => $this->urlBuilder->getUrl('dd_productdesigner/product/images'),
                                 'urlLoadImages' => $this->urlBuilder->getUrl('dd_productdesigner/product/loadimages'),
                                 'urlUploadImages' => $this->urlBuilder->getUrl('dd_productdesigner/image/upload'),

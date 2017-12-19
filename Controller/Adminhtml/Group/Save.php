@@ -1,6 +1,6 @@
 <?php
 
-namespace Develo\Designer\Controller\Adminhtml\Group;
+namespace Develodesign\Designer\Controller\Adminhtml\Group;
 
 use Magento\Framework\Stdlib\DateTime\DateTime;
 
@@ -14,9 +14,9 @@ class Save extends \Magento\Backend\App\Action {
     
     public function __construct(
         \Magento\Backend\App\Action\Context $context,
-        \Develo\Designer\Model\ImageFactory $imageFactory,
-        \Develo\Designer\Model\ImagegroupFactory $imagegroupFactory , 
-        \Develo\Designer\Model\Designer $designerModel,    
+        \Develodesign\Designer\Model\ImageFactory $imageFactory,
+        \Develodesign\Designer\Model\ImagegroupFactory $imagegroupFactory , 
+        \Develodesign\Designer\Model\Designer $designerModel,    
         DateTime $date   
     ) {
         parent::__construct($context);

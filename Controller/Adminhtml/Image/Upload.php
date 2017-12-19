@@ -1,6 +1,6 @@
 <?php
 
-namespace Develo\Designer\Controller\Adminhtml\Image;
+namespace Develodesign\Designer\Controller\Adminhtml\Image;
 
 use Magento\Framework\Controller\ResultFactory;
 

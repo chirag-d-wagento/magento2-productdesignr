@@ -1,6 +1,6 @@
 <?php
 
-namespace Develo\Designer\Setup;
+namespace Develodesign\Designer\Setup;
 
 use Magento\Framework\Setup\ModuleContextInterface;
 use Magento\Framework\Setup\ModuleDataSetupInterface;
@@ -19,19 +19,15 @@ class UpgradeData implements \Magento\Framework\Setup\UpgradeDataInterface {
 
         $setup->startSetup();
         if (version_compare($context->getVersion(), '1.0.7') < 0) {
-            echo 'Create help customize button cms block' . "\n";
             $this->createCustomizeButtonCmsBlock();
         }
         if (version_compare($context->getVersion(), '1.0.8') < 0) {
-            echo 'Create designer help first cms block' . "\n";
             $this->createHelpFirsBlockCmsBlock();
         }
         if (version_compare($context->getVersion(), '1.0.9') < 0) {
-            echo 'Create designer help second and third cms block' . "\n";
             $this->createHelpsBlockCmsBlock();
         }
         if (version_compare($context->getVersion(), '1.1.0') < 0) {
-            echo 'Create designer help switch cms block' . "\n";
             $this->createDesignerSwitchBlock();
         }
         $setup->endSetup();

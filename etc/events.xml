@@ -1,38 +1,32 @@
 <?xml version="1.0"?>
-
+<!--
+/**
+ * Copyright © 2017 
+ */
+-->
 <config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:Event/etc/events.xsd">
-    
     <event name="sales_order_place_after">
-        <observer name="dd_productdesigner_place_order" instance="Develo\Designer\Observer\OrderObserver" />
+        <observer name="dd_productdesigner_place_order" instance="Develodesign\Designer\Observer\OrderObserver" />
     </event>
-    
     <event name="checkout_cart_product_add_after">
-        <observer name="dd_productdesigner_cart_add_after" instance="Develo\Designer\Observer\AddAfter"/>
+        <observer name="dd_productdesigner_cart_add_after" instance="Develodesign\Designer\Observer\AddAfter"/>
     </event>
-    
     <event name="checkout_cart_product_update_after">
-        <observer name="dd_productdesigner_cart_update_after" instance="Develo\Designer\Observer\AddAfter"/>
+        <observer name="dd_productdesigner_cart_update_after" instance="Develodesign\Designer\Observer\AddAfter"/>
     </event>
-    
     <event name="checkout_cart_add_product_complete">
-        <observer name="dd_productdesigner_cart_add_complete" instance="Develo\Designer\Observer\AddComplete"/>
+        <observer name="dd_productdesigner_cart_add_complete" instance="Develodesign\Designer\Observer\AddComplete"/>
     </event>
-    
     <event name="checkout_cart_update_item_complete">
-        <observer name="dd_productdesigner_cart_update_complete" instance="Develo\Designer\Observer\AddComplete"/>
+        <observer name="dd_productdesigner_cart_update_complete" instance="Develodesign\Designer\Observer\AddComplete"/>
     </event>
-    
     <event name="sales_quote_merge_before">
-        <observer name="dd_productdesigner_merge_quote_before" instance="Develo\Designer\Observer\QuoteMergeBefore"/>
+        <observer name="dd_productdesigner_merge_quote_before" instance="Develodesign\Designer\Observer\QuoteMergeBefore"/>
     </event>
-    
     <event name="customer_data_object_login">
-        <observer name="dd_productdesigner_customer_after_login" instance="Develo\Designer\Observer\CustomerAfterLogin"/>
+        <observer name="dd_productdesigner_customer_after_login" instance="Develodesign\Designer\Observer\CustomerAfterLogin"/>
     </event>
-  
     <event name="sales_quote_remove_item">
-        <observer name="dd_productdesigner_quote_remove_item" instance="Develo\Designer\Observer\RemoveAfter"/>
+        <observer name="dd_productdesigner_quote_remove_item" instance="Develodesign\Designer\Observer\RemoveAfter"/>
     </event>
-   
 </config>
-

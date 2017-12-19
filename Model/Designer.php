@@ -1,6 +1,6 @@
 <?php
 
-namespace Develo\Designer\Model;
+namespace Develodesign\Designer\Model;
 
 use Magento\ConfigurableProduct\Api\LinkManagementInterface;
 
@@ -15,9 +15,9 @@ class Designer {
     protected $_fileSystem;
 
     public function __construct(
-        \Develo\Designer\Model\ImageFactory $imageModel, 
+        \Develodesign\Designer\Model\ImageFactory $imageModel, 
         \Magento\Framework\Filesystem $fileSystem, 
-        \Develo\Designer\Model\ImagegroupFactory $groupImageModel, 
+        \Develodesign\Designer\Model\ImagegroupFactory $groupImageModel, 
         LinkManagementInterface $linkManagement, 
         \Magento\Catalog\Api\ProductRepositoryInterface $productRepo, 
         \Magento\Catalog\Model\ProductFactory $productLoader

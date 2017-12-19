@@ -1,6 +1,6 @@
 <?php
 
-namespace Develo\Designer\Observer;
+namespace Develodesign\Designer\Observer;
 
 use Magento\Framework\Event\Observer;
 use Magento\Framework\Event\ObserverInterface;
@@ -18,9 +18,9 @@ class AddComplete implements ObserverInterface {
 
     public function __construct(
         \Magento\Checkout\Model\Cart $cart, 
-        \Develo\Designer\Model\TmpdesignFactory $tmpDesignModel, 
-        \Develo\Designer\Model\CartitemFactory $cartItem, 
-        \Develo\Designer\Helper\Data $designerHelper,     
+        \Develodesign\Designer\Model\TmpdesignFactory $tmpDesignModel, 
+        \Develodesign\Designer\Model\CartitemFactory $cartItem, 
+        \Develodesign\Designer\Helper\Data $designerHelper,     
         DateTime $date, 
         \Psr\Log\LoggerInterface $logger, 
         \Magento\Framework\Registry $registry
@@ -42,7 +42,7 @@ class AddComplete implements ObserverInterface {
         
         $request = $observer->getRequest();
         $designsIds = $request->getParam('dd_design');
-        $product = $this->_registry->registry(\Develo\Designer\Observer\AddAfter::CURRENT_REGISTRATED_PRODUCT);
+        $product = $this->_registry->registry(\Develodesign\Designer\Observer\AddAfter::CURRENT_REGISTRATED_PRODUCT);
         $quoteData = $this->getQuoteData($product);
         if (!empty($quoteData['cart_quote_id'])) {
             $this->removeOldDesigns($quoteData['cart_item_id']);
@@ -58,7 +58,7 @@ class AddComplete implements ObserverInterface {
         
         if (!empty($quoteData['cart_quote_id'])) {
             
-        $product = $this->_registry->registry(\Develo\Designer\Observer\AddAfter::CURRENT_REGISTRATED_PRODUCT);
+        $product = $this->_registry->registry(\Develodesign\Designer\Observer\AddAfter::CURRENT_REGISTRATED_PRODUCT);
         
             foreach ($designsIds as $designId) {
                 $modelCartItem = $this->_cartItem->create()

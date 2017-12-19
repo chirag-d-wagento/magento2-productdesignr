@@ -1,8 +1,10 @@
 <?php
 
-namespace Develo\Designer\Controller\Index;
+namespace Develodesign\Designer\Controller\Index;
 
-class Myfiles extends \Develo\Designer\Controller\Front {
+use Magento\Framework\Controller\ResultFactory;
+
+class Myfiles extends \Magento\Framework\App\Action\Action{
 
     protected $_cataloSession;
 
@@ -23,9 +25,23 @@ class Myfiles extends \Develo\Designer\Controller\Front {
                 $myFilesArr = json_decode($myFiles);
             }
             return $this->sendResponse($myFilesArr);
-        } catch (Exception $ex) {
+        } catch (\Exception $ex) {
             return $this->sendError(__('Error') . ': ' . $ex->getMessage());
         }
+    }
+    
+    protected function sendError($errMessage) {
+        return $this->sendResponse([
+            'error' => true,
+            'errMessage' => $errMessage
+        ]);
+    }
+    
+    protected function sendResponse($response = array()) {
+
+        $jsonResponse = $this->resultFactory->create(ResultFactory::TYPE_JSON);
+        $jsonResponse->setData($response);
+        return $jsonResponse;
     }
 
 }

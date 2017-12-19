@@ -1,6 +1,6 @@
 <?php
 
-namespace Develo\Designer\Model\ResourceModel;
+namespace Develodesign\Designer\Model\ResourceModel;
 
 class Tmpdesign extends \Magento\Framework\Model\ResourceModel\Db\AbstractDb {
 

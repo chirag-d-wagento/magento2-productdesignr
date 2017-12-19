@@ -1,8 +1,10 @@
 <?php
 
-namespace Develo\Designer\Controller\Index;
+namespace Develodesign\Designer\Controller\Index;
 
-class Share extends \Develo\Designer\Controller\Front {
+use Magento\Framework\Controller\ResultFactory;
+
+class Share extends \Magento\Framework\App\Action\Action{
 
     const SHARE_PATH = 'dd_share';
     
@@ -32,7 +34,7 @@ class Share extends \Develo\Designer\Controller\Front {
         $img = $this->getRequest()->getParam('img');
         
         if(!$type || !$img) {
-            die();
+            return;
         }
         try {
             $reader = $this->_filesystem->getDirectoryRead(\Magento\Framework\App\Filesystem\DirectoryList::MEDIA);
@@ -57,7 +59,7 @@ class Share extends \Develo\Designer\Controller\Front {
                 'share_url' => $this->prepareShareUrl($type, $fileUrl)
             ]);
 
-        } catch (Exception $ex) {
+        } catch (\Exception $ex) {
             return $this->sendError(__('Error') . ': ' . $ex->getMessage());
         }
     }
@@ -78,5 +80,19 @@ class Share extends \Develo\Designer\Controller\Front {
         //decodedData = atob(encodedData);
         $dataEncoded = explode(',', $img);
         return base64_decode($dataEncoded[1]);
+    }
+    
+    protected function sendError($errMessage) {
+        return $this->sendResponse([
+            'error' => true,
+            'errMessage' => $errMessage
+        ]);
+    }
+    
+    protected function sendResponse($response = array()) {
+
+        $jsonResponse = $this->resultFactory->create(ResultFactory::TYPE_JSON);
+        $jsonResponse->setData($response);
+        return $jsonResponse;
     }
 }

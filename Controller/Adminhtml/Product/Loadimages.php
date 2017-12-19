@@ -1,6 +1,6 @@
 <?php
 
-namespace Develo\Designer\Controller\Adminhtml\Product;
+namespace Develodesign\Designer\Controller\Adminhtml\Product;
 
 use Magento\Framework\Controller\ResultFactory;
 use Magento\ConfigurableProduct\Api\LinkManagementInterface;

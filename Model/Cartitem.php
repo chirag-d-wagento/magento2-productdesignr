@@ -1,6 +1,6 @@
 <?php
 
-namespace Develo\Designer\Model;
+namespace Develodesign\Designer\Model;
 
 use Magento\Framework\DataObject\IdentityInterface;
 
@@ -19,7 +19,7 @@ class Cartitem extends \Magento\Framework\Model\AbstractModel implements Identit
      * @return void
      */
     protected function _construct() {
-        $this->_init('Develo\Designer\Model\ResourceModel\Cartitem');
+        $this->_init('Develodesign\Designer\Model\ResourceModel\Cartitem');
     }
 
     /**

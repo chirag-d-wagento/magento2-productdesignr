@@ -1,28 +1,26 @@
 <?xml version="1.0"?>
-
+<!--
+/**
+ * Copyright © 2017 
+ */
+-->
 <config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:Acl/etc/acl.xsd">
     <acl>
         <resources>
-            
             <resource id="Magento_Backend::admin">
-                
                 <resource id="Develo_Productdesigner::productdesigner" title="Develo Designer" translate="title" sortOrder="30">
                     <resource id="Develo_Productdesigner::manage" title="Develo Designer Menu" translate="title" sortOrder="10">
-                        <resource id="Develo_Productdesigner::images" title="Manage Images" translate="title" sortOrder="10" />
-                        <resource id="Develo_Productdesigner::category" title="Manage Categories" translate="title" sortOrder="20" />
+                        <resource id="Develo_Productdesigner::userquide" title="User Quide" translate="title" sortOrder="10" />
                     </resource>
                 </resource>
-                
                 <resource id="Magento_Backend::stores">
                     <resource id="Magento_Backend::stores_settings">
                         <resource id="Magento_Config::config">
-                            <resource id="Develo_Productdesigner::configuration" title="Develo_Designer configuration" />
+                            <resource id="Develo_Productdesigner::configuration" title="Develodesign_Designer configuration" />
                         </resource>
                     </resource>
                 </resource>
             </resource>
-          
         </resources>
     </acl>
 </config>
-

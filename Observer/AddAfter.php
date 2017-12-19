@@ -1,6 +1,6 @@
 <?php
 
-namespace Develo\Designer\Observer;
+namespace Develodesign\Designer\Observer;
 
 use Magento\Framework\Event\Observer;
 use Magento\Framework\Event\ObserverInterface;
@@ -21,9 +21,9 @@ class AddAfter implements ObserverInterface {
 
     public function __construct(
         \Magento\Catalog\Api\ProductRepositoryInterface $productRepo, 
-        \Develo\Designer\Helper\Data $designerHelper, 
-        \Develo\Designer\Model\TmpdesignFactory $tmpDesignModel, 
-        \Develo\Designer\Model\ImageFactory $imageDesign, 
+        \Develodesign\Designer\Helper\Data $designerHelper, 
+        \Develodesign\Designer\Model\TmpdesignFactory $tmpDesignModel, 
+        \Develodesign\Designer\Model\ImageFactory $imageDesign, 
         \Magento\Store\Model\StoreManagerInterface $storeManager, 
         \Magento\Directory\Model\Currency $currency,
         \Magento\Framework\App\RequestInterface $request,    

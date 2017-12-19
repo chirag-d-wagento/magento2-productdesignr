@@ -1,6 +1,6 @@
 <?php
 
-namespace Develo\Designer\Controller\Adminhtml\Product;
+namespace Develodesign\Designer\Controller\Adminhtml\Product;
 
 use Magento\Framework\Controller\ResultFactory;
 
@@ -10,7 +10,7 @@ class Images extends \Magento\Backend\App\Action {
     
     public function __construct(
         \Magento\Backend\App\Action\Context $context,
-        \Develo\Designer\Model\Designer $designer   
+        \Develodesign\Designer\Model\Designer $designer   
     ) {
         parent::__construct($context);
         $this->_designer = $designer;

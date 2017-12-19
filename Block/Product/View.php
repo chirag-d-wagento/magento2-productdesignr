@@ -1,6 +1,6 @@
 <?php
 
-namespace Develo\Designer\Block\Product;
+namespace Develodesign\Designer\Block\Product;
 
 class View extends \Magento\Catalog\Block\Product\AbstractProduct {
 
@@ -9,7 +9,7 @@ class View extends \Magento\Catalog\Block\Product\AbstractProduct {
     protected $_designerModel;
     protected $_designerFonts;
     protected $_pricesLayers = [];
-    protected $_storeManager;
+    //protected $_storeManager;
     protected $_currency;
     
     protected $_filterProvider;
@@ -53,12 +53,12 @@ class View extends \Magento\Catalog\Block\Product\AbstractProduct {
 
     public function __construct(
         \Magento\Catalog\Block\Product\Context $context, 
-        \Develo\Designer\Helper\Data $designerHelper, 
-        \Develo\Designer\Helper\Url $helperUrl, 
-        \Develo\Designer\Helper\Fonts $designerFonts, 
-        \Magento\Store\Model\StoreManagerInterface $storeManager, 
+        \Develodesign\Designer\Helper\Data $designerHelper, 
+        \Develodesign\Designer\Helper\Url $helperUrl, 
+        \Develodesign\Designer\Helper\Fonts $designerFonts, 
+        //\Magento\Store\Model\StoreManagerInterface $storeManager, 
         \Magento\Directory\Model\Currency $currency, 
-        \Develo\Designer\Model\Designer $designerModel, 
+        \Develodesign\Designer\Model\Designer $designerModel, 
         \Magento\Cms\Model\BlockFactory $blockFactory,
         \Magento\Cms\Model\Template\FilterProvider $filterProvider,    
         array $data = array()
@@ -70,7 +70,7 @@ class View extends \Magento\Catalog\Block\Product\AbstractProduct {
         $this->_designerModel = $designerModel;
         $this->_designerFonts = $designerFonts;
         $this->_currency = $currency;
-        $this->_storeManager = $storeManager;
+        //$this->_storeManager = $storeManager;
         
         $this->_filterProvider = $filterProvider;
         $this->_blockFactory = $blockFactory;

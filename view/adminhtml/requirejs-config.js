@@ -1,10 +1,10 @@
 var config = {
     paths: {
-        'designer/template': 'Develo_Designer/templates'
+        'designer/template': 'Develodesign_Designer/templates'
     },
     map: {
         '*': {
-            desgnerAll: 'Develo_Designer/js/dist/productdesigner.min'
+            desgnerAll: 'Develodesign_Designer/js/dist/productdesigner.min'
         }
     }
 };

@@ -1,8 +1,10 @@
 <?php
 
-namespace Develo\Designer\Controller\Index;
+namespace Develodesign\Designer\Controller\Index;
 
-class Upload extends \Develo\Designer\Controller\Front {
+use Magento\Framework\Controller\ResultFactory;
+
+class Upload extends \Magento\Framework\App\Action\Action{
 
     const UPLOADER_PATH = 'dd_front_designer';
 
@@ -55,7 +57,7 @@ class Upload extends \Develo\Designer\Controller\Front {
             } else {
                 return $this->sendError('ERROR: UPLOADING FILES!');
             }
-        } catch (Exception $ex) {
+        } catch (\Exception $ex) {
             return $this->sendError(__('Error') . ': ' . $ex->getMessage());
         }
     }
@@ -71,4 +73,17 @@ class Upload extends \Develo\Designer\Controller\Front {
         $this->_catalogSession->setDDDesignerFiles(json_encode($myFilesArr));
     }
 
+    protected function sendError($errMessage) {
+        return $this->sendResponse([
+            'error' => true,
+            'errMessage' => $errMessage
+        ]);
+    }
+    
+    protected function sendResponse($response = array()) {
+
+        $jsonResponse = $this->resultFactory->create(ResultFactory::TYPE_JSON);
+        $jsonResponse->setData($response);
+        return $jsonResponse;
+    }
 }

@@ -1,6 +1,6 @@
 <?php
 
-namespace Develo\Designer\Model;
+namespace Develodesign\Designer\Model;
 
 use Magento\Framework\DataObject\IdentityInterface;
 
@@ -19,7 +19,7 @@ class Image extends \Magento\Framework\Model\AbstractModel implements IdentityIn
      * @return void
      */
     protected function _construct() {
-        $this->_init('Develo\Designer\Model\ResourceModel\Image');
+        $this->_init('Develodesign\Designer\Model\ResourceModel\Image');
     }
 
     /**

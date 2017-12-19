@@ -1,6 +1,6 @@
 <?php
 
-namespace Develo\Designer\Setup;
+namespace Develodesign\Designer\Setup;
 
 use Magento\Framework\Setup\InstallSchemaInterface;
 use Magento\Framework\Setup\ModuleContextInterface;

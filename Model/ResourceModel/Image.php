@@ -1,6 +1,6 @@
 <?php
 
-namespace Develo\Designer\Model\ResourceModel;
+namespace Develodesign\Designer\Model\ResourceModel;
 
 /**
  * Post model

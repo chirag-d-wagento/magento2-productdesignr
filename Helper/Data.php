@@ -1,6 +1,6 @@
 <?php
 
-namespace Develo\Designer\Helper;
+namespace Develodesign\Designer\Helper;
 
 class Data extends \Magento\Framework\App\Helper\AbstractHelper {
 

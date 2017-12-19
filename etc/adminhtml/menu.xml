@@ -1,12 +1,14 @@
 <?xml version="1.0"?>
+<!--
+/**
+ * Copyright © 2017 
+ */
+-->
 <config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Backend:etc/menu.xsd">
     <menu>
-        
-        <add id="Develo_Productdesigner::productdesigner" title="Product Designer" translate="title" module="Develo_Designer" sortOrder="200" dependsOnModule="Develo_Designer" resource="Develo_Productdesigner::productdesigner"/>
-        <add id="Develo_Productdesigner::productdesigner_manage" title="Menu" translate="title" module="Develo_Designer" sortOrder="10" parent="Develo_Productdesigner::productdesigner" dependsOnModule="Develo_Designer" resource="Develo_Productdesigner::category"/>
-        <add id="Develo_Productdesigner::userquide" action="dd_productdesigner/quide/index" title="User Quide" module="Develo_Designer" sortOrder="99" parent="Develo_Productdesigner::productdesigner_manage"  resource="Develo_Productdesigner::configuration"/>
-        <add id="Develo_Productdesigner::configuration" action="adminhtml/system_config/edit/section/develo_productdesigner" title="Configuration" module="Develo_Designer" sortOrder="100" parent="Develo_Productdesigner::productdesigner_manage"  resource="Develo_Productdesigner::configuration"/>
-        
+        <add id="Develo_Productdesigner::productdesigner" title="Product Designer" translate="title" module="Develodesign_Designer" sortOrder="200" dependsOnModule="Develodesign_Designer" resource="Develo_Productdesigner::productdesigner"/>
+        <add id="Develo_Productdesigner::productdesigner_manage" title="Menu" translate="title" module="Develodesign_Designer" sortOrder="10" parent="Develo_Productdesigner::productdesigner" dependsOnModule="Develodesign_Designer" resource="Develo_Productdesigner::category"/>
+        <add id="Develo_Productdesigner::userquide" action="dd_productdesigner/quide/index" title="User Quide" module="Develodesign_Designer" sortOrder="99" parent="Develo_Productdesigner::productdesigner_manage"  resource="Develo_Productdesigner::configuration"/>
+        <add id="Develo_Productdesigner::configuration" action="adminhtml/system_config/edit/section/develo_productdesigner" title="Configuration" module="Develodesign_Designer" sortOrder="100" parent="Develo_Productdesigner::productdesigner_manage"  resource="Develo_Productdesigner::configuration"/>        
     </menu>
 </config>
-

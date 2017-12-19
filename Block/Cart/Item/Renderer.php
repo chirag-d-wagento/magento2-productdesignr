@@ -1,6 +1,6 @@
 <?php
 
-namespace Develo\Designer\Block\Cart\Item;
+namespace Develodesign\Designer\Block\Cart\Item;
 use Magento\Checkout\Block\Cart\Item\Renderer\Actions\Generic;
 
 
@@ -13,7 +13,7 @@ class Renderer extends Generic
     
     public function __construct(
         \Magento\Framework\View\Element\Template\Context $context, 
-        \Develo\Designer\Model\CartitemFactory $modelCartItem,
+        \Develodesign\Designer\Model\CartitemFactory $modelCartItem,
         array $data = array()
     ) {
         parent::__construct($context, $data);
