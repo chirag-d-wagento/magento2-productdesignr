@@ -1,14 +1,12 @@
 <?xml version="1.0"?>
 
 <page xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:View/Layout/etc/page_configuration.xsd">
+    <head>
+        <css src="Develodesign_Designer/css/product_view.css"/>
+        <css src="Develodesign_Designer/css/dd_productdesigner.css"/>
+    </head>
     <body>
-        <referenceContainer name='root'>
-            <block
-                class='Develodesign\Designer\Block\InitProducView'
-                name='Develodesign_Designer_Block_InitProducView'
-                ifconfig='develo_productdesigner/general/enable'
-            />
-        </referenceContainer>
+        
         <referenceBlock name="product.info.addtocart">
             <block 
                 class="Develodesign\Designer\Block\Product\View" 
