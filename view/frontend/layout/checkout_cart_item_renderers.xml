@@ -3,27 +3,37 @@
 <page xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:View/Layout/etc/page_configuration.xsd">
     <body>
         <referenceBlock name="checkout.cart.item.renderers.default.actions">
-            <block class="Develodesign\Designer\Block\Cart\Item\Renderer" name="dd_designer.renderer.default" template="Develodesign_Designer::cart/item/default.phtml" before="-" cacheable="false">
+            <block class="Develodesign\Designer\Block\Cart\Item\Renderer" name="dd_designer.renderer.default" template="Develodesign_Designer::cart/item/default.phtml" before="-">
                 
             </block>
         </referenceBlock>
         <referenceBlock name="checkout.cart.item.renderers.simple.actions">
-            <block class="Develodesign\Designer\Block\Cart\Item\Renderer" name="dd_designer.renderer.simple" template="Develodesign_Designer::cart/item/default.phtml" before="-" cacheable="false">
+            <block class="Develodesign\Designer\Block\Cart\Item\Renderer" name="dd_designer.renderer.simple" template="Develodesign_Designer::cart/item/default.phtml" before="-">
                 
             </block>
         </referenceBlock>
         <referenceBlock name="checkout.cart.item.renderers.bundle.actions">
-            <block class="Develodesign\Designer\Block\Cart\Item\Renderer" name="dd_designer.renderer.bundle" template="Develodesign_Designer::cart/item/default.phtml" before="-" cacheable="false">
+            <block class="Develodesign\Designer\Block\Cart\Item\Renderer" name="dd_designer.renderer.bundle" template="Develodesign_Designer::cart/item/default.phtml" before="-">
                 
             </block>
         </referenceBlock>
         <referenceBlock name="checkout.cart.item.renderers.grouped.actions">
-            <block class="Develodesign\Designer\Block\Cart\Item\Renderer" name="dd_designer.renderer.grouped" template="Develodesign_Designer::cart/item/default.phtml" before="-" cacheable="false">
+            <block class="Develodesign\Designer\Block\Cart\Item\Renderer" name="dd_designer.renderer.grouped" template="Develodesign_Designer::cart/item/default.phtml" before="-">
                 
             </block>
         </referenceBlock>
         <referenceBlock name="checkout.cart.item.renderers.configurable.actions">
-            <block class="Develodesign\Designer\Block\Cart\Item\Renderer" name="dd_designer.renderer.configurable" template="Develodesign_Designer::cart/item/default.phtml" before="-" cacheable="false">
+            <block class="Develodesign\Designer\Block\Cart\Item\Renderer" name="dd_designer.renderer.configurable" template="Develodesign_Designer::cart/item/default.phtml" before="-">
+                
+            </block>
+        </referenceBlock>
+        <referenceBlock name="checkout.cart.item.renderers.virtual.actions">
+            <block class="Develodesign\Designer\Block\Cart\Item\Renderer" name="dd_designer.renderer.virtual" template="Develodesign_Designer::cart/item/default.phtml" before="-">
+                
+            </block>
+        </referenceBlock>
+        <referenceBlock name="checkout.cart.item.renderers.downloadable.actions">
+            <block class="Develodesign\Designer\Block\Cart\Item\Renderer" name="dd_designer.renderer.downloadable" template="Develodesign_Designer::cart/item/default.phtml" before="-">
                 
             </block>
         </referenceBlock>
