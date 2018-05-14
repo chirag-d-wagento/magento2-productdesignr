@@ -25,6 +25,8 @@
             'desgnerModule'
 
         ], function ($, ui, modal, _, _designer) {
+            
+        $(function () {
 
             var formCartSelector = '#product_addtocart_form';
 
@@ -342,7 +344,8 @@
                         'shareFb': <?php echo $this->getIsFbShareEnabled() ? 'true' : 'false' ?>,
                         'shareUrl': '<?php echo $block->getShareUrl() ?>',
                         'shareInst': <?php echo $this->getIsInstagramShareEnabled() ? 'true' : 'false' ?>,
-                        'addfromlibrary': <?php echo $this->getIsAddFromLibraryEnabled() ? 'true' : 'false' ?>
+                        'addfromlibrary': <?php echo $this->getIsAddFromLibraryEnabled() ? 'true' : 'false' ?>,
+                        'importFbEnabled': <?php echo $this->getIsImportFromFbEnabled() ? 'true' : 'false' ?>
                     }
                     <?php if($helpConf = $block->getHelpDesigner()): ?>
                     ,help: <?php echo json_encode($helpConf); ?>
@@ -422,7 +425,9 @@
                 }
                 return;
             });
-
+            
         });
+
+    });
     </script>
 <?php endif; ?>

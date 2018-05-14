@@ -43,7 +43,7 @@ class Designer extends \Magento\Sales\Block\Adminhtml\Order\AbstractOrder implem
      * ######################## TAB settings #################################
      */
     public function canShowTab() {
-        return true;
+        return !($this->checkIsHidden());
     }
 
     public function getTabLabel() {

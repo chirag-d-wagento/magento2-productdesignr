@@ -2,6 +2,10 @@ var DD_AddPhoto_Model = DD_ModelBase.extend({
     idUploaderTab: 'dd-add-photo-tab',
     idMyPhotosTab: 'dd-my-photo-tab',
     uploaderInitiated: false,
+    
+    contentTop: null,
+    contentImages: null,
+    importFromFbControl: null,
 
     init: function (obj) {
         this.obj = obj;
@@ -87,8 +91,24 @@ var DD_AddPhoto_Model = DD_ModelBase.extend({
 
     initMyPhotos: function (content) {
         var self = this;
-        content.html(this._('loading') + '...')
-                .addClass('tab-loading');
+        if(!this.contentTop) {
+            this.contentTop = $('<div />')
+                .addClass('dd-my-photo-tab-content-images-top');
+            content.append(this.contentTop);
+        }
+        if(!this.contentImages) {
+            this.contentImages = $('<div />')
+                .addClass('dd-my-photo-tab-content-images');
+            content.append(this.contentImages);
+        }
+        
+        content.addClass('tab-loading');
+        this.contentImages.html(this._('loading') + '...');
+        
+        if(this._s('importFbEnabled') && !this.importFromFbControl){
+            this.importFromFbControl = new DD_ImportFbButton(this.contentTop, content, this.contentImages);
+        }
+        var self = this;
 
         $.ajax({
             url: this._s('myFilesPath'),
@@ -97,16 +117,16 @@ var DD_AddPhoto_Model = DD_ModelBase.extend({
                 .done(function (data) {
                     content.removeClass('tab-loading');
                     if (!data || data.length == 0) {
-                        content.html(self._('no_data'))
+                        self.contentImages.html(self._('no_data'))
                         content.addClass('tab-no-data');
                         return;
                     }
                     content.removeClass('tab-no-data');
-                    content.html('');
+                    self.contentImages.html('');
 
                     $.each(data, function (a, img) {
                         new DD_ImageLinkAdd({
-                            'parent': content,
+                            'parent': self.contentImages,
                             'src': img.src,
                             'width': img.width,
                             'height': img.height

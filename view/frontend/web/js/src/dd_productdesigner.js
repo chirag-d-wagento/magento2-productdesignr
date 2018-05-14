@@ -72,7 +72,8 @@ $.fn.dd_productdesigner = function (options) {
             'print': 'Print',
             'clear_all': 'Clear All',
             'share_facebook': 'Share Facebook',
-            'share_instagram': 'Share Instagram'
+            'share_instagram': 'Share Instagram',
+            'import_from_fb': 'Import from Facebook'
         },
         //'settings': settings,
         'onSave': null,

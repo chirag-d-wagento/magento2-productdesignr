@@ -128,6 +128,10 @@ class View extends \Magento\Catalog\Block\Product\AbstractProduct {
         return $this->_designerHelper->getIsAddFromLibraryEnabled();
     }
 
+    public function getIsImportFromFbEnabled() {
+        return $this->_designerHelper->getIsFbImportEnabled();
+    }
+
     public function getLayerPrices() {
         return json_encode($this->_pricesLayers);
     }

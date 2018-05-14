@@ -25,9 +25,16 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper {
     const DESIGNER_SOCIAL_SHARE_INSTAGRAM = 'develo_productdesigner/social/enable_instagram_share';
     const DESIGNER_SOCIAL_SHARE_FACEBOOK = 'develo_productdesigner/social/enable_facebook_share';
     
+    
+    const DESIGNER_SOCIAL_FACEBOOK_IMPORT = 'develo_productdesigner/social/enable_facebook_share';
+    
 
     public function __construct(\Magento\Framework\App\Helper\Context $context) {
         parent::__construct($context);
+    }
+    
+    public function getIsFbImportEnabled() {
+        return $this->scopeConfig->getValue(self::DESIGNER_SOCIAL_FACEBOOK_IMPORT , \Magento\Store\Model\ScopeInterface::SCOPE_STORE);
     }
     
     public function getIsFbEnabled() {

@@ -11,6 +11,12 @@ var DD_button = DD_Uibase.extend({
             class: this.mainClass + ' ' + (this.options.class ? this.options.class : ''),
             text: (this.options.text && !this.options.fa && !this.options.fa_addon  ? this.options.text : '')
         });
+        if(this.options.label) {
+            this.self.append($('<span />')
+                    .text(this.options.label)
+                    .addClass('label')
+                    );
+        }
         this.add();
         if(this.options.fa_addon){
             var fa = $('<span />', {
