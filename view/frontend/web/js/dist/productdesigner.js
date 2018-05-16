@@ -36861,6 +36861,8 @@ var DD_shareFbButton = DD_button.extend({
     class_name: 'dd-main-button fa-facebook fa',
     model: 'DD_Share_Model',
     
+    trigerHiddenClickId: ''
+    
     init: function(parent, mainModel, shareUrl) {
         this.mainModel = mainModel;
         this.mainModel.shareUrl = shareUrl;
