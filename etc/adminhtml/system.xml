@@ -93,6 +93,15 @@
                 <field id="enable_facebook_my_photos" translate="label comment" type="select" sortOrder="20" showInDefault="1" showInWebsite="1" showInStore="1">
                     <label>Import Images from Facebook</label>
                     <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                    <comment>Not leave empty "Facebook APP ID" and "Facebook APP Secret"</comment>
+                </field>
+                
+                <field id="facebook_app_id" translate="label comment" type="text" sortOrder="30" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Facebook APP ID</label>
+                </field>
+                
+                <field id="facebook_app_secret" translate="label comment" type="text" sortOrder="40" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Facebook APP Secret</label>
                 </field>
             </group>
         </section>

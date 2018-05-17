@@ -27,10 +27,20 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper {
     
     
     const DESIGNER_SOCIAL_FACEBOOK_IMPORT = 'develo_productdesigner/social/enable_facebook_share';
+    const DESIGNER_SOCIAL_FACEBOOK_APP_ID  = 'develo_productdesigner/social/facebook_app_id';
+    const DESIGNER_SOCIAL_FACEBOOK_APP_SECRET  = 'develo_productdesigner/social/facebook_app_secret';
     
 
     public function __construct(\Magento\Framework\App\Helper\Context $context) {
         parent::__construct($context);
+    }
+    
+    public function getFbAppSecret() {
+        return $this->scopeConfig->getValue(self::DESIGNER_SOCIAL_FACEBOOK_APP_SECRET, \Magento\Store\Model\ScopeInterface::SCOPE_STORE);
+    }
+    
+    public function getFbAppId() {
+        return $this->scopeConfig->getValue(self::DESIGNER_SOCIAL_FACEBOOK_APP_ID , \Magento\Store\Model\ScopeInterface::SCOPE_STORE);
     }
     
     public function getIsFbImportEnabled() {

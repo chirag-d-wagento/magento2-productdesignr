@@ -338,6 +338,7 @@
                         'listFonts': <?php echo json_encode($this->getFonts()); ?>,
                         'urlUploadImages': '<?php echo $this->getUploadFileUrl(); ?>',
                         'myFilesPath': '<?php echo $this->getMyFilesUrl() ?>',
+                        'fbImagesPath': '<?php echo $this->getFbImagesUrl() ?>',
                         'libraryPath': '<?php echo $this->getLibraryUrl() ?>',
                         'addphoto': <?php echo $this->getIsAddImageEnabled() ? 'true' : 'false' ?>,
                         'addtext': <?php echo $this->getIsAddTextEnabled() ? 'true' : 'false' ?>,
@@ -429,5 +430,25 @@
         });
 
     });
+    <?php if($this->getIsImportFromFbEnabled()): ?>
+        
+        window.fbAsyncInit = function() {
+          FB.init({
+            appId: '<?php echo $block->getFbAppId(); ?>',
+            cookie: true, // This is important, it's not enabled by default
+            version: 'v2.2'
+          });
+        };
+
+        (function(d, s, id){
+          var js, fjs = d.getElementsByTagName(s)[0];
+          if (d.getElementById(id)) {return;}
+          js = d.createElement(s); js.id = id;
+          js.src = "https://connect.facebook.net/en_US/sdk.js";
+          fjs.parentNode.insertBefore(js, fjs);
+        }(document, 'script', 'facebook-jssdk'));
+        
+    <?php endif; ?>
+
     </script>
 <?php endif; ?>

@@ -115,6 +115,10 @@ class View extends \Magento\Catalog\Block\Product\AbstractProduct {
     public function getShareUrl() {
         return $this->getUrl('dd_designer/index/share');
     }
+    
+    public function getFbImagesUrl(){
+        return $this->getUrl('dd_designer/index/facebook');
+    }
 
     public function getIsAddImageEnabled() {
         return $this->_designerHelper->getIsAddImageEnabled();
@@ -130,6 +134,10 @@ class View extends \Magento\Catalog\Block\Product\AbstractProduct {
 
     public function getIsImportFromFbEnabled() {
         return $this->_designerHelper->getIsFbImportEnabled();
+    }
+
+    public function getFbAppId() {
+        return $this->_designerHelper->getFbAppId();
     }
 
     public function getLayerPrices() {
