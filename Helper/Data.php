@@ -26,13 +26,29 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper {
     const DESIGNER_SOCIAL_SHARE_FACEBOOK = 'develo_productdesigner/social/enable_facebook_share';
     
     
-    const DESIGNER_SOCIAL_FACEBOOK_IMPORT = 'develo_productdesigner/social/enable_facebook_share';
+    const DESIGNER_SOCIAL_FACEBOOK_IMPORT = 'develo_productdesigner/social/enable_facebook_my_photos';
     const DESIGNER_SOCIAL_FACEBOOK_APP_ID  = 'develo_productdesigner/social/facebook_app_id';
     const DESIGNER_SOCIAL_FACEBOOK_APP_SECRET  = 'develo_productdesigner/social/facebook_app_secret';
+    
+    const DESIGNER_SOCIAL_INSTAGRAM_IMPORT = 'develo_productdesigner/social/enable_instagram_my_photos';
+    const DESIGNER_SOCIAL_INSTAGRAM_CLIENT_ID = 'develo_productdesigner/social/instagram_client_id';
+    const DESIGNER_SOCIAL_INSTAGRAM_SECRET = 'develo_productdesigner/social/instagram_client_secret';
     
 
     public function __construct(\Magento\Framework\App\Helper\Context $context) {
         parent::__construct($context);
+    }
+    
+    public function getInstagramClientSecret() {
+        return $this->scopeConfig->getValue(self::DESIGNER_SOCIAL_INSTAGRAM_SECRET , \Magento\Store\Model\ScopeInterface::SCOPE_STORE);
+    }
+    
+    public function getInstagramClientId(){
+        return $this->scopeConfig->getValue(self::DESIGNER_SOCIAL_INSTAGRAM_CLIENT_ID , \Magento\Store\Model\ScopeInterface::SCOPE_STORE);
+    }
+    
+    public function getIsInstagramImportEnabled() {
+        return $this->scopeConfig->getValue(self::DESIGNER_SOCIAL_INSTAGRAM_IMPORT , \Magento\Store\Model\ScopeInterface::SCOPE_STORE);
     }
     
     public function getFbAppSecret() {

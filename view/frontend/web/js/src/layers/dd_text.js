@@ -19,7 +19,7 @@ var DD_Layer_Text = DD_Layer_Base.extend({
 
         conf.notSelect = notSelect;
         
-        var text = new fabric.Text(text, conf);
+        var text = new fabric.IText(text, conf);
         parent.add(text);
         
         if (!fullCnfg) {

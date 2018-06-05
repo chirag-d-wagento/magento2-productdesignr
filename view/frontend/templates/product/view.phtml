@@ -126,7 +126,8 @@
                     configuredMediaProducts[media_id].splice(conf.index, 1);
                     return;
                 }
-                if (fabricObj.type === 'image' || fabricObj.type === 'text' || fabricObj.isSvg) {
+                console.log( fabricObj.type );
+                if (fabricObj.type === 'image' || fabricObj.type === 'text' || fabricObj.type === 'i-text' || fabricObj.isSvg) {
                     if (typeof (configuredMediaProducts[media_id]) === 'undefined') {
                         configuredMediaProducts[media_id] = [];
                     }
@@ -346,7 +347,8 @@
                         'shareUrl': '<?php echo $block->getShareUrl() ?>',
                         'shareInst': <?php echo $this->getIsInstagramShareEnabled() ? 'true' : 'false' ?>,
                         'addfromlibrary': <?php echo $this->getIsAddFromLibraryEnabled() ? 'true' : 'false' ?>,
-                        'importFbEnabled': <?php echo $this->getIsImportFromFbEnabled() ? 'true' : 'false' ?>
+                        'importFbEnabled': <?php echo $this->getIsImportFromFbEnabled() ? 'true' : 'false' ?>,
+                        'importInstagramEnabled': <?php echo $this->getIsInstagramImportEnabled() ? 'true' : 'false' ?>
                     }
                     <?php if($helpConf = $block->getHelpDesigner()): ?>
                     ,help: <?php echo json_encode($helpConf); ?>

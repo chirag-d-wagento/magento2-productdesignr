@@ -34555,6 +34555,8 @@ var DD_control = DD_Uibase.extend({
         $("#" + uid).spectrum({
             allowEmpty: true,
             color: color,
+            preferredFormat: "hex",
+            showInput: true,
             change: function(color) {
                 if(onUpdate) {
                     onUpdate.call(this, color, model);
@@ -34780,6 +34782,22 @@ var DD_ImportFb_Model = DD_ModelBase.extend({
 
 });
 
+var DD_ImportInstagram_Model = DD_ModelBase.extend({
+
+    cookie_name: 'designer-instagram-token',
+    init: function (obj) {
+        this.obj = obj;
+    },
+
+    setClickEvents: function () {
+        var self = this;
+        this.obj.self.on('click', function () {
+            self.obj.content.addClass('tab-loading');
+            self.obj.contentImages.html(self._('loading') + '...');
+        });
+    }
+});
+
 var DD_AddFromLibrary_Model = DD_ModelBase.extend({
 
     currentCategory: null,
@@ -34975,6 +34993,9 @@ var DD_AddPhoto_Model = DD_ModelBase.extend({
         
         if(this._s('importFbEnabled') && !this.importFromFbControl){
             this.importFromFbControl = new DD_ImportFbButton(this.contentTop, content, this.contentImages);
+        }
+        if(this._s('importInstagramEnabled') && !this.importFromInstagramControl){
+            this.importFromInstagramControl = new DD_ImportInstagramButton(this.contentTop, content, this.contentImages);
         }
         var self = this;
 
@@ -35542,7 +35563,7 @@ var DD_Main_Model = DD_ModelBase.extend({
                 if (obj.type === 'image') {
                     new DD_Layer_Img(null, obj, notSelect);
                 }
-                if (obj.type === 'text') {
+                if (obj.type === 'text' || obj.type === 'i-text') {
                     new DD_Layer_Text(null, obj, notSelect);
                 }
                 if (obj.isSvg === true) {
@@ -36366,7 +36387,7 @@ var DD_Layer_Text = DD_Layer_Base.extend({
 
         conf.notSelect = notSelect;
         
-        var text = new fabric.Text(text, conf);
+        var text = new fabric.IText(text, conf);
         parent.add(text);
         
         if (!fullCnfg) {
@@ -36697,6 +36718,31 @@ var DD_ImportFbButton = DD_button.extend({
             id: this.object_id,
             class: this.class_name,
             label: this._('import_from_fb')
+        }
+        this.content = content;
+        this.contentImages = contentImages;
+        this._super(options);
+    },
+    
+    _callBackModel: function (model) {
+        model.setClickEvents();
+    }
+})
+
+
+var DD_ImportInstagramButton = DD_button.extend({
+    object_id: 'dd-import-fb-button',
+    class_name: 'dd-add-text-controls fa-instagram fa full-width',
+    model: 'DD_ImportInstagram_Model',
+    content: null,
+    contentImages: null,
+    
+    init: function(parent, content, contentImages) {
+        var options = {
+            parent: parent,
+            id: this.object_id,
+            class: this.class_name,
+            label: this._('import_from_instagram')
         }
         this.content = content;
         this.contentImages = contentImages;
@@ -37229,7 +37275,9 @@ $.fn.dd_productdesigner = function (options) {
             'clear_all': 'Clear All',
             'share_facebook': 'Share Facebook',
             'share_instagram': 'Share Instagram',
-            'import_from_fb': 'Import from Facebook'
+            'import_from_fb': 'Import from Facebook',
+            'import_from_instagram': 'Import from Instagram'
+            
         },
         //'settings': settings,
         'onSave': null,

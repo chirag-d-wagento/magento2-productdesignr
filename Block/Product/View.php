@@ -135,6 +135,10 @@ class View extends \Magento\Catalog\Block\Product\AbstractProduct {
     public function getIsImportFromFbEnabled() {
         return $this->_designerHelper->getIsFbImportEnabled();
     }
+    
+    public function getIsInstagramImportEnabled(){
+        return $this->_designerHelper->getIsInstagramImportEnabled();
+    }
 
     public function getFbAppId() {
         return $this->_designerHelper->getFbAppId();

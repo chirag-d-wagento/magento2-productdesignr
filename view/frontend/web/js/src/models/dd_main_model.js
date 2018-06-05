@@ -177,7 +177,7 @@ var DD_Main_Model = DD_ModelBase.extend({
                 if (obj.type === 'image') {
                     new DD_Layer_Img(null, obj, notSelect);
                 }
-                if (obj.type === 'text') {
+                if (obj.type === 'text' || obj.type === 'i-text') {
                     new DD_Layer_Text(null, obj, notSelect);
                 }
                 if (obj.isSvg === true) {

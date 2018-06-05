@@ -170,6 +170,8 @@ var DD_control = DD_Uibase.extend({
         $("#" + uid).spectrum({
             allowEmpty: true,
             color: color,
+            preferredFormat: "hex",
+            showInput: true,
             change: function(color) {
                 if(onUpdate) {
                     onUpdate.call(this, color, model);

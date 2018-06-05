@@ -108,6 +108,9 @@ var DD_AddPhoto_Model = DD_ModelBase.extend({
         if(this._s('importFbEnabled') && !this.importFromFbControl){
             this.importFromFbControl = new DD_ImportFbButton(this.contentTop, content, this.contentImages);
         }
+        if(this._s('importInstagramEnabled') && !this.importFromInstagramControl){
+            this.importFromInstagramControl = new DD_ImportInstagramButton(this.contentTop, content, this.contentImages);
+        }
         var self = this;
 
         $.ajax({

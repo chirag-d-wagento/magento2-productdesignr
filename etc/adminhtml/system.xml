@@ -103,6 +103,21 @@
                 <field id="facebook_app_secret" translate="label comment" type="text" sortOrder="40" showInDefault="1" showInWebsite="1" showInStore="1">
                     <label>Facebook APP Secret</label>
                 </field>
+                
+                <field id="enable_instagram_my_photos" translate="label comment" type="select" sortOrder="50" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Import Images from Instagram</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                    <comment>Not leave empty "Instagram CLIENT ID" and "Instagram CLIENT SECRET"</comment>
+                </field>
+                
+                <field id="instagram_client_id" translate="label comment" type="text" sortOrder="60" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Instagram CLIENT ID</label>
+                </field>
+                
+                <field id="instagram_client_secret" translate="label comment" type="text" sortOrder="70" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Instagram CLIENT SECRET</label>
+                </field>
+                
             </group>
         </section>
     </system>
