@@ -7,20 +7,25 @@ var DD_ImportFb_Model = DD_ModelBase.extend({
     setClickEvents: function () {
         var self = this;
         this.obj.self.on('click', function () {
-            self.obj.content.addClass('tab-loading');
-            self.obj.contentImages.html(self._('loading') + '...');
-            FB.login(function (response) {
-                if (response.authResponse) {
-                    self.getImagesFromServer(response.authResponse.signedRequest, response.authResponse.accessToken);
+            try {
+                self.obj.content.addClass('tab-loading');
+                self.obj.contentImages.html(self._('loading') + '...');
+                FB.login(function (response) {
+                    if (response.authResponse) {
+                        self.getImagesFromServer(response.authResponse.signedRequest, response.authResponse.accessToken);
 
-                } else {
-                    self.obj.contentImages.html(self._('facebook_load_failed') + '...');
-                }
-            });
+                    } else {
+                        self.obj.contentImages.html(self._('facebook_load_failed') + '...');
+                    }
+                });
+
+            } catch (e) {
+
+            }
 
         });
     },
-    
+
     getImagesFromServer: function (code, accessToken) {
 
         var self = this;
@@ -48,7 +53,7 @@ var DD_ImportFb_Model = DD_ModelBase.extend({
                             'src': img.src,
                             'width': img.width,
                             'height': img.height
-                            
+
                         });
                     });
                 });

@@ -2830,7 +2830,7 @@ body[class*=" jBox-blockScroll-"] {
   line-height: 28px;
   cursor: pointer;
   margin: 3px;
-  width: 200px;
+  width: 180px;
   background-image: -webkit-linear-gradient(top, #f9f9f9, #f0f0f0);
   background-image: -moz-linear-gradient(top, #f9f9f9, #f0f0f0);
   background-image: -o-linear-gradient(top, #f9f9f9, #f0f0f0);
@@ -3885,6 +3885,9 @@ body:not(._keyfocus) .dd-designer-maincontrols button.fa-spin:focus {
 }
 .dd-control-layer button {
   float: right;
+}
+.dd-control-layer.active {
+  background: #ccc;
 }
 .dd-help-container {
   padding: 10px;

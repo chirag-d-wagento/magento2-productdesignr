@@ -1,5 +1,8 @@
 var DD_Layers_Model = DD_ModelBase.extend({
 
+    count: 0,
+    active: null,
+
     init: function (obj) {
         this.obj = obj;
         this._super(obj);
@@ -15,11 +18,15 @@ var DD_Layers_Model = DD_ModelBase.extend({
         var self = this;
         
         parent.html('');
-
+        this.count = 0;
         $.each(objs, function () {
             var object = this;
             self.drawElement(object, parent, canvas);
         });
+        
+        if(this.count == 0) {
+            parent.html(this._('no_data'));
+        }
     },
 
     drawElement: function (object, parent, canvas) {
@@ -40,15 +47,24 @@ var DD_Layers_Model = DD_ModelBase.extend({
         var innerHtml = '';
         switch (type) {
             case "image":
-                innerHtml += '<img src="' + object.src + '" class="dd-control-layer-image" />'
+                innerHtml += '<img src="' + object._originalElement.src + '" class="dd-control-layer-image" />'
+                this.count++;
                 break;
             case "svg":
                 innerHtml += '<img src="' + object.src_orig + '" class="dd-control-layer-image" />'
+                this.count++;
                 break;
             case "text":
                 innerHtml += '<span class="dd-control-layer-text">'
                         + object.text
                         + '</span>';
+                this.count++;
+                break;
+            case "i-text":
+                innerHtml += '<span class="dd-control-layer-text">'
+                        + object.text
+                        + '</span>';
+                this.count++;
                 break;
         }
 
@@ -79,8 +95,15 @@ var DD_Layers_Model = DD_ModelBase.extend({
     },
 
     attachPanelClick: function (panel, object, canvas) {
-        panel.get().on('click', function () {
+        var self = this;
+        var panel = panel.get();
+        panel.on('click', function () {
+            if(self.active) {
+               self.active.removeClass('active'); 
+            }
             canvas.setActiveObject(object);
+            $(panel).addClass('active');
+            self.active = panel;
         });
     }
 

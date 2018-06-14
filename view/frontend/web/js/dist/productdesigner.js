@@ -34718,20 +34718,25 @@ var DD_ImportFb_Model = DD_ModelBase.extend({
     setClickEvents: function () {
         var self = this;
         this.obj.self.on('click', function () {
-            self.obj.content.addClass('tab-loading');
-            self.obj.contentImages.html(self._('loading') + '...');
-            FB.login(function (response) {
-                if (response.authResponse) {
-                    self.getImagesFromServer(response.authResponse.signedRequest, response.authResponse.accessToken);
+            try {
+                self.obj.content.addClass('tab-loading');
+                self.obj.contentImages.html(self._('loading') + '...');
+                FB.login(function (response) {
+                    if (response.authResponse) {
+                        self.getImagesFromServer(response.authResponse.signedRequest, response.authResponse.accessToken);
 
-                } else {
-                    self.obj.contentImages.html(self._('facebook_load_failed') + '...');
-                }
-            });
+                    } else {
+                        self.obj.contentImages.html(self._('facebook_load_failed') + '...');
+                    }
+                });
+
+            } catch (e) {
+
+            }
 
         });
     },
-    
+
     getImagesFromServer: function (code, accessToken) {
 
         var self = this;
@@ -34759,7 +34764,7 @@ var DD_ImportFb_Model = DD_ModelBase.extend({
                             'src': img.src,
                             'width': img.width,
                             'height': img.height
-                            
+
                         });
                     });
                 });
@@ -34879,9 +34884,6 @@ var DD_ImportInstagram_Model = DD_ModelBase.extend({
         $.getJSON(url, function (dataInstagram) {
 
             var data = dataInstagram.data;
-
-            console.log( data );
-
             if (!data || data.length == 0) {
                 self.obj.contentImages.html(self._('no_data'))
                 self.obj.content.addClass('tab-no-data');
@@ -35454,6 +35456,9 @@ var DD_ImageLink_Model = DD_ModelBase.extend({
 
 var DD_Layers_Model = DD_ModelBase.extend({
 
+    count: 0,
+    active: null,
+
     init: function (obj) {
         this.obj = obj;
         this._super(obj);
@@ -35469,11 +35474,15 @@ var DD_Layers_Model = DD_ModelBase.extend({
         var self = this;
         
         parent.html('');
-
+        this.count = 0;
         $.each(objs, function () {
             var object = this;
             self.drawElement(object, parent, canvas);
         });
+        
+        if(this.count == 0) {
+            parent.html(this._('no_data'));
+        }
     },
 
     drawElement: function (object, parent, canvas) {
@@ -35494,15 +35503,24 @@ var DD_Layers_Model = DD_ModelBase.extend({
         var innerHtml = '';
         switch (type) {
             case "image":
-                innerHtml += '<img src="' + object.src + '" class="dd-control-layer-image" />'
+                innerHtml += '<img src="' + object._originalElement.src + '" class="dd-control-layer-image" />'
+                this.count++;
                 break;
             case "svg":
                 innerHtml += '<img src="' + object.src_orig + '" class="dd-control-layer-image" />'
+                this.count++;
                 break;
             case "text":
                 innerHtml += '<span class="dd-control-layer-text">'
                         + object.text
                         + '</span>';
+                this.count++;
+                break;
+            case "i-text":
+                innerHtml += '<span class="dd-control-layer-text">'
+                        + object.text
+                        + '</span>';
+                this.count++;
                 break;
         }
 
@@ -35533,8 +35551,15 @@ var DD_Layers_Model = DD_ModelBase.extend({
     },
 
     attachPanelClick: function (panel, object, canvas) {
-        panel.get().on('click', function () {
+        var self = this;
+        var panel = panel.get();
+        panel.on('click', function () {
+            if(self.active) {
+               self.active.removeClass('active'); 
+            }
             canvas.setActiveObject(object);
+            $(panel).addClass('active');
+            self.active = panel;
         });
     }
 

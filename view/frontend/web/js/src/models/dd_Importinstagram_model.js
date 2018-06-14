@@ -109,9 +109,6 @@ var DD_ImportInstagram_Model = DD_ModelBase.extend({
         $.getJSON(url, function (dataInstagram) {
 
             var data = dataInstagram.data;
-
-            console.log( data );
-
             if (!data || data.length == 0) {
                 self.obj.contentImages.html(self._('no_data'))
                 self.obj.content.addClass('tab-no-data');
