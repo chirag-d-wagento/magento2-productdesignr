@@ -156,6 +156,10 @@ class View extends \Magento\Catalog\Block\Product\AbstractProduct {
         return $this->_designerHelper->getIsInstagramEnabled();
     }
     
+    public function getInstagramClientId() {
+        return $this->_designerHelper->getInstagramClientId();
+    }
+    
     public function getHelpDesigner() {
         $out = [];
         $switchBlock = $this->getSwitchHelpBlockConf();

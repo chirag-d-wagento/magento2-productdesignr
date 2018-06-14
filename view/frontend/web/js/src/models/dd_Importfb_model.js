@@ -1,6 +1,5 @@
 var DD_ImportFb_Model = DD_ModelBase.extend({
 
-    cookie_name: 'designer-token',
     init: function (obj) {
         this.obj = obj;
     },
@@ -10,31 +9,18 @@ var DD_ImportFb_Model = DD_ModelBase.extend({
         this.obj.self.on('click', function () {
             self.obj.content.addClass('tab-loading');
             self.obj.contentImages.html(self._('loading') + '...');
-            if (self.getToken()) {
-                self.getImagesFromServer(null, self.getToken());
-                return;
-            }
             FB.login(function (response) {
                 if (response.authResponse) {
-                    self.setToken(response.authResponse.accessToken);
                     self.getImagesFromServer(response.authResponse.signedRequest, response.authResponse.accessToken);
 
                 } else {
-                    self.obj.contentImages.html(self._('Failed') + '...');
+                    self.obj.contentImages.html(self._('facebook_load_failed') + '...');
                 }
             });
 
         });
     },
-
-    getToken: function () {
-        return $.cookie(this.cookie_name);
-    },
-
-    setToken: function (token) {
-        $.cookie(this.cookie_name, token);
-    },
-
+    
     getImagesFromServer: function (code, accessToken) {
 
         var self = this;

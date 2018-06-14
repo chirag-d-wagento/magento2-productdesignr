@@ -280,7 +280,7 @@
                 var conf = configuredMediaProducts[media_id] ? configuredMediaProducts[media_id] : {};
                 var json = json ? json : {};
                 $.ajax({
-                    url: '<?php echo $this->getSaveDesignUrl() ?>',
+                    url: '<?php echo $block->getSaveDesignUrl() ?>',
                     method: 'post',
                     data: {
                         'conf': JSON.stringify(conf),
@@ -336,19 +336,20 @@
                     'conf': img.conf,
                     'extra_config': img.extra_config,
                     'settings': {
-                        'listFonts': <?php echo json_encode($this->getFonts()); ?>,
-                        'urlUploadImages': '<?php echo $this->getUploadFileUrl(); ?>',
-                        'myFilesPath': '<?php echo $this->getMyFilesUrl() ?>',
-                        'fbImagesPath': '<?php echo $this->getFbImagesUrl() ?>',
-                        'libraryPath': '<?php echo $this->getLibraryUrl() ?>',
-                        'addphoto': <?php echo $this->getIsAddImageEnabled() ? 'true' : 'false' ?>,
-                        'addtext': <?php echo $this->getIsAddTextEnabled() ? 'true' : 'false' ?>,
-                        'shareFb': <?php echo $this->getIsFbShareEnabled() ? 'true' : 'false' ?>,
+                        'listFonts': <?php echo json_encode($block->getFonts()); ?>,
+                        'urlUploadImages': '<?php echo $block->getUploadFileUrl(); ?>',
+                        'myFilesPath': '<?php echo $block->getMyFilesUrl() ?>',
+                        'fbImagesPath': '<?php echo $block->getFbImagesUrl() ?>',
+                        'libraryPath': '<?php echo $block->getLibraryUrl() ?>',
+                        'addphoto': <?php echo $block->getIsAddImageEnabled() ? 'true' : 'false' ?>,
+                        'addtext': <?php echo $block->getIsAddTextEnabled() ? 'true' : 'false' ?>,
+                        'shareFb': <?php echo $block->getIsFbShareEnabled() ? 'true' : 'false' ?>,
                         'shareUrl': '<?php echo $block->getShareUrl() ?>',
-                        'shareInst': <?php echo $this->getIsInstagramShareEnabled() ? 'true' : 'false' ?>,
-                        'addfromlibrary': <?php echo $this->getIsAddFromLibraryEnabled() ? 'true' : 'false' ?>,
-                        'importFbEnabled': <?php echo $this->getIsImportFromFbEnabled() ? 'true' : 'false' ?>,
-                        'importInstagramEnabled': <?php echo $this->getIsInstagramImportEnabled() ? 'true' : 'false' ?>
+                        'shareInst': <?php echo $block->getIsInstagramShareEnabled() ? 'true' : 'false' ?>,
+                        'addfromlibrary': <?php echo $block->getIsAddFromLibraryEnabled() ? 'true' : 'false' ?>,
+                        'importFbEnabled': <?php echo $block->getIsImportFromFbEnabled() ? 'true' : 'false' ?>,
+                        'importInstagramEnabled': <?php echo $block->getIsInstagramImportEnabled() ? 'true' : 'false' ?>,
+                        'instagramClientId': '<?php echo $block->getInstagramClientId() ?>'
                     }
                     <?php if($helpConf = $block->getHelpDesigner()): ?>
                     ,help: <?php echo json_encode($helpConf); ?>
@@ -389,7 +390,7 @@
 
                     var selected_options = {};
 
-    <?php if ($this->getProduct()->getTypeId() == 'configurable'): ?>
+    <?php if ($block->getProduct()->getTypeId() == 'configurable'): ?>
 
                         $('div.swatch-attribute').each(function (k, v) {
                             var attribute_id = $(v).attr('attribute-id');
@@ -432,7 +433,7 @@
         });
 
     });
-    <?php if($this->getIsImportFromFbEnabled()): ?>
+    <?php if($block->getIsImportFromFbEnabled()): ?>
         
         window.fbAsyncInit = function() {
           FB.init({
