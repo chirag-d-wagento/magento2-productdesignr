@@ -1,6 +1,8 @@
 var DD_Topcontrols = DD_panel.extend({
     object_id: 'dd-top-controls',
     class_name: 'dd-designer-topcontrols',
+    controlButtons: [],
+    
     
     init: function (parent, main, mainModel) {
         this.parent = parent;
@@ -24,21 +26,25 @@ var DD_Topcontrols = DD_panel.extend({
         this.addTextButton();
         this.addFromLibraryButton();
         this.addLayersButton();
-        this.addShareFbButton();
+        
+        this.addShareButtons();
+        
+        //this.addShareFbButton();
     },
     
-    addShareFbButton: function() {
-        if(!this._s('shareFb')) {
+    addShareButtons: function() {
+        if(!this._s('shareFb') && !this._s('shareTw') && !this._s('sharePn')) {
             return;
         }
-        new DD_shareFbButton(this.self, this.mainModel, this.main.options.settings.shareUrl);
+        return new DD_shareButton(this.self, this.mainModel, this.main.options.settings.shareUrl, this.controlButtons);
     },
     
     addLayersButton: function() {
         if(!this._s('layers')) {
             return;
         }
-        new DD_layerButton(this.self);
+        var button = new DD_layerButton(this.self);
+        this.controlButtons.push(button);
     },
     
     addPhotoButton: function() {
@@ -46,7 +52,8 @@ var DD_Topcontrols = DD_panel.extend({
             return;
         }
         if(this._s('addphoto') || this.main.options.extra_config.photos_enabled === true) {
-            return new DD_AddphotoButton(this.self);
+            var button = new DD_AddphotoButton(this.self);
+            this.controlButtons.push(button);
         }
     },
     
@@ -55,7 +62,8 @@ var DD_Topcontrols = DD_panel.extend({
             return;
         }
         if(this._s('addtext') || this.main.options.extra_config.text_enabled === true) {
-            return new DD_AddtextButton(this.self);
+            var button = new DD_AddtextButton(this.self);
+            this.controlButtons.push(button);
         }
     },
     
@@ -64,7 +72,8 @@ var DD_Topcontrols = DD_panel.extend({
             return;
         }
         if(this._s('addfromlibrary') || this.main.options.extra_config.library_enabled === true) {
-            return new DD_AddfromLibraryButton(this.self);
+            var button = new DD_AddfromLibraryButton(this.self);
+            this.controlButtons.push(button);
         }
     }
     

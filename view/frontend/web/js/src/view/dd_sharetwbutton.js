@@ -1,6 +1,6 @@
-var DD_shareFbButton = DD_button.extend({
+var DD_shareTwButton = DD_button.extend({
     object_id: 'dd-main-layer-button',
-    class_name: 'dd-main-button fa-facebook fa dd-share-button',
+    class_name: 'dd-main-button fa-twitter fa dd-share-button',
     model: 'DD_Share_Model',
     
     init: function(parent, mainModel, shareUrl) {
@@ -10,7 +10,7 @@ var DD_shareFbButton = DD_button.extend({
             parent: parent,
             id: this.object_id,
             class: this.class_name,
-            tooltip_text: this._('share_facebook'),
+            tooltip_text: this._('share_twitter'),
             fa: true,
             tooltip: true
         }
@@ -18,7 +18,7 @@ var DD_shareFbButton = DD_button.extend({
     },
     
     _callBackModel: function(model) {
-        model.initShareFb(this.mainModel);
+        model.initShareTw(this.mainModel);
     }
 });
 

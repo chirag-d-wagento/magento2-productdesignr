@@ -2333,6 +2333,8 @@ var DD_RemoveAll_model = DD_ModelBase.extend({
 
 var DD_Share_Model = DD_ModelBase.extend({
 
+    constMargin: 10,
+
     init: function (obj) {
         this.obj = obj;
         this._super(obj);
@@ -2345,8 +2347,76 @@ var DD_Share_Model = DD_ModelBase.extend({
             self.sendData('facebook');
         });
     },
+    
+    initShareTw: function(mainModel) {
+        this.mainModel = mainModel;
+        var self = this;
+        this.obj.get().on('click', function () {
+            self.sendData('twitter');
+        });
+    },
+    
+    initSharePn: function(mainModel) {
+        this.mainModel = mainModel;
+        var self = this;
+        this.obj.get().on('click', function () {
+            self.sendData('pinterest');
+        });
+    },
+    
+    initMainClick: function() {
+        var obj = this.obj;
+        var self = this;
+        obj.get().on('click', function () {
+            
+            for(var a in obj.controlButtons) {
+                
+                var objButton = obj.controlButtons[a];
+                if(!$(this).attr('data-active')) {
+                    $(objButton.get())
+                            .css({opacity: 1.0, visibility: "hidden"})
+                            .animate({opacity: 0}, 200);
+                }else{
+                    $(objButton.get())
+                            .css({opacity: 0, visibility: "visible"})
+                            .animate({opacity: 1.0}, 200);
+                }
+            }
+            var currentButton = obj.get();
+            var buttonTop = obj.get().offset().top;
+            
+            for(var i in obj.shareButtons) {
+                var shareButton = obj.shareButtons[i];
+                var prev = $(currentButton).prev();
+                var baseTop = obj.get().next().offset().top;
+                var top = prev.offset().top - baseTop;
+                
+                if(!$(this).attr('data-active')) {
+                    $(shareButton.get())
+                            .css({top: (buttonTop-baseTop - self.constMargin), display: "block"})
+                            .animate({top: top - self.constMargin},  200);
+                }else{
+                    $(shareButton.get())
+                            .css({top: (buttonTop-baseTop - self.constMargin), display: "none"});
+                }
+                
+                currentButton = prev;
+                
+            }
+            
+            if($(this).attr('data-active')) {
+                $(this).removeAttr('data-active');
+                $(this).removeClass('fa-close');
+                $(this).addClass('fa-share-alt');
+            }else{
+                $(this).attr('data-active', '1');
+                $(this).addClass('fa-close');
+                $(this).removeClass('fa-share-alt');
+            }
+        });
+    },
 
-    sendData: function (type) { //fb or instagram
+    sendData: function (type) { //fb or twitter or pinterest
         var self = this;
         switch (type) {
             case 'facebook':
@@ -3489,9 +3559,80 @@ var DD_saveButton = DD_button.extend({
 });
 
 
+var DD_shareButton = DD_button.extend({
+
+    object_id: 'dd-main-layer-button',
+    class_name: 'dd-main-button fa-share-alt fa',
+    model: 'DD_Share_Model',
+
+    shareButtons: [],
+
+    init: function (parent, mainModel, shareUrl, controlButtons) {
+        this.mainModel = mainModel;
+        this.mainModel.shareUrl = shareUrl;
+        var options = {
+            parent: parent,
+            id: this.object_id,
+            class: this.class_name,
+            tooltip_text: this._('share'),
+            fa: true,
+            tooltip: true
+        }
+        this.parent = parent;
+        this._super(options);
+
+        this.controlButtons = controlButtons;
+        this.addSharePanel();
+        this.addButtons();
+    },
+
+    addButtons: function () {
+        this.addShareFbButton();
+        this.addShareTwButton();
+        this.addSharePnButton();
+    },
+
+    addSharePanel: function () {
+        this.sharePanel = new DD_panel({
+            class: 'dd-share-panel',
+            parent: this.parent
+        });
+        this.sharePanel.add();
+    },
+
+    addShareFbButton: function () {
+        if (!this._s('shareFb')) {
+            return;
+        }
+        var fbButton = new DD_shareFbButton(this.sharePanel.self, this.mainModel, this.mainModel.shareUrl);
+        this.shareButtons.push(fbButton);
+    },
+
+    addShareTwButton: function () {
+        if (!this._s('shareTw')) {
+            return;
+        }
+        var twButton = new DD_shareTwButton(this.sharePanel.self, this.mainModel, this.mainModel.shareUrl);
+        this.shareButtons.push(twButton);
+    },
+    
+    addSharePnButton: function() {
+        if (!this._s('sharePn')) {
+            return;
+        }
+        var pnButton = new DD_sharePnButton(this.sharePanel.self, this.mainModel, this.mainModel.shareUrl);
+        this.shareButtons.push(pnButton);
+      
+    },
+
+    _callBackModel: function (model) {
+        model.initMainClick();
+    }
+});
+
 var DD_shareFbButton = DD_button.extend({
     object_id: 'dd-main-layer-button',
-    class_name: 'dd-main-button fa-facebook fa',
+    class_name: 'dd-main-button fa-facebook fa dd-share-button',
     model: 'DD_Share_Model',
     
     init: function(parent, mainModel, shareUrl) {
@@ -3515,9 +3656,63 @@ var DD_shareFbButton = DD_button.extend({
 
 
 
+var DD_sharePnButton = DD_button.extend({
+    object_id: 'dd-main-layer-button',
+    class_name: 'dd-main-button fa-pinterest fa dd-share-button',
+    model: 'DD_Share_Model',
+    
+    init: function(parent, mainModel, shareUrl) {
+        this.mainModel = mainModel;
+        this.mainModel.shareUrl = shareUrl;
+        var options = {
+            parent: parent,
+            id: this.object_id,
+            class: this.class_name,
+            tooltip_text: this._('share_pinterest'),
+            fa: true,
+            tooltip: true
+        }
+        this._super(options);
+    },
+    
+    _callBackModel: function(model) {
+        model.initSharePn(this.mainModel);
+    }
+});
+
+
+
+var DD_shareTwButton = DD_button.extend({
+    object_id: 'dd-main-layer-button',
+    class_name: 'dd-main-button fa-twitter fa dd-share-button',
+    model: 'DD_Share_Model',
+    
+    init: function(parent, mainModel, shareUrl) {
+        this.mainModel = mainModel;
+        this.mainModel.shareUrl = shareUrl;
+        var options = {
+            parent: parent,
+            id: this.object_id,
+            class: this.class_name,
+            tooltip_text: this._('share_twitter'),
+            fa: true,
+            tooltip: true
+        }
+        this._super(options);
+    },
+    
+    _callBackModel: function(model) {
+        model.initShareTw(this.mainModel);
+    }
+});
+
+
+
 var DD_Topcontrols = DD_panel.extend({
     object_id: 'dd-top-controls',
     class_name: 'dd-designer-topcontrols',
+    controlButtons: [],
+    
     
     init: function (parent, main, mainModel) {
         this.parent = parent;
@@ -3541,21 +3736,25 @@ var DD_Topcontrols = DD_panel.extend({
         this.addTextButton();
         this.addFromLibraryButton();
         this.addLayersButton();
-        this.addShareFbButton();
+        
+        this.addShareButtons();
+        
+        //this.addShareFbButton();
     },
     
-    addShareFbButton: function() {
-        if(!this._s('shareFb')) {
+    addShareButtons: function() {
+        if(!this._s('shareFb') && !this._s('shareTw') && !this._s('sharePn')) {
             return;
         }
-        new DD_shareFbButton(this.self, this.mainModel, this.main.options.settings.shareUrl);
+        return new DD_shareButton(this.self, this.mainModel, this.main.options.settings.shareUrl, this.controlButtons);
     },
     
     addLayersButton: function() {
         if(!this._s('layers')) {
             return;
         }
-        new DD_layerButton(this.self);
+        var button = new DD_layerButton(this.self);
+        this.controlButtons.push(button);
     },
     
     addPhotoButton: function() {
@@ -3563,7 +3762,8 @@ var DD_Topcontrols = DD_panel.extend({
             return;
         }
         if(this._s('addphoto') || this.main.options.extra_config.photos_enabled === true) {
-            return new DD_AddphotoButton(this.self);
+            var button = new DD_AddphotoButton(this.self);
+            this.controlButtons.push(button);
         }
     },
     
@@ -3572,7 +3772,8 @@ var DD_Topcontrols = DD_panel.extend({
             return;
         }
         if(this._s('addtext') || this.main.options.extra_config.text_enabled === true) {
-            return new DD_AddtextButton(this.self);
+            var button = new DD_AddtextButton(this.self);
+            this.controlButtons.push(button);
         }
     },
     
@@ -3581,7 +3782,8 @@ var DD_Topcontrols = DD_panel.extend({
             return;
         }
         if(this._s('addfromlibrary') || this.main.options.extra_config.library_enabled === true) {
-            return new DD_AddfromLibraryButton(this.self);
+            var button = new DD_AddfromLibraryButton(this.self);
+            this.controlButtons.push(button);
         }
     }
     
@@ -3806,8 +4008,10 @@ $.fn.dd_productdesigner = function (options) {
             'download': 'Download',
             'print': 'Print',
             'clear_all': 'Clear All',
+            'share': 'Share',
             'share_facebook': 'Share Facebook',
-            'share_instagram': 'Share Instagram',
+            'share_twitter': 'Share Twitter',
+            'share_pinterest': 'Share Pinterest',
             'import_from_fb': 'Import from Facebook',
             'import_from_instagram': 'Import from Instagram',
             'instagram_load_failed': 'Instagram load images failed',

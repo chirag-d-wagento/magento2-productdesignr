@@ -45,6 +45,17 @@ body:not(._keyfocus) .dd-designer-topcontrols{
         color:red;
         width: 60px;
     }
+
+    .dd-share-panel{
+        bottom: 0px;
+        position: absolute;
+    }
+    
+    .dd-share-button{
+        position: absolute;
+        display:none;
+        z-index:2;
+    }
 }
 
 
@@ -53,5 +64,21 @@ body:not(._keyfocus) .dd-designer-topcontrols{
     .dd-designer-topcontrols{
         bottom:0px;
         top:auto;
+    }
+}
+
+
+@media only screen and (max-width: 700px){
+    .dd-designer-topcontrols {
+        
+        button{
+            width: 44px;
+            height: 44px;
+            padding: 7% 8%;
+        }
+        
+        .fa{
+            font-size: 23px;
+        }
     }
 }

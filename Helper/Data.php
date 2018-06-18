@@ -22,8 +22,9 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper {
     const DESIGNER_HELP_THIRD_BLOCK = 'develo_productdesigner/help/designer_control_third_block';
     const DESIGNER_HELP_SWITCH_BLOCK = 'develo_productdesigner/help/designer_control_switch_images_block';
     
-    const DESIGNER_SOCIAL_SHARE_INSTAGRAM = 'develo_productdesigner/social/enable_instagram_share';
-    const DESIGNER_SOCIAL_SHARE_FACEBOOK = 'develo_productdesigner/social/enable_facebook_share';
+    const DESIGNER_SOCIAL_SHARE_PINTEREST = 'develo_productdesigner/social/enable_pinterest_share';
+    const DESIGNER_SOCIAL_SHARE_TWITTER   = 'develo_productdesigner/social/enable_twitter_share';
+    const DESIGNER_SOCIAL_SHARE_FACEBOOK  = 'develo_productdesigner/social/enable_facebook_share';
     
     
     const DESIGNER_SOCIAL_FACEBOOK_IMPORT = 'develo_productdesigner/social/enable_facebook_my_photos';
@@ -65,6 +66,14 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper {
     
     public function getIsFbEnabled() {
         return $this->scopeConfig->getValue(self::DESIGNER_SOCIAL_SHARE_FACEBOOK , \Magento\Store\Model\ScopeInterface::SCOPE_STORE);
+    }
+    
+    public function getIsTwitterShareEnabled() {
+        return $this->scopeConfig->getValue(self::DESIGNER_SOCIAL_SHARE_TWITTER , \Magento\Store\Model\ScopeInterface::SCOPE_STORE);
+    }
+    
+    public function getIsPinterestShareEnabled() {
+        return $this->scopeConfig->getValue(self::DESIGNER_SOCIAL_SHARE_PINTEREST , \Magento\Store\Model\ScopeInterface::SCOPE_STORE);
     }
     
     public function getIsInstagramEnabled() {
@@ -139,13 +148,6 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper {
         }
         return array();
     }
-
-    /*
-      public function getFrontDefaultLayerPosition() {
-      return $this->scopeConfig->getValue(self::DESIGNER_FRONT_PRODUCT_LAYER_POSITION, \Magento\Store\Model\ScopeInterface::SCOPE_STORE);
-      }
-     * 
-     */
 
     public function getIsActiveOnProductView($product) {
         if (!$this->getIsDesignerEnabled()) {

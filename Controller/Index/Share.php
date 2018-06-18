@@ -9,6 +9,10 @@ class Share extends \Magento\Framework\App\Action\Action{
     const SHARE_PATH = 'dd_share';
     
     const SHARE_FB_URL = 'https://facebook.com/share.php?u=';
+    
+    const SHARE_TWITTER_URL = 'https://www.twitter.com/share?url=';
+    
+    const SHARE_PIN_URL = 'https://pinterest.com/pin/create/link/?url=';
 
     protected $_fileUploaderFactory;
     protected $_filesystem;
@@ -69,7 +73,23 @@ class Share extends \Magento\Framework\App\Action\Action{
             case 'facebook':
                     return $this->prepareShareFbUrl( $fileUrl );
                 break;
+            
+            case 'twitter':
+                    return $this->prepareShareTwUrl( $fileUrl );
+                break;
+            
+            case 'pinterest':
+                    return $this->prepareSharePnUrl( $fileUrl );
+                break;
         }
+    }
+    
+    protected function prepareSharePnUrl ( $fileUrl ) {
+        return self::SHARE_PIN_URL . $fileUrl;
+    }
+    
+    protected function prepareShareTwUrl( $fileUrl ) {
+        return self::SHARE_TWITTER_URL . $fileUrl;
     }
 
     protected function prepareShareFbUrl( $fileUrl ) {

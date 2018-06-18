@@ -152,8 +152,12 @@ class View extends \Magento\Catalog\Block\Product\AbstractProduct {
         return $this->_designerHelper->getIsFbEnabled();
     }
     
-    public function getIsInstagramShareEnabled() {
-        return $this->_designerHelper->getIsInstagramEnabled();
+    public function getIsTwShareEnabled() {
+        return $this->_designerHelper->getIsTwitterShareEnabled();
+    }
+    
+    public function getIsPintShareEnabled() {
+        return $this->_designerHelper->getIsPinterestShareEnabled();
     }
     
     public function getInstagramClientId() {
