@@ -33646,6 +33646,7 @@ var Aa = {latin:"BESbswy", "latin-ext":"\u00e7\u00f6\u00fc\u011f\u015f", cyrilli
     
             (window.WebFont = Z, window.WebFontConfig && Y.load(window.WebFontConfig)); 
 }());
+
 (function($){"use strict"; var DD_Global = {};
 var DD_object = Class.extend({
     
@@ -35670,7 +35671,8 @@ var DD_Main_Model = DD_ModelBase.extend({
     },
 
     _canvasEvents: function (hoverCanvas) {
-        var self = this;
+        var self = this; 
+        
         hoverCanvas.on('object:added', function (e) {
 
             new DD_control({
@@ -35732,6 +35734,17 @@ var DD_Main_Model = DD_ModelBase.extend({
         hoverCanvas.on('object:clear_all', function (e) {
             self.obj.options.onClearAll.call(null, self.obj.options.media_id)
         });
+        
+        fabric.util.addListener(hoverCanvas.upperCanvasEl, 'dblclick', function(e) {
+            
+            if (hoverCanvas.findTarget(e)) {
+               var objType = hoverCanvas.findTarget(e).type;
+               if (objType === 'i-text') {
+                  hoverCanvas.findTarget(e).controlModelCreated.handleActive();
+               }
+            }
+         });
+        
     },
 
     _addObjects: function (options) {
@@ -36280,6 +36293,10 @@ var DD_control_text = DD_Control_Base_Model.extend({
         _delete.get().on('click', function () {
             self.removeBase();
         });
+    },
+    
+    handleActive: function() {
+        this.showTextSetting();
     }
 })
 

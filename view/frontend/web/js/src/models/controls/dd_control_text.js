@@ -100,5 +100,9 @@ var DD_control_text = DD_Control_Base_Model.extend({
         _delete.get().on('click', function () {
             self.removeBase();
         });
+    },
+    
+    handleActive: function() {
+        this.showTextSetting();
     }
 })

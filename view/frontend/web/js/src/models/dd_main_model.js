@@ -100,7 +100,8 @@ var DD_Main_Model = DD_ModelBase.extend({
     },
 
     _canvasEvents: function (hoverCanvas) {
-        var self = this;
+        var self = this; 
+        
         hoverCanvas.on('object:added', function (e) {
 
             new DD_control({
@@ -162,6 +163,17 @@ var DD_Main_Model = DD_ModelBase.extend({
         hoverCanvas.on('object:clear_all', function (e) {
             self.obj.options.onClearAll.call(null, self.obj.options.media_id)
         });
+        
+        fabric.util.addListener(hoverCanvas.upperCanvasEl, 'dblclick', function(e) {
+            
+            if (hoverCanvas.findTarget(e)) {
+               var objType = hoverCanvas.findTarget(e).type;
+               if (objType === 'i-text') {
+                  hoverCanvas.findTarget(e).controlModelCreated.handleActive();
+               }
+            }
+         });
+        
     },
 
     _addObjects: function (options) {
