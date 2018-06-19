@@ -34558,6 +34558,8 @@ var DD_control = DD_Uibase.extend({
             preferredFormat: "hex",
             showInput: true,
             showPalette: true,
+            showSelectionPalette: true, // true by default
+            palette: [ ],
             change: function(color) {
                 if(onUpdate) {
                     onUpdate.call(this, color, model);
