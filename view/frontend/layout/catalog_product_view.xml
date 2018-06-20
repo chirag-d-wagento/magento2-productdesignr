@@ -7,23 +7,32 @@
     </head>
     <body>
         
-        <referenceBlock name="product.info.addtocart">
+        <!-- referenceBlock name="product.info.addtocart">
             <block 
                 class="Develodesign\Designer\Block\Product\View" 
                 name="product.info.designer" 
                 template="Develodesign_Designer::product/view.phtml" 
                 after="-"
             />
-        </referenceBlock>
+        </referenceBlock -->
         <!-- for config products -->
-        <referenceBlock name="product.info.addtocart.additional">
+        <!-- referenceBlock name="product.info.options.wrapper.bottom">
             <block 
                 class="Develodesign\Designer\Block\Product\View" 
                 name="product.info.designer.configurable" 
                 template="Develodesign_Designer::product/view.phtml" 
                 after="-"
             />
-        </referenceBlock>
+        </referenceBlock -->
+        
+        <referenceContainer name="product.info.main">
+            <block 
+                class="Develodesign\Designer\Block\Product\View" 
+                name="product.info.designer.configurable" 
+                template="Develodesign_Designer::product/view.phtml" 
+                after="product.info"
+            />
+        </referenceContainer>
     </body>
 
 </page>

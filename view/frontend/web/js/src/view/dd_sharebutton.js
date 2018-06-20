@@ -7,6 +7,8 @@ var DD_shareButton = DD_button.extend({
     shareButtons: [],
 
     init: function (parent, mainModel, shareUrl, controlButtons) {
+        this.shareButtons = [];
+        
         this.mainModel = mainModel;
         this.mainModel.shareUrl = shareUrl;
         var options = {

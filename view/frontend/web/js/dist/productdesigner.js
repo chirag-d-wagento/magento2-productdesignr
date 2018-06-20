@@ -36052,19 +36052,21 @@ var DD_Share_Model = DD_ModelBase.extend({
             for(var i in obj.shareButtons) {
                 var shareButton = obj.shareButtons[i];
                 var prev = $(currentButton).prev();
-                var baseTop = obj.get().next().offset().top;
-                var top = prev.offset().top - baseTop;
-                
-                if(!$(this).attr('data-active')) {
-                    $(shareButton.get())
-                            .css({top: (buttonTop-baseTop - self.constMargin), display: "block"})
-                            .animate({top: top - self.constMargin},  200);
-                }else{
-                    $(shareButton.get())
-                            .css({top: (buttonTop-baseTop - self.constMargin), display: "none"});
+                if(obj.get().next()) {
+                    var baseTop = obj.get().next().offset().top;
+                    var top = prev.offset().top - baseTop;
+
+                    if(!$(this).attr('data-active')) {
+                        $(shareButton.get())
+                                .css({top: (buttonTop-baseTop - self.constMargin), display: "block"})
+                                .animate({top: top - self.constMargin},  200);
+                    }else{
+                        $(shareButton.get())
+                                .css({top: (buttonTop-baseTop - self.constMargin), display: "none"});
+                    }
+
+                    currentButton = prev;
                 }
-                
-                currentButton = prev;
                 
             }
             
@@ -37236,6 +37238,8 @@ var DD_shareButton = DD_button.extend({
     shareButtons: [],
 
     init: function (parent, mainModel, shareUrl, controlButtons) {
+        this.shareButtons = [];
+        
         this.mainModel = mainModel;
         this.mainModel.shareUrl = shareUrl;
         var options = {
@@ -37560,6 +37564,15 @@ $.fn.dd_help = function (options) {
                 return;
             }
             $.cookie(cookieName, true, { expires: 30 });
+            
+            if(data.content == '') {
+                index++;
+                var newEl = options['data'][index];
+                if(newEl) {
+                    showHelpElement(newEl);
+                }
+                return;
+            }
             var divContainer = $('<div />').addClass('dd-help-container')
                     .html(data.content);
             var buttonContainer = $('<div />').addClass('dd-help-buttons');

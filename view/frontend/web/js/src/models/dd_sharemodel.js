@@ -55,19 +55,21 @@ var DD_Share_Model = DD_ModelBase.extend({
             for(var i in obj.shareButtons) {
                 var shareButton = obj.shareButtons[i];
                 var prev = $(currentButton).prev();
-                var baseTop = obj.get().next().offset().top;
-                var top = prev.offset().top - baseTop;
-                
-                if(!$(this).attr('data-active')) {
-                    $(shareButton.get())
-                            .css({top: (buttonTop-baseTop - self.constMargin), display: "block"})
-                            .animate({top: top - self.constMargin},  200);
-                }else{
-                    $(shareButton.get())
-                            .css({top: (buttonTop-baseTop - self.constMargin), display: "none"});
+                if(obj.get().next()) {
+                    var baseTop = obj.get().next().offset().top;
+                    var top = prev.offset().top - baseTop;
+
+                    if(!$(this).attr('data-active')) {
+                        $(shareButton.get())
+                                .css({top: (buttonTop-baseTop - self.constMargin), display: "block"})
+                                .animate({top: top - self.constMargin},  200);
+                    }else{
+                        $(shareButton.get())
+                                .css({top: (buttonTop-baseTop - self.constMargin), display: "none"});
+                    }
+
+                    currentButton = prev;
                 }
-                
-                currentButton = prev;
                 
             }
             

@@ -375,6 +375,9 @@
                     var json = designer.getJson();
                     saveImage(media_id, product_id, data);
                     saveDesignedImage(media_id, data, json, this);
+                    /// close designer ///
+                    designer.destroy();
+                    $('#dd-designer-container').modal('closeModal');
                 });
                 designer.init();
                 if (!skipOpen) {

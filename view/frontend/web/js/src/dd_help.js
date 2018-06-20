@@ -39,6 +39,15 @@ $.fn.dd_help = function (options) {
                 return;
             }
             $.cookie(cookieName, true, { expires: 30 });
+            
+            if(data.content == '') {
+                index++;
+                var newEl = options['data'][index];
+                if(newEl) {
+                    showHelpElement(newEl);
+                }
+                return;
+            }
             var divContainer = $('<div />').addClass('dd-help-container')
                     .html(data.content);
             var buttonContainer = $('<div />').addClass('dd-help-buttons');

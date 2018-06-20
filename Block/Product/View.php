@@ -74,6 +74,7 @@ class View extends \Magento\Catalog\Block\Product\AbstractProduct {
         
         $this->_filterProvider = $filterProvider;
         $this->_blockFactory = $blockFactory;
+        
     }
 
     public function showCustomizeButton() {
