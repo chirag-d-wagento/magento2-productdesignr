@@ -221,7 +221,7 @@
                     if (obj.type === 'image' || obj.isSvg) { //image price
                         configuredPrices[mediaId] += defaultLayerPrices[mediaId]['layer_img_price'];
                     }
-                    if (obj.type === 'text') {
+                    if (obj.type === 'text' || obj.type === 'i-text') {
                         configuredPrices[mediaId] += defaultLayerPrices[mediaId]['layer_txt_price'];
                     }
                 });
@@ -362,9 +362,18 @@
                 designer.onClearAll(clearAll);
 
                 designer.onClose(function () {
+                    callClose();                    
+                });
+                
+                function callClose() {
                     designer.destroy();
                     $('#dd-designer-container').modal('closeModal');
-                });
+                    setTimeout(function() {
+                        $('html, body').animate({
+                            scrollTop: $(".action.tocart").offset().top
+                        }, 800);
+                    }, 100);
+                }
 
                 designer.onSave(function () {
                     designer.unselectAll();
@@ -376,8 +385,7 @@
                     saveImage(media_id, product_id, data);
                     saveDesignedImage(media_id, data, json, this);
                     /// close designer ///
-                    designer.destroy();
-                    $('#dd-designer-container').modal('closeModal');
+                    callClose();
                 });
                 designer.init();
                 if (!skipOpen) {

@@ -22,14 +22,18 @@ var DD_control_text = DD_Control_Base_Model.extend({
         
 
         edit.get().on('click', function () {
-            var content = self.obj.content.get();
-            content.empty();
-            var fabricObject = self.obj.options.fabricObject;
-            var text = fabricObject.text;
-            var form = new DD_windowTextForm(content, text);
-            self.obj.contentContainer.get().show();
-            self.setEditEvents(form);
+            self.showEditForm();
         });
+    },
+    
+    showEditForm: function() {
+        var content = this.obj.content.get();
+        content.empty();
+        var fabricObject = this.obj.options.fabricObject;
+        var text = fabricObject.text;
+        var form = new DD_windowTextForm(content, text);
+        this.obj.contentContainer.get().show();
+        this.setEditEvents(form);
     },
 
     setEditEvents: function (form) {
@@ -103,6 +107,6 @@ var DD_control_text = DD_Control_Base_Model.extend({
     },
     
     handleActive: function() {
-        this.showTextSetting();
+        this.showEditForm();
     }
 })

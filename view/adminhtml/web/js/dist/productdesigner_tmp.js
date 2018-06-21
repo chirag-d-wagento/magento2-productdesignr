@@ -209,13 +209,13 @@ var DD_Window = DD_object.extend({
         this.registerModal();
         this.registerPreview();
         this.setGlobal();
-
+        
         return this.modal;
     },
-
-    registerPreview: function () {
+    
+    registerPreview: function() {
         var self = this;
-
+        
         this.preview = new jBox('Modal', {
             title: '-',
             draggable: false,
@@ -237,13 +237,13 @@ var DD_Window = DD_object.extend({
         });
 
 
-        this._evnt().register('preview-showed', this.preview);
-        this._evnt().register('preview-closed', this.preview, true);
+        this._evnt().register('preview-showed', this.modal);
+        this._evnt().register('preview-closed', this.modal, true);
     },
-
-    registerModal: function () {
+    
+    registerModal: function() {
         var self = this;
-
+        
         this.modal = new jBox('Modal', {
             title: '-',
             draggable: 'title',
@@ -256,7 +256,7 @@ var DD_Window = DD_object.extend({
             repositionOnOpen: false,
             repositionOnContent: true,
             target: $('.canvas-container'),
-
+            
             onOpen: function () {
                 self._evnt().doCall('window-showed');
             },
@@ -266,7 +266,7 @@ var DD_Window = DD_object.extend({
         });
 
 
-        this._evnt().register('window-destroyed', this.modal, true);
+        this._evnt().register('window-showed', this.modal);
         this._evnt().register('window-closed', this.modal, true);
         this.registerCloseWinEventCall();
     },
@@ -292,10 +292,10 @@ var DD_Window = DD_object.extend({
     },
 
     createContentElement: function (id) {
-        if (!this.contentElement) {
+        if(!this.contentElement) {
             this.contentElement = {};
         }
-        if ($('#' + id).get(0)) {
+        if($('#' + id).get(0)) {
             this.contentElement[id] = $('#' + id);
             return;
         }
@@ -307,16 +307,10 @@ var DD_Window = DD_object.extend({
 
         $('body').append(this.contentElement[id]);
     },
-
-    registerCloseWinEventCall: function () {
-        this._evnt().registerCallback('window-closed', function (window) {
+    
+    registerCloseWinEventCall: function() {
+        this._evnt().registerCallback('window-closed', function(window) {
             window.isClosed = true;
-        }, 'no-reposition');
-
-        this._evnt().registerCallback('window-destroyed', function (window) {
-            setTimeout(function () {
-                window.isClosed = false;
-            }, 1000);
         }, 'no-reposition');
     }
 });
@@ -654,12 +648,6 @@ var DD_button = DD_Uibase.extend({
             class: this.mainClass + ' ' + (this.options.class ? this.options.class : ''),
             text: (this.options.text && !this.options.fa && !this.options.fa_addon  ? this.options.text : '')
         });
-        if(this.options.label) {
-            this.self.append($('<span />')
-                    .text(this.options.label)
-                    .addClass('label')
-                    );
-        }
         this.add();
         if(this.options.fa_addon){
             var fa = $('<span />', {
@@ -725,8 +713,11 @@ var DD_checkbox = DD_Uibase.extend({
                 model.uncheckedAction.call(model, this, self.options.view);
             }
         });
+        if(this.options.noInit) {
+            return;
+        }
         setTimeout(function () {
-            if (self.checked) {
+            if (self.options.checked) {
                 model.checkedAction.call(model, self._checkbox, self.options.view);
                 return;
             }
@@ -779,18 +770,8 @@ var DD_control = DD_Uibase.extend({
         this._closeContent = new DD_button({
             'parent': this.contentContainer.get(),
             //'text': this._('delete'),
-            'class': 'fa fa-caret-square-o-up dd-helper-popup-content-close'
+            'class': 'fa fa-angle-double-up dd-helper-popup-content-close'
         });
-    },
-    
-    addPaintBase: function() {
-        this._paint = new DD_button({
-            'parent': this.buttons.get(),
-            //'text': this._('delete'),
-            'class': 'fa fa-paint-brush'
-        });
-
-        return this._paint;
     },
 
     addButtonPanel: function () {
@@ -889,6 +870,7 @@ var DD_control = DD_Uibase.extend({
     },
 
     colorSelector: function (parent, name, color, onUpdate, model) {
+        var self = this;
         var colorSelectorContainer = new DD_panel({
             'parent': parent,
             'class': 'dd-helper-color-selector-container'
@@ -912,6 +894,7 @@ var DD_control = DD_Uibase.extend({
             showPalette: true,
             showSelectionPalette: true, // true by default
             palette: [ ],
+            
             change: function(color) {
                 if(onUpdate) {
                     onUpdate.call(this, color, model);
@@ -954,6 +937,41 @@ var DD_ImageLinkAdd = DD_Uibase.extend({
     
     _callBackModel: function (model) {
         model.setClickEvents();
+    }
+    
+});
+
+var DD_inputText = DD_Uibase.extend({
+    
+    mainClass: 'dd-input-text-container',
+    labelClass: 'dd-label',
+    defaultType: 'text',
+    
+    init: function (options) {
+        this.options = $.extend((options ? options : {}), this.options);
+        this._super();
+        this.selfBase();
+        this._add();
+    },
+    
+    _addElements: function () {
+        this._label = $('<div />').addClass(this.labelClass);
+        this._label.html(this.options.label);
+        this._input = $('<input />', {
+            id: this.options.id ? this.options.id : this.createUUID(),
+            class: this.mainClass + ' ' + (this.options.class ? this.options.class : ''),
+            type: this.options.type ? this.options.type : this.defaultType
+        });
+        if(this.options.value) {
+            this._input.val(this.options.value);
+        }
+        if(this.options['data-type']) {
+            this._input.attr({
+                'data-type': this.options['data-type']
+            });
+        }
+        this.self.append(this._label);
+        this.self.append(this._input);
     }
     
 });
@@ -1064,253 +1082,6 @@ var DD_Tabs = DD_Uibase.extend({
     }
 });
 
-var DD_ImportFb_Model = DD_ModelBase.extend({
-
-    init: function (obj) {
-        this.obj = obj;
-    },
-
-    setClickEvents: function () {
-        var self = this;
-        this.obj.self.on('click', function () {
-            try {
-                self.obj.content.addClass('tab-loading');
-                self.obj.contentImages.html(self._('loading') + '...');
-                FB.login(function (response) {
-                    if (response.authResponse) {
-                        self.getImagesFromServer(response.authResponse.signedRequest, response.authResponse.accessToken);
-
-                    } else {
-                        self.obj.contentImages.html(self._('facebook_load_failed') + '...');
-                    }
-                });
-
-            } catch (e) {
-
-            }
-
-        });
-    },
-
-    getImagesFromServer: function (code, accessToken) {
-
-        var self = this;
-        $.ajax({
-            url: this._s('fbImagesPath'),
-            type: 'json',
-            method: 'post',
-            data: {
-                'code': code,
-                'token': accessToken
-            }
-        })
-                .done(function (data) {
-                    if (!data || data.length == 0) {
-                        self.obj.contentImages.html(self._('no_data'))
-                        self.obj.content.addClass('tab-no-data');
-                        return;
-                    }
-                    self.obj.content.removeClass('tab-no-data');
-                    self.obj.contentImages.html('');
-
-                    $.each(data, function (a, img) {
-                        new DD_ImageLinkAdd({
-                            'parent': self.obj.contentImages,
-                            'src': img.src,
-                            'width': img.width,
-                            'height': img.height
-
-                        });
-                    });
-                });
-    }
-
-
-});
-
-var DD_ImportInstagram_Model = DD_ModelBase.extend({
-
-    urlMyImages: 'https://api.instagram.com/v1/users/self/media/recent/',
-
-    interval: null,
-    popupWindow: null,
-    processInterval: 50,
-    error: null,
-    token: null,
-
-    init: function (obj) {
-        this.obj = obj;
-    },
-
-    setClickEvents: function () {
-        var self = this;
-        this.obj.self.on('click', function () {
-            self.obj.content.addClass('tab-loading');
-            self.obj.contentImages.html(self._('loading') + '...');
-
-            self.process();
-
-            //window.InstAuth.init('5f3c220152ee4ff08586908d1766f71b');
-            //window.InstAuth.startAuthFlow();
-        });
-    },
-
-    process: function () {
-        this.processAuth();
-    },
-
-    getWidth: function () {
-        return ($(window).width() / 2) > 400 ? 400 : ($(window).width() / 2 < 400 ? 300 : $(window).width() / 2);
-    },
-
-    getHeight: function () {
-        return $(window).height() / 2 < 400 ? 300 : $(window).height() / 2;
-    },
-
-    getTop: function () {
-        return (($(window).height() / 2) - (this.getHeight() / 2));
-    },
-
-    getLeft: function () {
-        return (($(window).width() / 2) - (this.getWidth() / 2));
-    },
-
-    processAuth: function () {
-        if (this.popupWindow) {
-            this.popupWindow.focus();
-            return;
-        }
-        var authUrl = this.getAuthUrl();
-        this.popupWindow = window.open(authUrl, '', 'width=' + this.getWidth() + ',height=' + this.getHeight() + ',top=' + this.getTop() + ',left=' + this.getLeft());
-        var self = this;
-        this.interval = setInterval(function () {
-            var location = self.popupWindow.location;
-
-            try {
-                if (typeof (location.href) == 'undefined' || !location.href) {
-                    self.unRegisterWindow();
-                    return;
-                }
-
-                if (location.hash.search("access_token") > -1) {
-                    var access_token = location.hash.substr(14).split("&")[0];
-                    self.registerAccessToken(access_token);
-                    //window.opener.postMessage(JSON.stringify({access_token: window.location.hash.substr(14).split("&")[0]}), window.opener.location.href)
-                }
-                if (location.href.search("error_reason=user_denied") > -1) {
-                    self.setError('unauthorized');
-                    self.unRegisterWindow();
-                    return;
-                }
-            } catch (error) {
-
-            }
-        }, self.processInterval);
-    },
-
-    setError: function (error) {
-        this.error = error;
-    },
-
-    unRegisterWindow: function () {
-        if (this.popupWindow) {
-            //this.popupWindow.stop();
-            this.popupWindow.close();
-            this.popupWindow = null;
-        }
-        if (this.interval) {
-            clearInterval(this.interval);
-            this.interval = null;
-        }
-
-        if (this.error || !this.token) {
-            this.error = 'unauthorized';
-            this.processError();
-            return;
-        }
-
-        this.loadImages();
-
-    },
-
-    loadImages: function () {
-        var self = this;
-        var url = this.urlMyImages + '?access_token=' + this.token;
-        $.getJSON(url, function (dataInstagram) {
-
-            var data = dataInstagram.data;
-            if (!data || data.length == 0) {
-                self.obj.contentImages.html(self._('no_data'))
-                self.obj.content.addClass('tab-no-data');
-                return;
-            }
-
-            self.obj.content.removeClass('tab-no-data');
-            self.obj.contentImages.html('');
-
-            $.each(data, function (a, imgDetail) {
-                var img = imgDetail.images;
-                new DD_ImageLinkAdd({
-                    'parent': self.obj.contentImages,
-                    'src': img.standard_resolution.url,
-                    'width': img.standard_resolution.width,
-                    'height': img.standard_resolution.height
-
-                });
-            });
-
-            //console.log( "suatroot" );
-            //console.log( data );
-            /*
-             var suatroot = data.data;
-             
-             console.log(suatroot);
-             $.each(suatroot, function (key, val) {
-             console.log("item");
-             var itemobj = val.images.low_resolution.url;
-             var hrefobj = val.link;
-             var captobj = val.caption.text;
-             console.log(captobj);
-             console.log(itemobj);
-             var suatpaket = "<a target='_blank' href='" + hrefobj + "'><img src='" + itemobj + "'/><br>" + captobj + "<br></a>";
-             $(".instagram").append(suatpaket);
-             });
-             */
-
-        });
-    },
-
-    registerAccessToken: function (token) {
-
-        this.token = token;
-        this.error = null;
-        this.unRegisterWindow();
-    },
-
-    processError: function () {
-        switch (this.error) {
-            case 'unauthorized':
-                this.obj.contentImages.html(this._('instagram_load_failed') + '...');
-                break;
-        }
-    },
-
-    getAuthUrl: function () {
-        return "https://api.instagram.com/oauth/authorize/?client_id="
-                + this.instagramClientId()
-                + "&response_type=token&redirect_uri="
-                + this.redirectUri();
-    },
-
-    instagramClientId: function () {
-        return this._s('instagramClientId');
-    },
-
-    redirectUri: function () {
-        return window.location.origin;
-    }
-});
-
 var DD_AddFromLibrary_Model = DD_ModelBase.extend({
 
     currentCategory: null,
@@ -1353,7 +1124,6 @@ var DD_AddFromLibrary_Model = DD_ModelBase.extend({
         parent.empty();
         parent.addClass('dd-window-loading');
         parent.html(this._('loading') + '...');
-
         $.ajax({
             url: this._s('libraryPath'),
             type: 'json',
@@ -1401,10 +1171,6 @@ var DD_AddPhoto_Model = DD_ModelBase.extend({
     idUploaderTab: 'dd-add-photo-tab',
     idMyPhotosTab: 'dd-my-photo-tab',
     uploaderInitiated: false,
-    
-    contentTop: null,
-    contentImages: null,
-    importFromFbControl: null,
 
     init: function (obj) {
         this.obj = obj;
@@ -1435,12 +1201,10 @@ var DD_AddPhoto_Model = DD_ModelBase.extend({
         var self = this;
         content.html('<form class="dropzone">' +                
         '</form>');
-        Dropzone.autoDiscover = false;
         content.find('form').dropzone({
-            url: self._s('urlUploadImages') /* + '?form_key=' + window.FORM_KEY */,
-            maxFilesize: 5, // MB
-            maxFiles: 1,
-            acceptedFiles: 'image/*',
+            url: self._s('urlUploadImages')  + '?form_key=' + window.FORM_KEY,
+            maxFilesize: 2, // MB
+            acceptedFiles: '.png, .jpeg, .jpg, .gif',
             init: function () {
                 this.on("addedfile", function (file) {
                     if (self.previousFile) {
@@ -1490,27 +1254,8 @@ var DD_AddPhoto_Model = DD_ModelBase.extend({
 
     initMyPhotos: function (content) {
         var self = this;
-        if(!this.contentTop) {
-            this.contentTop = $('<div />')
-                .addClass('dd-my-photo-tab-content-images-top');
-            content.append(this.contentTop);
-        }
-        if(!this.contentImages) {
-            this.contentImages = $('<div />')
-                .addClass('dd-my-photo-tab-content-images');
-            content.append(this.contentImages);
-        }
-        
-        content.addClass('tab-loading');
-        this.contentImages.html(this._('loading') + '...');
-        
-        if(this._s('importFbEnabled') && !this.importFromFbControl){
-            this.importFromFbControl = new DD_ImportFbButton(this.contentTop, content, this.contentImages);
-        }
-        if(this._s('importInstagramEnabled') && !this.importFromInstagramControl){
-            this.importFromInstagramControl = new DD_ImportInstagramButton(this.contentTop, content, this.contentImages);
-        }
-        var self = this;
+        content.html(this._('loading') + '...')
+                .addClass('tab-loading');
 
         $.ajax({
             url: this._s('myFilesPath'),
@@ -1519,16 +1264,16 @@ var DD_AddPhoto_Model = DD_ModelBase.extend({
                 .done(function (data) {
                     content.removeClass('tab-loading');
                     if (!data || data.length == 0) {
-                        self.contentImages.html(self._('no_data'))
+                        content.html(self._('no_data'))
                         content.addClass('tab-no-data');
                         return;
                     }
                     content.removeClass('tab-no-data');
-                    self.contentImages.html('');
+                    content.html('');
 
                     $.each(data, function (a, img) {
                         new DD_ImageLinkAdd({
-                            'parent': self.contentImages,
+                            'parent': content,
                             'src': img.src,
                             'width': img.width,
                             'height': img.height
@@ -1542,30 +1287,30 @@ var DD_AddPhoto_Model = DD_ModelBase.extend({
 });
 
 var DD_AddText_Model = DD_ModelBase.extend({
-
+    
     init: function (obj) {
         this.obj = obj;
         this._super(obj);
     },
-
-    getWindowTitle: function () {
+    
+    getWindowTitle: function() {
         return this._('add_text_to_image');
     },
-
-    setWindowContent: function (parent) {
+    
+    setWindowContent: function(parent) {
         this.form = new DD_windowTextForm(parent);
         this.setSaveTextEvent();
     },
-
-    setSaveTextEvent: function () {
+    
+    setSaveTextEvent: function() {
         var textarea = this.form.get().find('textarea');
         var self = this;
-
-        this.form.get().find('button').on('click', function () {
+        
+        this.form.get().find('button').on('click', function() {
             var text = textarea.val();
-            if (text.trim() == '') {
+            if(text.trim() == '') {
                 textarea.addClass('empty');
-            } else {
+            }else{
                 textarea.removeClass('empty');
                 textarea.addClass('valid');
                 new DD_Layer_Text({
@@ -1574,9 +1319,6 @@ var DD_AddText_Model = DD_ModelBase.extend({
                 self.closeWindow();
             }
         });
-        setTimeout(function () {
-            $(textarea).focus();
-        }, 0);
     }
 });
 
@@ -1747,11 +1489,10 @@ var DD_Control_Base_Model = DD_ModelBase.extend({
     calcTopPosition: function () {
         return '0';
     },
-    /*
+
     calcLeftosition: function () {
         //return '0';
     },
-    */
 
     hide: function () {
         this.obj.contentContainer.get().hide()
@@ -1763,33 +1504,6 @@ var DD_Control_Base_Model = DD_ModelBase.extend({
     }
 });
 
-var DD_Download_Model = DD_ModelBase.extend({
-    init: function (obj) {
-        this.obj = obj;
-    },
-
-    addDownloadEvent: function (mainModel) {
-        this.obj.get().on('click', function () {
-            mainModel.unselectAll();
-            var data = mainModel.getDataImg();
-            var image_data = atob(data.split(',')[1]);
-            var arraybuffer = new ArrayBuffer(image_data.length);
-            var view = new Uint8Array(arraybuffer);
-            for (var i = 0; i < image_data.length; i++) {
-                view[i] = image_data.charCodeAt(i) & 0xff;
-            }
-            try {
-                var blob = new Blob([arraybuffer], {type: 'application/octet-stream'});
-            } catch (e) {
-                var bb = new (window.WebKitBlobBuilder || window.MozBlobBuilder);
-                bb.append(arraybuffer);
-                var blob = bb.getBlob('application/octet-stream');
-            }
-            var url = (window.webkitURL || window.URL).createObjectURL(blob);
-            location.href = url;
-        });
-    }
-});
 var DD_ImageLink_Model = DD_ModelBase.extend({
 
     init: function(obj) {
@@ -1809,117 +1523,6 @@ var DD_ImageLink_Model = DD_ModelBase.extend({
     }
 });
 
-var DD_Layers_Model = DD_ModelBase.extend({
-
-    count: 0,
-    active: null,
-
-    init: function (obj) {
-        this.obj = obj;
-        this._super(obj);
-    },
-
-    getWindowTitle: function () {
-        return this._('layers');
-    },
-
-    setWindowContent: function (parent) {
-        var canvas = this._l().getHoverCanvas();
-        var objs = canvas.getObjects();
-        var self = this;
-        
-        parent.html('');
-        this.count = 0;
-        $.each(objs, function () {
-            var object = this;
-            self.drawElement(object, parent, canvas);
-        });
-        
-        if(this.count == 0) {
-            parent.html(this._('no_data'));
-        }
-    },
-
-    drawElement: function (object, parent, canvas) {
-        if (typeof (object) === 'undefined') {
-            return;
-        }
-        if (object.layerMask) {
-            return;
-        }
-
-        var panel = new DD_panel({
-            parent: parent,
-            class: 'dd-control-layer'
-        });
-
-        panel.add();
-        var type = object.isSvg ? 'svg' : object.type;
-        var innerHtml = '';
-        switch (type) {
-            case "image":
-                innerHtml += '<img src="' + object._originalElement.src + '" class="dd-control-layer-image" />'
-                this.count++;
-                break;
-            case "svg":
-                innerHtml += '<img src="' + object.src_orig + '" class="dd-control-layer-image" />'
-                this.count++;
-                break;
-            case "text":
-                innerHtml += '<span class="dd-control-layer-text">'
-                        + object.text
-                        + '</span>';
-                this.count++;
-                break;
-            case "i-text":
-                innerHtml += '<span class="dd-control-layer-text">'
-                        + object.text
-                        + '</span>';
-                this.count++;
-                break;
-        }
-
-        panel.get().html(innerHtml);
-
-        this.attachPanelClick( panel, object, canvas );
-        this.drawControls( panel, object, canvas, parent );
-    },
-
-    drawControls: function (panel, object, canvas, parent) {
-        var self = this;
-        var remove = new DD_button({
-            'parent': panel.get(),
-            'class': 'fa fa-trash'
-        });
-
-        remove.get().on('click', function (e) {
-            e.preventDefault();
-            if (object.isSvg === true) {
-                object.forEachObject(function (a) {
-                    canvas.remove(a);
-                });
-            }
-            canvas.remove(object);
-            canvas.renderAll();
-            self.setWindowContent(parent);
-        });
-    },
-
-    attachPanelClick: function (panel, object, canvas) {
-        var self = this;
-        var panel = panel.get();
-        panel.on('click', function () {
-            if(self.active) {
-               self.active.removeClass('active'); 
-            }
-            canvas.setActiveObject(object);
-            $(panel).addClass('active');
-            self.active = panel;
-        });
-    }
-
-});
-
 var DD_Main_Model = DD_ModelBase.extend({
     eventBase: 'main-panel-created',
     eventClick: 'panel-click',
@@ -1932,6 +1535,7 @@ var DD_Main_Model = DD_ModelBase.extend({
         var self = this;
 
         if (this._s('loadGoogleFonts')) {
+            
             var fonts = self.prepareFonts();
             WebFont.load({
                 google: {
@@ -1939,49 +1543,32 @@ var DD_Main_Model = DD_ModelBase.extend({
                 },
                 active: function () {
                     self.initLayers();
-                    if (obj.options.help) {
-                        self.help = $('body').dd_help({
-                            'data': obj.options.help
-                        });
-                        self.help.show();
-                        
-                    }
                 }
             });
             return;
         }
         this.initLayers();
-        if (obj.options.help) {
-            self.help = $('body').dd_help({
-                'data': obj.options.help
-            });
-            self.help.show();
-        }
-
     },
 
     registerEvents: function () {
         this._evnt().register(this.eventClick, this.obj);
         this._evnt().register(this.eventObjectChanged, this.obj);
         this._evnt().register(this.eventObjectAdded, this.obj);
-
-        this.callBackObject();
     },
 
     initLayers: function () {
         var self = this;
         this.layersObj = new DD_Layer();
-        this.idBgCanvas = 'canvas-' + this.createUUID();
-        this.idCanvasHover = 'canvas-hover-' + this.createUUID();
+        var idBgCanvas = 'canvas-' + this.createUUID();
+        var idCanvasHover = 'canvas-hover-' + this.createUUID();
         var bgCanvas = $('<canvas/>', {
-            id: this.idBgCanvas
+            id: idBgCanvas
         });
         var hoverCanvas = $('<canvas/>', {
-            id: this.idCanvasHover
+            id: idCanvasHover
         });
         var width = this.obj.options.width;
         var height = this.obj.options.height;
-        
         bgCanvas.attr({
             'width': width,
             'height': height
@@ -1995,8 +1582,8 @@ var DD_Main_Model = DD_ModelBase.extend({
                 .append(hoverCanvas);
         this.obj.self.append(div);
 
-        var bgCanvas = new fabric.Canvas(this.idBgCanvas);
-        var hoverCanvas = new fabric.Canvas(this.idCanvasHover);
+        var bgCanvas = new fabric.Canvas(idBgCanvas);
+        var hoverCanvas = new fabric.Canvas(idCanvasHover);
 
         this.layersObj.setBgCanvas(bgCanvas);
         this.layersObj.setHoverCanvas(hoverCanvas);
@@ -2016,14 +1603,11 @@ var DD_Main_Model = DD_ModelBase.extend({
         $(window).on('resize', function () {
             self.resize(width, height);
         });
-
-        $('.dd-designer-loading').hide();
         return;
     },
 
     _canvasEvents: function (hoverCanvas) {
-        var self = this; 
-        
+        var self = this;
         hoverCanvas.on('object:added', function (e) {
 
             new DD_control({
@@ -2082,20 +1666,16 @@ var DD_Main_Model = DD_ModelBase.extend({
                 e.target.controlModelCreated.remove();
             }
         });
-        hoverCanvas.on('object:clear_all', function (e) {
-            self.obj.options.onClearAll.call(null, self.obj.options.media_id)
+        
+        hoverCanvas.on('object:extra_config', function (e) {
+            e.type = 'extra_conf';
+            self.obj.options.onUpdate.call(
+                    null,
+                    e,
+                    self.obj.options.group_index,
+                    self.obj.options.media_id,
+                    'extra_conf');
         });
-        
-        fabric.util.addListener(hoverCanvas.upperCanvasEl, 'dblclick', function(e) {
-            
-            if (hoverCanvas.findTarget(e)) {
-               var objType = hoverCanvas.findTarget(e).type;
-               if (objType === 'i-text') {
-                  hoverCanvas.findTarget(e).controlModelCreated.handleActive();
-               }
-            }
-         });
-        
     },
 
     _addObjects: function (options) {
@@ -2104,18 +1684,14 @@ var DD_Main_Model = DD_ModelBase.extend({
             mask.save();
         }
         if (options.conf) {
-            var self = this;
             var last = options.conf.length;
             $(options.conf).each(function (i, obj) {
                 var notSelect = (last - 1) == i ? false : true;
                 if (obj.type === 'image') {
                     new DD_Layer_Img(null, obj, notSelect);
                 }
-                if (obj.type === 'text' || obj.type === 'i-text') {
+                if (obj.type === 'text') {
                     new DD_Layer_Text(null, obj, notSelect);
-                }
-                if (obj.isSvg === true) {
-                    new DD_Layer_Svg(obj);
                 }
             });
         }
@@ -2131,11 +1707,6 @@ var DD_Main_Model = DD_ModelBase.extend({
         if (fabricObj.controlModel) {
             newObject.controlModel = fabricObj.controlModel;
         }
-        if (fabricObj.isSvg) {
-            newObject.svgString = fabricObj.toSVG();
-            newObject.src_orig = fabricObj.src_orig;
-            newObject.isSvg = true;
-        }
 
         if (this.obj.options.onUpdate) {
             this.obj.options.onUpdate.call(
@@ -2148,60 +1719,37 @@ var DD_Main_Model = DD_ModelBase.extend({
     },
 
     resize: function (width, height) {
-        var blockWidth = $(window).width(); //magento 2 modal
-        var blockHeight = $(window).height() - 40; //magento 2 modal
-
-        this.obj.get().width(blockWidth);
-        this.obj.get().height(blockHeight);
-
-        var newWidth, newHeight, scaleFactor;
-        var bgCanvas = this.layersObj.getBgCanvas();
-        var hoverCanvas = this.layersObj.getHoverCanvas();
+        var blockWidth = this.obj.self.width();
+        var newWidth, newHeight;
+        var proportion = height / width;
+        newWidth = blockWidth;
+        newHeight = proportion * newWidth;
         if (blockWidth < width) {
-            newWidth = blockWidth;
-            newHeight = (height / width) * newWidth;
-            scaleFactor = blockWidth / this._l().getWidth();
-        }
-
-        if (blockHeight < (newHeight ? newHeight : height)) {
-            var scaleFactorH = (blockHeight) / (newHeight ? newHeight : this._l().getHeight());
-            if (scaleFactorH != 1) {
-                newHeight = blockHeight;
-                newWidth = (newHeight) * (width / height);
-                scaleFactor = (scaleFactor ? scaleFactor : 1) * scaleFactorH;
+            var bgCanvas = this.layersObj.getBgCanvas();
+            var hoverCanvas = this.layersObj.getHoverCanvas();
+            var scaleFactor = blockWidth / this._l().getWidth();
+            if (scaleFactor != 1) {
+                bgCanvas.setWidth(blockWidth);
+                bgCanvas.setHeight(newHeight);
+                bgCanvas.setZoom(scaleFactor);
+                bgCanvas.calcOffset();
+                bgCanvas.renderAll();
+                hoverCanvas.setWidth(blockWidth);
+                hoverCanvas.setHeight(newHeight);
+                hoverCanvas.setZoom(scaleFactor);
+                hoverCanvas.calcOffset();
+                hoverCanvas.renderAll();
             }
-        }
-
-        if (scaleFactor != 1 && newHeight && newWidth) {
-            bgCanvas.setWidth(newWidth);
-            bgCanvas.setHeight(newHeight);
-            bgCanvas.setZoom(scaleFactor);
-            bgCanvas.calcOffset();
-            bgCanvas.renderAll();
-            hoverCanvas.setWidth(newWidth);
-            hoverCanvas.setHeight(newHeight);
-            hoverCanvas.setZoom(scaleFactor);
-            hoverCanvas.calcOffset();
-            hoverCanvas.renderAll();
-
-            this.obj.get().width(newWidth);
-            this.obj.get().height(newHeight);
-
+            return;
         }
         return;
     },
 
     destroy: function () {
-        this._evnt().doCall('window-destroyed');
         this._evnt().unregisterAll();
         this.obj.self.parent().empty();
         this.obj.self.parent().remove();
-        
-        this._w().close();
-        this._evnt().destroyJBoxes();
-        if(this.help) {
-            this.help.destroy();
-        }
+
         delete this;
     },
 
@@ -2216,265 +1764,6 @@ var DD_Main_Model = DD_ModelBase.extend({
         });
 
         return googleFonts;
-    },
-
-    getDataImg: function () {
-        return this._mergeCanvases();
-    },
-
-    getJsonImg: function () {
-        return this._mergeCanvases(true);
-    },
-
-    unselectAll: function () {
-        var _hoverCanvas = this.layersObj.getHoverCanvas();
-        if (_hoverCanvas) {
-            _hoverCanvas.discardActiveObject().renderAll();
-        }
-    },
-
-    _getSvgLayer: function (obj) {
-        var output = $('<canvas />')
-                .attr({
-                    'width': obj.width,
-                    'height': obj.height
-                })
-                .get(0);
-
-        var octx = output.getContext('2d');
-
-    },
-
-    _mergeCanvases: function (json) {
-
-        var _bgCanvas = this.layersObj.getBgCanvas();
-        var _hoverCanvas = this.layersObj.getHoverCanvas()
-        var bgCanvas = $('#' + this.idBgCanvas).get(0);
-        var hoverCanvas = $('#' + this.idCanvasHover).get(0);
-
-        var sourceBgWidth = _bgCanvas.lowerCanvasEl.width;
-        var sourceBgHeight = _bgCanvas.lowerCanvasEl.height;
-        var sourceHoverWidth = _hoverCanvas.lowerCanvasEl.width;
-        var sourceHoverHeight = _hoverCanvas.lowerCanvasEl.height;
-        var output = $('<canvas />')
-                .attr({
-                    'width': this._l().getWidth(),
-                    'height': this._l().getHeight()
-                })
-                .get(0);
-
-        var octx = output.getContext('2d');
-
-        octx.drawImage(bgCanvas, 0, 0, sourceBgWidth, sourceBgHeight, 0, 0, output.width, output.height);
-        octx.drawImage(hoverCanvas, 0, 0, sourceHoverWidth, sourceHoverHeight, 0, 0, output.width, output.height);
-        if (!json) {
-            return output.toDataURL('png');
-        }
-
-        return []; //skip this for now!
-    }
-});
-
-var DD_Privew_Model = DD_ModelBase.extend({
-    init: function (obj) {
-        this.obj = obj;
-    },
-
-    addPreviewEvent: function (mainModel) {
-        var self = this;
-        this.obj.get().on('click', function () {
-            mainModel.unselectAll();
-            var data = mainModel.getDataImg();
-            var Pagelink = "about:blank";
-            var pwa = window.open(Pagelink, "_new");
-            pwa.document.open();
-            pwa.document.write(self.__imgSourcetoShow(data));
-            pwa.document.close();
-
-        });
-    },
-
-    __imgSourcetoShow: function (data) {
-        return "<html><head>/head><body>" +
-                "<img src='" + data + "' style='max-width:100%;' /></body></html>";
-    }
-});
-
-
-var DD_Print_model = DD_ModelBase.extend({
-    init: function (obj) {
-        this.obj = obj;
-    },
-
-    addPrintEvent: function (mainModel) {
-        var self = this;
-        this.obj.get().on('click', function () {
-            mainModel.unselectAll();
-            var data = mainModel.getDataImg();
-            var Pagelink = "about:blank";
-            var pwa = window.open(Pagelink, "_new");
-            pwa.document.open();
-            pwa.document.write(self.__imgSourcetoPrint(data));
-            pwa.document.close();
-
-        });
-    },
-
-    __imgSourcetoPrint: function (data) {
-        return "<html><head><script>function step1(){\n" +
-                "setTimeout('step2()', 10);}\n" +
-                "function step2(){window.print();window.close()}\n" +
-                "</scri" + "pt></head><body onload='step1()'>\n" +
-                "<img src='" + data + "' /></body></html>";
-    }
-});
-
-var DD_RemoveAll_model = DD_ModelBase.extend({
-    init: function (obj) {
-        this.obj = obj;
-    },
-    addClearAllEvent: function (mainModel) {
-        var self = this;
-        this.obj.get().on('click', function () {
-            var canvas = self._l().getHoverCanvas();
-            canvas.clear();
-            canvas.renderAll();
-            canvas.trigger('object:clear_all', {});
-        });
-    }
-});
-
-
-
-var DD_Share_Model = DD_ModelBase.extend({
-
-    constMargin: 10,
-
-    init: function (obj) {
-        this.obj = obj;
-        this._super(obj);
-    },
-
-    initShareFb: function (mainModel) {
-        this.mainModel = mainModel;
-        var self = this;
-        this.obj.get().on('click', function () {
-            self.sendData('facebook');
-        });
-    },
-    
-    initShareTw: function(mainModel) {
-        this.mainModel = mainModel;
-        var self = this;
-        this.obj.get().on('click', function () {
-            self.sendData('twitter');
-        });
-    },
-    
-    initSharePn: function(mainModel) {
-        this.mainModel = mainModel;
-        var self = this;
-        this.obj.get().on('click', function () {
-            self.sendData('pinterest');
-        });
-    },
-    
-    initMainClick: function() {
-        var obj = this.obj;
-        var self = this;
-        obj.get().on('click', function () {
-            
-            for(var a in obj.controlButtons) {
-                
-                var objButton = obj.controlButtons[a];
-                if(!$(this).attr('data-active')) {
-                    $(objButton.get())
-                            .css({opacity: 1.0, visibility: "hidden"})
-                            .animate({opacity: 0}, 200);
-                }else{
-                    $(objButton.get())
-                            .css({opacity: 0, visibility: "visible"})
-                            .animate({opacity: 1.0}, 200);
-                }
-            }
-            var currentButton = obj.get();
-            var buttonTop = obj.get().offset().top;
-            
-            for(var i in obj.shareButtons) {
-                var shareButton = obj.shareButtons[i];
-                var prev = $(currentButton).prev();
-                if(obj.get().next()) {
-                    var baseTop = obj.get().next().offset().top;
-                    var top = prev.offset().top - baseTop;
-
-                    if(!$(this).attr('data-active')) {
-                        $(shareButton.get())
-                                .css({top: (buttonTop-baseTop - self.constMargin), display: "block"})
-                                .animate({top: top - self.constMargin},  200);
-                    }else{
-                        $(shareButton.get())
-                                .css({top: (buttonTop-baseTop - self.constMargin), display: "none"});
-                    }
-
-                    currentButton = prev;
-                }
-                
-            }
-            
-            if($(this).attr('data-active')) {
-                $(this).removeAttr('data-active');
-                $(this).removeClass('fa-close');
-                $(this).addClass('fa-share-alt');
-            }else{
-                $(this).attr('data-active', '1');
-                $(this).addClass('fa-close');
-                $(this).removeClass('fa-share-alt');
-            }
-        });
-    },
-
-    sendData: function (type) { //fb or twitter or pinterest
-        var self = this;
-        switch (type) {
-            case 'facebook':
-                var _class = 'fa-facebook';
-                break;
-
-        }
-        var img = this.mainModel;
-        this.showLoading(_class);
-        this.mainModel.unselectAll();
-        $.ajax({
-            url: this.mainModel.shareUrl,
-            type: 'json',
-            method: 'post',
-            data: {
-                'type': type,
-                'img': this.mainModel.getDataImg()
-            }
-        })
-                .done(function (response) {
-                    self.hideLoading(_class);
-                    if(response.error) {
-                        alert(response.errMessage);
-                        return;
-                    }
-                    if(response.share_url) {
-                        window.open(response.share_url);
-                    }
-                });
-    },
-
-    showLoading: function (_class) {
-        this.obj.get().removeClass(_class)
-                .addClass('fa-circle-o-notch')
-                .addClass('fa-spin');
-    },
-
-    hideLoading: function (_class) {
-        this.obj.get().removeClass('fa-spin')
-                .removeClass('fa-circle-o-notch')
-                .addClass(_class);
     }
 });
 
@@ -2568,18 +1857,14 @@ var DD_control_text = DD_Control_Base_Model.extend({
         
 
         edit.get().on('click', function () {
-            self.showEditForm();
+            var content = self.obj.content.get();
+            content.empty();
+            var fabricObject = self.obj.options.fabricObject;
+            var text = fabricObject.text;
+            var form = new DD_windowTextForm(content, text);
+            self.obj.contentContainer.get().show();
+            self.setEditEvents(form);
         });
-    },
-    
-    showEditForm: function() {
-        var content = this.obj.content.get();
-        content.empty();
-        var fabricObject = this.obj.options.fabricObject;
-        var text = fabricObject.text;
-        var form = new DD_windowTextForm(content, text);
-        this.obj.contentContainer.get().show();
-        this.setEditEvents(form);
     },
 
     setEditEvents: function (form) {
@@ -2596,10 +1881,6 @@ var DD_control_text = DD_Control_Base_Model.extend({
                 self.obj.contentContainer.get().hide();
             }
         });
-        
-        setTimeout(function () {
-            $(textarea).focus();
-        }, 0);
     },
 
     addFontSelector: function () {
@@ -2650,10 +1931,6 @@ var DD_control_text = DD_Control_Base_Model.extend({
         _delete.get().on('click', function () {
             self.removeBase();
         });
-    },
-    
-    handleActive: function() {
-        this.showEditForm();
     }
 })
 
@@ -2787,7 +2064,7 @@ var DD_Layer_Img = DD_Layer_Base.extend({
         var src = fullCnfg ? fullCnfg.src : options.src;
         var ext = src.substr(src.lastIndexOf('.') + 1);
 
-        function ___callBack(iImg, isSvg, src_orig) {
+        function ___callBack(iImg, isSvg) {
             var parent = self.getParent()
             if (!fullCnfg) {
                 var conf = {
@@ -2796,7 +2073,6 @@ var DD_Layer_Img = DD_Layer_Base.extend({
                     selectable: options.noselectable ? false : true,
                     controlModel: 'DD_control_image',
                     centeredScaling: true,
-                    src_orig: src_orig,
                     isSvg: isSvg
                 }
                 var mask = self._l().getMask();
@@ -2857,7 +2133,7 @@ var DD_Layer_Img = DD_Layer_Base.extend({
             }, {crossOrigin: 'anonymous'});
         } else {
             fabric.loadSVGFromURL(src, function (svgobject) {
-                ___callBack(svgobject, true, src);
+                ___callBack(svgobject, true);
             });
         }
     }
@@ -2898,6 +2174,7 @@ var DD_Layer_Mask = DD_Layer_Base.extend({
         var parent = this.getParent();
         if (!conf) {
             var conf = {
+                fill: 'white',
                 opacity: 0.4,
                 layerMask: true,
                 controlModel: 'DD_control_mask',
@@ -2910,7 +2187,6 @@ var DD_Layer_Mask = DD_Layer_Base.extend({
         }
         var rect = new fabric.Rect(conf);
         parent.add(rect);
-        
         rect.notSelect = notSelect;
         if(!notSelect) {
             parent.setActiveObject(rect);
@@ -2930,7 +2206,7 @@ var DD_Layer_Mask = DD_Layer_Base.extend({
         var canvas = this._l().getHoverCanvas();
         canvas.clipTo = function (ctx) {
             var oCoords = object.oCoords;
-            ctx.strokeStyle = 'transparent';
+            ctx.strokeStyle = '#ccc';
             ctx.beginPath();
             ctx.moveTo(oCoords.tl.x, oCoords.tl.y);
             ctx.lineTo(oCoords.tr.x, oCoords.tr.y);
@@ -2940,7 +2216,7 @@ var DD_Layer_Mask = DD_Layer_Base.extend({
             ctx.stroke();
             ctx.save();
         }
-        canvas.setBackgroundColor('transparent');
+        canvas.setBackgroundColor('rgba(255, 255, 153, 0.6)');
         object.hasControls = false;
         object.selectable = false;
         if(object.controlModelCreated) {
@@ -3015,7 +2291,7 @@ var DD_Layer_Text = DD_Layer_Base.extend({
 
         conf.notSelect = notSelect;
         
-        var text = new fabric.IText(text, conf);
+        var text = new fabric.Text(text, conf);
         parent.add(text);
         
         if (!fullCnfg) {
@@ -3076,7 +2352,6 @@ var DD_AddphotoButton = DD_button.extend({
             tooltip_text: this._('add_photo'),
             windowOpener: true,
             fa: true,
-            
             tooltip: true
         }
         this._super(options);
@@ -3102,60 +2377,6 @@ var DD_AddtextButton = DD_button.extend({
     }
 })
 
-
-var DD_Bottomcontrols = DD_panel.extend({
-    object_id: 'dd-bottom-controls',
-    class_name: 'dd-designer-bottomcontrols',
-
-    init: function (parent, main, mainModel) {
-        this.parent = parent;
-        this.main = main;
-        this.mainModel = mainModel;
-        this._super({
-            'id': this.object_id,
-            'class': this.class_name,
-            'parent': parent
-        });
-        this.add();
-    },
-    
-    _addElements: function () {
-        this.addPreviewButton();
-        this.addDownloadButton();
-        this.addPrintButton();
-        this.addClearAllButton();
-    },
-    
-    addDownloadButton: function() {
-        if(!this._s('download')) {
-            return;
-        }
-        new DD_downloadButton(this.self, this.mainModel);
-    },
-    
-    addPrintButton: function() {
-        if(!this._s('print')) {
-            return;
-        }
-        new DD_printButton(this.self, this.mainModel);
-    },
-    
-    addClearAllButton: function() {
-        if(!this._s('clear_all')) {
-            return;
-        }
-        new DD_clearAllButton(this.self, this.mainModel);
-    },
-    
-    
-    addPreviewButton: function() {
-        if(!this._s('preview')) {
-            return;
-        }
-        new DD_previewButton(this.self, this.mainModel);
-        
-    }
-});
 
 var DD_Category = DD_panel.extend({
     
@@ -3185,218 +2406,16 @@ var DD_Category = DD_panel.extend({
     
 });
 
-var DD_clearAllButton = DD_button.extend({
-    class_name: 'dd-main-button fa-scissors fa',
-    model: 'DD_RemoveAll_model',
-    
-    init: function (parent, mainModel) {
-        this.mainModel = mainModel;
-        var options = {
-            parent: parent,
-            id: this.object_id,
-            class: this.class_name,
-            tooltip_text: this._('clear_all'),
-            fa: true,
-            tooltip: true,
-            tooltip_position: {
-                x: 'center',
-                y: 'top'
-            },
-            tooltip_outside: 'y'
-        }
-        this._super(options);
-    },
-    
-    
-    _callBackModel: function(model) {
-        model.addClearAllEvent(this.mainModel);
-    }
-
-});
-
-var DD_closeButton = DD_button.extend({
-    object_id: 'dd-main-close-button',
-    class_name: 'dd-main-button-cancel fa fa-times',
-    model: 'DD_Callback_Model',
-
-    init: function (parent, callback) {
-        this.callback = callback;
-        var options = {
-            parent: parent,
-            id: this.object_id,
-            class: this.class_name,
-            tooltip_text: this._('close'),
-            tooltip: true
-        }
-        this._super(options);
-    },
-
-    _callBackModel: function (model) {
-        var self = this;
-        model.destroy = function () {
-            if (self.tooltipBox) {
-                self.tooltipBox.destroy();
-            }
-        }
-        model._callbackClick();
-    }
-});
-
-
-var DD_downloadButton = DD_button.extend({
-    class_name: 'dd-main-button fa-download fa',
-    model: 'DD_Download_Model',
-    
-    init: function (parent, mainModel) {
-        this.mainModel = mainModel;
-        var options = {
-            parent: parent,
-            id: this.object_id,
-            class: this.class_name,
-            
-            tooltip_text: this._('download'),
-            fa: true,
-            tooltip: true,
-            tooltip_position: {
-                x: 'center',
-                y: 'top'
-            },
-            tooltip_outside: 'y'
-        }
-        this._super(options);
-    },
-    
-    _callBackModel: function(model) {
-        model.addDownloadEvent(this.mainModel);
-    }
-
-});
-
-var DD_historyBackButton = DD_button.extend({
-    object_id: 'dd-history-back-button',
-    class_name: 'dd-history-controls',
-    
-    init: function(parent) {
-        var options = {
-            parent: parent,
-            id: this.object_id,
-            class: this.class_name,
-            text: this._('back')
-        }
-        this._super(options);
-    }
-});
-
-
-var DD_Historycontrols = DD_panel.extend({
-    object_id: 'dd-history-controls',
-    class_name: 'dd-designer-history-controls',
-    
-    init: function (parent) {
-        this.parent = parent;
-        this._super({
-            'id': this.object_id,
-            'class': this.class_name,
-            'parent': parent
-        });
-        this.add();
-    },
-    
-    _addElements: function() {
-        this.addBackButton();
-        this.addNextButton();
-    },
-    
-    addNextButton: function() {
-        new DD_historyNextButton(this.self);
-    },
-    
-    addBackButton: function() {
-        new DD_historyBackButton(this.self);
-    }
-});
-
-var DD_historyNextButton = DD_button.extend({
-    object_id: 'dd-history-next-button',
-    class_name: 'dd-history-controls',
-    
-    init: function(parent) {
-        var options = {
-            parent: parent,
-            id: this.object_id,
-            class: this.class_name,
-            text: this._('next')
-        }
-        this._super(options);
-    }
-});
-
-
-
-var DD_ImportFbButton = DD_button.extend({
-    object_id: 'dd-import-fb-button',
-    class_name: 'dd-add-text-controls fa-facebook fa full-width',
-    model: 'DD_ImportFb_Model',
-    content: null,
-    contentImages: null,
-    
-    init: function(parent, content, contentImages) {
-        var options = {
-            parent: parent,
-            id: this.object_id,
-            class: this.class_name,
-            label: this._('import_from_fb')
-        }
-        this.content = content;
-        this.contentImages = contentImages;
-        this._super(options);
-    },
-    
-    _callBackModel: function (model) {
-        model.setClickEvents();
-    }
-})
-
-
-var DD_ImportInstagramButton = DD_button.extend({
-    object_id: 'dd-import-fb-button',
-    class_name: 'dd-add-text-controls fa-instagram fa full-width',
-    model: 'DD_ImportInstagram_Model',
-    content: null,
-    contentImages: null,
-    
-    init: function(parent, content, contentImages) {
-        var options = {
-            parent: parent,
-            id: this.object_id,
-            class: this.class_name,
-            label: this._('import_from_instagram')
-        }
-        this.content = content;
-        this.contentImages = contentImages;
-        this._super(options);
-    },
-    
-    _callBackModel: function (model) {
-        model.setClickEvents();
-    }
-})
-
-
 var DD_layerButton = DD_button.extend({
     object_id: 'dd-main-layer-button',
-    class_name: 'dd-main-button fa-database fa',
-    model: 'DD_Layers_Model',
+    class_name: 'dd-main-button',
     
     init: function(parent) {
         var options = {
             parent: parent,
             id: this.object_id,
             class: this.class_name,
-            tooltip_text: this._('layers'),
-            fa: true,
-            tooltip: true,
-            windowOpener: true
+            text: this._('layers')
         }
         this._super(options);
     }
@@ -3422,106 +2441,8 @@ var DD_main = DD_panel.extend({
     },
     
     _addElements: function() {
-        if(this._s('history')) {
-            new DD_Historycontrols(this.self);
-        }
-        new DD_Maincontrols(this.self.parent(), this);
-    },
-    
-    _callBackModel: function(model) {
-        new DD_Topcontrols(this.self.parent(), this, model);
-        new DD_Bottomcontrols(this.self.parent(), this, model);
+        new DD_setup(this.getParent(), this.options);
     }
-});
-
-var DD_Maincontrols = DD_panel.extend({
-    object_id: 'dd-main-controls',
-    class_name: 'dd-designer-maincontrols',
-
-    init: function (parent, main) {
-        this.parent = parent;
-        this.main = main;
-        this._super({
-            'id': this.object_id,
-            'class': this.class_name,
-            'parent': parent
-        });
-        this.add();
-    },
-
-    _addElements: function () {
-        if(this.main.options.onClose) {
-            this.addCloseButton(this.main.options.onClose);
-        }
-        this.addSaveButton();
-    },    
-    
-    addCloseButton: function(onClose) {
-        new DD_closeButton(this.self, onClose);
-    },
-    
-    addSaveButton: function() {
-        if(!this._s('save') || !this.main.options.onSave) {
-            return;
-        }
-        new DD_saveButton(this.self, this.main.options.onSave);
-    }
-});
-
-var DD_previewButton = DD_button.extend({
-    object_id: 'dd-main-preview-button',
-    class_name: 'dd-main-button fa fa-eye',
-    model: 'DD_Privew_Model',
-    
-    init: function(parent, mainModel) {
-        this.mainModel = mainModel;
-        var options = {
-            parent: parent,
-            id: this.object_id,
-            class: this.class_name,
-            tooltip_text: this._('preview'),
-            fa: true,
-            tooltip: true,
-            tooltip_position: {
-                x: 'center',
-                y: 'top'
-            },
-            tooltip_outside: 'y'
-        }
-        this._super(options);
-    },
-    
-    _callBackModel: function(model) {
-        model.addPreviewEvent(this.mainModel);
-    }
-});
-
-
-var DD_printButton = DD_button.extend({
-    class_name: 'dd-main-button fa-print fa',
-    model: 'DD_Print_model',
-    init: function (parent, mainModel) {
-        this.mainModel = mainModel;
-        var options = {
-            parent: parent,
-            id: this.object_id,
-            class: this.class_name,
-            tooltip_text: this._('print'),
-            fa: true,
-            tooltip: true,
-            tooltip_position: {
-                x: 'center',
-                y: 'top'
-            },
-            tooltip_outside: 'y'
-        }
-        this._super(options);
-    },
-    
-    _callBackModel: function(model) {
-        model.addPrintEvent(this.mainModel);
-    }
-
 });
 
 var DD_qrButton = DD_button.extend({
@@ -3539,282 +2460,6 @@ var DD_qrButton = DD_button.extend({
     }
 });
 
-
-var DD_saveButton = DD_button.extend({
-    object_id: 'dd-main-save-button',
-    class_name: 'dd-main-button fa-check-square fa',
-    model: 'DD_Callback_Model',
-
-    init: function (parent, callback) {
-        this.callback = callback;
-        var options = {
-            parent: parent,
-            id: this.object_id,
-            class: this.class_name,
-            tooltip_text: this._('save'),
-            fa: true,
-            tooltip: true
-        }
-        this._super(options);
-    },
-
-    _callBackModel: function (model) {
-        var self = this;
-        model.destroy = function () {
-            if (self.tooltipBox) {
-                self.tooltipBox.destroy();
-            }
-        }
-
-        model._callbackClick();
-        
-    },
-
-    showLoading: function () {
-        this.self.removeClass('fa-check-square')
-                .addClass('fa-circle-o-notch')
-                .addClass('fa-spin');
-    },
-
-    hideLoading: function () {
-        this.self.removeClass('fa-spin')
-                    .removeClass('fa-circle-o-notch')
-                    .addClass('fa-check-square');
-    }
-});
-
-
-var DD_shareButton = DD_button.extend({
-
-    object_id: 'dd-main-layer-button',
-    class_name: 'dd-main-button fa-share-alt fa',
-    model: 'DD_Share_Model',
-
-    shareButtons: [],
-
-    init: function (parent, mainModel, shareUrl, controlButtons) {
-        this.shareButtons = [];
-        
-        this.mainModel = mainModel;
-        this.mainModel.shareUrl = shareUrl;
-        var options = {
-            parent: parent,
-            id: this.object_id,
-            class: this.class_name,
-            tooltip_text: this._('share'),
-            fa: true,
-            tooltip: true
-        }
-        this.parent = parent;
-        this._super(options);
-
-        this.controlButtons = controlButtons;
-        this.addSharePanel();
-        this.addButtons();
-    },
-
-    addButtons: function () {
-        this.addShareFbButton();
-        this.addShareTwButton();
-        this.addSharePnButton();
-    },
-
-    addSharePanel: function () {
-        this.sharePanel = new DD_panel({
-            class: 'dd-share-panel',
-            parent: this.parent
-        });
-        this.sharePanel.add();
-    },
-
-    addShareFbButton: function () {
-        if (!this._s('shareFb')) {
-            return;
-        }
-        var fbButton = new DD_shareFbButton(this.sharePanel.self, this.mainModel, this.mainModel.shareUrl);
-        this.shareButtons.push(fbButton);
-    },
-
-    addShareTwButton: function () {
-        if (!this._s('shareTw')) {
-            return;
-        }
-        var twButton = new DD_shareTwButton(this.sharePanel.self, this.mainModel, this.mainModel.shareUrl);
-        this.shareButtons.push(twButton);
-    },
-    
-    addSharePnButton: function() {
-        if (!this._s('sharePn')) {
-            return;
-        }
-        var pnButton = new DD_sharePnButton(this.sharePanel.self, this.mainModel, this.mainModel.shareUrl);
-        this.shareButtons.push(pnButton);
-      
-    },
-
-    _callBackModel: function (model) {
-        model.initMainClick();
-    }
-});
-
-var DD_shareFbButton = DD_button.extend({
-    object_id: 'dd-main-layer-button',
-    class_name: 'dd-main-button fa-facebook fa dd-share-button',
-    model: 'DD_Share_Model',
-    
-    init: function(parent, mainModel, shareUrl) {
-        this.mainModel = mainModel;
-        this.mainModel.shareUrl = shareUrl;
-        var options = {
-            parent: parent,
-            id: this.object_id,
-            class: this.class_name,
-            tooltip_text: this._('share_facebook'),
-            fa: true,
-            tooltip: true
-        }
-        this._super(options);
-    },
-    
-    _callBackModel: function(model) {
-        model.initShareFb(this.mainModel);
-    }
-});
-
-
-
-var DD_sharePnButton = DD_button.extend({
-    object_id: 'dd-main-layer-button',
-    class_name: 'dd-main-button fa-pinterest fa dd-share-button',
-    model: 'DD_Share_Model',
-    
-    init: function(parent, mainModel, shareUrl) {
-        this.mainModel = mainModel;
-        this.mainModel.shareUrl = shareUrl;
-        var options = {
-            parent: parent,
-            id: this.object_id,
-            class: this.class_name,
-            tooltip_text: this._('share_pinterest'),
-            fa: true,
-            tooltip: true
-        }
-        this._super(options);
-    },
-    
-    _callBackModel: function(model) {
-        model.initSharePn(this.mainModel);
-    }
-});
-
-
-
-var DD_shareTwButton = DD_button.extend({
-    object_id: 'dd-main-layer-button',
-    class_name: 'dd-main-button fa-twitter fa dd-share-button',
-    model: 'DD_Share_Model',
-    
-    init: function(parent, mainModel, shareUrl) {
-        this.mainModel = mainModel;
-        this.mainModel.shareUrl = shareUrl;
-        var options = {
-            parent: parent,
-            id: this.object_id,
-            class: this.class_name,
-            tooltip_text: this._('share_twitter'),
-            fa: true,
-            tooltip: true
-        }
-        this._super(options);
-    },
-    
-    _callBackModel: function(model) {
-        model.initShareTw(this.mainModel);
-    }
-});
-
-
-
-var DD_Topcontrols = DD_panel.extend({
-    object_id: 'dd-top-controls',
-    class_name: 'dd-designer-topcontrols',
-    controlButtons: [],
-    
-    
-    init: function (parent, main, mainModel) {
-        this.parent = parent;
-        this.main = main;
-        this.mainModel = mainModel;
-        this._super({
-            'id': this.object_id,
-            'class': this.class_name,
-            'parent': parent
-        });
-        
-        if(typeof(this.main.options.extra_config) === 'undefined') {
-            this.main.options.extra_config = {};
-        }
-        this.add();
-        
-    },
-    
-    _addElements: function() {
-        this.addPhotoButton();
-        this.addTextButton();
-        this.addFromLibraryButton();
-        this.addLayersButton();
-        
-        this.addShareButtons();
-        
-        //this.addShareFbButton();
-    },
-    
-    addShareButtons: function() {
-        if(!this._s('shareFb') && !this._s('shareTw') && !this._s('sharePn')) {
-            return;
-        }
-        return new DD_shareButton(this.self, this.mainModel, this.main.options.settings.shareUrl, this.controlButtons);
-    },
-    
-    addLayersButton: function() {
-        if(!this._s('layers')) {
-            return;
-        }
-        var button = new DD_layerButton(this.self);
-        this.controlButtons.push(button);
-    },
-    
-    addPhotoButton: function() {
-        if(this.main.options.extra_config.photos_enabled === false) {
-            return;
-        }
-        if(this._s('addphoto') || this.main.options.extra_config.photos_enabled === true) {
-            var button = new DD_AddphotoButton(this.self);
-            this.controlButtons.push(button);
-        }
-    },
-    
-    addTextButton: function() {
-        if(this.main.options.extra_config.text_enabled === false) {
-            return;
-        }
-        if(this._s('addtext') || this.main.options.extra_config.text_enabled === true) {
-            var button = new DD_AddtextButton(this.self);
-            this.controlButtons.push(button);
-        }
-    },
-    
-    addFromLibraryButton: function(){
-        if(this.main.options.extra_config.library_enabled === false) {
-            return;
-        }
-        if(this._s('addfromlibrary') || this.main.options.extra_config.library_enabled === true) {
-            var button = new DD_AddfromLibraryButton(this.self);
-            this.controlButtons.push(button);
-        }
-    }
-    
-});
 
 var DD_windowPhotoTabs = DD_Tabs.extend({
     object_id: 'dd-add-photo-tabs',
@@ -3878,111 +2523,446 @@ var DD_windowTextForm = DD_panel.extend({
     }
 });
 
-$.fn.dd_help = function (options) {
-    this.options = $.extend({
-        'delay': 7000,
-        'defaultOutside': 'y',
-        'defaultPosition': {
-            x: 'center',
-            y: 'top'
-        },
-        data: [
-            /* 
-             * {
-             * 
-             'selector': 'jquerySelector',
-             'content' : '{content}'
-             'position': null,
-             'outside' : null
-            
-             }
-             */
-        ]
-    }, options);
+var DD_setup_model = DD_ModelBase.extend({
 
-    this.show = function () {
+    init: function (obj) {
+        this.obj = obj;
+        this.imgOptions = obj.imgOptions;
+        this._super();
+    },
 
-        var options = this.options;
-        var firstEl = options.data[0];
-        var index   = 0;
-        
-        var self = this;
+    tabActive: function (id) {
+        var content = $('#content-' + id + '');
+        content.html('');
+        switch (id) {
+            case 'dd-setup-info':
+                    this.tabInfo(content);
+                break;
+            case 'dd-setup-layer-mask':
+                    this.tabLayerMask(content);
+                break;
+            case 'dd-setup-layer-images':
+                    this.tabImages(content);
+                break;
+            case 'dd-setup-layer-texts':
+                    this.tabTexts(content);
+                break;
+            case 'dd-setup-options':
+                    this.tabOptions(content);
+                break;
+                /*
+            case 'dd-setup-layer-qrcode':
 
-        function showHelpElement(data) {
-            var cookieName = 'help-' + data.selector;
-            if($.cookie(cookieName)) {
-                index++;
-                var newEl = options['data'][index];
-                if(newEl) {
-                    showHelpElement(newEl);
-                }
-                return;
-            }
-            $.cookie(cookieName, true, { expires: 30 });
-            
-            if(data.content == '') {
-                index++;
-                var newEl = options['data'][index];
-                if(newEl) {
-                    showHelpElement(newEl);
-                }
-                return;
-            }
-            var divContainer = $('<div />').addClass('dd-help-container')
-                    .html(data.content);
-            var buttonContainer = $('<div />').addClass('dd-help-buttons');
-            
-            var help = new jBox('Tooltip', {
-                target: data.selector,
-                position: data.position ? data.position : options.defaultPosition,
-                outside: data.outside ? data.outside :options.defaultOutside,
-                closeOnMouseleave: true           
-            });
-            
-            var _close = $('<button />').text('OK');
-            _close.on('click', function() {
-                help.destroy();
-                index++;
-                var newEl = options['data'][index];
-                if(newEl) {
-                    showHelpElement(newEl);
-                }
-            });
-            
-            
-            buttonContainer.append(_close);
-            divContainer.append(buttonContainer);
-            help.setContent(divContainer);
-            help.open();
-            
-            self.showed = help;
+                break;
+                */
+            default: //options
+
+                break;
         }
-
-
-        setTimeout(showHelpElement(firstEl), options.delay);
-
-    };
+    },
     
-    this.destroy = function() {
-        if(this.showed){
-            this.showed.destroy();
-        }
+    tabOptions: function(content) {
+        new DD_setup_options(content, this.imgOptions);
+    },
+    
+    tabTexts: function(content) {
+         new DD_setup_texts(content, this.imgOptions);
+    },
+    
+    tabImages: function(content) {
+        new DD_setup_images(content, this.imgOptions);
+    },
+    
+    
+    tabLayerMask: function(content) {
+        new DD_setup_layer(content, this.imgOptions);
+    },
+    
+    tabInfo: function(content) {
+        new DD_setup_info(content, this.imgOptions);
     }
 
-    return this;
-};
+});
+
+var DD_setup_images_model = DD_AddPhoto_Model.extend({
+    
+    init: function (obj) {
+        this.obj = obj;
+        this._super(obj);
+    },
+    
+    addEditImageEvent: function(button, view) {
+        view.addWindowOpenEvent(button.get(), this, this.obj.modal, this.obj.options);
+    }
+    
+});
+
+var DD_setup_layer_model = DD_ModelBase.extend({
+
+    init: function (obj) {
+        this.obj = obj;
+        this._super();
+    },
+
+    checkedAction: function (checkbox, view) {
+        view.button.get().prop('disabled', false);
+    },
+
+    uncheckedAction: function (checkbox, view) {
+        view.button.get().prop('disabled', true);
+    },
+
+    addEditLayerEvent: function (button, view) {
+        var self = this;
+        button.get().on('click', function () {
+            if (!self._l().getMask()) {
+                return new DD_Layer_Mask();
+            }   
+            self._l().getMask().eventRestore.call();
+
+        });
+    }
+
+});
+
+var DD_setup_options_model = DD_ModelBase.extend({
+
+    hoverCanvas: null,
+
+    init: function (obj) {
+        this.obj = obj;
+        this.hoverCanvas = this._l().getHoverCanvas();
+        this._super();
+    },
+    
+    checkedAction: function (checkbox) {
+        this.hoverCanvas.fire('object:extra_config', { key: $(checkbox).attr('id'), value: true });
+    },
+
+    uncheckedAction: function (checkbox, view) {
+        this.hoverCanvas.fire('object:extra_config', { key: $(checkbox).attr('id'), value: false });
+    },
+    
+    initInputEvents: function(input) {
+        this.parseFloat(input);
+        var self = this;
+        input.on('keyup', function() {
+            var value = self.parseFloat(input);
+            self.hoverCanvas.fire('object:extra_config', { key: input.attr('id'), value: value });
+        });
+    },
+    
+    parseFloat: function(input) {
+        var val = input.val();
+        var regex = /\d*\.?\d*/g;
+        if(val) {
+            var match = val.match(regex);
+            val = match[0];
+        }
+        input.val(val);
+        
+        return val;
+    }
+
+});
+
+var DD_setup_texts_model = DD_AddText_Model.extend({
+    
+    init: function (obj) {
+        this.obj = obj;
+        this._super(obj);
+    },
+    
+    addEditTextEvent: function(button, view) {
+        view.addWindowOpenEvent(button.get(), this, this.obj.modal, this.obj.options);
+    }
+    
+});
+
+var DD_setup = DD_panel.extend({
+    object_id: 'dd-setup',
+    class_name: 'dd-setup-image',
+    model: 'DD_setup_model',
+    
+    init: function(parent, imgOptions) {
+        this.parent = parent;
+        this.imgOptions = imgOptions;
+        this._super({
+            'id': this.object_id,
+            'class': this.class_name,
+            'parent': parent
+        });
+        this.add();
+    },
+    
+    _addElements: function() {
+        new DD_setup_tabs(this.self, this.imgOptions);
+    }
+    
+});
+
+
+
+var DD_setup_images = DD_panel.extend({
+    class_name: 'dd-setup-images',
+    model: 'DD_setup_images_model',
+
+    init: function (parent, imgOptions) {
+        this.parentModel = this.model;
+        this.parent = parent;
+        this.imgOptions = imgOptions;
+        this._super({
+            'class': this.class_name,
+            'parent': parent
+        });
+        this.add();
+    },
+    
+    _addElements: function() {
+        this.self
+                .append($('<h3 />').text(this._('add_default_images')));
+        this.button = new DD_button({parent: this.self, 'text': this._('add_image'), 'fa_addon': 'fa fa-image'});
+        this.libbutton = new DD_button({
+            parent: this.self, 
+            model: 'DD_AddFromLibrary_Model', 
+            windowOpener: true, 
+            'text': this._('add_from_lib_image'), 
+            'fa_addon': 'fa fa-folder'
+        });
+    },
+    
+    _callBackModel: function (model) {
+        model.addEditImageEvent(this.button, this);
+    }
+    
+    
+});
+
+var DD_setup_info = DD_panel.extend({
+    class_name: 'dd-setup-image-info',
+
+    init: function (parent, imgOptions) {
+        this.parent = parent;
+        this.imgOptions = imgOptions;
+        this._super({
+            'class': this.class_name,
+            'parent': parent
+        });
+        this.add();
+        //this.addElements();
+    },
+    
+    _addElements: function() {
+        this.self
+                .append($('<h3 />').text(this._('product_sku') + ': ' + this.imgOptions.sku))
+                .append($('<div />').text(this._('image_src') + ': ' + this.imgOptions.src))
+                .append($('<div />').text(this._('width') + ': ' + this.imgOptions.width + 'px'))
+                .append($('<div />').text(this._('height') + ': ' + this.imgOptions.height + 'px'))
+                .append($('<div />').text(this._('media_id') + ': ' + this.imgOptions.media_id))
+                .append($('<div />').text(this._('product_id') + ': ' + this.imgOptions.product_id));
+    }
+
+
+});
+
+var DD_setup_layer = DD_panel.extend({
+    class_name: 'dd-setup-layer',
+    model: 'DD_setup_layer_model',
+
+    init: function (parent, imgOptions) {
+        this.parentModel = this.model;
+        this.parent = parent;
+        this.imgOptions = imgOptions;
+        this._super({
+            'class': this.class_name,
+            'parent': parent
+        });
+        this.add();
+    },
+    
+    _addElements: function() {
+        this.self
+                .append($('<h3 />').text(this._('configure_layer_mask')));
+        //this.checkbox = new DD_checkbox({parent: this.self, 'text': this._('enable_layer_mask'), model: this.model, view: this});
+        this.button = new DD_button({parent: this.self, 'text': this._('add_layer_mask'), 'fa_addon': 'fa fa-window-restore'});
+    },
+    
+    _callBackModel: function (model) {
+        model.addEditLayerEvent(this.button, this);
+    }
+    
+});
+
+var DD_setup_options = DD_panel.extend({
+    class_name: 'dd-setup-options',
+    setupModel: 'DD_setup_options_model',
+
+    init: function (parent, imgOptions) {
+        this.parent = parent;
+        this.imgOptions = imgOptions;
+        this.model = this.setupModel;
+        this._super({
+            'class': this.class_name,
+            'parent': parent
+        });
+        this.add();
+    },
+    
+    _addElements: function() {
+        this.self
+                .append($('<h3 />').text(this._('configuration')));
+        
+        new DD_checkbox({
+            parent: this.self, 
+            text: this._('enable_photos'), 
+            model: this.setupModel, 
+            view: this,
+            id: 'photos_enabled',
+            checked : (this._('defaultImgEnabled') && this.imgOptions.extra_config.photos_enabled !== false
+                    || this.imgOptions.extra_config.photos_enabled  ? true 
+            : false)
+        });
+        new DD_checkbox({
+            parent: this.self, 
+            text: this._('enable_text'), 
+            model: this.setupModel, 
+            view: this,
+            id: 'text_enabled',
+            checked : (this._('defaultTextEnabled') && this.imgOptions.extra_config.text_enabled !== false 
+                    || this.imgOptions.extra_config.text_enabled ? true 
+            : false)
+        });
+        new DD_checkbox({
+            parent: this.self, 
+            text: this._('enable_add_from_library'), 
+            model: this.setupModel, 
+            view: this,
+            id: 'library_enabled',
+            checked : (this._('defaultLibraryEnabled') && this.imgOptions.extra_config.library_enabled !== false 
+                    || this.imgOptions.extra_config.library_enabled ? true 
+            : false)
+        });
+        
+        this.self.append($('<hr>'));
+        
+        this.self
+                .append($('<h3 />').text(this._('prices_configuration')));
+        
+        this.layerImgPrice = new DD_inputText({
+            parent: this.self, 
+            label: this._('layer_img_price'),
+            value: (typeof(this.imgOptions.extra_config.layer_img_price) !== 'undefined') 
+                ? this.imgOptions.extra_config.layer_img_price 
+                : this._s('defaultImgPrice'),
+            id: 'layer_img_price',
+            'data-type': 'price'
+        });
+        
+        
+        this.layerTxtPrice = new DD_inputText({
+            parent: this.self, 
+            label: this._('layer_txt_price'),
+            value: (typeof(this.imgOptions.extra_config.layer_txt_price) !== 'undefined') 
+                ? this.imgOptions.extra_config.layer_txt_price 
+                :  this._s('defaultTextPrice'),
+            id: 'layer_txt_price',
+            'data-type': 'price'
+        });
+    },
+    
+    _callBackModel: function (model) {
+        this.self.find('input[type="text"]').each(function() {
+            var input = $(this);
+            model.initInputEvents(input);
+        });
+    }
+    
+});
+
+var DD_setup_tabs = DD_Tabs.extend({
+    object_id: 'dd-setup-tabs',
+    model: 'DD_setup_model',
+    
+    init: function(parent, imgOptions) {
+        var options = {
+            parent: parent,
+            id: this.object_id,
+            tabs: this.getTabs()
+        }
+        this.imgOptions = imgOptions;
+        this._super(options);
+    },
+    getTabs: function() {
+        return [
+            {
+                id: 'dd-setup-info',
+                text: this._('info')
+            },
+            {
+                id: 'dd-setup-layer-mask',
+                text: this._('layer_mask')
+            },
+            {
+                id: 'dd-setup-layer-images',
+                text: this._('images')
+            },
+            {
+                id: 'dd-setup-layer-texts',
+                text: this._('texts')
+            },
+            /*
+            {
+                id: 'dd-setup-layer-qrcode',
+                text: this._('qr_code')
+            },
+            */
+            {
+                id: 'dd-setup-options',
+                text: this._('options')
+            }
+        ];
+    }
+});
+
+
+
+var DD_setup_texts = DD_panel.extend({
+    class_name: 'dd-setup-texts',
+    model: 'DD_setup_texts_model',
+
+    init: function (parent, imgOptions) {
+        this.parentModel = this.model;
+        this.parent = parent;
+        this.imgOptions = imgOptions;
+        this._super({
+            'class': this.class_name,
+            'parent': parent
+        });
+        this.add();
+    },
+    
+    _addElements: function() {
+        this.self
+                .append($('<h3 />').text(this._('add_default_texts')));
+        this.button = new DD_button({parent: this.self, 'text': this._('add_text'), 'fa_addon': 'fa fa-pencil'});
+    },
+    
+    _callBackModel: function (model) {
+        model.addEditTextEvent(this.button, this);
+    }
+    
+});
+
 $.fn.dd_productdesigner = function (options) {
     var settings = {
-        'addphoto': true,
-        'addtext': true,
-        'addfromlibrary': true,
+        'addphoto': false,
+        'addtext': false,
+        'addfromlibrary': false,
         'history': false,
-        'layers': true,
-        'save': true,
-        'print': true,
-        'clear_all': true,
-        'preview': true,
-        'download': true,
+        'layers': false,
+        'save': false,
+        'qrcode': false,
+        'preview': false,
         'defaultFont': 'Verdana,Geneva,sans-serif',
         'defualtFontColor': '#ffffff',
         'defaultFontSize': 25,
@@ -3991,15 +2971,12 @@ $.fn.dd_productdesigner = function (options) {
         'defaultLayerMaskWidth': 40,
         'urlUploadImages': '',
         'myFilesPath': '/myfiles.php',
-        'libraryPath': '',
-        'shareFb': false,
-        'shareInst': false,
         'loadGoogleFonts': true,
-        'percentSizeImage': 20 //percentage size from canvas width,
+        'percentSizeImage': 20 //percentage size from canvas width
     };
-
+    
     settings = $.extend(settings, options.settings);
-
+    
     this.options = $.extend({
         'src': '',
         'debug': false,
@@ -4036,47 +3013,43 @@ $.fn.dd_productdesigner = function (options) {
             'rotate': 'Rotate',
             'background_color': 'Background',
             'text_color': 'Color',
-            'resize': 'Resize',
-            'text_settings': 'Text Settings',
-            'edit': 'Edit',
-            'close': 'Close',
-            'color': 'Color',
-            'download': 'Download',
-            'print': 'Print',
-            'clear_all': 'Clear All',
-            'share': 'Share',
-            'share_facebook': 'Share Facebook',
-            'share_twitter': 'Share Twitter',
-            'share_pinterest': 'Share Pinterest',
-            'import_from_fb': 'Import from Facebook',
-            'import_from_instagram': 'Import from Instagram',
-            'instagram_load_failed': 'Instagram load images failed',
-            'facebook_load_failed': 'Facebook load images failed'
-            
+            'add_from_lib_image': 'Add From Library',
+
+            //setup
+            'info': 'Image Info',
+            'layer_mask': 'Layer Mask',
+            'images': 'Images',
+            'texts': 'Texts',
+            'qr_code': 'QR Code',
+            'options': 'Options',
+            'image_src': 'Image src',
+            'width': 'Width',
+            'height': 'Height',
+            'media_id': 'Media ID',
+            'product_id': 'Product ID',
+            'product_sku': 'Product SKU',
+            'configure_layer_mask': 'Layer Mask Configuration',
+            'enable_layer_mask': 'Enable Layer Mask',
+            'add_layer_mask': 'Add/Edit Layer Mask',
+            'add_default_images': 'Add Default Images',
+            'add_image': 'Add Image',
+            'add_default_texts': 'Add default texts',
+            'configuration': 'Configuration',
+            'enable_photos': 'Enable Photos',
+            'enable_text': 'Enable Texts',
+            'enable_add_from_library': 'Enable Add From Library',
+            'prices_configuration': 'Prices Configuration',
+            'layer_img_price' : 'Image Price',
+            'layer_txt_price': 'Text Price'
         },
         //'settings': settings,
-        'onSave': null,
-        'onUpdate': null,
-        'onClose': null,
-        'onClearAll': null
+        'afterLoad': null,
+        'onUpdate': null
     }, options);
 
     this.options.settings = settings;
-
     this.onUpdate = function (callback) {
         this.options.onUpdate = callback;
-    }
-    
-    this.onClearAll = function (callback) {
-        this.options.onClearAll = callback;
-    }
-
-    this.onClose = function (callback) {
-        this.options.onClose = callback;
-    }
-
-    this.onSave = function (callback) {
-        this.options.onSave = callback;
     }
 
     this.init = function () {
@@ -4091,26 +3064,6 @@ $.fn.dd_productdesigner = function (options) {
 
         this.destroy = function () {
             app.destroy();
-        }
-
-        this.unselectAll = function () {
-            return app.unselectAll();
-        }
-
-        this.getData = function () {
-            return app.getDataImg();
-        }
-
-        this.getMediaId = function () {
-            return this.options.media_id;
-        }
-
-        this.getProductId = function () {
-            return this.options.product_id;
-        }
-
-        this.getJson = function () {
-            return app.getJsonImg();
         }
 
         return this;

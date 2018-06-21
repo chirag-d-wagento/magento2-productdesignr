@@ -306,7 +306,7 @@ class View extends \Magento\Catalog\Block\Product\AbstractProduct {
     }
 
     protected function getCurrencyCode() {
-        return $this->_currency->getCurrencySymbol();
+        return $this->_storeManager->getStore()->getCurrentCurrency()->getCurrencySymbol();
     }
 
     protected function convertPrice($basePrice) {

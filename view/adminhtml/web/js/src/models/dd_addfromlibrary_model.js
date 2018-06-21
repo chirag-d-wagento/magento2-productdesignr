@@ -40,7 +40,6 @@ var DD_AddFromLibrary_Model = DD_ModelBase.extend({
         parent.empty();
         parent.addClass('dd-window-loading');
         parent.html(this._('loading') + '...');
-
         $.ajax({
             url: this._s('libraryPath'),
             type: 'json',

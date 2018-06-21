@@ -63,6 +63,8 @@ var DD_admin_group_image_model = DD_Admin_ImagesSelected_Model.extend({
         var defaultLibraryEnabled = this._s('defaultLibraryEnabled');
         var defaultTextPrice = this._s('defaultTextPrice');
         var defaultImgPrice = this._s('defaultImgPrice');
+        var libraryPath = this._s('libraryPath');
+
 
         el.on('click', function () {
             $('#dd_designer').html('');
@@ -93,13 +95,14 @@ var DD_admin_group_image_model = DD_Admin_ImagesSelected_Model.extend({
                     'defaultTextEnabled': defaultTextEnabled,
                     'defaultLibraryEnabled': defaultLibraryEnabled,
                     'defaultTextPrice': defaultTextPrice,
-                    'defaultImgPrice': defaultImgPrice
+                    'defaultImgPrice': defaultImgPrice,
+                    'libraryPath': libraryPath
                 }
 
             });
             $('html, body').animate({
                 scrollTop: $("#dd_designer").offset().top - 100
-            }, 2000);
+            }, 500);
 
             designer.onUpdate(onUpdate);
             self.getObject().designer = designer.init();

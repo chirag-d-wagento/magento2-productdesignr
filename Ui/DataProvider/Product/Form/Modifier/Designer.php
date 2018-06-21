@@ -77,7 +77,8 @@ class Designer extends AbstractModifier {
                                 'defaultTextEnabled' => $this->_designerHelper->getIsAddTextEnabled(),
                                 'defaultLibraryEnabled' => $this->_designerHelper->getIsAddFromLibraryEnabled(),
                                 'defaultTextPrice' => $this->_designerHelper->getLayerTextPrice(),
-                                'defaultImgPrice' => $this->_designerHelper->getLayerImgPrice()
+                                'defaultImgPrice' => $this->_designerHelper->getLayerImgPrice(),
+                                'libraryPath' => $this->urlBuilder->getUrl('dd_productdesigner/library/index')
                             ],
                         ],
                     ]

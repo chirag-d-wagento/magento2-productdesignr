@@ -58,6 +58,7 @@ $.fn.dd_productdesigner = function (options) {
             'rotate': 'Rotate',
             'background_color': 'Background',
             'text_color': 'Color',
+            'add_from_lib_image': 'Add From Library',
 
             //setup
             'info': 'Image Info',

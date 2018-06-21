@@ -33501,114 +33501,9 @@ fabric.util.object.extend(fabric.IText.prototype, /** @lends fabric.IText.protot
   
   return jBox;
 }));
-/*!
- * jQuery Cookie Plugin v1.4.1
- * https://github.com/carhartl/jquery-cookie
- *
- * Copyright 2006, 2014 Klaus Hartl
- * Released under the MIT license
- */
-(function ($) {
-
-    var pluses = /\+/g;
-
-    function encode(s) {
-        return config.raw ? s : encodeURIComponent(s);
-    }
-
-    function decode(s) {
-        return config.raw ? s : decodeURIComponent(s);
-    }
-
-    function stringifyCookieValue(value) {
-        return encode(config.json ? JSON.stringify(value) : String(value));
-    }
-
-    function parseCookieValue(s) {
-        if (s.indexOf('"') === 0) {
-            // This is a quoted cookie as according to RFC2068, unescape...
-            s = s.slice(1, -1).replace(/\\"/g, '"').replace(/\\\\/g, '\\');
-        }
-
-        try {
-            // Replace server-side written pluses with spaces.
-            // If we can't decode the cookie, ignore it, it's unusable.
-            // If we can't parse the cookie, ignore it, it's unusable.
-            s = decodeURIComponent(s.replace(pluses, ' '));
-            return config.json ? JSON.parse(s) : s;
-        } catch (e) {
-        }
-    }
-
-    function read(s, converter) {
-        var value = config.raw ? s : parseCookieValue(s);
-        return $.isFunction(converter) ? converter(value) : value;
-    }
-
-    var config = $.cookie = function (key, value, options) {
-
-        // Write
-
-        if (arguments.length > 1 && !$.isFunction(value)) {
-            options = $.extend({}, config.defaults, options);
-
-            if (typeof options.expires === 'number') {
-                var days = options.expires, t = options.expires = new Date();
-                t.setMilliseconds(t.getMilliseconds() + days * 864e+5);
-            }
-
-            return (document.cookie = [
-                encode(key), '=', stringifyCookieValue(value),
-                options.expires ? '; expires=' + options.expires.toUTCString() : '', // use expires attribute, max-age is not supported by IE
-                options.path ? '; path=' + options.path : '',
-                options.domain ? '; domain=' + options.domain : '',
-                options.secure ? '; secure' : ''
-            ].join(''));
-        }
-
-        // Read
-
-        var result = key ? undefined : {},
-                // To prevent the for loop in the first place assign an empty array
-                // in case there are no cookies at all. Also prevents odd result when
-                // calling $.cookie().
-                cookies = document.cookie ? document.cookie.split('; ') : [],
-                i = 0,
-                l = cookies.length;
-
-        for (; i < l; i++) {
-            var parts = cookies[i].split('='),
-                    name = decode(parts.shift()),
-                    cookie = parts.join('=');
-
-            if (key === name) {
-                // If second argument (value) is a function it's a converter...
-                result = read(cookie, value);
-                break;
-            }
-
-            // Prevent storing a cookie that we couldn't decode.
-            if (!key && (cookie = read(cookie)) !== undefined) {
-                result[name] = cookie;
-            }
-        }
-
-        return result;
-    };
-
-    config.defaults = {};
-
-    $.removeCookie = function (key, options) {
-        // Must not alter options, thus extending a fresh object...
-        $.cookie(key, '', $.extend({}, options, {expires: -1}));
-        return !$.cookie(key);
-    };
-
-})(jQuery);
-
 /*! modernizr 3.5.0 (Custom Build) | MIT *
- * https://modernizr.com/download/?-touchevents-setclasses !*/
-!function(e,n,t){function o(e,n){return typeof e===n}function s(){var e,n,t,s,a,i,r;for(var l in c)if(c.hasOwnProperty(l)){if(e=[],n=c[l],n.name&&(e.push(n.name.toLowerCase()),n.options&&n.options.aliases&&n.options.aliases.length))for(t=0;t<n.options.aliases.length;t++)e.push(n.options.aliases[t].toLowerCase());for(s=o(n.fn,"function")?n.fn():n.fn,a=0;a<e.length;a++)i=e[a],r=i.split("."),1===r.length?Modernizr[r[0]]=s:(!Modernizr[r[0]]||Modernizr[r[0]]instanceof Boolean||(Modernizr[r[0]]=new Boolean(Modernizr[r[0]])),Modernizr[r[0]][r[1]]=s),f.push((s?"":"no-")+r.join("-"))}}function a(e){var n=u.className,t=Modernizr._config.classPrefix||"";if(p&&(n=n.baseVal),Modernizr._config.enableJSClass){var o=new RegExp("(^|\\s)"+t+"no-js(\\s|$)");n=n.replace(o,"$1"+t+"js$2")}Modernizr._config.enableClasses&&(n+=" "+t+e.join(" "+t),p?u.className.baseVal=n:u.className=n)}function i(){return"function"!=typeof n.createElement?n.createElement(arguments[0]):p?n.createElementNS.call(n,"http://www.w3.org/2000/svg",arguments[0]):n.createElement.apply(n,arguments)}function r(){var e=n.body;return e||(e=i(p?"svg":"body"),e.fake=!0),e}function l(e,t,o,s){var a,l,f,c,d="modernizr",p=i("div"),h=r();if(parseInt(o,10))for(;o--;)f=i("div"),f.id=s?s[o]:d+(o+1),p.appendChild(f);return a=i("style"),a.type="text/css",a.id="s"+d,(h.fake?h:p).appendChild(a),h.appendChild(p),a.styleSheet?a.styleSheet.cssText=e:a.appendChild(n.createTextNode(e)),p.id=d,h.fake&&(h.style.background="",h.style.overflow="hidden",c=u.style.overflow,u.style.overflow="hidden",u.appendChild(h)),l=t(p,e),h.fake?(h.parentNode.removeChild(h),u.style.overflow=c,u.offsetHeight):p.parentNode.removeChild(p),!!l}var f=[],c=[],d={_version:"3.5.0",_config:{classPrefix:"",enableClasses:!0,enableJSClass:!0,usePrefixes:!0},_q:[],on:function(e,n){var t=this;setTimeout(function(){n(t[e])},0)},addTest:function(e,n,t){c.push({name:e,fn:n,options:t})},addAsyncTest:function(e){c.push({name:null,fn:e})}},Modernizr=function(){};Modernizr.prototype=d,Modernizr=new Modernizr;var u=n.documentElement,p="svg"===u.nodeName.toLowerCase(),h=d._config.usePrefixes?" -webkit- -moz- -o- -ms- ".split(" "):["",""];d._prefixes=h;var m=d.testStyles=l;Modernizr.addTest("touchevents",function(){var t;if("ontouchstart"in e||e.DocumentTouch&&n instanceof DocumentTouch)t=!0;else{var o=["@media (",h.join("touch-enabled),("),"heartz",")","{#modernizr{top:9px;position:absolute}}"].join("");m(o,function(e){t=9===e.offsetTop})}return t}),s(),a(f),delete d.addTest,delete d.addAsyncTest;for(var v=0;v<Modernizr._q.length;v++)Modernizr._q[v]();e.Modernizr=Modernizr}(window,document);
+ * https://modernizr.com/download/?-backgroundsize-bgsizecover-canvas-canvastext-cssresize-sizes-smil-svgfilters-mq-setclasses !*/
+!function(e,t,n){function r(e,t){return typeof e===t}function o(){var e,t,n,o,i,s,a;for(var l in w)if(w.hasOwnProperty(l)){if(e=[],t=w[l],t.name&&(e.push(t.name.toLowerCase()),t.options&&t.options.aliases&&t.options.aliases.length))for(n=0;n<t.options.aliases.length;n++)e.push(t.options.aliases[n].toLowerCase());for(o=r(t.fn,"function")?t.fn():t.fn,i=0;i<e.length;i++)s=e[i],a=s.split("."),1===a.length?Modernizr[a[0]]=o:(!Modernizr[a[0]]||Modernizr[a[0]]instanceof Boolean||(Modernizr[a[0]]=new Boolean(Modernizr[a[0]])),Modernizr[a[0]][a[1]]=o),C.push((o?"":"no-")+a.join("-"))}}function i(e){var t=_.className,n=Modernizr._config.classPrefix||"";if(b&&(t=t.baseVal),Modernizr._config.enableJSClass){var r=new RegExp("(^|\\s)"+n+"no-js(\\s|$)");t=t.replace(r,"$1"+n+"js$2")}Modernizr._config.enableClasses&&(t+=" "+n+e.join(" "+n),b?_.className.baseVal=t:_.className=t)}function s(){return"function"!=typeof t.createElement?t.createElement(arguments[0]):b?t.createElementNS.call(t,"http://www.w3.org/2000/svg",arguments[0]):t.createElement.apply(t,arguments)}function a(e,t){if("object"==typeof e)for(var n in e)T(e,n)&&a(n,e[n]);else{e=e.toLowerCase();var r=e.split("."),o=Modernizr[r[0]];if(2==r.length&&(o=o[r[1]]),"undefined"!=typeof o)return Modernizr;t="function"==typeof t?t():t,1==r.length?Modernizr[r[0]]=t:(!Modernizr[r[0]]||Modernizr[r[0]]instanceof Boolean||(Modernizr[r[0]]=new Boolean(Modernizr[r[0]])),Modernizr[r[0]][r[1]]=t),i([(t&&0!=t?"":"no-")+r.join("-")]),Modernizr._trigger(e,t)}return Modernizr}function l(e,t){return!!~(""+e).indexOf(t)}function u(e){return e.replace(/([a-z])-([a-z])/g,function(e,t,n){return t+n.toUpperCase()}).replace(/^-/,"")}function f(e,t){return function(){return e.apply(t,arguments)}}function c(e,t,n){var o;for(var i in e)if(e[i]in t)return n===!1?e[i]:(o=t[e[i]],r(o,"function")?f(o,n||t):o);return!1}function d(){var e=t.body;return e||(e=s(b?"svg":"body"),e.fake=!0),e}function p(e,n,r,o){var i,a,l,u,f="modernizr",c=s("div"),p=d();if(parseInt(r,10))for(;r--;)l=s("div"),l.id=o?o[r]:f+(r+1),c.appendChild(l);return i=s("style"),i.type="text/css",i.id="s"+f,(p.fake?p:c).appendChild(i),p.appendChild(c),i.styleSheet?i.styleSheet.cssText=e:i.appendChild(t.createTextNode(e)),c.id=f,p.fake&&(p.style.background="",p.style.overflow="hidden",u=_.style.overflow,_.style.overflow="hidden",_.appendChild(p)),a=n(c,e),p.fake?(p.parentNode.removeChild(p),_.style.overflow=u,_.offsetHeight):c.parentNode.removeChild(c),!!a}function m(e){return e.replace(/([A-Z])/g,function(e,t){return"-"+t.toLowerCase()}).replace(/^ms-/,"-ms-")}function A(t,n,r){var o;if("getComputedStyle"in e){o=getComputedStyle.call(e,t,n);var i=e.console;if(null!==o)r&&(o=o.getPropertyValue(r));else if(i){var s=i.error?"error":"log";i[s].call(i,"getComputedStyle returning null, its possible modernizr test results are inaccurate")}}else o=!n&&t.currentStyle&&t.currentStyle[r];return o}function g(t,r){var o=t.length;if("CSS"in e&&"supports"in e.CSS){for(;o--;)if(e.CSS.supports(m(t[o]),r))return!0;return!1}if("CSSSupportsRule"in e){for(var i=[];o--;)i.push("("+m(t[o])+":"+r+")");return i=i.join(" or "),p("@supports ("+i+") { #modernizr { position: absolute; } }",function(e){return"absolute"==A(e,null,"position")})}return n}function v(e,t,o,i){function a(){c&&(delete B.style,delete B.modElem)}if(i=r(i,"undefined")?!1:i,!r(o,"undefined")){var f=g(e,o);if(!r(f,"undefined"))return f}for(var c,d,p,m,A,v=["modernizr","tspan","samp"];!B.style&&v.length;)c=!0,B.modElem=s(v.shift()),B.style=B.modElem.style;for(p=e.length,d=0;p>d;d++)if(m=e[d],A=B.style[m],l(m,"-")&&(m=u(m)),B.style[m]!==n){if(i||r(o,"undefined"))return a(),"pfx"==t?m:!0;try{B.style[m]=o}catch(h){}if(B.style[m]!=A)return a(),"pfx"==t?m:!0}return a(),!1}function h(e,t,n,o,i){var s=e.charAt(0).toUpperCase()+e.slice(1),a=(e+" "+z.join(s+" ")+s).split(" ");return r(t,"string")||r(t,"undefined")?v(a,t,o,i):(a=(e+" "+P.join(s+" ")+s).split(" "),c(a,t,n))}function y(e,t,r){return h(e,n,n,t,r)}var C=[],w=[],S={_version:"3.5.0",_config:{classPrefix:"",enableClasses:!0,enableJSClass:!0,usePrefixes:!0},_q:[],on:function(e,t){var n=this;setTimeout(function(){t(n[e])},0)},addTest:function(e,t,n){w.push({name:e,fn:t,options:n})},addAsyncTest:function(e){w.push({name:null,fn:e})}},Modernizr=function(){};Modernizr.prototype=S,Modernizr=new Modernizr,Modernizr.addTest("svgfilters",function(){var t=!1;try{t="SVGFEColorMatrixElement"in e&&2==SVGFEColorMatrixElement.SVG_FECOLORMATRIX_TYPE_SATURATE}catch(n){}return t});var _=t.documentElement,b="svg"===_.nodeName.toLowerCase();Modernizr.addTest("canvas",function(){var e=s("canvas");return!(!e.getContext||!e.getContext("2d"))}),Modernizr.addTest("canvastext",function(){return Modernizr.canvas===!1?!1:"function"==typeof s("canvas").getContext("2d").fillText});var E={}.toString;Modernizr.addTest("smil",function(){return!!t.createElementNS&&/SVGAnimate/.test(E.call(t.createElementNS("http://www.w3.org/2000/svg","animate")))});var T;!function(){var e={}.hasOwnProperty;T=r(e,"undefined")||r(e.call,"undefined")?function(e,t){return t in e&&r(e.constructor.prototype[t],"undefined")}:function(t,n){return e.call(t,n)}}(),S._l={},S.on=function(e,t){this._l[e]||(this._l[e]=[]),this._l[e].push(t),Modernizr.hasOwnProperty(e)&&setTimeout(function(){Modernizr._trigger(e,Modernizr[e])},0)},S._trigger=function(e,t){if(this._l[e]){var n=this._l[e];setTimeout(function(){var e,r;for(e=0;e<n.length;e++)(r=n[e])(t)},0),delete this._l[e]}},Modernizr._q.push(function(){S.addTest=a}),Modernizr.addAsyncTest(function(){var e,t,n,r=s("img"),o="sizes"in r;!o&&"srcset"in r?(t="data:image/gif;base64,R0lGODlhAgABAPAAAP///wAAACH5BAAAAAAALAAAAAACAAEAAAICBAoAOw==",e="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==",n=function(){a("sizes",2==r.width)},r.onload=n,r.onerror=n,r.setAttribute("sizes","9px"),r.srcset=e+" 1w,"+t+" 8w",r.src=e):a("sizes",o)});var x="Moz O ms Webkit",z=S._config.usePrefixes?x.split(" "):[];S._cssomPrefixes=z;var P=S._config.usePrefixes?x.toLowerCase().split(" "):[];S._domPrefixes=P;var O=function(){var t=e.matchMedia||e.msMatchMedia;return t?function(e){var n=t(e);return n&&n.matches||!1}:function(t){var n=!1;return p("@media "+t+" { #modernizr { position: absolute; } }",function(t){n="absolute"==(e.getComputedStyle?e.getComputedStyle(t,null):t.currentStyle).position}),n}}();S.mq=O;var N={elem:s("modernizr")};Modernizr._q.push(function(){delete N.elem});var B={style:N.elem.style};Modernizr._q.unshift(function(){delete B.style}),S.testAllProps=h,S.testAllProps=y,Modernizr.addTest("backgroundsize",y("backgroundSize","100%",!0)),Modernizr.addTest("bgsizecover",y("backgroundSize","cover")),Modernizr.addTest("cssresize",y("resize","both",!0)),o(),i(C),delete S.addTest,delete S.addAsyncTest;for(var j=0;j<Modernizr._q.length;j++)Modernizr._q[j]();e.Modernizr=Modernizr}(window,document);
 /*
  * Copyright 2016 Small Batch, Inc.
  *
@@ -33646,7 +33541,6 @@ var Aa = {latin:"BESbswy", "latin-ext":"\u00e7\u00f6\u00fc\u011f\u015f", cyrilli
     
             (window.WebFont = Z, window.WebFontConfig && Y.load(window.WebFontConfig)); 
 }());
-
 (function($){"use strict"; var DD_Global = {};
 var DD_object = Class.extend({
     
@@ -33858,13 +33752,13 @@ var DD_Window = DD_object.extend({
         this.registerModal();
         this.registerPreview();
         this.setGlobal();
-
+        
         return this.modal;
     },
-
-    registerPreview: function () {
+    
+    registerPreview: function() {
         var self = this;
-
+        
         this.preview = new jBox('Modal', {
             title: '-',
             draggable: false,
@@ -33886,13 +33780,13 @@ var DD_Window = DD_object.extend({
         });
 
 
-        this._evnt().register('preview-showed', this.preview);
-        this._evnt().register('preview-closed', this.preview, true);
+        this._evnt().register('preview-showed', this.modal);
+        this._evnt().register('preview-closed', this.modal, true);
     },
-
-    registerModal: function () {
+    
+    registerModal: function() {
         var self = this;
-
+        
         this.modal = new jBox('Modal', {
             title: '-',
             draggable: 'title',
@@ -33905,7 +33799,7 @@ var DD_Window = DD_object.extend({
             repositionOnOpen: false,
             repositionOnContent: true,
             target: $('.canvas-container'),
-
+            
             onOpen: function () {
                 self._evnt().doCall('window-showed');
             },
@@ -33915,7 +33809,7 @@ var DD_Window = DD_object.extend({
         });
 
 
-        this._evnt().register('window-destroyed', this.modal, true);
+        this._evnt().register('window-showed', this.modal);
         this._evnt().register('window-closed', this.modal, true);
         this.registerCloseWinEventCall();
     },
@@ -33941,10 +33835,10 @@ var DD_Window = DD_object.extend({
     },
 
     createContentElement: function (id) {
-        if (!this.contentElement) {
+        if(!this.contentElement) {
             this.contentElement = {};
         }
-        if ($('#' + id).get(0)) {
+        if($('#' + id).get(0)) {
             this.contentElement[id] = $('#' + id);
             return;
         }
@@ -33956,16 +33850,10 @@ var DD_Window = DD_object.extend({
 
         $('body').append(this.contentElement[id]);
     },
-
-    registerCloseWinEventCall: function () {
-        this._evnt().registerCallback('window-closed', function (window) {
+    
+    registerCloseWinEventCall: function() {
+        this._evnt().registerCallback('window-closed', function(window) {
             window.isClosed = true;
-        }, 'no-reposition');
-
-        this._evnt().registerCallback('window-destroyed', function (window) {
-            setTimeout(function () {
-                window.isClosed = false;
-            }, 1000);
         }, 'no-reposition');
     }
 });
@@ -34303,12 +34191,6 @@ var DD_button = DD_Uibase.extend({
             class: this.mainClass + ' ' + (this.options.class ? this.options.class : ''),
             text: (this.options.text && !this.options.fa && !this.options.fa_addon  ? this.options.text : '')
         });
-        if(this.options.label) {
-            this.self.append($('<span />')
-                    .text(this.options.label)
-                    .addClass('label')
-                    );
-        }
         this.add();
         if(this.options.fa_addon){
             var fa = $('<span />', {
@@ -34374,8 +34256,11 @@ var DD_checkbox = DD_Uibase.extend({
                 model.uncheckedAction.call(model, this, self.options.view);
             }
         });
+        if(this.options.noInit) {
+            return;
+        }
         setTimeout(function () {
-            if (self.checked) {
+            if (self.options.checked) {
                 model.checkedAction.call(model, self._checkbox, self.options.view);
                 return;
             }
@@ -34428,18 +34313,8 @@ var DD_control = DD_Uibase.extend({
         this._closeContent = new DD_button({
             'parent': this.contentContainer.get(),
             //'text': this._('delete'),
-            'class': 'fa fa-caret-square-o-up dd-helper-popup-content-close'
+            'class': 'fa fa-angle-double-up dd-helper-popup-content-close'
         });
-    },
-    
-    addPaintBase: function() {
-        this._paint = new DD_button({
-            'parent': this.buttons.get(),
-            //'text': this._('delete'),
-            'class': 'fa fa-paint-brush'
-        });
-
-        return this._paint;
     },
 
     addButtonPanel: function () {
@@ -34538,6 +34413,7 @@ var DD_control = DD_Uibase.extend({
     },
 
     colorSelector: function (parent, name, color, onUpdate, model) {
+        var self = this;
         var colorSelectorContainer = new DD_panel({
             'parent': parent,
             'class': 'dd-helper-color-selector-container'
@@ -34561,6 +34437,7 @@ var DD_control = DD_Uibase.extend({
             showPalette: true,
             showSelectionPalette: true, // true by default
             palette: [ ],
+            
             change: function(color) {
                 if(onUpdate) {
                     onUpdate.call(this, color, model);
@@ -34603,6 +34480,41 @@ var DD_ImageLinkAdd = DD_Uibase.extend({
     
     _callBackModel: function (model) {
         model.setClickEvents();
+    }
+    
+});
+
+var DD_inputText = DD_Uibase.extend({
+    
+    mainClass: 'dd-input-text-container',
+    labelClass: 'dd-label',
+    defaultType: 'text',
+    
+    init: function (options) {
+        this.options = $.extend((options ? options : {}), this.options);
+        this._super();
+        this.selfBase();
+        this._add();
+    },
+    
+    _addElements: function () {
+        this._label = $('<div />').addClass(this.labelClass);
+        this._label.html(this.options.label);
+        this._input = $('<input />', {
+            id: this.options.id ? this.options.id : this.createUUID(),
+            class: this.mainClass + ' ' + (this.options.class ? this.options.class : ''),
+            type: this.options.type ? this.options.type : this.defaultType
+        });
+        if(this.options.value) {
+            this._input.val(this.options.value);
+        }
+        if(this.options['data-type']) {
+            this._input.attr({
+                'data-type': this.options['data-type']
+            });
+        }
+        this.self.append(this._label);
+        this.self.append(this._input);
     }
     
 });
@@ -34713,253 +34625,6 @@ var DD_Tabs = DD_Uibase.extend({
     }
 });
 
-var DD_ImportFb_Model = DD_ModelBase.extend({
-
-    init: function (obj) {
-        this.obj = obj;
-    },
-
-    setClickEvents: function () {
-        var self = this;
-        this.obj.self.on('click', function () {
-            try {
-                self.obj.content.addClass('tab-loading');
-                self.obj.contentImages.html(self._('loading') + '...');
-                FB.login(function (response) {
-                    if (response.authResponse) {
-                        self.getImagesFromServer(response.authResponse.signedRequest, response.authResponse.accessToken);
-
-                    } else {
-                        self.obj.contentImages.html(self._('facebook_load_failed') + '...');
-                    }
-                });
-
-            } catch (e) {
-
-            }
-
-        });
-    },
-
-    getImagesFromServer: function (code, accessToken) {
-
-        var self = this;
-        $.ajax({
-            url: this._s('fbImagesPath'),
-            type: 'json',
-            method: 'post',
-            data: {
-                'code': code,
-                'token': accessToken
-            }
-        })
-                .done(function (data) {
-                    if (!data || data.length == 0) {
-                        self.obj.contentImages.html(self._('no_data'))
-                        self.obj.content.addClass('tab-no-data');
-                        return;
-                    }
-                    self.obj.content.removeClass('tab-no-data');
-                    self.obj.contentImages.html('');
-
-                    $.each(data, function (a, img) {
-                        new DD_ImageLinkAdd({
-                            'parent': self.obj.contentImages,
-                            'src': img.src,
-                            'width': img.width,
-                            'height': img.height
-
-                        });
-                    });
-                });
-    }
-
-
-});
-
-var DD_ImportInstagram_Model = DD_ModelBase.extend({
-
-    urlMyImages: 'https://api.instagram.com/v1/users/self/media/recent/',
-
-    interval: null,
-    popupWindow: null,
-    processInterval: 50,
-    error: null,
-    token: null,
-
-    init: function (obj) {
-        this.obj = obj;
-    },
-
-    setClickEvents: function () {
-        var self = this;
-        this.obj.self.on('click', function () {
-            self.obj.content.addClass('tab-loading');
-            self.obj.contentImages.html(self._('loading') + '...');
-
-            self.process();
-
-            //window.InstAuth.init('5f3c220152ee4ff08586908d1766f71b');
-            //window.InstAuth.startAuthFlow();
-        });
-    },
-
-    process: function () {
-        this.processAuth();
-    },
-
-    getWidth: function () {
-        return ($(window).width() / 2) > 400 ? 400 : ($(window).width() / 2 < 400 ? 300 : $(window).width() / 2);
-    },
-
-    getHeight: function () {
-        return $(window).height() / 2 < 400 ? 300 : $(window).height() / 2;
-    },
-
-    getTop: function () {
-        return (($(window).height() / 2) - (this.getHeight() / 2));
-    },
-
-    getLeft: function () {
-        return (($(window).width() / 2) - (this.getWidth() / 2));
-    },
-
-    processAuth: function () {
-        if (this.popupWindow) {
-            this.popupWindow.focus();
-            return;
-        }
-        var authUrl = this.getAuthUrl();
-        this.popupWindow = window.open(authUrl, '', 'width=' + this.getWidth() + ',height=' + this.getHeight() + ',top=' + this.getTop() + ',left=' + this.getLeft());
-        var self = this;
-        this.interval = setInterval(function () {
-            var location = self.popupWindow.location;
-
-            try {
-                if (typeof (location.href) == 'undefined' || !location.href) {
-                    self.unRegisterWindow();
-                    return;
-                }
-
-                if (location.hash.search("access_token") > -1) {
-                    var access_token = location.hash.substr(14).split("&")[0];
-                    self.registerAccessToken(access_token);
-                    //window.opener.postMessage(JSON.stringify({access_token: window.location.hash.substr(14).split("&")[0]}), window.opener.location.href)
-                }
-                if (location.href.search("error_reason=user_denied") > -1) {
-                    self.setError('unauthorized');
-                    self.unRegisterWindow();
-                    return;
-                }
-            } catch (error) {
-
-            }
-        }, self.processInterval);
-    },
-
-    setError: function (error) {
-        this.error = error;
-    },
-
-    unRegisterWindow: function () {
-        if (this.popupWindow) {
-            //this.popupWindow.stop();
-            this.popupWindow.close();
-            this.popupWindow = null;
-        }
-        if (this.interval) {
-            clearInterval(this.interval);
-            this.interval = null;
-        }
-
-        if (this.error || !this.token) {
-            this.error = 'unauthorized';
-            this.processError();
-            return;
-        }
-
-        this.loadImages();
-
-    },
-
-    loadImages: function () {
-        var self = this;
-        var url = this.urlMyImages + '?access_token=' + this.token;
-        $.getJSON(url, function (dataInstagram) {
-
-            var data = dataInstagram.data;
-            if (!data || data.length == 0) {
-                self.obj.contentImages.html(self._('no_data'))
-                self.obj.content.addClass('tab-no-data');
-                return;
-            }
-
-            self.obj.content.removeClass('tab-no-data');
-            self.obj.contentImages.html('');
-
-            $.each(data, function (a, imgDetail) {
-                var img = imgDetail.images;
-                new DD_ImageLinkAdd({
-                    'parent': self.obj.contentImages,
-                    'src': img.standard_resolution.url,
-                    'width': img.standard_resolution.width,
-                    'height': img.standard_resolution.height
-
-                });
-            });
-
-            //console.log( "suatroot" );
-            //console.log( data );
-            /*
-             var suatroot = data.data;
-             
-             console.log(suatroot);
-             $.each(suatroot, function (key, val) {
-             console.log("item");
-             var itemobj = val.images.low_resolution.url;
-             var hrefobj = val.link;
-             var captobj = val.caption.text;
-             console.log(captobj);
-             console.log(itemobj);
-             var suatpaket = "<a target='_blank' href='" + hrefobj + "'><img src='" + itemobj + "'/><br>" + captobj + "<br></a>";
-             $(".instagram").append(suatpaket);
-             });
-             */
-
-        });
-    },
-
-    registerAccessToken: function (token) {
-
-        this.token = token;
-        this.error = null;
-        this.unRegisterWindow();
-    },
-
-    processError: function () {
-        switch (this.error) {
-            case 'unauthorized':
-                this.obj.contentImages.html(this._('instagram_load_failed') + '...');
-                break;
-        }
-    },
-
-    getAuthUrl: function () {
-        return "https://api.instagram.com/oauth/authorize/?client_id="
-                + this.instagramClientId()
-                + "&response_type=token&redirect_uri="
-                + this.redirectUri();
-    },
-
-    instagramClientId: function () {
-        return this._s('instagramClientId');
-    },
-
-    redirectUri: function () {
-        return window.location.origin;
-    }
-});
-
 var DD_AddFromLibrary_Model = DD_ModelBase.extend({
 
     currentCategory: null,
@@ -35002,7 +34667,6 @@ var DD_AddFromLibrary_Model = DD_ModelBase.extend({
         parent.empty();
         parent.addClass('dd-window-loading');
         parent.html(this._('loading') + '...');
-
         $.ajax({
             url: this._s('libraryPath'),
             type: 'json',
@@ -35050,10 +34714,6 @@ var DD_AddPhoto_Model = DD_ModelBase.extend({
     idUploaderTab: 'dd-add-photo-tab',
     idMyPhotosTab: 'dd-my-photo-tab',
     uploaderInitiated: false,
-    
-    contentTop: null,
-    contentImages: null,
-    importFromFbControl: null,
 
     init: function (obj) {
         this.obj = obj;
@@ -35084,12 +34744,10 @@ var DD_AddPhoto_Model = DD_ModelBase.extend({
         var self = this;
         content.html('<form class="dropzone">' +                
         '</form>');
-        Dropzone.autoDiscover = false;
         content.find('form').dropzone({
-            url: self._s('urlUploadImages') /* + '?form_key=' + window.FORM_KEY */,
-            maxFilesize: 5, // MB
-            maxFiles: 1,
-            acceptedFiles: 'image/*',
+            url: self._s('urlUploadImages')  + '?form_key=' + window.FORM_KEY,
+            maxFilesize: 2, // MB
+            acceptedFiles: '.png, .jpeg, .jpg, .gif',
             init: function () {
                 this.on("addedfile", function (file) {
                     if (self.previousFile) {
@@ -35139,27 +34797,8 @@ var DD_AddPhoto_Model = DD_ModelBase.extend({
 
     initMyPhotos: function (content) {
         var self = this;
-        if(!this.contentTop) {
-            this.contentTop = $('<div />')
-                .addClass('dd-my-photo-tab-content-images-top');
-            content.append(this.contentTop);
-        }
-        if(!this.contentImages) {
-            this.contentImages = $('<div />')
-                .addClass('dd-my-photo-tab-content-images');
-            content.append(this.contentImages);
-        }
-        
-        content.addClass('tab-loading');
-        this.contentImages.html(this._('loading') + '...');
-        
-        if(this._s('importFbEnabled') && !this.importFromFbControl){
-            this.importFromFbControl = new DD_ImportFbButton(this.contentTop, content, this.contentImages);
-        }
-        if(this._s('importInstagramEnabled') && !this.importFromInstagramControl){
-            this.importFromInstagramControl = new DD_ImportInstagramButton(this.contentTop, content, this.contentImages);
-        }
-        var self = this;
+        content.html(this._('loading') + '...')
+                .addClass('tab-loading');
 
         $.ajax({
             url: this._s('myFilesPath'),
@@ -35168,16 +34807,16 @@ var DD_AddPhoto_Model = DD_ModelBase.extend({
                 .done(function (data) {
                     content.removeClass('tab-loading');
                     if (!data || data.length == 0) {
-                        self.contentImages.html(self._('no_data'))
+                        content.html(self._('no_data'))
                         content.addClass('tab-no-data');
                         return;
                     }
                     content.removeClass('tab-no-data');
-                    self.contentImages.html('');
+                    content.html('');
 
                     $.each(data, function (a, img) {
                         new DD_ImageLinkAdd({
-                            'parent': self.contentImages,
+                            'parent': content,
                             'src': img.src,
                             'width': img.width,
                             'height': img.height
@@ -35191,30 +34830,30 @@ var DD_AddPhoto_Model = DD_ModelBase.extend({
 });
 
 var DD_AddText_Model = DD_ModelBase.extend({
-
+    
     init: function (obj) {
         this.obj = obj;
         this._super(obj);
     },
-
-    getWindowTitle: function () {
+    
+    getWindowTitle: function() {
         return this._('add_text_to_image');
     },
-
-    setWindowContent: function (parent) {
+    
+    setWindowContent: function(parent) {
         this.form = new DD_windowTextForm(parent);
         this.setSaveTextEvent();
     },
-
-    setSaveTextEvent: function () {
+    
+    setSaveTextEvent: function() {
         var textarea = this.form.get().find('textarea');
         var self = this;
-
-        this.form.get().find('button').on('click', function () {
+        
+        this.form.get().find('button').on('click', function() {
             var text = textarea.val();
-            if (text.trim() == '') {
+            if(text.trim() == '') {
                 textarea.addClass('empty');
-            } else {
+            }else{
                 textarea.removeClass('empty');
                 textarea.addClass('valid');
                 new DD_Layer_Text({
@@ -35223,9 +34862,6 @@ var DD_AddText_Model = DD_ModelBase.extend({
                 self.closeWindow();
             }
         });
-        setTimeout(function () {
-            $(textarea).focus();
-        }, 0);
     }
 });
 
@@ -35396,11 +35032,10 @@ var DD_Control_Base_Model = DD_ModelBase.extend({
     calcTopPosition: function () {
         return '0';
     },
-    /*
+
     calcLeftosition: function () {
         //return '0';
     },
-    */
 
     hide: function () {
         this.obj.contentContainer.get().hide()
@@ -35412,33 +35047,6 @@ var DD_Control_Base_Model = DD_ModelBase.extend({
     }
 });
 
-var DD_Download_Model = DD_ModelBase.extend({
-    init: function (obj) {
-        this.obj = obj;
-    },
-
-    addDownloadEvent: function (mainModel) {
-        this.obj.get().on('click', function () {
-            mainModel.unselectAll();
-            var data = mainModel.getDataImg();
-            var image_data = atob(data.split(',')[1]);
-            var arraybuffer = new ArrayBuffer(image_data.length);
-            var view = new Uint8Array(arraybuffer);
-            for (var i = 0; i < image_data.length; i++) {
-                view[i] = image_data.charCodeAt(i) & 0xff;
-            }
-            try {
-                var blob = new Blob([arraybuffer], {type: 'application/octet-stream'});
-            } catch (e) {
-                var bb = new (window.WebKitBlobBuilder || window.MozBlobBuilder);
-                bb.append(arraybuffer);
-                var blob = bb.getBlob('application/octet-stream');
-            }
-            var url = (window.webkitURL || window.URL).createObjectURL(blob);
-            location.href = url;
-        });
-    }
-});
 var DD_ImageLink_Model = DD_ModelBase.extend({
 
     init: function(obj) {
@@ -35458,117 +35066,6 @@ var DD_ImageLink_Model = DD_ModelBase.extend({
     }
 });
 
-var DD_Layers_Model = DD_ModelBase.extend({
-
-    count: 0,
-    active: null,
-
-    init: function (obj) {
-        this.obj = obj;
-        this._super(obj);
-    },
-
-    getWindowTitle: function () {
-        return this._('layers');
-    },
-
-    setWindowContent: function (parent) {
-        var canvas = this._l().getHoverCanvas();
-        var objs = canvas.getObjects();
-        var self = this;
-        
-        parent.html('');
-        this.count = 0;
-        $.each(objs, function () {
-            var object = this;
-            self.drawElement(object, parent, canvas);
-        });
-        
-        if(this.count == 0) {
-            parent.html(this._('no_data'));
-        }
-    },
-
-    drawElement: function (object, parent, canvas) {
-        if (typeof (object) === 'undefined') {
-            return;
-        }
-        if (object.layerMask) {
-            return;
-        }
-
-        var panel = new DD_panel({
-            parent: parent,
-            class: 'dd-control-layer'
-        });
-
-        panel.add();
-        var type = object.isSvg ? 'svg' : object.type;
-        var innerHtml = '';
-        switch (type) {
-            case "image":
-                innerHtml += '<img src="' + object._originalElement.src + '" class="dd-control-layer-image" />'
-                this.count++;
-                break;
-            case "svg":
-                innerHtml += '<img src="' + object.src_orig + '" class="dd-control-layer-image" />'
-                this.count++;
-                break;
-            case "text":
-                innerHtml += '<span class="dd-control-layer-text">'
-                        + object.text
-                        + '</span>';
-                this.count++;
-                break;
-            case "i-text":
-                innerHtml += '<span class="dd-control-layer-text">'
-                        + object.text
-                        + '</span>';
-                this.count++;
-                break;
-        }
-
-        panel.get().html(innerHtml);
-
-        this.attachPanelClick( panel, object, canvas );
-        this.drawControls( panel, object, canvas, parent );
-    },
-
-    drawControls: function (panel, object, canvas, parent) {
-        var self = this;
-        var remove = new DD_button({
-            'parent': panel.get(),
-            'class': 'fa fa-trash'
-        });
-
-        remove.get().on('click', function (e) {
-            e.preventDefault();
-            if (object.isSvg === true) {
-                object.forEachObject(function (a) {
-                    canvas.remove(a);
-                });
-            }
-            canvas.remove(object);
-            canvas.renderAll();
-            self.setWindowContent(parent);
-        });
-    },
-
-    attachPanelClick: function (panel, object, canvas) {
-        var self = this;
-        var panel = panel.get();
-        panel.on('click', function () {
-            if(self.active) {
-               self.active.removeClass('active'); 
-            }
-            canvas.setActiveObject(object);
-            $(panel).addClass('active');
-            self.active = panel;
-        });
-    }
-
-});
-
 var DD_Main_Model = DD_ModelBase.extend({
     eventBase: 'main-panel-created',
     eventClick: 'panel-click',
@@ -35581,6 +35078,7 @@ var DD_Main_Model = DD_ModelBase.extend({
         var self = this;
 
         if (this._s('loadGoogleFonts')) {
+            
             var fonts = self.prepareFonts();
             WebFont.load({
                 google: {
@@ -35588,49 +35086,32 @@ var DD_Main_Model = DD_ModelBase.extend({
                 },
                 active: function () {
                     self.initLayers();
-                    if (obj.options.help) {
-                        self.help = $('body').dd_help({
-                            'data': obj.options.help
-                        });
-                        self.help.show();
-                        
-                    }
                 }
             });
             return;
         }
         this.initLayers();
-        if (obj.options.help) {
-            self.help = $('body').dd_help({
-                'data': obj.options.help
-            });
-            self.help.show();
-        }
-
     },
 
     registerEvents: function () {
         this._evnt().register(this.eventClick, this.obj);
         this._evnt().register(this.eventObjectChanged, this.obj);
         this._evnt().register(this.eventObjectAdded, this.obj);
-
-        this.callBackObject();
     },
 
     initLayers: function () {
         var self = this;
         this.layersObj = new DD_Layer();
-        this.idBgCanvas = 'canvas-' + this.createUUID();
-        this.idCanvasHover = 'canvas-hover-' + this.createUUID();
+        var idBgCanvas = 'canvas-' + this.createUUID();
+        var idCanvasHover = 'canvas-hover-' + this.createUUID();
         var bgCanvas = $('<canvas/>', {
-            id: this.idBgCanvas
+            id: idBgCanvas
         });
         var hoverCanvas = $('<canvas/>', {
-            id: this.idCanvasHover
+            id: idCanvasHover
         });
         var width = this.obj.options.width;
         var height = this.obj.options.height;
-        
         bgCanvas.attr({
             'width': width,
             'height': height
@@ -35644,8 +35125,8 @@ var DD_Main_Model = DD_ModelBase.extend({
                 .append(hoverCanvas);
         this.obj.self.append(div);
 
-        var bgCanvas = new fabric.Canvas(this.idBgCanvas);
-        var hoverCanvas = new fabric.Canvas(this.idCanvasHover);
+        var bgCanvas = new fabric.Canvas(idBgCanvas);
+        var hoverCanvas = new fabric.Canvas(idCanvasHover);
 
         this.layersObj.setBgCanvas(bgCanvas);
         this.layersObj.setHoverCanvas(hoverCanvas);
@@ -35665,14 +35146,11 @@ var DD_Main_Model = DD_ModelBase.extend({
         $(window).on('resize', function () {
             self.resize(width, height);
         });
-
-        $('.dd-designer-loading').hide();
         return;
     },
 
     _canvasEvents: function (hoverCanvas) {
-        var self = this; 
-        
+        var self = this;
         hoverCanvas.on('object:added', function (e) {
 
             new DD_control({
@@ -35731,20 +35209,16 @@ var DD_Main_Model = DD_ModelBase.extend({
                 e.target.controlModelCreated.remove();
             }
         });
-        hoverCanvas.on('object:clear_all', function (e) {
-            self.obj.options.onClearAll.call(null, self.obj.options.media_id)
+        
+        hoverCanvas.on('object:extra_config', function (e) {
+            e.type = 'extra_conf';
+            self.obj.options.onUpdate.call(
+                    null,
+                    e,
+                    self.obj.options.group_index,
+                    self.obj.options.media_id,
+                    'extra_conf');
         });
-        
-        fabric.util.addListener(hoverCanvas.upperCanvasEl, 'dblclick', function(e) {
-            
-            if (hoverCanvas.findTarget(e)) {
-               var objType = hoverCanvas.findTarget(e).type;
-               if (objType === 'i-text') {
-                  hoverCanvas.findTarget(e).controlModelCreated.handleActive();
-               }
-            }
-         });
-        
     },
 
     _addObjects: function (options) {
@@ -35753,18 +35227,14 @@ var DD_Main_Model = DD_ModelBase.extend({
             mask.save();
         }
         if (options.conf) {
-            var self = this;
             var last = options.conf.length;
             $(options.conf).each(function (i, obj) {
                 var notSelect = (last - 1) == i ? false : true;
                 if (obj.type === 'image') {
                     new DD_Layer_Img(null, obj, notSelect);
                 }
-                if (obj.type === 'text' || obj.type === 'i-text') {
+                if (obj.type === 'text') {
                     new DD_Layer_Text(null, obj, notSelect);
-                }
-                if (obj.isSvg === true) {
-                    new DD_Layer_Svg(obj);
                 }
             });
         }
@@ -35780,11 +35250,6 @@ var DD_Main_Model = DD_ModelBase.extend({
         if (fabricObj.controlModel) {
             newObject.controlModel = fabricObj.controlModel;
         }
-        if (fabricObj.isSvg) {
-            newObject.svgString = fabricObj.toSVG();
-            newObject.src_orig = fabricObj.src_orig;
-            newObject.isSvg = true;
-        }
 
         if (this.obj.options.onUpdate) {
             this.obj.options.onUpdate.call(
@@ -35797,60 +35262,37 @@ var DD_Main_Model = DD_ModelBase.extend({
     },
 
     resize: function (width, height) {
-        var blockWidth = $(window).width(); //magento 2 modal
-        var blockHeight = $(window).height() - 40; //magento 2 modal
-
-        this.obj.get().width(blockWidth);
-        this.obj.get().height(blockHeight);
-
-        var newWidth, newHeight, scaleFactor;
-        var bgCanvas = this.layersObj.getBgCanvas();
-        var hoverCanvas = this.layersObj.getHoverCanvas();
+        var blockWidth = this.obj.self.width();
+        var newWidth, newHeight;
+        var proportion = height / width;
+        newWidth = blockWidth;
+        newHeight = proportion * newWidth;
         if (blockWidth < width) {
-            newWidth = blockWidth;
-            newHeight = (height / width) * newWidth;
-            scaleFactor = blockWidth / this._l().getWidth();
-        }
-
-        if (blockHeight < (newHeight ? newHeight : height)) {
-            var scaleFactorH = (blockHeight) / (newHeight ? newHeight : this._l().getHeight());
-            if (scaleFactorH != 1) {
-                newHeight = blockHeight;
-                newWidth = (newHeight) * (width / height);
-                scaleFactor = (scaleFactor ? scaleFactor : 1) * scaleFactorH;
+            var bgCanvas = this.layersObj.getBgCanvas();
+            var hoverCanvas = this.layersObj.getHoverCanvas();
+            var scaleFactor = blockWidth / this._l().getWidth();
+            if (scaleFactor != 1) {
+                bgCanvas.setWidth(blockWidth);
+                bgCanvas.setHeight(newHeight);
+                bgCanvas.setZoom(scaleFactor);
+                bgCanvas.calcOffset();
+                bgCanvas.renderAll();
+                hoverCanvas.setWidth(blockWidth);
+                hoverCanvas.setHeight(newHeight);
+                hoverCanvas.setZoom(scaleFactor);
+                hoverCanvas.calcOffset();
+                hoverCanvas.renderAll();
             }
-        }
-
-        if (scaleFactor != 1 && newHeight && newWidth) {
-            bgCanvas.setWidth(newWidth);
-            bgCanvas.setHeight(newHeight);
-            bgCanvas.setZoom(scaleFactor);
-            bgCanvas.calcOffset();
-            bgCanvas.renderAll();
-            hoverCanvas.setWidth(newWidth);
-            hoverCanvas.setHeight(newHeight);
-            hoverCanvas.setZoom(scaleFactor);
-            hoverCanvas.calcOffset();
-            hoverCanvas.renderAll();
-
-            this.obj.get().width(newWidth);
-            this.obj.get().height(newHeight);
-
+            return;
         }
         return;
     },
 
     destroy: function () {
-        this._evnt().doCall('window-destroyed');
         this._evnt().unregisterAll();
         this.obj.self.parent().empty();
         this.obj.self.parent().remove();
-        
-        this._w().close();
-        this._evnt().destroyJBoxes();
-        if(this.help) {
-            this.help.destroy();
-        }
+
         delete this;
     },
 
@@ -35865,265 +35307,6 @@ var DD_Main_Model = DD_ModelBase.extend({
         });
 
         return googleFonts;
-    },
-
-    getDataImg: function () {
-        return this._mergeCanvases();
-    },
-
-    getJsonImg: function () {
-        return this._mergeCanvases(true);
-    },
-
-    unselectAll: function () {
-        var _hoverCanvas = this.layersObj.getHoverCanvas();
-        if (_hoverCanvas) {
-            _hoverCanvas.discardActiveObject().renderAll();
-        }
-    },
-
-    _getSvgLayer: function (obj) {
-        var output = $('<canvas />')
-                .attr({
-                    'width': obj.width,
-                    'height': obj.height
-                })
-                .get(0);
-
-        var octx = output.getContext('2d');
-
-    },
-
-    _mergeCanvases: function (json) {
-
-        var _bgCanvas = this.layersObj.getBgCanvas();
-        var _hoverCanvas = this.layersObj.getHoverCanvas()
-        var bgCanvas = $('#' + this.idBgCanvas).get(0);
-        var hoverCanvas = $('#' + this.idCanvasHover).get(0);
-
-        var sourceBgWidth = _bgCanvas.lowerCanvasEl.width;
-        var sourceBgHeight = _bgCanvas.lowerCanvasEl.height;
-        var sourceHoverWidth = _hoverCanvas.lowerCanvasEl.width;
-        var sourceHoverHeight = _hoverCanvas.lowerCanvasEl.height;
-        var output = $('<canvas />')
-                .attr({
-                    'width': this._l().getWidth(),
-                    'height': this._l().getHeight()
-                })
-                .get(0);
-
-        var octx = output.getContext('2d');
-
-        octx.drawImage(bgCanvas, 0, 0, sourceBgWidth, sourceBgHeight, 0, 0, output.width, output.height);
-        octx.drawImage(hoverCanvas, 0, 0, sourceHoverWidth, sourceHoverHeight, 0, 0, output.width, output.height);
-        if (!json) {
-            return output.toDataURL('png');
-        }
-
-        return []; //skip this for now!
-    }
-});
-
-var DD_Privew_Model = DD_ModelBase.extend({
-    init: function (obj) {
-        this.obj = obj;
-    },
-
-    addPreviewEvent: function (mainModel) {
-        var self = this;
-        this.obj.get().on('click', function () {
-            mainModel.unselectAll();
-            var data = mainModel.getDataImg();
-            var Pagelink = "about:blank";
-            var pwa = window.open(Pagelink, "_new");
-            pwa.document.open();
-            pwa.document.write(self.__imgSourcetoShow(data));
-            pwa.document.close();
-
-        });
-    },
-
-    __imgSourcetoShow: function (data) {
-        return "<html><head>/head><body>" +
-                "<img src='" + data + "' style='max-width:100%;' /></body></html>";
-    }
-});
-
-
-var DD_Print_model = DD_ModelBase.extend({
-    init: function (obj) {
-        this.obj = obj;
-    },
-
-    addPrintEvent: function (mainModel) {
-        var self = this;
-        this.obj.get().on('click', function () {
-            mainModel.unselectAll();
-            var data = mainModel.getDataImg();
-            var Pagelink = "about:blank";
-            var pwa = window.open(Pagelink, "_new");
-            pwa.document.open();
-            pwa.document.write(self.__imgSourcetoPrint(data));
-            pwa.document.close();
-
-        });
-    },
-
-    __imgSourcetoPrint: function (data) {
-        return "<html><head><script>function step1(){\n" +
-                "setTimeout('step2()', 10);}\n" +
-                "function step2(){window.print();window.close()}\n" +
-                "</scri" + "pt></head><body onload='step1()'>\n" +
-                "<img src='" + data + "' /></body></html>";
-    }
-});
-
-var DD_RemoveAll_model = DD_ModelBase.extend({
-    init: function (obj) {
-        this.obj = obj;
-    },
-    addClearAllEvent: function (mainModel) {
-        var self = this;
-        this.obj.get().on('click', function () {
-            var canvas = self._l().getHoverCanvas();
-            canvas.clear();
-            canvas.renderAll();
-            canvas.trigger('object:clear_all', {});
-        });
-    }
-});
-
-
-
-var DD_Share_Model = DD_ModelBase.extend({
-
-    constMargin: 10,
-
-    init: function (obj) {
-        this.obj = obj;
-        this._super(obj);
-    },
-
-    initShareFb: function (mainModel) {
-        this.mainModel = mainModel;
-        var self = this;
-        this.obj.get().on('click', function () {
-            self.sendData('facebook');
-        });
-    },
-    
-    initShareTw: function(mainModel) {
-        this.mainModel = mainModel;
-        var self = this;
-        this.obj.get().on('click', function () {
-            self.sendData('twitter');
-        });
-    },
-    
-    initSharePn: function(mainModel) {
-        this.mainModel = mainModel;
-        var self = this;
-        this.obj.get().on('click', function () {
-            self.sendData('pinterest');
-        });
-    },
-    
-    initMainClick: function() {
-        var obj = this.obj;
-        var self = this;
-        obj.get().on('click', function () {
-            
-            for(var a in obj.controlButtons) {
-                
-                var objButton = obj.controlButtons[a];
-                if(!$(this).attr('data-active')) {
-                    $(objButton.get())
-                            .css({opacity: 1.0, visibility: "hidden"})
-                            .animate({opacity: 0}, 200);
-                }else{
-                    $(objButton.get())
-                            .css({opacity: 0, visibility: "visible"})
-                            .animate({opacity: 1.0}, 200);
-                }
-            }
-            var currentButton = obj.get();
-            var buttonTop = obj.get().offset().top;
-            
-            for(var i in obj.shareButtons) {
-                var shareButton = obj.shareButtons[i];
-                var prev = $(currentButton).prev();
-                if(obj.get().next()) {
-                    var baseTop = obj.get().next().offset().top;
-                    var top = prev.offset().top - baseTop;
-
-                    if(!$(this).attr('data-active')) {
-                        $(shareButton.get())
-                                .css({top: (buttonTop-baseTop - self.constMargin), display: "block"})
-                                .animate({top: top - self.constMargin},  200);
-                    }else{
-                        $(shareButton.get())
-                                .css({top: (buttonTop-baseTop - self.constMargin), display: "none"});
-                    }
-
-                    currentButton = prev;
-                }
-                
-            }
-            
-            if($(this).attr('data-active')) {
-                $(this).removeAttr('data-active');
-                $(this).removeClass('fa-close');
-                $(this).addClass('fa-share-alt');
-            }else{
-                $(this).attr('data-active', '1');
-                $(this).addClass('fa-close');
-                $(this).removeClass('fa-share-alt');
-            }
-        });
-    },
-
-    sendData: function (type) { //fb or twitter or pinterest
-        var self = this;
-        switch (type) {
-            case 'facebook':
-                var _class = 'fa-facebook';
-                break;
-
-        }
-        var img = this.mainModel;
-        this.showLoading(_class);
-        this.mainModel.unselectAll();
-        $.ajax({
-            url: this.mainModel.shareUrl,
-            type: 'json',
-            method: 'post',
-            data: {
-                'type': type,
-                'img': this.mainModel.getDataImg()
-            }
-        })
-                .done(function (response) {
-                    self.hideLoading(_class);
-                    if(response.error) {
-                        alert(response.errMessage);
-                        return;
-                    }
-                    if(response.share_url) {
-                        window.open(response.share_url);
-                    }
-                });
-    },
-
-    showLoading: function (_class) {
-        this.obj.get().removeClass(_class)
-                .addClass('fa-circle-o-notch')
-                .addClass('fa-spin');
-    },
-
-    hideLoading: function (_class) {
-        this.obj.get().removeClass('fa-spin')
-                .removeClass('fa-circle-o-notch')
-                .addClass(_class);
     }
 });
 
@@ -36217,18 +35400,14 @@ var DD_control_text = DD_Control_Base_Model.extend({
         
 
         edit.get().on('click', function () {
-            self.showEditForm();
+            var content = self.obj.content.get();
+            content.empty();
+            var fabricObject = self.obj.options.fabricObject;
+            var text = fabricObject.text;
+            var form = new DD_windowTextForm(content, text);
+            self.obj.contentContainer.get().show();
+            self.setEditEvents(form);
         });
-    },
-    
-    showEditForm: function() {
-        var content = this.obj.content.get();
-        content.empty();
-        var fabricObject = this.obj.options.fabricObject;
-        var text = fabricObject.text;
-        var form = new DD_windowTextForm(content, text);
-        this.obj.contentContainer.get().show();
-        this.setEditEvents(form);
     },
 
     setEditEvents: function (form) {
@@ -36245,10 +35424,6 @@ var DD_control_text = DD_Control_Base_Model.extend({
                 self.obj.contentContainer.get().hide();
             }
         });
-        
-        setTimeout(function () {
-            $(textarea).focus();
-        }, 0);
     },
 
     addFontSelector: function () {
@@ -36299,10 +35474,6 @@ var DD_control_text = DD_Control_Base_Model.extend({
         _delete.get().on('click', function () {
             self.removeBase();
         });
-    },
-    
-    handleActive: function() {
-        this.showEditForm();
     }
 })
 
@@ -36436,7 +35607,7 @@ var DD_Layer_Img = DD_Layer_Base.extend({
         var src = fullCnfg ? fullCnfg.src : options.src;
         var ext = src.substr(src.lastIndexOf('.') + 1);
 
-        function ___callBack(iImg, isSvg, src_orig) {
+        function ___callBack(iImg, isSvg) {
             var parent = self.getParent()
             if (!fullCnfg) {
                 var conf = {
@@ -36445,7 +35616,6 @@ var DD_Layer_Img = DD_Layer_Base.extend({
                     selectable: options.noselectable ? false : true,
                     controlModel: 'DD_control_image',
                     centeredScaling: true,
-                    src_orig: src_orig,
                     isSvg: isSvg
                 }
                 var mask = self._l().getMask();
@@ -36506,7 +35676,7 @@ var DD_Layer_Img = DD_Layer_Base.extend({
             }, {crossOrigin: 'anonymous'});
         } else {
             fabric.loadSVGFromURL(src, function (svgobject) {
-                ___callBack(svgobject, true, src);
+                ___callBack(svgobject, true);
             });
         }
     }
@@ -36547,6 +35717,7 @@ var DD_Layer_Mask = DD_Layer_Base.extend({
         var parent = this.getParent();
         if (!conf) {
             var conf = {
+                fill: 'white',
                 opacity: 0.4,
                 layerMask: true,
                 controlModel: 'DD_control_mask',
@@ -36559,7 +35730,6 @@ var DD_Layer_Mask = DD_Layer_Base.extend({
         }
         var rect = new fabric.Rect(conf);
         parent.add(rect);
-        
         rect.notSelect = notSelect;
         if(!notSelect) {
             parent.setActiveObject(rect);
@@ -36579,7 +35749,7 @@ var DD_Layer_Mask = DD_Layer_Base.extend({
         var canvas = this._l().getHoverCanvas();
         canvas.clipTo = function (ctx) {
             var oCoords = object.oCoords;
-            ctx.strokeStyle = 'transparent';
+            ctx.strokeStyle = '#ccc';
             ctx.beginPath();
             ctx.moveTo(oCoords.tl.x, oCoords.tl.y);
             ctx.lineTo(oCoords.tr.x, oCoords.tr.y);
@@ -36589,7 +35759,7 @@ var DD_Layer_Mask = DD_Layer_Base.extend({
             ctx.stroke();
             ctx.save();
         }
-        canvas.setBackgroundColor('transparent');
+        canvas.setBackgroundColor('rgba(255, 255, 153, 0.6)');
         object.hasControls = false;
         object.selectable = false;
         if(object.controlModelCreated) {
@@ -36664,7 +35834,7 @@ var DD_Layer_Text = DD_Layer_Base.extend({
 
         conf.notSelect = notSelect;
         
-        var text = new fabric.IText(text, conf);
+        var text = new fabric.Text(text, conf);
         parent.add(text);
         
         if (!fullCnfg) {
@@ -36725,7 +35895,6 @@ var DD_AddphotoButton = DD_button.extend({
             tooltip_text: this._('add_photo'),
             windowOpener: true,
             fa: true,
-            
             tooltip: true
         }
         this._super(options);
@@ -36751,60 +35920,6 @@ var DD_AddtextButton = DD_button.extend({
     }
 })
 
-
-var DD_Bottomcontrols = DD_panel.extend({
-    object_id: 'dd-bottom-controls',
-    class_name: 'dd-designer-bottomcontrols',
-
-    init: function (parent, main, mainModel) {
-        this.parent = parent;
-        this.main = main;
-        this.mainModel = mainModel;
-        this._super({
-            'id': this.object_id,
-            'class': this.class_name,
-            'parent': parent
-        });
-        this.add();
-    },
-    
-    _addElements: function () {
-        this.addPreviewButton();
-        this.addDownloadButton();
-        this.addPrintButton();
-        this.addClearAllButton();
-    },
-    
-    addDownloadButton: function() {
-        if(!this._s('download')) {
-            return;
-        }
-        new DD_downloadButton(this.self, this.mainModel);
-    },
-    
-    addPrintButton: function() {
-        if(!this._s('print')) {
-            return;
-        }
-        new DD_printButton(this.self, this.mainModel);
-    },
-    
-    addClearAllButton: function() {
-        if(!this._s('clear_all')) {
-            return;
-        }
-        new DD_clearAllButton(this.self, this.mainModel);
-    },
-    
-    
-    addPreviewButton: function() {
-        if(!this._s('preview')) {
-            return;
-        }
-        new DD_previewButton(this.self, this.mainModel);
-        
-    }
-});
 
 var DD_Category = DD_panel.extend({
     
@@ -36834,218 +35949,16 @@ var DD_Category = DD_panel.extend({
     
 });
 
-var DD_clearAllButton = DD_button.extend({
-    class_name: 'dd-main-button fa-scissors fa',
-    model: 'DD_RemoveAll_model',
-    
-    init: function (parent, mainModel) {
-        this.mainModel = mainModel;
-        var options = {
-            parent: parent,
-            id: this.object_id,
-            class: this.class_name,
-            tooltip_text: this._('clear_all'),
-            fa: true,
-            tooltip: true,
-            tooltip_position: {
-                x: 'center',
-                y: 'top'
-            },
-            tooltip_outside: 'y'
-        }
-        this._super(options);
-    },
-    
-    
-    _callBackModel: function(model) {
-        model.addClearAllEvent(this.mainModel);
-    }
-
-});
-
-var DD_closeButton = DD_button.extend({
-    object_id: 'dd-main-close-button',
-    class_name: 'dd-main-button-cancel fa fa-times',
-    model: 'DD_Callback_Model',
-
-    init: function (parent, callback) {
-        this.callback = callback;
-        var options = {
-            parent: parent,
-            id: this.object_id,
-            class: this.class_name,
-            tooltip_text: this._('close'),
-            tooltip: true
-        }
-        this._super(options);
-    },
-
-    _callBackModel: function (model) {
-        var self = this;
-        model.destroy = function () {
-            if (self.tooltipBox) {
-                self.tooltipBox.destroy();
-            }
-        }
-        model._callbackClick();
-    }
-});
-
-
-var DD_downloadButton = DD_button.extend({
-    class_name: 'dd-main-button fa-download fa',
-    model: 'DD_Download_Model',
-    
-    init: function (parent, mainModel) {
-        this.mainModel = mainModel;
-        var options = {
-            parent: parent,
-            id: this.object_id,
-            class: this.class_name,
-            
-            tooltip_text: this._('download'),
-            fa: true,
-            tooltip: true,
-            tooltip_position: {
-                x: 'center',
-                y: 'top'
-            },
-            tooltip_outside: 'y'
-        }
-        this._super(options);
-    },
-    
-    _callBackModel: function(model) {
-        model.addDownloadEvent(this.mainModel);
-    }
-
-});
-
-var DD_historyBackButton = DD_button.extend({
-    object_id: 'dd-history-back-button',
-    class_name: 'dd-history-controls',
-    
-    init: function(parent) {
-        var options = {
-            parent: parent,
-            id: this.object_id,
-            class: this.class_name,
-            text: this._('back')
-        }
-        this._super(options);
-    }
-});
-
-
-var DD_Historycontrols = DD_panel.extend({
-    object_id: 'dd-history-controls',
-    class_name: 'dd-designer-history-controls',
-    
-    init: function (parent) {
-        this.parent = parent;
-        this._super({
-            'id': this.object_id,
-            'class': this.class_name,
-            'parent': parent
-        });
-        this.add();
-    },
-    
-    _addElements: function() {
-        this.addBackButton();
-        this.addNextButton();
-    },
-    
-    addNextButton: function() {
-        new DD_historyNextButton(this.self);
-    },
-    
-    addBackButton: function() {
-        new DD_historyBackButton(this.self);
-    }
-});
-
-var DD_historyNextButton = DD_button.extend({
-    object_id: 'dd-history-next-button',
-    class_name: 'dd-history-controls',
-    
-    init: function(parent) {
-        var options = {
-            parent: parent,
-            id: this.object_id,
-            class: this.class_name,
-            text: this._('next')
-        }
-        this._super(options);
-    }
-});
-
-
-
-var DD_ImportFbButton = DD_button.extend({
-    object_id: 'dd-import-fb-button',
-    class_name: 'dd-add-text-controls fa-facebook fa full-width',
-    model: 'DD_ImportFb_Model',
-    content: null,
-    contentImages: null,
-    
-    init: function(parent, content, contentImages) {
-        var options = {
-            parent: parent,
-            id: this.object_id,
-            class: this.class_name,
-            label: this._('import_from_fb')
-        }
-        this.content = content;
-        this.contentImages = contentImages;
-        this._super(options);
-    },
-    
-    _callBackModel: function (model) {
-        model.setClickEvents();
-    }
-})
-
-
-var DD_ImportInstagramButton = DD_button.extend({
-    object_id: 'dd-import-fb-button',
-    class_name: 'dd-add-text-controls fa-instagram fa full-width',
-    model: 'DD_ImportInstagram_Model',
-    content: null,
-    contentImages: null,
-    
-    init: function(parent, content, contentImages) {
-        var options = {
-            parent: parent,
-            id: this.object_id,
-            class: this.class_name,
-            label: this._('import_from_instagram')
-        }
-        this.content = content;
-        this.contentImages = contentImages;
-        this._super(options);
-    },
-    
-    _callBackModel: function (model) {
-        model.setClickEvents();
-    }
-})
-
-
 var DD_layerButton = DD_button.extend({
     object_id: 'dd-main-layer-button',
-    class_name: 'dd-main-button fa-database fa',
-    model: 'DD_Layers_Model',
+    class_name: 'dd-main-button',
     
     init: function(parent) {
         var options = {
             parent: parent,
             id: this.object_id,
             class: this.class_name,
-            tooltip_text: this._('layers'),
-            fa: true,
-            tooltip: true,
-            windowOpener: true
+            text: this._('layers')
         }
         this._super(options);
     }
@@ -37071,106 +35984,8 @@ var DD_main = DD_panel.extend({
     },
     
     _addElements: function() {
-        if(this._s('history')) {
-            new DD_Historycontrols(this.self);
-        }
-        new DD_Maincontrols(this.self.parent(), this);
-    },
-    
-    _callBackModel: function(model) {
-        new DD_Topcontrols(this.self.parent(), this, model);
-        new DD_Bottomcontrols(this.self.parent(), this, model);
+        new DD_setup(this.getParent(), this.options);
     }
-});
-
-var DD_Maincontrols = DD_panel.extend({
-    object_id: 'dd-main-controls',
-    class_name: 'dd-designer-maincontrols',
-
-    init: function (parent, main) {
-        this.parent = parent;
-        this.main = main;
-        this._super({
-            'id': this.object_id,
-            'class': this.class_name,
-            'parent': parent
-        });
-        this.add();
-    },
-
-    _addElements: function () {
-        if(this.main.options.onClose) {
-            this.addCloseButton(this.main.options.onClose);
-        }
-        this.addSaveButton();
-    },    
-    
-    addCloseButton: function(onClose) {
-        new DD_closeButton(this.self, onClose);
-    },
-    
-    addSaveButton: function() {
-        if(!this._s('save') || !this.main.options.onSave) {
-            return;
-        }
-        new DD_saveButton(this.self, this.main.options.onSave);
-    }
-});
-
-var DD_previewButton = DD_button.extend({
-    object_id: 'dd-main-preview-button',
-    class_name: 'dd-main-button fa fa-eye',
-    model: 'DD_Privew_Model',
-    
-    init: function(parent, mainModel) {
-        this.mainModel = mainModel;
-        var options = {
-            parent: parent,
-            id: this.object_id,
-            class: this.class_name,
-            tooltip_text: this._('preview'),
-            fa: true,
-            tooltip: true,
-            tooltip_position: {
-                x: 'center',
-                y: 'top'
-            },
-            tooltip_outside: 'y'
-        }
-        this._super(options);
-    },
-    
-    _callBackModel: function(model) {
-        model.addPreviewEvent(this.mainModel);
-    }
-});
-
-
-var DD_printButton = DD_button.extend({
-    class_name: 'dd-main-button fa-print fa',
-    model: 'DD_Print_model',
-    init: function (parent, mainModel) {
-        this.mainModel = mainModel;
-        var options = {
-            parent: parent,
-            id: this.object_id,
-            class: this.class_name,
-            tooltip_text: this._('print'),
-            fa: true,
-            tooltip: true,
-            tooltip_position: {
-                x: 'center',
-                y: 'top'
-            },
-            tooltip_outside: 'y'
-        }
-        this._super(options);
-    },
-    
-    _callBackModel: function(model) {
-        model.addPrintEvent(this.mainModel);
-    }
-
 });
 
 var DD_qrButton = DD_button.extend({
@@ -37188,282 +36003,6 @@ var DD_qrButton = DD_button.extend({
     }
 });
 
-
-var DD_saveButton = DD_button.extend({
-    object_id: 'dd-main-save-button',
-    class_name: 'dd-main-button fa-check-square fa',
-    model: 'DD_Callback_Model',
-
-    init: function (parent, callback) {
-        this.callback = callback;
-        var options = {
-            parent: parent,
-            id: this.object_id,
-            class: this.class_name,
-            tooltip_text: this._('save'),
-            fa: true,
-            tooltip: true
-        }
-        this._super(options);
-    },
-
-    _callBackModel: function (model) {
-        var self = this;
-        model.destroy = function () {
-            if (self.tooltipBox) {
-                self.tooltipBox.destroy();
-            }
-        }
-
-        model._callbackClick();
-        
-    },
-
-    showLoading: function () {
-        this.self.removeClass('fa-check-square')
-                .addClass('fa-circle-o-notch')
-                .addClass('fa-spin');
-    },
-
-    hideLoading: function () {
-        this.self.removeClass('fa-spin')
-                    .removeClass('fa-circle-o-notch')
-                    .addClass('fa-check-square');
-    }
-});
-
-
-var DD_shareButton = DD_button.extend({
-
-    object_id: 'dd-main-layer-button',
-    class_name: 'dd-main-button fa-share-alt fa',
-    model: 'DD_Share_Model',
-
-    shareButtons: [],
-
-    init: function (parent, mainModel, shareUrl, controlButtons) {
-        this.shareButtons = [];
-        
-        this.mainModel = mainModel;
-        this.mainModel.shareUrl = shareUrl;
-        var options = {
-            parent: parent,
-            id: this.object_id,
-            class: this.class_name,
-            tooltip_text: this._('share'),
-            fa: true,
-            tooltip: true
-        }
-        this.parent = parent;
-        this._super(options);
-
-        this.controlButtons = controlButtons;
-        this.addSharePanel();
-        this.addButtons();
-    },
-
-    addButtons: function () {
-        this.addShareFbButton();
-        this.addShareTwButton();
-        this.addSharePnButton();
-    },
-
-    addSharePanel: function () {
-        this.sharePanel = new DD_panel({
-            class: 'dd-share-panel',
-            parent: this.parent
-        });
-        this.sharePanel.add();
-    },
-
-    addShareFbButton: function () {
-        if (!this._s('shareFb')) {
-            return;
-        }
-        var fbButton = new DD_shareFbButton(this.sharePanel.self, this.mainModel, this.mainModel.shareUrl);
-        this.shareButtons.push(fbButton);
-    },
-
-    addShareTwButton: function () {
-        if (!this._s('shareTw')) {
-            return;
-        }
-        var twButton = new DD_shareTwButton(this.sharePanel.self, this.mainModel, this.mainModel.shareUrl);
-        this.shareButtons.push(twButton);
-    },
-    
-    addSharePnButton: function() {
-        if (!this._s('sharePn')) {
-            return;
-        }
-        var pnButton = new DD_sharePnButton(this.sharePanel.self, this.mainModel, this.mainModel.shareUrl);
-        this.shareButtons.push(pnButton);
-      
-    },
-
-    _callBackModel: function (model) {
-        model.initMainClick();
-    }
-});
-
-var DD_shareFbButton = DD_button.extend({
-    object_id: 'dd-main-layer-button',
-    class_name: 'dd-main-button fa-facebook fa dd-share-button',
-    model: 'DD_Share_Model',
-    
-    init: function(parent, mainModel, shareUrl) {
-        this.mainModel = mainModel;
-        this.mainModel.shareUrl = shareUrl;
-        var options = {
-            parent: parent,
-            id: this.object_id,
-            class: this.class_name,
-            tooltip_text: this._('share_facebook'),
-            fa: true,
-            tooltip: true
-        }
-        this._super(options);
-    },
-    
-    _callBackModel: function(model) {
-        model.initShareFb(this.mainModel);
-    }
-});
-
-
-
-var DD_sharePnButton = DD_button.extend({
-    object_id: 'dd-main-layer-button',
-    class_name: 'dd-main-button fa-pinterest fa dd-share-button',
-    model: 'DD_Share_Model',
-    
-    init: function(parent, mainModel, shareUrl) {
-        this.mainModel = mainModel;
-        this.mainModel.shareUrl = shareUrl;
-        var options = {
-            parent: parent,
-            id: this.object_id,
-            class: this.class_name,
-            tooltip_text: this._('share_pinterest'),
-            fa: true,
-            tooltip: true
-        }
-        this._super(options);
-    },
-    
-    _callBackModel: function(model) {
-        model.initSharePn(this.mainModel);
-    }
-});
-
-
-
-var DD_shareTwButton = DD_button.extend({
-    object_id: 'dd-main-layer-button',
-    class_name: 'dd-main-button fa-twitter fa dd-share-button',
-    model: 'DD_Share_Model',
-    
-    init: function(parent, mainModel, shareUrl) {
-        this.mainModel = mainModel;
-        this.mainModel.shareUrl = shareUrl;
-        var options = {
-            parent: parent,
-            id: this.object_id,
-            class: this.class_name,
-            tooltip_text: this._('share_twitter'),
-            fa: true,
-            tooltip: true
-        }
-        this._super(options);
-    },
-    
-    _callBackModel: function(model) {
-        model.initShareTw(this.mainModel);
-    }
-});
-
-
-
-var DD_Topcontrols = DD_panel.extend({
-    object_id: 'dd-top-controls',
-    class_name: 'dd-designer-topcontrols',
-    controlButtons: [],
-    
-    
-    init: function (parent, main, mainModel) {
-        this.parent = parent;
-        this.main = main;
-        this.mainModel = mainModel;
-        this._super({
-            'id': this.object_id,
-            'class': this.class_name,
-            'parent': parent
-        });
-        
-        if(typeof(this.main.options.extra_config) === 'undefined') {
-            this.main.options.extra_config = {};
-        }
-        this.add();
-        
-    },
-    
-    _addElements: function() {
-        this.addPhotoButton();
-        this.addTextButton();
-        this.addFromLibraryButton();
-        this.addLayersButton();
-        
-        this.addShareButtons();
-        
-        //this.addShareFbButton();
-    },
-    
-    addShareButtons: function() {
-        if(!this._s('shareFb') && !this._s('shareTw') && !this._s('sharePn')) {
-            return;
-        }
-        return new DD_shareButton(this.self, this.mainModel, this.main.options.settings.shareUrl, this.controlButtons);
-    },
-    
-    addLayersButton: function() {
-        if(!this._s('layers')) {
-            return;
-        }
-        var button = new DD_layerButton(this.self);
-        this.controlButtons.push(button);
-    },
-    
-    addPhotoButton: function() {
-        if(this.main.options.extra_config.photos_enabled === false) {
-            return;
-        }
-        if(this._s('addphoto') || this.main.options.extra_config.photos_enabled === true) {
-            var button = new DD_AddphotoButton(this.self);
-            this.controlButtons.push(button);
-        }
-    },
-    
-    addTextButton: function() {
-        if(this.main.options.extra_config.text_enabled === false) {
-            return;
-        }
-        if(this._s('addtext') || this.main.options.extra_config.text_enabled === true) {
-            var button = new DD_AddtextButton(this.self);
-            this.controlButtons.push(button);
-        }
-    },
-    
-    addFromLibraryButton: function(){
-        if(this.main.options.extra_config.library_enabled === false) {
-            return;
-        }
-        if(this._s('addfromlibrary') || this.main.options.extra_config.library_enabled === true) {
-            var button = new DD_AddfromLibraryButton(this.self);
-            this.controlButtons.push(button);
-        }
-    }
-    
-});
 
 var DD_windowPhotoTabs = DD_Tabs.extend({
     object_id: 'dd-add-photo-tabs',
@@ -37527,111 +36066,446 @@ var DD_windowTextForm = DD_panel.extend({
     }
 });
 
-$.fn.dd_help = function (options) {
-    this.options = $.extend({
-        'delay': 7000,
-        'defaultOutside': 'y',
-        'defaultPosition': {
-            x: 'center',
-            y: 'top'
-        },
-        data: [
-            /* 
-             * {
-             * 
-             'selector': 'jquerySelector',
-             'content' : '{content}'
-             'position': null,
-             'outside' : null
-            
-             }
-             */
-        ]
-    }, options);
+var DD_setup_model = DD_ModelBase.extend({
 
-    this.show = function () {
+    init: function (obj) {
+        this.obj = obj;
+        this.imgOptions = obj.imgOptions;
+        this._super();
+    },
 
-        var options = this.options;
-        var firstEl = options.data[0];
-        var index   = 0;
-        
-        var self = this;
+    tabActive: function (id) {
+        var content = $('#content-' + id + '');
+        content.html('');
+        switch (id) {
+            case 'dd-setup-info':
+                    this.tabInfo(content);
+                break;
+            case 'dd-setup-layer-mask':
+                    this.tabLayerMask(content);
+                break;
+            case 'dd-setup-layer-images':
+                    this.tabImages(content);
+                break;
+            case 'dd-setup-layer-texts':
+                    this.tabTexts(content);
+                break;
+            case 'dd-setup-options':
+                    this.tabOptions(content);
+                break;
+                /*
+            case 'dd-setup-layer-qrcode':
 
-        function showHelpElement(data) {
-            var cookieName = 'help-' + data.selector;
-            if($.cookie(cookieName)) {
-                index++;
-                var newEl = options['data'][index];
-                if(newEl) {
-                    showHelpElement(newEl);
-                }
-                return;
-            }
-            $.cookie(cookieName, true, { expires: 30 });
-            
-            if(data.content == '') {
-                index++;
-                var newEl = options['data'][index];
-                if(newEl) {
-                    showHelpElement(newEl);
-                }
-                return;
-            }
-            var divContainer = $('<div />').addClass('dd-help-container')
-                    .html(data.content);
-            var buttonContainer = $('<div />').addClass('dd-help-buttons');
-            
-            var help = new jBox('Tooltip', {
-                target: data.selector,
-                position: data.position ? data.position : options.defaultPosition,
-                outside: data.outside ? data.outside :options.defaultOutside,
-                closeOnMouseleave: true           
-            });
-            
-            var _close = $('<button />').text('OK');
-            _close.on('click', function() {
-                help.destroy();
-                index++;
-                var newEl = options['data'][index];
-                if(newEl) {
-                    showHelpElement(newEl);
-                }
-            });
-            
-            
-            buttonContainer.append(_close);
-            divContainer.append(buttonContainer);
-            help.setContent(divContainer);
-            help.open();
-            
-            self.showed = help;
+                break;
+                */
+            default: //options
+
+                break;
         }
-
-
-        setTimeout(showHelpElement(firstEl), options.delay);
-
-    };
+    },
     
-    this.destroy = function() {
-        if(this.showed){
-            this.showed.destroy();
-        }
+    tabOptions: function(content) {
+        new DD_setup_options(content, this.imgOptions);
+    },
+    
+    tabTexts: function(content) {
+         new DD_setup_texts(content, this.imgOptions);
+    },
+    
+    tabImages: function(content) {
+        new DD_setup_images(content, this.imgOptions);
+    },
+    
+    
+    tabLayerMask: function(content) {
+        new DD_setup_layer(content, this.imgOptions);
+    },
+    
+    tabInfo: function(content) {
+        new DD_setup_info(content, this.imgOptions);
     }
 
-    return this;
-};
+});
+
+var DD_setup_images_model = DD_AddPhoto_Model.extend({
+    
+    init: function (obj) {
+        this.obj = obj;
+        this._super(obj);
+    },
+    
+    addEditImageEvent: function(button, view) {
+        view.addWindowOpenEvent(button.get(), this, this.obj.modal, this.obj.options);
+    }
+    
+});
+
+var DD_setup_layer_model = DD_ModelBase.extend({
+
+    init: function (obj) {
+        this.obj = obj;
+        this._super();
+    },
+
+    checkedAction: function (checkbox, view) {
+        view.button.get().prop('disabled', false);
+    },
+
+    uncheckedAction: function (checkbox, view) {
+        view.button.get().prop('disabled', true);
+    },
+
+    addEditLayerEvent: function (button, view) {
+        var self = this;
+        button.get().on('click', function () {
+            if (!self._l().getMask()) {
+                return new DD_Layer_Mask();
+            }   
+            self._l().getMask().eventRestore.call();
+
+        });
+    }
+
+});
+
+var DD_setup_options_model = DD_ModelBase.extend({
+
+    hoverCanvas: null,
+
+    init: function (obj) {
+        this.obj = obj;
+        this.hoverCanvas = this._l().getHoverCanvas();
+        this._super();
+    },
+    
+    checkedAction: function (checkbox) {
+        this.hoverCanvas.fire('object:extra_config', { key: $(checkbox).attr('id'), value: true });
+    },
+
+    uncheckedAction: function (checkbox, view) {
+        this.hoverCanvas.fire('object:extra_config', { key: $(checkbox).attr('id'), value: false });
+    },
+    
+    initInputEvents: function(input) {
+        this.parseFloat(input);
+        var self = this;
+        input.on('keyup', function() {
+            var value = self.parseFloat(input);
+            self.hoverCanvas.fire('object:extra_config', { key: input.attr('id'), value: value });
+        });
+    },
+    
+    parseFloat: function(input) {
+        var val = input.val();
+        var regex = /\d*\.?\d*/g;
+        if(val) {
+            var match = val.match(regex);
+            val = match[0];
+        }
+        input.val(val);
+        
+        return val;
+    }
+
+});
+
+var DD_setup_texts_model = DD_AddText_Model.extend({
+    
+    init: function (obj) {
+        this.obj = obj;
+        this._super(obj);
+    },
+    
+    addEditTextEvent: function(button, view) {
+        view.addWindowOpenEvent(button.get(), this, this.obj.modal, this.obj.options);
+    }
+    
+});
+
+var DD_setup = DD_panel.extend({
+    object_id: 'dd-setup',
+    class_name: 'dd-setup-image',
+    model: 'DD_setup_model',
+    
+    init: function(parent, imgOptions) {
+        this.parent = parent;
+        this.imgOptions = imgOptions;
+        this._super({
+            'id': this.object_id,
+            'class': this.class_name,
+            'parent': parent
+        });
+        this.add();
+    },
+    
+    _addElements: function() {
+        new DD_setup_tabs(this.self, this.imgOptions);
+    }
+    
+});
+
+
+
+var DD_setup_images = DD_panel.extend({
+    class_name: 'dd-setup-images',
+    model: 'DD_setup_images_model',
+
+    init: function (parent, imgOptions) {
+        this.parentModel = this.model;
+        this.parent = parent;
+        this.imgOptions = imgOptions;
+        this._super({
+            'class': this.class_name,
+            'parent': parent
+        });
+        this.add();
+    },
+    
+    _addElements: function() {
+        this.self
+                .append($('<h3 />').text(this._('add_default_images')));
+        this.button = new DD_button({parent: this.self, 'text': this._('add_image'), 'fa_addon': 'fa fa-image'});
+        this.libbutton = new DD_button({
+            parent: this.self, 
+            model: 'DD_AddFromLibrary_Model', 
+            windowOpener: true, 
+            'text': this._('add_from_lib_image'), 
+            'fa_addon': 'fa fa-folder'
+        });
+    },
+    
+    _callBackModel: function (model) {
+        model.addEditImageEvent(this.button, this);
+    }
+    
+    
+});
+
+var DD_setup_info = DD_panel.extend({
+    class_name: 'dd-setup-image-info',
+
+    init: function (parent, imgOptions) {
+        this.parent = parent;
+        this.imgOptions = imgOptions;
+        this._super({
+            'class': this.class_name,
+            'parent': parent
+        });
+        this.add();
+        //this.addElements();
+    },
+    
+    _addElements: function() {
+        this.self
+                .append($('<h3 />').text(this._('product_sku') + ': ' + this.imgOptions.sku))
+                .append($('<div />').text(this._('image_src') + ': ' + this.imgOptions.src))
+                .append($('<div />').text(this._('width') + ': ' + this.imgOptions.width + 'px'))
+                .append($('<div />').text(this._('height') + ': ' + this.imgOptions.height + 'px'))
+                .append($('<div />').text(this._('media_id') + ': ' + this.imgOptions.media_id))
+                .append($('<div />').text(this._('product_id') + ': ' + this.imgOptions.product_id));
+    }
+
+
+});
+
+var DD_setup_layer = DD_panel.extend({
+    class_name: 'dd-setup-layer',
+    model: 'DD_setup_layer_model',
+
+    init: function (parent, imgOptions) {
+        this.parentModel = this.model;
+        this.parent = parent;
+        this.imgOptions = imgOptions;
+        this._super({
+            'class': this.class_name,
+            'parent': parent
+        });
+        this.add();
+    },
+    
+    _addElements: function() {
+        this.self
+                .append($('<h3 />').text(this._('configure_layer_mask')));
+        //this.checkbox = new DD_checkbox({parent: this.self, 'text': this._('enable_layer_mask'), model: this.model, view: this});
+        this.button = new DD_button({parent: this.self, 'text': this._('add_layer_mask'), 'fa_addon': 'fa fa-window-restore'});
+    },
+    
+    _callBackModel: function (model) {
+        model.addEditLayerEvent(this.button, this);
+    }
+    
+});
+
+var DD_setup_options = DD_panel.extend({
+    class_name: 'dd-setup-options',
+    setupModel: 'DD_setup_options_model',
+
+    init: function (parent, imgOptions) {
+        this.parent = parent;
+        this.imgOptions = imgOptions;
+        this.model = this.setupModel;
+        this._super({
+            'class': this.class_name,
+            'parent': parent
+        });
+        this.add();
+    },
+    
+    _addElements: function() {
+        this.self
+                .append($('<h3 />').text(this._('configuration')));
+        
+        new DD_checkbox({
+            parent: this.self, 
+            text: this._('enable_photos'), 
+            model: this.setupModel, 
+            view: this,
+            id: 'photos_enabled',
+            checked : (this._('defaultImgEnabled') && this.imgOptions.extra_config.photos_enabled !== false
+                    || this.imgOptions.extra_config.photos_enabled  ? true 
+            : false)
+        });
+        new DD_checkbox({
+            parent: this.self, 
+            text: this._('enable_text'), 
+            model: this.setupModel, 
+            view: this,
+            id: 'text_enabled',
+            checked : (this._('defaultTextEnabled') && this.imgOptions.extra_config.text_enabled !== false 
+                    || this.imgOptions.extra_config.text_enabled ? true 
+            : false)
+        });
+        new DD_checkbox({
+            parent: this.self, 
+            text: this._('enable_add_from_library'), 
+            model: this.setupModel, 
+            view: this,
+            id: 'library_enabled',
+            checked : (this._('defaultLibraryEnabled') && this.imgOptions.extra_config.library_enabled !== false 
+                    || this.imgOptions.extra_config.library_enabled ? true 
+            : false)
+        });
+        
+        this.self.append($('<hr>'));
+        
+        this.self
+                .append($('<h3 />').text(this._('prices_configuration')));
+        
+        this.layerImgPrice = new DD_inputText({
+            parent: this.self, 
+            label: this._('layer_img_price'),
+            value: (typeof(this.imgOptions.extra_config.layer_img_price) !== 'undefined') 
+                ? this.imgOptions.extra_config.layer_img_price 
+                : this._s('defaultImgPrice'),
+            id: 'layer_img_price',
+            'data-type': 'price'
+        });
+        
+        
+        this.layerTxtPrice = new DD_inputText({
+            parent: this.self, 
+            label: this._('layer_txt_price'),
+            value: (typeof(this.imgOptions.extra_config.layer_txt_price) !== 'undefined') 
+                ? this.imgOptions.extra_config.layer_txt_price 
+                :  this._s('defaultTextPrice'),
+            id: 'layer_txt_price',
+            'data-type': 'price'
+        });
+    },
+    
+    _callBackModel: function (model) {
+        this.self.find('input[type="text"]').each(function() {
+            var input = $(this);
+            model.initInputEvents(input);
+        });
+    }
+    
+});
+
+var DD_setup_tabs = DD_Tabs.extend({
+    object_id: 'dd-setup-tabs',
+    model: 'DD_setup_model',
+    
+    init: function(parent, imgOptions) {
+        var options = {
+            parent: parent,
+            id: this.object_id,
+            tabs: this.getTabs()
+        }
+        this.imgOptions = imgOptions;
+        this._super(options);
+    },
+    getTabs: function() {
+        return [
+            {
+                id: 'dd-setup-info',
+                text: this._('info')
+            },
+            {
+                id: 'dd-setup-layer-mask',
+                text: this._('layer_mask')
+            },
+            {
+                id: 'dd-setup-layer-images',
+                text: this._('images')
+            },
+            {
+                id: 'dd-setup-layer-texts',
+                text: this._('texts')
+            },
+            /*
+            {
+                id: 'dd-setup-layer-qrcode',
+                text: this._('qr_code')
+            },
+            */
+            {
+                id: 'dd-setup-options',
+                text: this._('options')
+            }
+        ];
+    }
+});
+
+
+
+var DD_setup_texts = DD_panel.extend({
+    class_name: 'dd-setup-texts',
+    model: 'DD_setup_texts_model',
+
+    init: function (parent, imgOptions) {
+        this.parentModel = this.model;
+        this.parent = parent;
+        this.imgOptions = imgOptions;
+        this._super({
+            'class': this.class_name,
+            'parent': parent
+        });
+        this.add();
+    },
+    
+    _addElements: function() {
+        this.self
+                .append($('<h3 />').text(this._('add_default_texts')));
+        this.button = new DD_button({parent: this.self, 'text': this._('add_text'), 'fa_addon': 'fa fa-pencil'});
+    },
+    
+    _callBackModel: function (model) {
+        model.addEditTextEvent(this.button, this);
+    }
+    
+});
+
 $.fn.dd_productdesigner = function (options) {
     var settings = {
-        'addphoto': true,
-        'addtext': true,
-        'addfromlibrary': true,
+        'addphoto': false,
+        'addtext': false,
+        'addfromlibrary': false,
         'history': false,
-        'layers': true,
-        'save': true,
-        'print': true,
-        'clear_all': true,
-        'preview': true,
-        'download': true,
+        'layers': false,
+        'save': false,
+        'qrcode': false,
+        'preview': false,
         'defaultFont': 'Verdana,Geneva,sans-serif',
         'defualtFontColor': '#ffffff',
         'defaultFontSize': 25,
@@ -37640,15 +36514,12 @@ $.fn.dd_productdesigner = function (options) {
         'defaultLayerMaskWidth': 40,
         'urlUploadImages': '',
         'myFilesPath': '/myfiles.php',
-        'libraryPath': '',
-        'shareFb': false,
-        'shareInst': false,
         'loadGoogleFonts': true,
-        'percentSizeImage': 20 //percentage size from canvas width,
+        'percentSizeImage': 20 //percentage size from canvas width
     };
-
+    
     settings = $.extend(settings, options.settings);
-
+    
     this.options = $.extend({
         'src': '',
         'debug': false,
@@ -37685,47 +36556,43 @@ $.fn.dd_productdesigner = function (options) {
             'rotate': 'Rotate',
             'background_color': 'Background',
             'text_color': 'Color',
-            'resize': 'Resize',
-            'text_settings': 'Text Settings',
-            'edit': 'Edit',
-            'close': 'Close',
-            'color': 'Color',
-            'download': 'Download',
-            'print': 'Print',
-            'clear_all': 'Clear All',
-            'share': 'Share',
-            'share_facebook': 'Share Facebook',
-            'share_twitter': 'Share Twitter',
-            'share_pinterest': 'Share Pinterest',
-            'import_from_fb': 'Import from Facebook',
-            'import_from_instagram': 'Import from Instagram',
-            'instagram_load_failed': 'Instagram load images failed',
-            'facebook_load_failed': 'Facebook load images failed'
-            
+            'add_from_lib_image': 'Add From Library',
+
+            //setup
+            'info': 'Image Info',
+            'layer_mask': 'Layer Mask',
+            'images': 'Images',
+            'texts': 'Texts',
+            'qr_code': 'QR Code',
+            'options': 'Options',
+            'image_src': 'Image src',
+            'width': 'Width',
+            'height': 'Height',
+            'media_id': 'Media ID',
+            'product_id': 'Product ID',
+            'product_sku': 'Product SKU',
+            'configure_layer_mask': 'Layer Mask Configuration',
+            'enable_layer_mask': 'Enable Layer Mask',
+            'add_layer_mask': 'Add/Edit Layer Mask',
+            'add_default_images': 'Add Default Images',
+            'add_image': 'Add Image',
+            'add_default_texts': 'Add default texts',
+            'configuration': 'Configuration',
+            'enable_photos': 'Enable Photos',
+            'enable_text': 'Enable Texts',
+            'enable_add_from_library': 'Enable Add From Library',
+            'prices_configuration': 'Prices Configuration',
+            'layer_img_price' : 'Image Price',
+            'layer_txt_price': 'Text Price'
         },
         //'settings': settings,
-        'onSave': null,
-        'onUpdate': null,
-        'onClose': null,
-        'onClearAll': null
+        'afterLoad': null,
+        'onUpdate': null
     }, options);
 
     this.options.settings = settings;
-
     this.onUpdate = function (callback) {
         this.options.onUpdate = callback;
-    }
-    
-    this.onClearAll = function (callback) {
-        this.options.onClearAll = callback;
-    }
-
-    this.onClose = function (callback) {
-        this.options.onClose = callback;
-    }
-
-    this.onSave = function (callback) {
-        this.options.onSave = callback;
     }
 
     this.init = function () {
@@ -37742,29 +36609,2199 @@ $.fn.dd_productdesigner = function (options) {
             app.destroy();
         }
 
-        this.unselectAll = function () {
-            return app.unselectAll();
-        }
-
-        this.getData = function () {
-            return app.getDataImg();
-        }
-
-        this.getMediaId = function () {
-            return this.options.media_id;
-        }
-
-        this.getProductId = function () {
-            return this.options.product_id;
-        }
-
-        this.getJson = function () {
-            return app.getJsonImg();
-        }
-
         return this;
     }
 
     return this;
+};
+})(jQuery);
+(function($){"use strict"; var DD_Global = {};
+var DD_object = Class.extend({
+    
+    idTranslateObject: 'dd_translate',
+    idEventObject: 'dd_event',
+    idLayersObject: 'dd_layer',
+    idSettingsObject: 'dd_settings',
+    idWindow: 'dd_window',
+    
+    init: function (id) {
+        this.id = id ? id : this.createUUID();
+    },
+    
+    setGlobal: function () {
+        DD_Global[this.id] = this;
+    },
+    getId: function () {
+        return this.id;
+    },
+    getGlobal: function (id) {
+        return DD_Global[id];
+    },
+    createUUID: function () {
+        var s = [];
+        var hexDigits = "0123456789abcdef";
+        for (var i = 0; i < 36; i++) {
+            s[i] = hexDigits.substr(Math.floor(Math.random() * 0x10), 1);
+        }
+        s[14] = "4";  // bits 12-15 of the time_hi_and_version field to 0010
+        s[19] = hexDigits.substr((s[19] & 0x3) | 0x8, 1);  // bits 6-7 of the clock_seq_hi_and_reserved to 01
+        s[8] = s[13] = s[18] = s[23] = "-";
+
+        var uuid = s.join("");
+        return uuid;
+    },
+    
+    sortArray: function(_array, new_index, old_index) {
+        var record = _array.splice(old_index, 1);
+        _array.splice(new_index, 0, record[0]);
+        return _array;
+    },
+    
+    //translation
+    _: function(key) {
+        var translateObject = this.getGlobal(this.idTranslateObject); 
+        if(translateObject) {
+            return translateObject.get(key);
+        }
+        return key;
+    },
+    //events
+    _evnt: function() {
+        return this.getGlobal(this.idEventObject);
+    },
+    //layers
+    _l: function() {
+        return this.getGlobal(this.idLayersObject);
+    },
+    //settings
+    _s: function(settingName) {
+        var settingsObject = this.getGlobal(this.idSettingsObject);
+        return settingsObject.settings[settingName];
+    },
+    //window
+    _w: function(object) {
+        if(object){
+            this.getGlobal(this.idWindow);
+        }
+        return this.getGlobal(this.idWindow).modal;
+    }
+});
+
+var DD_Event = DD_object.extend({
+    id: 'dd_event',
+    listEvents: {},
+    listEventsBase: {}, //delete all callbacks after run
+    listEventsCallbacks: {},
+    jBoxes: [],
+    
+    init: function() {
+        this._super(this.id);
+        this.setGlobal();
+    },
+    
+    register: function(eventName, obj, base) {
+        if(this.listEvents[eventName]) {
+            console.log('ERROR: event already exists('+eventName+'); Should be unique!');
+            return;
+        }
+        if(!obj) {
+            return;
+        }
+        this.listEvents[eventName] = obj;
+        if(base) {
+            this.listEventsBase[eventName] = obj; 
+        }
+    },
+    
+    unregister: function(eventName) {
+        delete this.listEvents[eventName];
+        delete this.listEventsBase[eventName];
+        delete this.listEventsCallbacks[eventName];
+    },
+    
+    registerCallback: function(eventName, func, id) {
+        id = id ? id : this.createUUID();
+        if(!this.listEventsCallbacks[eventName]) {
+            this.listEventsCallbacks[eventName] = {};
+        }
+        if(this.listEventsCallbacks[eventName][id]) {
+            return;
+        }
+        this.listEventsCallbacks[eventName][id] = func;
+    },
+    
+    doCall: function(eventName, data) {
+        var self = this;
+        if(!this.listEvents[eventName] || !this.listEventsCallbacks[eventName]) {
+            return;
+        }
+        $.each(this.listEventsCallbacks[eventName], function (i, eventCall) {
+            eventCall.call(self, self.listEvents[eventName], eventName, data);
+        });
+        if(this.listEventsBase[eventName]) {
+            delete this.listEventsCallbacks[eventName];
+        }
+    },
+    
+    getListEvents: function() {
+        return this.listEvents;
+    },
+    
+    getListEventCallback: function() {
+        return $.extend(this.listEventsBase, this.listEvents);
+    },
+    
+    isBase: function(eventName) {
+        return this.listEventsBase[eventName];
+    },
+    
+    getEventObject: function(eventName) {
+        return this.listEvents[eventName];
+    },
+    
+    getEventCallBacks: function(eventName) {
+        return this.listEventsCallbacks[eventName];
+    },
+    
+    unregisterAll: function() {
+        var self = this;
+        $.each(this.listEvents, function(eventName, obj) {
+            self.unregister(eventName);
+        });
+    },
+    addJBox: function(box) {
+        this.jBoxes.push(box);
+    },
+    
+    destroyJBoxes: function() {
+        $.each(this.jBoxes, function(i, obj) {
+            obj.destroy();
+        });
+    }
+});
+
+var DD_Translator = DD_object.extend({
+
+    id: 'dd_translate',
+    translateObject: {},
+    init: function(translate) {
+        this._super(this.id);
+        this.setGlobal();
+        this.setTranslation(translate);
+    },
+    setTranslation: function(translate) {
+        this.translateObject = translate ? translate : {};
+    },
+    get: function(key) {
+        if(typeof(this.translateObject[key]) !== 'undefined') {
+            return this.translateObject[key];
+        }
+        return key;
+    }
+});
+
+var DD_Settings = DD_object.extend({
+    id: 'dd_settings',
+    jBoxes: [],
+    init: function(settings) {
+        this._super(this.id);
+        this.settings = settings;
+        this.setGlobal();
+    }
+})
+
+var DD_Window = DD_object.extend({
+    CONST_WIN_WIDTH: 300,
+    CONST_WIN_CONTENT_EL: 'modalContent',
+    CONST_WIN_PREVIEW_EL: 'previewContent',
+
+    id: 'dd_window',
+    init: function () {
+        if (this.getGlobal(this.id)) {
+            return;
+        }
+        this._super(this.id);
+        this.createContentElement(this.CONST_WIN_CONTENT_EL);
+        this.createContentElement(this.CONST_WIN_PREVIEW_EL);
+        this.registerModal();
+        this.registerPreview();
+        this.setGlobal();
+        
+        return this.modal;
+    },
+    
+    registerPreview: function() {
+        var self = this;
+        
+        this.preview = new jBox('Modal', {
+            title: '-',
+            draggable: false,
+            overlay: false,
+            close: true,
+            content: $('#' + this.CONST_WIN_PREVIEW_EL),
+            width: $(window).width(),
+            fixed: false,
+            height: $(window).width(),
+            repositionOnOpen: false,
+            repositionOnContent: true,
+            fixed: true,
+            onOpen: function () {
+                self._evnt().doCall('preview-showed');
+            },
+            onClose: function () {
+                self._evnt().doCall('preview-closed');
+            }
+        });
+
+
+        this._evnt().register('preview-showed', this.modal);
+        this._evnt().register('preview-closed', this.modal, true);
+    },
+    
+    registerModal: function() {
+        var self = this;
+        
+        this.modal = new jBox('Modal', {
+            title: '-',
+            draggable: 'title',
+            overlay: false,
+            close: true,
+            content: $('#' + this.CONST_WIN_CONTENT_EL),
+            width: this.getWinWidth(),
+            fixed: false,
+            maxHeight: 500,
+            repositionOnOpen: false,
+            repositionOnContent: true,
+            target: $('.canvas-container'),
+            
+            onOpen: function () {
+                self._evnt().doCall('window-showed');
+            },
+            onClose: function () {
+                self._evnt().doCall('window-closed');
+            }
+        });
+
+
+        this._evnt().register('window-showed', this.modal);
+        this._evnt().register('window-closed', this.modal, true);
+        this.registerCloseWinEventCall();
+    },
+
+    getWindow: function () {
+        return this.getGlobal(this.id).modal;
+    },
+
+    getPreview: function () {
+        return this.getGlobal(this.id).preview;
+    },
+
+    getContentElement: function () {
+        return this.getGlobal(this.id).contentElement[this.CONST_WIN_CONTENT_EL];
+    },
+
+    getContentElementPreview: function () {
+        return this.getGlobal(this.id).contentElement[this.CONST_WIN_PREVIEW_EL];
+    },
+
+    getWinWidth: function () {
+        return this.CONST_WIN_WIDTH;
+    },
+
+    createContentElement: function (id) {
+        if(!this.contentElement) {
+            this.contentElement = {};
+        }
+        if($('#' + id).get(0)) {
+            this.contentElement[id] = $('#' + id);
+            return;
+        }
+        this.contentElement[id] = $('<div />').attr({
+            'id': id
+        }).css({
+            'display': 'none'
+        }).html('<p>&nbsp;</p>');
+
+        $('body').append(this.contentElement[id]);
+    },
+    
+    registerCloseWinEventCall: function() {
+        this._evnt().registerCallback('window-closed', function(window) {
+            window.isClosed = true;
+        }, 'no-reposition');
+    }
+});
+
+
+var DD_Uibase = DD_object.extend({
+    options: {},
+
+    init: function (id) {
+        this._super(id);
+    },
+
+    getParent: function () {
+        return $(this.options.parent);
+    },
+
+    get: function () {
+        return this.self;
+    },
+
+    selfBase: function (tag) {
+        tag = tag ? tag : '<div/>';
+        this.self = $(tag, {
+            id: this.getId(),
+            class: this.mainClass + ' ' + (this.options.class ? this.options.class : ''),
+        });
+    },
+
+    _add: function () {
+        this._onBeforeCreate();
+        $(this.options.parent).append(this.self);
+        if (this._addElements) {
+            this._addElements();
+        }
+        var model = this._onAfterCreate();
+        if (model) {
+            model.registerEvents();
+            return model;
+        }
+    },
+
+    _onBeforeCreate: function () {
+        this.windowInit();
+    },
+
+    _onAfterCreate: function () {
+        var model = null;
+        if (this.model) {
+            eval("try {model = new " + this.model + "(this); }catch(err) {console.log('ERROR FOR MODEL: " + this.model + "; ERRTXT: ' + err + '; err.lineNumber: ' + err.lineNumber)}");
+        }
+        if (this.options.windowOpener && model) {
+            this.addWindowOpenEvent(this, model, this.modal, this.options);
+        }
+        if (this.options.tooltip && this.options.tooltip_text && !Modernizr.touchevents) {
+            this.addTooltip();
+        }
+        if (model) {
+            return model;
+        }
+    },
+
+    addTooltip: function () {
+        var position = this.options.tooltip_position ?
+                this.options.tooltip_position : {
+                    x: 'right',
+                    y: 'center'
+                };
+
+        var outside = this.options.tooltip_outside ?
+                this.options.tooltip_outside : 'x';
+
+        this.tooltipBox = $(this.self).jBox('Tooltip', {
+            content: this.options.tooltip_text,
+            position: position,
+            outside: outside
+        });
+        
+        this._evnt().addJBox(this.tooltipBox);
+
+    },
+
+    addWindowOpenEvent: function (me, model, modal, options) {
+        var obj = me.get();
+        $(obj).on('click', function () {
+            if (!options.windowPreview) {
+                var window = modal.getWindow();
+                var contentElement = modal.getContentElement();
+            } else {
+                var window = modal.getPreview();
+                var contentElement = modal.getContentElementPreview();
+            }
+
+            contentElement.empty();
+            model.setWindowContent(contentElement);
+            model.setWindow(window);
+
+            window.setTitle(model.getWindowTitle())
+            window.open({});
+
+            if (!window.isClosed && !options.windowPreview) {
+                window.position({target: $('.canvas-container')});
+            }
+        });
+    },
+
+    windowInit: function () {
+        if (!this.winInit) {
+            this.modal = new DD_Window();
+            this.winInit = true;
+        }
+    }
+
+});
+
+var DD_Debug = DD_object.extend({
+    init: function (obj) {
+        this.obj = obj;
+        this.addDebug();
+        this.addControls();
+        this.addConsole();
+        this.attachEvents();
+    },
+    attachEvents: function () {
+        var self = this;
+        this.listEventsBtn.on('click', function () {
+            var events = self._evnt().getListEvents();
+            self.consoleInner.html('');
+            self.title.html('All registrated Events');
+            var eventsHtml = '';
+            $.each(events, function (index, event) {
+                if (event.get) {
+                    var el = event.get();
+                    eventsHtml += '<a href="javascript:void(0)" class="debugger-event" style="color:#fff;">' + index + '</a>'
+                            + ' <a href="javascript:void(0)" class="debugger-event-element">(#' + el.attr('id') + ' .' + el.get(0).className + ')</a>'
+                            + (self._evnt().isBase(index) ? ' - BASE ' : '') + '<br>';
+                } else {
+                    eventsHtml += '<a href="javascript:void(0)" class="debugger-event" style="color:#fff;">' + index
+                            + (self._evnt().isBase(index) ? ' - BASE ' : '') + '</a><br>';
+                }
+            });
+            self.consoleInner.html(eventsHtml);
+        });
+        if (typeof (this._l()) != 'undefined') {
+
+            this.listLayers.on('click', function () {
+                var layers = self._l().layers;
+                self.consoleInner.html('');
+                self.title.html('All added Layers');
+                var layersHtml = '';
+                $.each(layers, function (index, layer) {
+                    layersHtml += '<a href="javascript:void(0)" class="debugger-layer" style="color:#fff;">' + index + '. '
+                            + layer.type + '<br>' +
+                            JSON.stringify(layer.data) +
+                            '</a>'
+                            + '<br><br>';
+                });
+                self.consoleInner.html(layersHtml);
+            });
+        }
+    },
+    addDebug: function () {
+        console.log('Debug started!');
+        this.parentDiv = $('<div/>', {
+            id: 'dd-debugger',
+            class: 'debugger-container',
+            style: 'border:1px solid silver; min-height:500px;margin:20px;'
+        });
+        this.obj.after(this.parentDiv);
+    },
+    addControls: function () {
+        this.controlsContainer = $('<div/>', {
+            id: 'dd-debugger-controls',
+            class: 'debugger-controls',
+            style: 'margin:20px;'
+        });
+        this.parentDiv.append(this.controlsContainer);
+        this.listEventsBtn = $('<button/>', {
+            id: 'dd-debugger-controls-list-btn',
+            class: 'debugger-controls button',
+            text: 'List Events'
+        });
+        this.controlsContainer.append(this.listEventsBtn);
+        if (typeof (this._l()) != 'undefined') {
+            this.listLayers = $('<button/>', {
+                id: 'dd-debugger-controls-list-btn',
+                class: 'debugger-controls button',
+                text: 'List Layers'
+            });
+            this.controlsContainer.append(this.listLayers);
+        }
+    },
+    addConsole: function () {
+        this.console = $('<div/>', {
+            id: 'dd-debugger-console',
+            class: 'debugger-console',
+            style: 'border:1px solid silver; height:500px;margin:20px; overflow:auto; background: #300a24; color:#fff;padding:7px; '
+        });
+        this.parentDiv.append(this.console);
+        this.title = $('<h3/>', {
+            style: 'color:#0a9890; text-transform:uppercase; text-align:center; padding:10px 0'
+        });
+        this.console.append(this.title);
+        this.consoleInner = $('<div/>', {
+            id: 'dd-debugger-console-inner',
+        });
+        this.console.append(this.consoleInner);
+    }
+});
+
+var DD_ModelBase = DD_object.extend({
+
+    init: function () {
+        if (this.eventBase) {
+            this._evnt().register(this.eventBase, this.obj, this.base);
+        }
+    },
+    
+    registerEvents: function() {
+        if (this._registerEvents) {
+            this._registerEvents();
+        }
+        if (this._registerCalls) {
+            this._registerCalls();
+        }
+        if (this._onComplete) {
+            this._onComplete();
+        }
+        this.callBackObject();
+    },
+    
+    callBackObject: function() {
+        if(!this.obj) {
+            return;
+        }
+        if(this.obj._callBackModel) {
+            this.obj._callBackModel.call(this.obj, this);
+        }
+    },
+
+    clickEventName: function () {
+        return this.eventClick;
+    },
+
+    setWindow: function (window) {
+        this.window = window;
+    },
+
+    closeWindow: function () {
+        if (this.window) {
+            this.window.close();
+        }
+    }
+});
+
+var DD_button = DD_Uibase.extend({
+    mainClass: 'button',
+    init: function (options) {
+        this.options = $.extend(( options ? options : {} ) , this.options);
+        if(this.options.model) {
+           this.model = this.options.model; 
+        }
+        this._super(this.options.id);
+        this.self = $('<button />', {
+            id: this.getId(),
+            class: this.mainClass + ' ' + (this.options.class ? this.options.class : ''),
+            text: (this.options.text && !this.options.fa && !this.options.fa_addon  ? this.options.text : '')
+        });
+        this.add();
+        if(this.options.fa_addon){
+            var fa = $('<span />', {
+                class: this.options.fa_addon + ' extra-fa fa-lg'
+            });
+            this.self.append(fa);
+            if(this.options.text) {
+                this.self.append(this.options.text);
+            }
+        }
+    },
+    
+    add: function() {
+        this._add();
+    }
+});
+
+
+
+var DD_checkbox = DD_Uibase.extend({
+    mainClass: 'dd-checkbox-container',
+    labelClass: 'dd-label',
+    init: function (options) {
+        this.options = $.extend((options ? options : {}), this.options);
+        if (this.options.model) {
+            this.model = this.options.model;
+        }
+        this._super();
+        this.selfBase();
+        this._add();
+    },
+
+    _addElements: function () {
+        this._checkbox = $('<input />', {
+            id: this.options.id ? this.options.id : this.createUUID(),
+            class: this.mainClass + ' ' + (this.options.class ? this.options.class : ''),
+            type: 'checkbox'
+        });
+        if (this.options.checked) {
+            this._checkbox.attr({
+                'checked': true
+            }).prop('checked');
+        }
+        this.self.append(this._checkbox);
+
+        if (this.options.text) {
+            this.self.append($('<label />')
+                    .addClass(this.labelClass)
+                    .attr({'for': this._checkbox.attr('id')})
+                    .text(this.options.text));
+        }
+    },
+
+    _callBackModel: function (model) {
+        if (!model || !model.checkedAction || !model.uncheckedAction) {
+            return;
+        }
+        var self = this;
+        this._checkbox.on('click', function () {
+            if ($(this).is(':checked')) {
+                model.checkedAction.call(model, this, self.options.view);
+            } else {
+                model.uncheckedAction.call(model, this, self.options.view);
+            }
+        });
+        if(this.options.noInit) {
+            return;
+        }
+        setTimeout(function () {
+            if (self.options.checked) {
+                model.checkedAction.call(model, self._checkbox, self.options.view);
+                return;
+            }
+            model.uncheckedAction.call(model, self._checkbox, self.options.view);
+        }, 10);
+    }
+});
+
+var DD_control = DD_Uibase.extend({
+    mainClass: 'dd-helper-popup',
+    contentAdded: false,
+    init: function (options) {
+        this.options = $.extend((options ? options : {}), this.options);
+        if (!this.options.fabricObject) {
+            return;
+        }
+        if (!this.options.fabricObject.controlModel) {
+            return;
+        }
+        this.model = this.options.fabricObject.controlModel;
+        this._super(this.options.id);
+        this.self = $('<div />', {
+            id: this.getId(),
+            class: this.mainClass + ' ' + (this.options.class ? this.options.class : '')
+        });
+        this._add();
+    },
+
+    _addElements: function () {
+        this.addButtonPanel();
+        this.addContentControls();
+    },
+
+    _callBackModel: function (model) {
+        model._initBase();
+        model.hideContentEvent();
+    },
+
+    addContentControls: function () {
+        this.contentContainer = new DD_panel({
+            'parent': this.self,
+            'class': 'dd-helper-popup-content-container clearfix'
+        });
+        this.contentContainer._add();
+        this.content = new DD_panel({
+            'parent': this.contentContainer.get(),
+            'class': 'dd-helper-popup-content'
+        });
+        this.content._add();
+        this._closeContent = new DD_button({
+            'parent': this.contentContainer.get(),
+            //'text': this._('delete'),
+            'class': 'fa fa-angle-double-up dd-helper-popup-content-close'
+        });
+    },
+
+    addButtonPanel: function () {
+        this.buttons = new DD_panel({
+            'parent': this.self,
+            'class': 'dd-helper-popup-buttons clearfix'
+        });
+        this.buttons._add();
+    },
+
+    addDeleteBase: function () {
+        this._delete = new DD_button({
+            'parent': this.buttons.get(),
+            //'text': this._('delete'),
+            'class': 'fa fa-trash'
+        });
+
+        return this._delete;
+    },
+
+    addRotateBase: function () {
+        this._rotate = new DD_button({
+            'parent': this.buttons.get(),
+            //'text': this._('delete'),
+            'class': 'fa fa-refresh'
+        });
+
+        return this._rotate;
+    },
+
+    addSaveBase: function () {
+        this._save = new DD_button({
+            'parent': this.buttons.get(),
+            //'text': this._('save'),
+            'class': 'fa fa-floppy-o'
+        });
+
+        return this._save;
+    },
+
+    addSizeBase: function () {
+        this._size = new DD_button({
+            'parent': this.buttons.get(),
+            //'text': this._('save'),
+            'class': 'fa fa-arrows fa-rotate-45'
+        });
+
+        return this._size;
+    },
+
+    addEditBase: function () {
+        this._edit = new DD_button({
+            'parent': this.buttons.get(),
+            //'text': this._('save'),
+            'class': 'fa fa-edit'
+        });
+        return this._edit;
+    },
+
+    addControlBase: function (attrs) {
+        this.control = $('<input>').attr({'type': 'range'}).addClass('dd-helper-range');
+        if (attrs) {
+            this.control.attr(attrs);
+        }
+        this.content.get().append(this.control);
+    },
+
+    fontSelector: function (parent, selectedFont, onUpdate, model) {
+        var fontSelectorContainer = new DD_panel({
+            'parent': parent,
+            'class': 'dd-helper-font-selector-container'
+        });
+        
+        fontSelectorContainer._add();
+        
+        //fontSelect
+        var uid = this.createUUID();
+
+        var fontSelect = $('<div />').attr({
+                    'id': uid,
+                }).addClass('fontSelect').html('<div class="arrow-down"></div>');
+                
+        fontSelectorContainer.get()
+                .append(fontSelect);
+
+        $(fontSelect).fontSelector({
+            'hide_fallbacks': true,
+            'initial': selectedFont,
+            'selected': function (style) {
+                if(onUpdate) {
+                    onUpdate.call(this, style, model);
+                }
+            },
+            'fonts': this._s('listFonts')
+        });
+    },
+
+    colorSelector: function (parent, name, color, onUpdate, model) {
+        var self = this;
+        var colorSelectorContainer = new DD_panel({
+            'parent': parent,
+            'class': 'dd-helper-color-selector-container'
+        });
+
+        colorSelectorContainer._add();
+
+        var uid = this.createUUID();
+
+        colorSelectorContainer.get()
+                .append($('<input />').attr({
+                    'id': uid,
+                    'type': 'text'
+                }));
+
+        $("#" + uid).spectrum({
+            allowEmpty: true,
+            color: color,
+            preferredFormat: "hex",
+            showInput: true,
+            showPalette: true,
+            showSelectionPalette: true, // true by default
+            palette: [ ],
+            
+            change: function(color) {
+                if(onUpdate) {
+                    onUpdate.call(this, color, model);
+                }
+            }
+        });
+        colorSelectorContainer.get()
+                .append($('<span />').text(name)
+                        .addClass('dd-helper-color-selector-title'));
+    }
+
+});
+
+var DD_ImageLinkAdd = DD_Uibase.extend({
+    
+    mainClass: 'dd-image-link',
+    defaultImageClass: 'size-medium',
+    model: 'DD_ImageLink_Model',
+    
+    init: function(options) {
+        this.options = options;
+        this._super(this.options.id);
+        this.self = $('<a />', {
+            id: this.getId(),
+            class: this.mainClass + ' ' + (this.options.class ? this.options.class : this.defaultImageClass),
+            href: 'javascript:void(0)',
+            "data-src": options.src,
+            "data-width": options.width,
+            "data-height": options.height
+        });
+        this._add();
+    },
+    
+    _addElements: function() {
+        this.image = $('<img />', {
+            src: this.options.src
+        });
+        this.self.append( this.image );
+    },
+    
+    _callBackModel: function (model) {
+        model.setClickEvents();
+    }
+    
+});
+
+var DD_inputText = DD_Uibase.extend({
+    
+    mainClass: 'dd-input-text-container',
+    labelClass: 'dd-label',
+    defaultType: 'text',
+    
+    init: function (options) {
+        this.options = $.extend((options ? options : {}), this.options);
+        this._super();
+        this.selfBase();
+        this._add();
+    },
+    
+    _addElements: function () {
+        this._label = $('<div />').addClass(this.labelClass);
+        this._label.html(this.options.label);
+        this._input = $('<input />', {
+            id: this.options.id ? this.options.id : this.createUUID(),
+            class: this.mainClass + ' ' + (this.options.class ? this.options.class : ''),
+            type: this.options.type ? this.options.type : this.defaultType
+        });
+        if(this.options.value) {
+            this._input.val(this.options.value);
+        }
+        if(this.options['data-type']) {
+            this._input.attr({
+                'data-type': this.options['data-type']
+            });
+        }
+        this.self.append(this._label);
+        this.self.append(this._input);
+    }
+    
+});
+
+var DD_panel = DD_Uibase.extend({
+    mainClass: 'panel',
+    init: function (options) {
+        this.options = $.extend(( options ? options : {} ) , this.options);
+        if(!this.parent ) {
+            this.parent = this.options.parent;
+        }
+        this._super(this.options.id);
+        this.selfBase();
+    },
+    
+    add: function() {
+        return this._add();
+    }
+});
+
+var DD_Tabs = DD_Uibase.extend({
+    mainClass: 'tabs-container',
+    classTabs: 'tabs',
+    classTabsContentContainer: 'tab-content-container',
+    classTabsContent: 'tab-content',
+    classTabCurrent: 'current',
+
+    tabs: {},
+    tabsContent: {},
+
+    init: function (options) {
+        this.options = options;
+        this._super(this.options.id);
+        this.selfBase();
+        this._add();
+    },
+    
+    _addElements: function() {
+        this.addTabs();
+    },
+    
+    _callBackModel: function (model) {
+        var self = this;
+        this.setEvents(model);
+        if (this.current && model.tabActive) {
+            setTimeout(function () {
+                model.tabActive(self.current.attr('id'), self.currentContent);
+            }, 100);
+        }
+    },
+
+    addTabs: function () {
+        var self = this;
+        this.createTabPanel();
+        this.createTabContent();
+        $.each(this.options.tabs, function (a, tab) {
+            self.tabsContent[tab.id] = $('<div />')
+                    .attr('id', 'content-' + tab.id)
+                    .addClass(self.classTabsContent);
+            
+            self.tabs[tab.id] = $('<li />')
+                    .attr('id', tab.id)
+                    .text(tab.text)
+                    .attr('data-index', tab.id);
+            if (a == 0 && !self.options.activeTab) {
+                self.tabs[tab.id].addClass('current');
+                self.tabsContent[tab.id].addClass('current');
+                self.current = self.tabs[tab.id];
+                self.currentContent = self.tabsContent[tab.id];
+            }
+            self.tabPanel.append(self.tabs[tab.id]);
+            self.tabContent.append(self.tabsContent[tab.id]);
+            
+        });
+        
+    },
+
+    createTabPanel: function () {
+        this.tabPanel = $('<ul />')
+                .addClass(this.classTabs);
+        this.self.append(this.tabPanel);
+    },
+
+    createTabContent: function () {
+        this.tabContent = $('<div />')
+                .addClass(this.classTabsContentContainer);
+        this.self.append(this.tabContent);
+    },
+
+    setEvents: function (model) {
+        var self = this;
+        this.tabPanel.find('li').on('click', function () {
+            var id = $(this).attr('id');
+            self.tabPanel.find('.current')
+                    .removeClass('current');
+            self.tabContent.find('.current')
+                    .removeClass('current');
+            var index = parseInt($(this).attr('data-index'));
+            self.tabsContent[id]
+                    .addClass('current');
+            $(this).addClass('current');
+            
+            if (model.tabActive) {
+                model.tabActive(id, self.tabsContent[id]);
+            }
+
+        });
+    }
+});
+
+var DD_Admin_ImagesSelected_Model = DD_ModelBase.extend({
+
+    groupChangedEvent: 'image-group-changed',
+    groupSetEvent: 'image-group-setdata',
+    groupCancelEvent: 'image-group-cancel',
+    addGroupEvent: 'image-group-add',
+    removeGroupEvent: 'image-group-remove',
+    updateExtraConfEvent: 'image-group-extra-conf',
+
+    init: function (obj) {
+        this.obj = obj;
+        this._super();
+    },
+
+    _registerEvents: function () {
+        if (this._evnt().getEventObject(this.groupChangedEvent)) {
+            return;
+        }
+        this._evnt().register(this.groupChangedEvent, this.obj);
+        this._evnt().register(this.groupSetEvent, this.obj);
+        this._evnt().register(this.addGroupEvent, this.obj);
+        this._evnt().register(this.groupCancelEvent, this.obj);
+        this._evnt().register(this.removeGroupEvent, this.obj);
+        this._evnt().register(this.updateExtraConfEvent, this.obj);
+    },
+
+    _registerCalls: function () {
+        if (this._evnt().getEventCallBacks(this.groupChangedEvent)) {
+            return;
+        }
+        var self = this;
+        
+        this._evnt().registerCallback(this.updateExtraConfEvent, function (obj, eventName, data) {
+            if(obj.options.onUpdate) {
+                obj.options.onUpdate.call(obj, obj.groups);
+            }
+        });
+        
+        this._evnt().registerCallback(this.groupChangedEvent, function (obj) {
+            if (!obj.groupContainer) {
+                return;
+            }
+            obj.groupContainer.empty();
+
+            var c = 0;
+            obj.groups.each(function (group) {
+                new DD_admin_group({
+                    data: group,
+                    parent: obj.groupContainer,
+                    index: group.group_uid
+                });
+                c++;
+            });
+            
+            self._evnt().doCall(self.updateExtraConfEvent);
+            
+        });
+        this._evnt().registerCallback(this.groupSetEvent, function (obj, eventName, data) {
+            obj.groups = data;
+            self._evnt().doCall(self.updateExtraConfEvent);
+        });
+
+        this._evnt().registerCallback(this.removeGroupEvent, function (obj, eventName, group_index) {
+            var tmpGroups = obj.groups;
+            var index = self.getGroupIndexByUid(group_index);
+            tmpGroups.splice(index, 1);
+            obj.groups = tmpGroups;
+            self._evnt().doCall(self.updateExtraConfEvent);
+        });
+
+        this._evnt().registerCallback(this.addGroupEvent, function (obj, eventName, data) {
+            obj.groups[obj.groups.length] = data;
+        });
+
+        this._evnt().registerCallback(this.groupCancelEvent, function (obj, eventName, data) {
+            var button = obj.drawNoImagesSelected();
+            self.attachCustomizeButtonEvents(button);
+            self._evnt().doCall(self.updateExtraConfEvent);
+        });
+    },
+
+    _onComplete: function () {
+        if (this.obj._onComplete) {
+            this.loadGroups();
+        }
+    },
+
+    updateGroupsOrder: function (group_index, new_index) {
+        var groups = this.getGroups();
+        var groups = this.sortArray(groups, new_index, group_index);
+        this._evnt().doCall(this.groupSetEvent, groups);
+    },
+
+    updateImageConf: function (group_uid, media_id, confName, confValue) {
+
+        var group_index = this.getGroupIndexByUid(group_uid);
+        var index = this.getImgIndex(group_uid, media_id);
+        var groups = this.getGroups();
+        groups[group_index]['imgs'][index][confName] = confValue;
+        this._evnt().doCall(this.groupSetEvent, groups);
+        return groups[group_index]['imgs'][index];
+    },
+
+    getObject: function () {
+        return this._evnt().getEventObject(this.groupSetEvent);
+    },
+
+    getGroups: function () {
+        return this._evnt().getEventObject(this.groupSetEvent).groups;
+    },
+
+    cancelGroups: function () {
+        this._evnt().doCall(this.groupSetEvent, []);
+        this._evnt().doCall(this.groupCancelEvent);
+    },
+    updateGroups: function (groups) {
+        this._evnt().doCall(this.groupSetEvent, groups);
+        this._evnt().doCall(this.groupChangedEvent);
+    },
+    removeGroup: function (index) {
+        if (this.getObject().designerGroupId === index && this.getObject().designer) {
+            this.getObject().designer.destroy();
+            delete this.getObject().designer;
+            delete this.getObject().media_id;
+            delete this.getObject().designerGroupId;
+        }
+        this._evnt().doCall(this.removeGroupEvent, index);
+        this._evnt().doCall(this.groupChangedEvent);
+    },
+    addGroup: function (data) {
+        this._evnt().doCall(this.addGroupEvent, data);
+        this._evnt().doCall(this.groupChangedEvent);
+    },
+
+    addImage: function (group_uid, media_id, img) {
+        var group_index = this.getGroupIndexByUid(group_uid);
+        var groups = this.getGroups();
+        if (group_index === false) {
+            this.addGroup({
+                'product_id': img.product_id,
+                'group_uid': group_uid,
+                'imgs': [
+                    img
+                ]
+            });
+            return;
+        }
+        var index = this.getImgIndex(group_uid, media_id);
+        if (index !== false) {
+            return;
+        }
+        var imgGroup = groups[group_index].imgs;
+        var newImgIndex = Object.keys(imgGroup).length ? Object.keys(imgGroup).length : 0;
+        groups[parseInt(group_index)]['imgs'][newImgIndex] = img;
+        this.updateGroups(groups);
+    },
+
+    updateImgFabricConf: function (group_uid, media_id, fabricObj, type) {
+        if (fabricObj.mainBg) {
+            return;
+        }
+        if (fabricObj.layerMask && type === 'remove') {
+            this.removeMask(group_uid, media_id, fabricObj);
+        }
+        if (fabricObj.layerMask) {
+            this.updateMask(group_uid, media_id, fabricObj);
+        }
+        if (type === 'remove') {
+            this.removeLayer(group_uid, media_id, fabricObj);
+            return;
+        }
+        if(fabricObj.type === 'image' || fabricObj.type === 'text') {
+            this.updateLayer(group_uid, media_id, fabricObj)
+        }
+        
+    },
+
+    findLayerByUid: function (imgConf, fabricObj) {
+        var _layer = null;
+        var _index = null;
+        $.each(imgConf, function (index, layer) {
+            if (layer.uid == fabricObj.uid) {
+                _layer = layer;
+                _index = index;
+                return true;
+            }
+        });
+        return {
+            'layer': _layer,
+            'index': _index
+        };
+    },
+
+    updateLayer: function (group_uid, media_id, fabricObj) {
+        var imgConf = this.getImgConf(group_uid, media_id);
+        var layer = this.findLayerByUid(imgConf, fabricObj);
+        if (!layer.layer) {
+            imgConf.push(fabricObj);
+        } else {
+            imgConf[layer.index] = fabricObj;
+        }
+        this.updateImageConf(group_uid, media_id, 'conf', imgConf);
+    },
+
+    removeLayer: function (group_uid, media_id, fabricObj) {
+        var imgConf = this.getImgConf(group_uid, media_id);
+        var layer = this.findLayerByUid(imgConf, fabricObj);
+        var newImgConf = imgConf.splice(layer.index, 1);
+        this.updateImageConf(group_uid, media_id, 'conf', imgConf);
+    },
+    
+    updateExtraConf: function(group_uid, media_id, key, value) {
+        var extraConf = this.getImgConf(group_uid, media_id, 'extra_config');
+        extraConf[key] = value;
+        this.updateImageConf(group_uid, media_id, 'extra_config', extraConf);
+    },
+
+    updateMask: function (group_uid, media_id, fabricObj) {
+        this.updateImageConf(group_uid, media_id, 'mask', fabricObj);
+    },
+
+    removeMask: function (group_uid, media_id, fabricObj) {
+        this.updateImageConf(group_uid, media_id, 'mask', null);
+    },
+
+    getImgConf: function (group_uid, media_id, indexConf) {
+        var groups = this.getGroups();
+        var index = this.getImgIndex(group_uid, media_id);
+        var img = groups[this.getGroupIndexByUid(group_uid)]['imgs'][index];
+        if(indexConf) {
+            if(!img[indexConf]) {
+                img[indexConf] = {};
+            }
+            
+            return img[indexConf];
+        }
+        
+        if (!img['conf']) {
+            img['conf'] = [];
+        }
+        return img['conf'];
+    },
+
+    getImgIndex: function (group_uid, media_id) {
+        if (!group_uid) {
+            return false;
+        }
+        var groups = this.getGroups();
+        if (!groups[this.getGroupIndexByUid(group_uid)]) {
+            return false;
+        }
+        var imgGroup = groups[this.getGroupIndexByUid(group_uid)]['imgs'];
+        var index = false;
+        $.each(imgGroup, function (i, image) {
+            if (parseInt(image.media_id) === parseInt(media_id)) {
+                index = i;
+            }
+        });
+        return index;
+    },
+
+    removeImage: function (group_uid, media_id) {
+        var groups = this.getGroups();
+        var group_index = this.getGroupIndexByUid(group_uid);
+        var indexRemov = this.getImgIndex(group_index, media_id);
+        var imgGroup = groups[group_index]['imgs'];
+        imgGroup.splice(indexRemov, 1);
+        if (imgGroup.length == 0) {
+            this.removeGroup(group_uid);
+        } else {
+            groups[parseInt(group_index)]['imgs'] = imgGroup;
+        }
+
+        if (this.getObject().designerMediaId === media_id
+                && this.getObject().designerGroupId === group_uid) {
+            this.getObject().designer.destroy();
+            delete this.getObject().designer;
+            delete this.getObject().media_id;
+            delete this.getObject().designerGroupId;
+        }
+
+        this.updateGroups(groups);
+    },
+
+    loadGroups: function () {
+
+        if (this.getGroups()) {
+            return;
+        }
+        var self = this;
+        this._evnt().doCall('show-admin-loader');
+        $.ajax({
+            url: this.obj.options.urlImages
+                    + '?form_key=' + window.FORM_KEY,
+            data: {
+                'product_id': self._s('product_id')
+            },
+            success: function (data) {
+                if (data.error) {
+                    alert(data.errorMessage);
+                } else {
+                    if (data.data.length == 0) {
+                        self.updateGroups(data.data);
+                        var button = self.obj.drawNoImagesSelected();
+                        self.attachCustomizeButtonEvents(button);
+                        return;
+                    } else {
+                        self.obj.drawCustomizePanel();
+                        self.updateGroups(data.data);
+                    }
+                    //process groups!
+                }
+            },
+            error: function () {
+                alert("Something went while loading groups wrong!");
+            },
+            complete: function () {
+                self._evnt().doCall('hide-admin-loader');
+            },
+            cache: false
+        }, 'json');
+    },
+
+    getGroupIndexByUid: function (group_uid) {
+        var groups = this.getGroups();
+        var index = false;
+        $.each(groups, function (i, group) {
+            if (group_uid == group.group_uid) {
+                index = i;
+            }
+        });
+        return index;
+    },
+
+    attachCustomizeButtonEvents: function (button) {
+        var self = this;
+        button.on('click', function () {
+            self.obj.p_noimages.remove();
+            self.obj.panelCustomize.get().remove();
+            self.obj.drawCustomizePanel();
+        });
+    },
+
+    clearClickEvents: function (obj) {
+        var self = this;
+        obj.on('click', function () {
+            if (self.getObject().designer) {
+                self.getObject().designer.destroy();
+                delete self.getObject().designer;
+                delete self.getObject().media_id;
+                delete self.getObject().designerGroupId;
+            }
+            self.updateGroups([]);
+        });
+    },
+
+    removeGroupClick: function (obj) {
+        var self = this;
+        obj.on('click', function () {
+            var remove = obj.attr('data-remove');
+            self.removeGroup(remove);
+        });
+    },
+
+    addGroupCancelClick: function (obj) {
+        var self = this;
+        obj.on('click', function () {
+            if (self.getObject().designer) {
+                self.getObject().designer.destroy();
+                delete self.getObject().designer;
+                delete self.getObject().media_id;
+                delete self.getObject().designerGroupId;
+            }
+            self.cancelGroups();
+        });
+    }
+
+});
+
+var DD_admin_group_image_model = DD_Admin_ImagesSelected_Model.extend({
+
+    setImageSize: function (img, group_id, media_id) {//group_index, media_id, conf
+        var sizes = this.getImgSizes(img);
+        return this.updateImageConf(group_id, media_id, 'sizes', sizes);
+    },
+
+    getImgSizes: function (element) {
+        if (element.naturalWidth != undefined && element.naturalWidth != '' && element.naturalWidth != 0) {
+            this.width = element.naturalWidth;
+            this.height = element.naturalHeight;
+        } else if (element.width != undefined && element.width != '' && element.width != 0) {
+            this.width = element.width;
+            this.height = element.height;
+        } else if (element.clientWidth != undefined && element.clientWidth != '' && element.clientWidth != 0) {
+            this.width = element.clientWidth;
+            this.height = element.clientHeight;
+        } else if (element.offsetWidth != undefined && element.offsetWidth != '' && element.offsetWidth != 0) {
+            this.width = element.offsetWidth;
+            this.height = element.offsetHeight;
+        }
+
+        return {
+            'width': parseInt(this.width),
+            'height': parseInt(this.height)
+        }
+    },
+
+    clickRemove: function (el) {
+        var self = this;
+        el.on('click', function () {
+            var group = el.attr('data-group');
+            var media_id = el.attr('data-remove');
+            self.removeImage(group, media_id);
+
+        });
+    },
+
+    onUpdate: function (fabricObj, group_uid, media_id, type) {
+        if (type === 'extra_conf') {
+            this.updateExtraConf(group_uid, media_id, fabricObj.key, fabricObj.value);
+            return;
+        }
+        this.updateImgFabricConf(group_uid, media_id, fabricObj, type);
+    },
+
+    clickEdit: function (el, options) {
+        var self = this;
+
+        var urlUploadImages = this._s('urlUploadImages');
+        var percentSizeImage = this._s('percentSizeImage');
+        var defaultFontSize = this._s('defaultFontSize');
+        var defaultFont = this._s('defaultFont');
+        var defualtFontColor = this._s('defualtFontColor');
+        var defaultLayerMaskWidth = this._s('defaultLayerMaskWidth');
+        var percentSizeFromMask = this._s('percentSizeFromMask');
+        var onUpdate = this.onUpdate.bind(this);
+        var group_index = el.attr('data-group');
+        var listFonts = this._s('listFonts');
+        var myFilesPath = this._s('myFilesPath');
+        var defaultImgEnabled = this._s('defaultImgEnabled');
+        var defaultTextEnabled = this._s('defaultTextEnabled');
+        var defaultLibraryEnabled = this._s('defaultLibraryEnabled');
+        var defaultTextPrice = this._s('defaultTextPrice');
+        var defaultImgPrice = this._s('defaultImgPrice');
+        var libraryPath = this._s('libraryPath');
+
+
+        el.on('click', function () {
+            $('#dd_designer').html('');
+            $('#dd_designer').empty();
+            var designer = $('#dd_designer').dd_productdesigner({
+                'src': options.src,
+                'width': options.sizes.width,
+                'height': options.sizes.height,
+                'sku': options.sku,
+                'product_id': options.product_id,
+                'media_id': options.media_id,
+                'group_index': group_index,
+                'mask': options.mask,
+                'conf': options.conf,
+                'extra_config': (options.extra_config ? options.extra_config : {}),
+                'settings': {
+                    'urlUploadImages': urlUploadImages,
+                    'percentSizeImage': percentSizeImage,
+                    'defualtFontColor': defualtFontColor,
+                    'defaultFont': defaultFont,
+                    'defaultFontSize': defaultFontSize,
+                    'defaultLayerMaskWidth': defaultLayerMaskWidth,
+                    'percentSizeFromMask': percentSizeFromMask,
+                    'listFonts': listFonts,
+                    'myFilesPath': myFilesPath,
+
+                    'defaultImgEnabled': defaultImgEnabled,
+                    'defaultTextEnabled': defaultTextEnabled,
+                    'defaultLibraryEnabled': defaultLibraryEnabled,
+                    'defaultTextPrice': defaultTextPrice,
+                    'defaultImgPrice': defaultImgPrice,
+                    'libraryPath': libraryPath
+                }
+
+            });
+            $('html, body').animate({
+                scrollTop: $("#dd_designer").offset().top - 100
+            }, 500);
+
+            designer.onUpdate(onUpdate);
+            self.getObject().designer = designer.init();
+
+            self.getObject().designerMediaId = options.media_id;
+            self.getObject().designerGroupId = group_index;
+        });
+    }
+
+});
+
+var DD_Admin_Image_Model = DD_Admin_ImagesSelected_Model.extend({
+
+    class_selected: 'selected',
+
+    registerImage: function (obj) {
+        var imgCnt = obj.self;
+        this.data = obj.imgOptions;
+        if (this.getImgIndex(this.data.group_index, this.data.media_id) !== false) {
+            this.selectImage(imgCnt);
+        }
+        this.registerClickEvent(imgCnt);
+    },
+
+    registerClickEvent: function (imgCnt) {
+        var self = this;
+        imgCnt.on('click', function () {
+            self.selectImage(imgCnt);
+        });
+    },
+
+    selectImage: function (imgCnt) {
+        if (imgCnt.hasClass('selected')) {
+            imgCnt.removeClass('selected');
+            this.removeImage(this.data.group_index, this.data.media_id);
+        } else {
+            imgCnt.addClass('selected');
+            this.addImage(this.data.group_index, this.data.media_id, this.data);
+        }
+    }
+});
+
+var DD_Admin_ImagesLoader_Model = DD_ModelBase.extend({
+    
+    eventShow: 'show-admin-loader',
+    eventHide: 'hide-admin-loader',
+    
+    init: function (obj) {
+        this.obj = obj;
+        this._super();
+    },
+    
+    _registerEvents: function () {
+        this._evnt().register(this.eventShow, this.obj);
+        this._evnt().register(this.eventHide, this.obj);
+    },
+    
+    _registerCalls: function(){
+        var self = this;
+        this._evnt().registerCallback(this.eventShow, function() {
+            self.obj
+                .get(0)
+                .show();
+        });
+        this._evnt().registerCallback(this.eventHide, function() {
+            self.obj
+                .get(0)
+                .hide();
+        });
+    }
+    
+});
+
+var DD_Admin_loadimages_model = DD_Admin_ImagesSelected_Model.extend({
+
+    class_container: 'dd-admin-loadimages-container',
+    class_loading: 'dd-admin-loadimages-loading',
+    modelCheckbox: 'DD_Admin_loadimages_model',
+
+    init: function (obj) {
+        this.obj = obj;
+        this._super(obj);
+    },
+
+    getWindowTitle: function () {
+        return this._('select_images');
+    },
+
+    setWindowContent: function (parent) {
+        this.parent = parent;
+        var container = new DD_panel({
+            'class': this.class_container,
+            'parent': parent
+        });
+        container.add();
+
+        this.container = container.get();
+        parent.append(this.container);
+        this.loadImages();
+    },
+
+    prepareGroupsData: function () {
+        var groups = this.getGroups();
+        var dataGroups = {};
+        if (groups && groups.length) {
+            $.each(groups, function (i, group) {
+                dataGroups[group.product_id] = group.group_uid;
+            });
+        }
+        return dataGroups;
+    },
+    
+    checkedAction: function(checkbox) {
+        var parent = $(checkbox).parent().parent();
+        parent.find('.dd-admin-product-image').each(function() {
+            if(!$(this).hasClass('selected')) {
+                $(this).trigger('click');
+            }
+        });
+    },
+    
+    uncheckedAction: function(checkbox) {
+        var parent = $(checkbox).parent().parent();
+        parent.find('.dd-admin-product-image').each(function() {
+            if($(this).hasClass('selected')) {
+                $(this).trigger('click');
+            }
+        });
+    },
+    
+    appendSelectAll: function() {
+        var checkBox = new DD_checkbox({
+            'model': this.modelCheckbox,
+            'text': this._('select_all'),
+            'parent': this.container,
+            'noInit': true
+        });
+    },
+
+    loadImages: function () {
+        this.showLoading();
+        var self = this;
+        $.ajax({
+            url: this._s('urlLoadImages')
+                    + '?form_key=' + window.FORM_KEY,
+            data: {
+                'product_sku': this._s('psku'),
+                'product_id': this._s('product_id'),
+                'groups': this.prepareGroupsData()
+            },
+            success: function (data) {
+                if (data.error) {
+                    alert(data.errorMessage);
+                    return;
+                }
+                if (data.success && data.parent) {
+                    self.container.append($('<h2 />').html(self._('configure_images') + ' ' + data.parent.product_name + '(' + data.parent.psku + ')'));
+                    self.appendSelectAll();
+                    $.each(data.data, function (i, row) {
+                        new DD_admin_image_row(self.container, row.imgs, row.extra);
+                    });
+                }
+            },
+            error: function () {
+                alert("Something went wrong!");
+            },
+            complete: function () {
+                self.hideLoading();
+            },
+            cache: false
+        }, 'json');
+    },
+
+    hideLoading: function () {
+        this.loading.remove();
+    },
+
+    showLoading: function () {
+        var loading = new DD_panel({
+            'class': this.class_loading,
+            'parent': this.container
+        });
+        loading.add();
+
+        this.loading = loading.get();
+    }
+});
+
+
+var DD_admin_group = DD_panel.extend({
+    class_name: 'dd-admin-group',
+    class_name_remove: 'dd-admin-group-remove fa fa-trash-o',
+    class_name_select_img: 'dd-admin-select-img fa fa-picture-o',
+    class_img_container: 'dd-admin-group-img-container',
+    class_header: 'dd-admin-group-hreader',
+    model: 'DD_Admin_ImagesSelected_Model',
+    //modelLoadImages: 'DD_Admin_loadimages_model',
+
+    init: function (options) {
+        this.options = options;
+        this._super({
+            'class': this.class_name
+        });
+        this.add();
+    },
+
+    _addElements: function () {
+        this.addHeader();
+        this.addRemove();
+        this.addImages();
+    },
+    
+    _callBackModel: function (model) {
+        model.removeGroupClick(this.remove.get(0));
+    },
+
+    addHeader: function() {
+        var header = new DD_panel({
+            class: this.class_header,
+            parent: this.self
+        });
+        header.add();
+        if(this.options && this.options.data && this.options.data.imgs) {
+            header.get().html(this.options.data.imgs[0].sku);
+        }
+    },
+
+    addImages: function () {
+        var imgContainer = new DD_panel({
+            class: this.class_img_container,
+            parent: this.self
+        });
+        imgContainer.add();
+
+        var index = this.options.index;
+        $.each(this.options.data.imgs, function (i, img) {
+            img.group_index = index;
+            new DD_admin_group_image(imgContainer.get(), img);
+        });
+    },
+
+    addRemove: function () {
+        this.remove = new DD_button({
+            'class': this.class_name_remove,
+            'text': this._('remove'),
+            'parent': this.self,
+            'fa': true
+        });
+        this.remove.get(0).attr({
+            'data-remove': this.options.index
+        });
+    }
+});
+
+var DD_admin_loader_images = DD_panel.extend({
+    
+    class_name: 'dd-admin-designer-container',
+    model: 'DD_Admin_ImagesLoader_Model',
+    
+    init: function (parent) {
+        var self = this;
+        this.parent = parent;
+        this._super({
+            'class': this.class_name,
+            'parent': parent
+        });
+        this.add();
+    }
+     
+});
+
+var DD_admin_main = DD_panel.extend({
+    
+    object_id: 'dd-admin-main-panel',
+    class_name: 'dd-admin-main-container',
+    
+    init: function (parent, options) {
+        var self = this;
+        this.options = options;
+        this.parent = parent;
+        this._super({
+            'id': this.object_id,
+            'class': this.class_name,
+            'parent': parent
+        });
+        this.add();
+    },
+    
+    _addElements: function() {
+        this.addLoader();
+        this.addImagesSelectedPanel();
+    },
+    
+    addImagesSelectedPanel: function() {
+        this.options.parent = this.self;
+        this.modelSelectedImages = new DD_admin_selected_images({
+            'parent': this.self,
+            'urlImages': this.options.urlImages,
+            'product_sku': this.options.psku,
+            'onUpdate': this.options.onUpdate
+        });
+        
+    },
+    
+    addLoader: function() {
+        new DD_admin_loader_images(this.self);
+    },
+    
+    getSelectedImagesModel: function() {
+        return this.modelSelectedImages;
+    }
+    
+})
+
+var DD_admin_selected_images = DD_panel.extend({
+    
+    class_name: 'dd-admin-designer-selected',
+    model: 'DD_Admin_ImagesSelected_Model',
+    class_no_image_selected: 'dd-admin-no-selected',
+    class_button_customize: 'dd-admin-images-customize',
+    class_group_container: 'dd-admin-group-container',
+    groups: null,
+    _onComplete: true, 
+    
+    init: function (options) {
+        var self = this;
+        this.options  = options;
+        this._super({
+            'class': this.class_name
+        });
+        this.add();
+    },
+    
+    drawNoImagesSelected: function() {
+        if(this.groupsPanel) {
+           this.groupsPanel.remove(); 
+        }
+        if(this.groupContainer){
+            this.groupContainer.remove();
+        }
+        this.p_noimages = $('<p />', {
+            id: this.getId(),
+            class: this.class_no_image_selected,
+            text: this._('default_main_image')
+        });
+        this.self.append(this.p_noimages);
+        this.panelCustomize = new DD_panel({
+            'parent': this.self
+        });
+        this.panelCustomize.add();
+        var buttonCustomize = new DD_button({
+            'class': this.class_button_customize,
+            'text': this._('configure_images'), 
+            'parent': this.panelCustomize.get(),
+            'fa_addon': 'fa fa-cogs'
+        });
+        return buttonCustomize.get();
+    },
+    
+    drawCustomizePanel: function() {
+        var groupsPanel = new DD_admin_groups_panel({parent: this.self});
+        this.groupsPanel = groupsPanel.get();
+        
+        var groupContainer = new DD_panel({
+            'parent': this.self,
+            'class': this.class_group_container
+        });
+        groupContainer.add();
+        this.groupContainer = groupContainer.get();
+    }
+    
+});
+
+var DD_admin_groups_panel = DD_panel.extend({
+    
+    class_name: 'dd-admin-groups-panel',
+    model: 'DD_Admin_ImagesSelected_Model',
+    
+    init: function (options) {
+        this.options  = options;
+        this._super({
+            'class': this.class_name
+        });
+        this.add();
+    },
+    
+    _addElements: function() {
+        this.addEditImgButton();
+        this.addClearButton();
+        this.addCancelButton();
+    },
+   
+    addEditImgButton: function(){
+        new DD_admin_image_button(
+            this.self
+        );
+    },
+    
+    addClearButton: function() {
+        new DD_admin_clear_button(
+            this.self
+        );
+    },
+    
+    addCancelButton: function() {
+        new DD_admin_groupcancel_button(
+            this.self
+        );
+    }
+
+});
+
+var DD_admin_clear_button = DD_button.extend({
+    class_name: 'dd-admin-clear-button',
+    model: 'DD_Admin_ImagesSelected_Model',
+
+    init: function (parent) {
+        var options = {
+            parent: parent,
+            class: this.class_name,
+            text: this._('clear_all'),
+            fa_addon: ' fa fa-times '
+        }
+        this._super(options);
+    },
+
+    _callBackModel: function (model) {
+        model.clearClickEvents(this.self);
+    }
+
+
+});
+
+/*
+ * var DD_admin_group_button= DD_button.extend({
+    class_name: 'dd-admin-group-button',
+    model: 'DD_Admin_ImagesSelected_Model',
+
+    init: function (parent) {
+        var options = {
+            parent: parent,
+            class: this.class_name,
+            text: this._('add_group'),
+            fa_addon: 'fa fa-folder-open-o'
+        }
+        this._super(options);
+    },
+    
+    _callBackModel: function(model) {
+        model.addEmptyGroupClick(this.self);
+    }
+
+});
+*/
+
+
+var DD_admin_group_image = DD_panel.extend({
+    model: 'DD_admin_group_image_model',
+    class_name_remove: 'dd-admin-image-remove fa fa-trash-o',
+    class_name_edit: 'dd-admin-image-edit fa fa-pencil-square-o',
+
+    class_name: 'dd-admin-group-image',
+
+    init: function (imgContainer, options) {
+        this.options = options;
+        this._super({
+            'class': this.class_name,
+            'parent': imgContainer
+        });
+        this.add();
+        
+    },
+
+    _callBackModel: function (model) {
+
+        var self = this;
+        this.img = $('<img />').attr('src', this.options.src)
+                .load(function () {
+                    self.options = model.setImageSize(this, self.options.group_index, self.options.media_id);
+                    self.addRemove();
+                    self.addEdit();
+                    model.clickEdit(self.edit.get(0), self.options);
+                    model.clickRemove(self.remove.get(0));
+                });
+
+        this.self.append(this.img);
+
+    },
+    
+    addRemove: function () {
+        if (this.remove) {
+            return;
+        }
+        this.remove = new DD_button({
+            'class': this.class_name_remove,
+            'text': this._('remove'),
+            'parent': this.self,
+            'fa': true
+        });
+
+        this.remove.get(0).attr({
+            'data-remove': this.options.media_id,
+            'data-group': this.options.group_index
+        });
+    },
+
+    addEdit: function () {
+        if (this.edit) {
+            return;
+        }
+        this.edit = new DD_button({
+            'class': this.class_name_edit,
+            'text': this._('edit'),
+            'parent': this.self,
+            'fa': true
+        });
+
+        this.edit.get(0).attr({
+            'data-edit': this.options.media_id,
+            'data-group': this.options.group_index
+        });
+
+    }
+
+});
+
+var DD_admin_groupcancel_button= DD_button.extend({
+    class_name: 'dd-admin-groupcancel-button',
+    model: 'DD_Admin_ImagesSelected_Model',
+
+    init: function (parent) {
+        var options = {
+            parent: parent,
+            class: this.class_name,
+            text: this._('cancel'),
+            fa_addon: 'fa fa-minus-circle'
+        }
+        this._super(options);
+    },
+
+    _callBackModel: function (model) {
+        model.addGroupCancelClick(this.self);
+    }
+
+});
+
+
+var DD_admin_image_button = DD_button.extend({
+    model: 'DD_Admin_loadimages_model',
+    class_name: 'dd-admin-image-button',
+
+    init: function (parent) {
+        this._super({
+            'class': this.class_name,
+            'parent': parent,
+            'text': this._('add_edit_image'),
+            'fa_addon': 'fa fa-image',
+            'windowOpener': true,
+            'windowPreview': true
+        });
+        
+    }
+
+});
+
+var DD_admin_image = DD_panel.extend({  
+    class_name: 'dd-admin-product-image',
+    class_selected: 'fa fa-check-square-o',
+    class_unselected: 'fa fa-square-o',
+    model: 'DD_Admin_Image_Model',
+    
+    init: function (parent, imgOptions) {
+        this.imgOptions  = imgOptions;
+        
+        this._super({
+            'class': this.class_name,
+            'parent': parent
+        });
+        this.add();
+    },
+    
+    _addElements: function() {
+        this.addImage(this);
+    },
+    
+    _callBackModel: function (model) {
+        model.registerImage(this);
+    },
+    
+    addImage: function(){
+        this.img = $('<img />').attr('src', this.imgOptions.src);
+        this.self.append(this.img);
+        this.addSelectedIcons();
+    },
+    
+    
+    addSelectedIcons: function() {
+        this.self.append($('<span />').addClass(this.class_selected));
+        this.self.append($('<span />').addClass(this.class_unselected));
+    }
+});
+var DD_admin_image_row = DD_panel.extend({
+
+    class_name: 'dd-admin-product-image-row clearfix',
+
+    init: function (parent, imgs, rowOptions) {
+        this.imgs = imgs;
+        if (rowOptions) {
+            this.rowOptions = rowOptions;
+            if (!this.rowOptions.group_index || this.rowOptions.group_index == 0) {
+                this.rowOptions.group_index = this.createUUID();
+            }
+        }
+        this._super({
+            'class': this.class_name,
+            'parent': parent
+        });
+        this.add();
+    },
+
+    _addElements: function () {
+        if (typeof (this.imgs) == 'undefined' || this.imgs.length == 0) {
+            this.self.append($('<div />').html(this.rowOptions.no_images_text));
+            return;
+        }
+        this.self.append($('<h3 />').html(this.rowOptions.product_name + '(' + this.rowOptions.psku + ')'));
+        this.addImages();
+    },
+
+    addImages: function () {
+        var me = this;
+        $.each(this.imgs, function (i, img) {
+            img.group_index = me.rowOptions.group_index;
+            new DD_admin_image(me.self, img);
+        });
+    }
+})
+
+$.fn.dd_productdesigner_admin = function (options) {
+    
+    this.options = $.extend({
+        'urlImages': '',
+        'translator': {
+            'default_main_image': 'By default shows main product image',
+            'configure_images': 'Configure Images',
+            'add_group': 'Add Group',
+            'clear_all': 'Clear All',
+            'cancel': 'Cancel',
+            'save': 'Save',
+            'remove': 'Remove',
+            'image': 'Image',
+            'select_images': 'Select Images',
+            'edit': 'Edit',
+            'add_edit_image': 'Add/Edit Image',
+            'configure_images': 'Configure Images',
+            'select_all': 'Select/Unselect All'
+        },
+        
+        'settings': {
+            'psku': '',
+            'urlLoadImages': '',
+            'product_id': '',
+            'urlUploadImages': '',
+            
+            'urlSaveData': '',
+            'percentSizeImage': '',
+            'percentSizeFromMask': 70,
+            'defaultFont': 'Verdana,Geneva,sans-serif',
+            
+            'defualtFontColor': '#ffffff',
+            'defaultFontSize': 20,
+            'listFonts': [],
+            'defaultLayerMaskWidth': 50
+        },
+        'onUpdate': null
+    }, options);
+    
+    new DD_Translator(this.options.translator);
+    new DD_Event();
+    new DD_Settings(this.options.settings);
+    
+    new DD_admin_main(this, this.options);
+    
+    if(this.options.debug) {
+        new DD_Debug(this);
+    }
+    
+    
+    return this;
+    
 };
 })(jQuery);

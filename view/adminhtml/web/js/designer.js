@@ -52,7 +52,9 @@ define([
                     'defaultTextEnabled': data.defaultTextEnabled,
                     'defaultLibraryEnabled': data.defaultLibraryEnabled,
                     'defaultTextPrice': data.defaultTextPrice,
-                    'defaultImgPrice': data.defaultImgPrice
+                    'defaultImgPrice': data.defaultImgPrice,
+                    
+                    'libraryPath': data.libraryPath
                     
                 },
                 
