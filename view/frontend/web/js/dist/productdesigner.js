@@ -36122,7 +36122,8 @@ var DD_Share_Model = DD_ModelBase.extend({
                 'type': type,
                 'img': this.mainModel.getDataImg(),
                 'share_config': JSON.stringify(config),
-                'product_id': this.mainModel.obj.options.product_id,
+                'product_id': this.mainModel.obj.options.parent_product_id,
+                
                 'form_key': $('[name="form_key"]').val()
             }
         })
