@@ -33,6 +33,12 @@
                 after="product.info"
             />
         </referenceContainer>
+        <referenceBlock name="opengraph.general">
+            <action method="setTemplate">
+                <argument name="template" xsi:type="string">Develodesign_Designer::opengraph/general.phtml</argument>
+            </action>  
+        </referenceBlock>
+        
     </body>
 
 </page>

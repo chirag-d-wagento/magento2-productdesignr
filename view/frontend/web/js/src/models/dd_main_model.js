@@ -4,6 +4,7 @@ var DD_Main_Model = DD_ModelBase.extend({
     eventObjectChanged: 'object-changed',
     eventObjectAdded: 'object-added',
     base: true,
+    mainConfig: {},
     init: function (obj) {
         this.obj = obj;
         this._super();
@@ -88,6 +89,7 @@ var DD_Main_Model = DD_ModelBase.extend({
         });
 
         this._canvasEvents(hoverCanvas);
+        
         this._addObjects(this.obj.options);
 
         this.resize(width, height);
@@ -192,7 +194,7 @@ var DD_Main_Model = DD_ModelBase.extend({
                 if (obj.type === 'text' || obj.type === 'i-text') {
                     new DD_Layer_Text(null, obj, notSelect);
                 }
-                if (obj.isSvg === true) {
+                if (obj.isSvg == true) {
                     new DD_Layer_Svg(obj);
                 }
             });

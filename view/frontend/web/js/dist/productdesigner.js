@@ -35575,6 +35575,7 @@ var DD_Main_Model = DD_ModelBase.extend({
     eventObjectChanged: 'object-changed',
     eventObjectAdded: 'object-added',
     base: true,
+    mainConfig: {},
     init: function (obj) {
         this.obj = obj;
         this._super();
@@ -35659,6 +35660,7 @@ var DD_Main_Model = DD_ModelBase.extend({
         });
 
         this._canvasEvents(hoverCanvas);
+        
         this._addObjects(this.obj.options);
 
         this.resize(width, height);
@@ -35763,7 +35765,7 @@ var DD_Main_Model = DD_ModelBase.extend({
                 if (obj.type === 'text' || obj.type === 'i-text') {
                     new DD_Layer_Text(null, obj, notSelect);
                 }
-                if (obj.isSvg === true) {
+                if (obj.isSvg == true) {
                     new DD_Layer_Svg(obj);
                 }
             });
@@ -36084,22 +36086,44 @@ var DD_Share_Model = DD_ModelBase.extend({
 
     sendData: function (type) { //fb or twitter or pinterest
         var self = this;
+        if(this.mainModel.mainConfig != null) {
+            var config = this.mainModel.mainConfig[this.mainModel.obj.options.media_id];
+        }
         switch (type) {
             case 'facebook':
                 var _class = 'fa-facebook';
                 break;
+                
+            case 'twitter': 
+                var _class = 'fa-twitter';
+                break;
+                
+            case 'pinterest': 
+                var _class = 'fa-pinterest';
+                break;
 
         }
-        var img = this.mainModel;
+        
+        if(typeof(config) == 'undefined') {
+            alert(this._('no_design_for_share'));
+            this.hideLoading(_class);
+            return;
+        }
+        
         this.showLoading(_class);
         this.mainModel.unselectAll();
+        
         $.ajax({
             url: this.mainModel.shareUrl,
             type: 'json',
             method: 'post',
+            
             data: {
                 'type': type,
-                'img': this.mainModel.getDataImg()
+                'img': this.mainModel.getDataImg(),
+                'share_config': JSON.stringify(config),
+                'product_id': this.mainModel.obj.options.product_id,
+                'form_key': $('[name="form_key"]').val()
             }
         })
                 .done(function (response) {
@@ -36615,6 +36639,7 @@ var DD_Layer_Mask = DD_Layer_Base.extend({
 var DD_Layer_Svg = DD_Layer_Base.extend({
     
     init: function (conf) {
+        
         var parent = this.getParent();
         var self = this;
         var svgString = conf.svgString;
@@ -37700,7 +37725,8 @@ $.fn.dd_productdesigner = function (options) {
             'import_from_fb': 'Import from Facebook',
             'import_from_instagram': 'Import from Instagram',
             'instagram_load_failed': 'Instagram load images failed',
-            'facebook_load_failed': 'Facebook load images failed'
+            'facebook_load_failed': 'Facebook load images failed',
+            'no_design_for_share': 'Create design for share it'
             
         },
         //'settings': settings,
@@ -37729,11 +37755,14 @@ $.fn.dd_productdesigner = function (options) {
     }
 
     this.init = function () {
+        
         new DD_Translator(this.options.translator);
         new DD_Settings(this.options.settings);
         new DD_Event();
         var main = new DD_main(this, this.options);
         var app = main.create();
+        
+        app.mainConfig = null;
         if (this.options.debug) {
             new DD_Debug(this);
         }
@@ -37760,6 +37789,10 @@ $.fn.dd_productdesigner = function (options) {
 
         this.getJson = function () {
             return app.getJsonImg();
+        }
+        
+        this.setMainConfig = function(_config) {
+            app.mainConfig = _config;
         }
 
         return this;

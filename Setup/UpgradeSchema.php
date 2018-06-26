@@ -9,19 +9,24 @@ use Magento\Eav\Setup\EavSetup;
 use Magento\Eav\Setup\EavSetupFactory;
 use Magento\Framework\Setup\ModuleDataSetupInterface;
 
-class UpgradeSchema implements UpgradeSchemaInterface {
+class UpgradeSchema implements UpgradeSchemaInterface
+{
 
     const LONG_BLOB_TYPE = 'longblob';
 
     public function __construct(
-    \Magento\Store\Model\StoreManagerInterface $storeManager, \Magento\Framework\App\Config\ScopeConfigInterface $scopeConfig, EavSetupFactory $eavSetupFactory
-    ) {
+        \Magento\Store\Model\StoreManagerInterface $storeManager, 
+        \Magento\Framework\App\Config\ScopeConfigInterface $scopeConfig, 
+        EavSetupFactory $eavSetupFactory
+    )
+    {
         $this->_storeManager = $storeManager;
         $this->_scopeConfig = $scopeConfig;
         $this->eavSetupFactory = $eavSetupFactory;
     }
 
-    public function upgrade(SchemaSetupInterface $setup, ModuleContextInterface $context) {
+    public function upgrade(SchemaSetupInterface $setup, ModuleContextInterface $context)
+    {
 
         $setup->startSetup();
         if (version_compare($context->getVersion(), '1.0.1') < 0) {
@@ -54,10 +59,46 @@ class UpgradeSchema implements UpgradeSchemaInterface {
             $this->changeColumnToLongBlob($setup);
         }
 
+        if (version_compare($context->getVersion(), '1.2.1') < 0) {
+            $this->createShareTable($setup);
+        }
+
         $setup->endSetup();
     }
 
-    protected function changeColumnToLongBlob($setup) {
+    protected function createShareTable($setup)
+    {
+
+        $table_share = $setup->getConnection()
+                ->newTable($setup->getTable('dd_productdesigner_share'))
+                ->addColumn(
+                    'share_id', \Magento\Framework\DB\Ddl\Table::TYPE_INTEGER, null, ['identity' => true, 'unsigned' => true, 'nullable' => false, 'primary' => true, 'autoincrement' => true], 'Autoincrement Id'
+                )
+                ->addColumn(
+                    'share_unique_id', \Magento\Framework\DB\Ddl\Table::TYPE_TEXT, 255, ['nullable' => false], 'Share Image Id'
+                )
+                ->addColumn(
+                    'system_product_id', \Magento\Framework\DB\Ddl\Table::TYPE_INTEGER, null, ['nullable' => false], 'Magento product Id'
+                )
+                ->addColumn(
+                    'share_config', \Magento\Framework\DB\Ddl\Table::TYPE_TEXT, null, ['nullable' => false], 'Configuration JSON for share image'
+                )
+                ->addColumn(
+                    'share_url', \Magento\Framework\DB\Ddl\Table::TYPE_TEXT, null, ['default' => null, 'nullable' => true], 'PNG Image url'
+                )
+                ->addColumn(
+                    'share_url_full', \Magento\Framework\DB\Ddl\Table::TYPE_TEXT, null, ['default' => null, 'nullable' => true], 'Full Share url'
+                )
+                ->addColumn(
+                    'created_time', \Magento\Framework\DB\Ddl\Table::TYPE_DATETIME, null, ['nullable' => true, 'default' => null], 'Time of creation'
+                )
+
+        ;
+        $setup->getConnection()->createTable($table_share);
+    }
+
+    protected function changeColumnToLongBlob($setup)
+    {
         $setup->getConnection()->changeColumn(
                 $setup->getTable('dd_productdesigner_tmp_designs'), 'png_blob', 'png_blob', [
             'type' => \Magento\Framework\DB\Ddl\Table::TYPE_BLOB,
@@ -72,7 +113,8 @@ class UpgradeSchema implements UpgradeSchemaInterface {
         );
     }
 
-    protected function initMediaIdField($setup) {
+    protected function initMediaIdField($setup)
+    {
         $setup->getConnection()->addColumn(
                 $setup->getTable('dd_productdesigner_tmp_designs'), 'media_id', [
             'type' => \Magento\Framework\DB\Ddl\Table::TYPE_INTEGER,
@@ -82,7 +124,8 @@ class UpgradeSchema implements UpgradeSchemaInterface {
         );
     }
 
-    protected function initExtraConfField($setup) {
+    protected function initExtraConfField($setup)
+    {
         $setup->getConnection()->addColumn(
                 $setup->getTable('dd_productdesigner_image'), 'extra_config', [
             'type' => \Magento\Framework\DB\Ddl\Table::TYPE_TEXT,
@@ -92,7 +135,8 @@ class UpgradeSchema implements UpgradeSchemaInterface {
         );
     }
 
-    protected function initOrderTable($setup) {
+    protected function initOrderTable($setup)
+    {
         $table_orders = $setup->getConnection()
                 ->newTable($setup->getTable('dd_productdesigner_order'))
                 ->addColumn(
@@ -106,7 +150,8 @@ class UpgradeSchema implements UpgradeSchemaInterface {
         $setup->getConnection()->createTable($table_orders);
     }
 
-    protected function initFeildProductId($setup) {
+    protected function initFeildProductId($setup)
+    {
         $setup->getConnection()->addColumn(
                 $setup->getTable('dd_productdesigner_cart_items'), 'magento_product_id', [
             'type' => \Magento\Framework\DB\Ddl\Table::TYPE_INTEGER,
@@ -116,7 +161,8 @@ class UpgradeSchema implements UpgradeSchemaInterface {
         );
     }
 
-    protected function initTmpDesignTable($setup) {
+    protected function initTmpDesignTable($setup)
+    {
 
         $table_tmp_designs = $setup->getConnection()
                 ->newTable($setup->getTable('dd_productdesigner_tmp_designs'))
@@ -147,7 +193,8 @@ class UpgradeSchema implements UpgradeSchemaInterface {
         $setup->getConnection()->createTable($table_tmp_designs);
     }
 
-    protected function initDesignCartItemsTable($setup) {
+    protected function initDesignCartItemsTable($setup)
+    {
 
         $table_design_cart_items = $setup->getConnection()
                 ->newTable($setup->getTable('dd_productdesigner_cart_items'))
@@ -186,7 +233,8 @@ class UpgradeSchema implements UpgradeSchemaInterface {
         $setup->getConnection()->createTable($table_design_cart_items);
     }
 
-    protected function initFieldGroupUid($setup) {
+    protected function initFieldGroupUid($setup)
+    {
         $setup->getConnection()->addColumn(
                 $setup->getTable('dd_productdesigner_image_groups'), 'group_uid', [
             'type' => \Magento\Framework\DB\Ddl\Table::TYPE_TEXT,
@@ -196,7 +244,8 @@ class UpgradeSchema implements UpgradeSchemaInterface {
         );
     }
 
-    protected function initFieldImageSrc($setup) {
+    protected function initFieldImageSrc($setup)
+    {
         $setup->getConnection()->addColumn(
                 $setup->getTable('dd_productdesigner_image'), 'image_src', [
             'type' => \Magento\Framework\DB\Ddl\Table::TYPE_TEXT,

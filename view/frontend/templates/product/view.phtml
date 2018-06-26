@@ -124,14 +124,15 @@
                 var conf = findConfLayer(media_id, fabricObj);
                 if (type === 'remove') {
                     configuredMediaProducts[media_id].splice(conf.index, 1);
+                    designer.setMainConfig(configuredMediaProducts);
                     return;
                 }
-                console.log( fabricObj.type );
                 if (fabricObj.type === 'image' || fabricObj.type === 'text' || fabricObj.type === 'i-text' || fabricObj.isSvg) {
                     if (typeof (configuredMediaProducts[media_id]) === 'undefined') {
                         configuredMediaProducts[media_id] = [];
                     }
                     configuredMediaProducts[media_id][conf.index] = fabricObj;
+                    designer.setMainConfig(configuredMediaProducts);
                 }
             }
 
@@ -313,6 +314,11 @@
             }
 
             function initDesigner(img, skipOpen) {
+            
+                <?php if($block->getShareDesign()): ?>
+                     img.conf = <?php echo $block->getShareDesign() ?>
+                <?php endif; ?>        
+            
                 img.conf = configuredMediaProducts[img.media_id] ? configuredMediaProducts[img.media_id]
                         : img.conf;
 

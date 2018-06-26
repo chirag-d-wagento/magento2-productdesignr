@@ -1,6 +1,7 @@
 var DD_Layer_Svg = DD_Layer_Base.extend({
     
     init: function (conf) {
+        
         var parent = this.getParent();
         var self = this;
         var svgString = conf.svgString;

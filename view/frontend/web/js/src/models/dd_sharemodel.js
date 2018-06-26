@@ -87,22 +87,44 @@ var DD_Share_Model = DD_ModelBase.extend({
 
     sendData: function (type) { //fb or twitter or pinterest
         var self = this;
+        if(this.mainModel.mainConfig != null) {
+            var config = this.mainModel.mainConfig[this.mainModel.obj.options.media_id];
+        }
         switch (type) {
             case 'facebook':
                 var _class = 'fa-facebook';
                 break;
+                
+            case 'twitter': 
+                var _class = 'fa-twitter';
+                break;
+                
+            case 'pinterest': 
+                var _class = 'fa-pinterest';
+                break;
 
         }
-        var img = this.mainModel;
+        
+        if(typeof(config) == 'undefined') {
+            alert(this._('no_design_for_share'));
+            this.hideLoading(_class);
+            return;
+        }
+        
         this.showLoading(_class);
         this.mainModel.unselectAll();
+        
         $.ajax({
             url: this.mainModel.shareUrl,
             type: 'json',
             method: 'post',
+            
             data: {
                 'type': type,
-                'img': this.mainModel.getDataImg()
+                'img': this.mainModel.getDataImg(),
+                'share_config': JSON.stringify(config),
+                'product_id': this.mainModel.obj.options.product_id,
+                'form_key': $('[name="form_key"]').val()
             }
         })
                 .done(function (response) {

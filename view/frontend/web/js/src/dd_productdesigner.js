@@ -78,7 +78,8 @@ $.fn.dd_productdesigner = function (options) {
             'import_from_fb': 'Import from Facebook',
             'import_from_instagram': 'Import from Instagram',
             'instagram_load_failed': 'Instagram load images failed',
-            'facebook_load_failed': 'Facebook load images failed'
+            'facebook_load_failed': 'Facebook load images failed',
+            'no_design_for_share': 'Create design for share it'
             
         },
         //'settings': settings,
@@ -107,11 +108,14 @@ $.fn.dd_productdesigner = function (options) {
     }
 
     this.init = function () {
+        
         new DD_Translator(this.options.translator);
         new DD_Settings(this.options.settings);
         new DD_Event();
         var main = new DD_main(this, this.options);
         var app = main.create();
+        
+        app.mainConfig = null;
         if (this.options.debug) {
             new DD_Debug(this);
         }
@@ -138,6 +142,10 @@ $.fn.dd_productdesigner = function (options) {
 
         this.getJson = function () {
             return app.getJsonImg();
+        }
+        
+        this.setMainConfig = function(_config) {
+            app.mainConfig = _config;
         }
 
         return this;
