@@ -85,7 +85,10 @@ $.fn.dd_productdesigner = function (options) {
             'enable_add_from_library': 'Enable Add From Library',
             'prices_configuration': 'Prices Configuration',
             'layer_img_price' : 'Image Price',
-            'layer_txt_price': 'Text Price'
+            'layer_txt_price': 'Text Price',
+            'photos_configuration': 'Photos Configuration',
+            'text_configuration': 'Text Configuration',
+            'add_from_library_configuration': 'Library Configuration'
         },
         //'settings': settings,
         'afterLoad': null,

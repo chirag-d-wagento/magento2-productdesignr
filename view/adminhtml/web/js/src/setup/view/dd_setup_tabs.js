@@ -29,12 +29,6 @@ var DD_setup_tabs = DD_Tabs.extend({
                 id: 'dd-setup-layer-texts',
                 text: this._('texts')
             },
-            /*
-            {
-                id: 'dd-setup-layer-qrcode',
-                text: this._('qr_code')
-            },
-            */
             {
                 id: 'dd-setup-options',
                 text: this._('options')

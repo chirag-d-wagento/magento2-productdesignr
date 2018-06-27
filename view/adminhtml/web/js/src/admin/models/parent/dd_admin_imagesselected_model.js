@@ -96,7 +96,12 @@ var DD_Admin_ImagesSelected_Model = DD_ModelBase.extend({
         var group_index = this.getGroupIndexByUid(group_uid);
         var index = this.getImgIndex(group_uid, media_id);
         var groups = this.getGroups();
-        groups[group_index]['imgs'][index][confName] = confValue;
+        if(confValue !== null) {
+            groups[group_index]['imgs'][index][confName] = confValue;
+        }else{
+            groups[group_index]['imgs'][index][confName] = null;
+            delete groups[group_index]['imgs'][index][confName];
+        }
         this._evnt().doCall(this.groupSetEvent, groups);
         return groups[group_index]['imgs'][index];
     },
@@ -161,6 +166,7 @@ var DD_Admin_ImagesSelected_Model = DD_ModelBase.extend({
         }
         if (fabricObj.layerMask && type === 'remove') {
             this.removeMask(group_uid, media_id, fabricObj);
+            return;
         }
         if (fabricObj.layerMask) {
             this.updateMask(group_uid, media_id, fabricObj);
@@ -169,7 +175,7 @@ var DD_Admin_ImagesSelected_Model = DD_ModelBase.extend({
             this.removeLayer(group_uid, media_id, fabricObj);
             return;
         }
-        if(fabricObj.type === 'image' || fabricObj.type === 'text') {
+        if(fabricObj.type === 'image' || fabricObj.type === 'text' || fabricObj.isSvg) {
             this.updateLayer(group_uid, media_id, fabricObj)
         }
         
@@ -205,7 +211,8 @@ var DD_Admin_ImagesSelected_Model = DD_ModelBase.extend({
     removeLayer: function (group_uid, media_id, fabricObj) {
         var imgConf = this.getImgConf(group_uid, media_id);
         var layer = this.findLayerByUid(imgConf, fabricObj);
-        var newImgConf = imgConf.splice(layer.index, 1);
+        imgConf.splice(layer.index, 1);
+        
         this.updateImageConf(group_uid, media_id, 'conf', imgConf);
     },
     
@@ -228,7 +235,7 @@ var DD_Admin_ImagesSelected_Model = DD_ModelBase.extend({
         var index = this.getImgIndex(group_uid, media_id);
         var img = groups[this.getGroupIndexByUid(group_uid)]['imgs'][index];
         if(indexConf) {
-            if(!img[indexConf]) {
+            if(!img[indexConf] || img[indexConf] == '') {
                 img[indexConf] = {};
             }
             
@@ -311,6 +318,7 @@ var DD_Admin_ImagesSelected_Model = DD_ModelBase.extend({
                     //process groups!
                 }
             },
+            
             error: function () {
                 alert("Something went while loading groups wrong!");
             },

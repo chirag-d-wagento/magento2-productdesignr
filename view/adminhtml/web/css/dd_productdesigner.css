@@ -3439,6 +3439,39 @@ ul.tabs li.current {
   padding: 30px 0;
   text-align: center;
 }
+/* accordions */
+.accordion ul.tabs {
+  list-style: none;
+  padding: 0;
+}
+.accordion ul.tabs .inner {
+  padding-left: 1em;
+  overflow: hidden;
+  display: none;
+}
+.accordion ul.tabs .inner.show {
+  /*display: block;*/
+}
+.accordion ul.tabs li {
+  padding: 1px;
+}
+.accordion ul.tabs li.current {
+  background: transparent;
+}
+.accordion ul.tabs li a.toggle {
+  width: 100%;
+  display: block;
+  background: rgba(0, 0, 0, 0.78);
+  color: #fefefe;
+  padding: .75em;
+  border-radius: 0.15em;
+  transition: background .3s ease;
+  font-weight: bold;
+  text-align: left;
+}
+.accordion ul.tabs li a.toggle:hover {
+  background: rgba(0, 0, 0, 0.9);
+}
 .dd-image-link {
   position: relative;
 }
@@ -3743,6 +3776,13 @@ ul.tabs li.current {
 }
 .dd-setup-image #dd-setup-tabs ul li {
   width: 19.5%;
+}
+.dd-setup-image #dd-setup-tabs .accordion ul li {
+  width: 100%;
+}
+.dd-setup-image #dd-setup-tabs .accordion ul li .tab-content {
+  text-align: left;
+  padding: 10px;
 }
 .dd-setup-image .tab-content {
   padding: 15px 0;

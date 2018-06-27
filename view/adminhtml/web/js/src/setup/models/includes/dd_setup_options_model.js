@@ -12,10 +12,18 @@ var DD_setup_options_model = DD_ModelBase.extend({
         this.hoverCanvas.fire('object:extra_config', { key: $(checkbox).attr('id'), value: true });
     },
 
-    uncheckedAction: function (checkbox, view) {
+    uncheckedAction: function (checkbox) {
         this.hoverCanvas.fire('object:extra_config', { key: $(checkbox).attr('id'), value: false });
     },
     
+    keyupAction: function(input) {
+        var value = this.parseFloat(input);
+        console.log(value);
+        this.hoverCanvas.fire('object:extra_config', { key: input.attr('id'), value: value });
+    },
+    
+    
+    /*
     initInputEvents: function(input) {
         this.parseFloat(input);
         var self = this;
@@ -24,9 +32,10 @@ var DD_setup_options_model = DD_ModelBase.extend({
             self.hoverCanvas.fire('object:extra_config', { key: input.attr('id'), value: value });
         });
     },
+    */
     
     parseFloat: function(input) {
-        var val = input.val();
+        var val = $(input).val();
         var regex = /\d*\.?\d*/g;
         if(val) {
             var match = val.match(regex);

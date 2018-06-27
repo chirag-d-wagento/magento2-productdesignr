@@ -6,6 +6,9 @@ var DD_inputText = DD_Uibase.extend({
     
     init: function (options) {
         this.options = $.extend((options ? options : {}), this.options);
+        if (this.options.model) {
+            this.model = this.options.model;
+        }   
         this._super();
         this.selfBase();
         this._add();
@@ -29,6 +32,16 @@ var DD_inputText = DD_Uibase.extend({
         }
         this.self.append(this._label);
         this.self.append(this._input);
+    },
+    
+    _callBackModel: function (model) {
+        if (!model || !model.keyupAction) {
+            return;
+        }
+        var self = this;
+        this._input.on('keyup', function () {
+            model.keyupAction.call(model, $(this));
+        });
     }
     
 });

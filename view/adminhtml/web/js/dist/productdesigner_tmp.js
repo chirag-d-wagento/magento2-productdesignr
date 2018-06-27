@@ -949,6 +949,9 @@ var DD_inputText = DD_Uibase.extend({
     
     init: function (options) {
         this.options = $.extend((options ? options : {}), this.options);
+        if (this.options.model) {
+            this.model = this.options.model;
+        }   
         this._super();
         this.selfBase();
         this._add();
@@ -972,6 +975,16 @@ var DD_inputText = DD_Uibase.extend({
         }
         this.self.append(this._label);
         this.self.append(this._input);
+    },
+    
+    _callBackModel: function (model) {
+        if (!model || !model.keyupAction) {
+            return;
+        }
+        var self = this;
+        this._input.on('keyup', function () {
+            model.keyupAction.call(model, $(this));
+        });
     }
     
 });
@@ -999,26 +1012,39 @@ var DD_Tabs = DD_Uibase.extend({
     classTabsContent: 'tab-content',
     classTabCurrent: 'current',
 
+    isAccordion: false,
+    accordionAnimation: 350,
+
     tabs: {},
     tabsContent: {},
 
     init: function (options) {
+        if (options.isAccordion) {
+            this.isAccordion = true;
+            this.mainClass += ' accordion';
+        }
         this.options = options;
         this._super(this.options.id);
         this.selfBase();
         this._add();
     },
-    
-    _addElements: function() {
+
+    _addElements: function () {
         this.addTabs();
     },
-    
+
     _callBackModel: function (model) {
         var self = this;
         this.setEvents(model);
+        
         if (this.current && model.tabActive) {
             setTimeout(function () {
-                model.tabActive(self.current.attr('id'), self.currentContent);
+                if (!self.isAccordion) {
+                    model.tabActive(self.current.attr('id'), self.currentContent);
+                }else{
+                    self.current.find('.toggle')
+                            .trigger('click');
+                }
             }, 100);
         }
     },
@@ -1026,27 +1052,41 @@ var DD_Tabs = DD_Uibase.extend({
     addTabs: function () {
         var self = this;
         this.createTabPanel();
-        this.createTabContent();
+        if (!this.isAccordion) {
+            this.createTabContent();
+        }
         $.each(this.options.tabs, function (a, tab) {
             self.tabsContent[tab.id] = $('<div />')
                     .attr('id', 'content-' + tab.id)
                     .addClass(self.classTabsContent);
-            
+
             self.tabs[tab.id] = $('<li />')
                     .attr('id', tab.id)
-                    .text(tab.text)
+                    //.text(tab.text)
                     .attr('data-index', tab.id);
+            
+            if (self.isAccordion) {
+                self.tabs[tab.id].append($('<a />').text(tab.text).addClass('toggle'));
+            } else {
+                self.tabs[tab.id].text(tab.text)
+            }
             if (a == 0 && !self.options.activeTab) {
                 self.tabs[tab.id].addClass('current');
                 self.tabsContent[tab.id].addClass('current');
                 self.current = self.tabs[tab.id];
                 self.currentContent = self.tabsContent[tab.id];
             }
+            if (self.isAccordion) {
+                self.tabsContent[tab.id].addClass('inner');
+                self.tabs[tab.id]
+                        .append(self.tabsContent[tab.id]);
+            } else {
+                self.tabContent.append(self.tabsContent[tab.id]);
+            }
             self.tabPanel.append(self.tabs[tab.id]);
-            self.tabContent.append(self.tabsContent[tab.id]);
             
         });
-        
+
     },
 
     createTabPanel: function () {
@@ -1063,22 +1103,45 @@ var DD_Tabs = DD_Uibase.extend({
 
     setEvents: function (model) {
         var self = this;
-        this.tabPanel.find('li').on('click', function () {
-            var id = $(this).attr('id');
-            self.tabPanel.find('.current')
-                    .removeClass('current');
-            self.tabContent.find('.current')
-                    .removeClass('current');
-            var index = parseInt($(this).attr('data-index'));
-            self.tabsContent[id]
-                    .addClass('current');
-            $(this).addClass('current');
-            
-            if (model.tabActive) {
-                model.tabActive(id, self.tabsContent[id]);
-            }
+        if (!this.isAccordion) {
+            this.tabPanel.find('li').on('click', function () {
+                var id = $(this).attr('id');
+                if (!self.isAccordion) {
+                    self.tabPanel.find('.current')
+                            .removeClass('current');
+                    self.tabContent.find('.current')
+                            .removeClass('current');
+                    var index = parseInt($(this).attr('data-index'));
+                    self.tabsContent[id]
+                            .addClass('current');
+                    $(this).addClass('current');
+                }
 
-        });
+                if (model.tabActive) {
+                    model.tabActive(id, self.tabsContent[id]);
+                }
+
+            });
+        } else {
+            this.tabPanel.find('.toggle').on('click', function (e) {
+                e.preventDefault();
+                var $this = $(this);
+                var id = $this.parent().attr('id');
+                
+                if (model.tabActive) {
+                    model.tabActive(id, self.tabsContent[id]);
+                }
+                if ($this.next().hasClass('show')) {
+                    $this.next().removeClass('show');
+                    $this.next().slideUp(self.accordionAnimation);
+                } else {
+                    $this.parent().parent().find('li .inner').removeClass('show');
+                    $this.parent().parent().find('li .inner').slideUp(self.accordionAnimation);
+                    $this.next().toggleClass('show');
+                    $this.next().slideToggle(self.accordionAnimation);
+                }
+            });
+        }
     }
 });
 
@@ -2445,22 +2508,6 @@ var DD_main = DD_panel.extend({
     }
 });
 
-var DD_qrButton = DD_button.extend({
-    object_id: 'dd-main-qrcode-button',
-    class_name: 'dd-main-button',
-    
-    init: function(parent) {
-        var options = {
-            parent: parent,
-            id: this.object_id,
-            class: this.class_name,
-            text: this._('add_qrcode')
-        }
-        this._super(options);
-    }
-});
-
-
 var DD_windowPhotoTabs = DD_Tabs.extend({
     object_id: 'dd-add-photo-tabs',
     model: 'DD_AddPhoto_Model',
@@ -2584,6 +2631,116 @@ var DD_setup_model = DD_ModelBase.extend({
 
 });
 
+var DD_advanced_configuration_model = DD_ModelBase.extend({
+    
+    mainModel: 'DD_setup_options_model',
+
+    init: function (obj) {
+        this.obj = obj;
+        this._super();
+    },
+
+    tabActive: function (id) {
+        var content = $('#content-' + id + '');
+        content.html('');
+        switch (id) {
+            case 'dd-photos-configuration':
+                this.tabPhotos(content);
+                break;
+            case 'dd-text-configuration':
+                this.tabText(content);
+                break;
+            case 'dd-lib-configuration':
+                this.tabLib(content);
+                break;
+            case 'dd-prices-configuration':
+                this.tabPrices(content);
+                break;
+            default: //options
+
+                break;
+        }
+    },
+
+    tabPhotos: function (content) {
+        content
+                .append($('<h3 />').text(this._('photos_configuration')));
+        
+        var control= new DD_checkbox({
+            parent: content, 
+            text: this._('enable_photos'), 
+            model: this.mainModel, 
+            view: this,
+            id: 'photos_enabled',
+            checked : (this._('defaultImgEnabled') && this.obj.imgOptions.extra_config.photos_enabled !== false
+                    || this.obj.imgOptions.extra_config.photos_enabled  ? true 
+            : false)
+        });
+
+    },
+
+    tabText: function (content) {
+        content
+                .append($('<h3 />').text(this._('text_configuration')));
+        
+        new DD_checkbox({
+            parent: content, 
+            text: this._('enable_text'), 
+            model: this.mainModel, 
+            view: this,
+            id: 'text_enabled',
+            checked : (this._('defaultTextEnabled') && this.obj.imgOptions.extra_config.text_enabled !== false 
+                    || this.obj.imgOptions.extra_config.text_enabled ? true 
+            : false)
+        });
+    },
+
+    tabLib: function (content) {
+        content
+                .append($('<h3 />').text(this._('add_from_library_configuration')));
+        
+        new DD_checkbox({
+            parent: content, 
+            text: this._('enable_add_from_library'), 
+            model: this.mainModel, 
+            view: this,
+            id: 'library_enabled',
+            checked : (this._('defaultLibraryEnabled') && this.obj.imgOptions.extra_config.library_enabled !== false 
+                    || this.obj.imgOptions.extra_config.library_enabled ? true 
+            : false)
+        });
+    },
+
+    tabPrices: function (content) {
+        
+        content
+                .append($('<h3 />').text(this._('prices_configuration')));
+
+        this.layerImgPrice = new DD_inputText({
+            parent: content,
+            label: this._('layer_img_price'),
+            model: this.mainModel,
+            value: (typeof (this.obj.imgOptions.extra_config.layer_img_price) !== 'undefined')
+                    ? this.obj.imgOptions.extra_config.layer_img_price
+                    : this._s('defaultImgPrice'),
+            id: 'layer_img_price',
+            'data-type': 'price'
+        });
+
+
+        this.layerTxtPrice = new DD_inputText({
+            parent: content,
+            label: this._('layer_txt_price'),
+            model: this.mainModel,
+            value: (typeof (this.obj.imgOptions.extra_config.layer_txt_price) !== 'undefined')
+                    ? this.imgOptions.extra_config.layer_txt_price
+                    : this.obj._s('defaultTextPrice'),
+            id: 'layer_txt_price',
+            'data-type': 'price'
+        });
+    }
+});
+
 var DD_setup_images_model = DD_AddPhoto_Model.extend({
     
     init: function (obj) {
@@ -2639,10 +2796,18 @@ var DD_setup_options_model = DD_ModelBase.extend({
         this.hoverCanvas.fire('object:extra_config', { key: $(checkbox).attr('id'), value: true });
     },
 
-    uncheckedAction: function (checkbox, view) {
+    uncheckedAction: function (checkbox) {
         this.hoverCanvas.fire('object:extra_config', { key: $(checkbox).attr('id'), value: false });
     },
     
+    keyupAction: function(input) {
+        var value = this.parseFloat(input);
+        console.log(value);
+        this.hoverCanvas.fire('object:extra_config', { key: input.attr('id'), value: value });
+    },
+    
+    
+    /*
     initInputEvents: function(input) {
         this.parseFloat(input);
         var self = this;
@@ -2651,9 +2816,10 @@ var DD_setup_options_model = DD_ModelBase.extend({
             self.hoverCanvas.fire('object:extra_config', { key: input.attr('id'), value: value });
         });
     },
+    */
     
     parseFloat: function(input) {
-        var val = input.val();
+        var val = $(input).val();
         var regex = /\d*\.?\d*/g;
         if(val) {
             var match = val.match(regex);
@@ -2677,6 +2843,44 @@ var DD_setup_texts_model = DD_AddText_Model.extend({
         view.addWindowOpenEvent(button.get(), this, this.obj.modal, this.obj.options);
     }
     
+});
+
+var DD_advanced_configuration = DD_Tabs.extend({
+    
+    object_id: 'dd-advanced-confiuration',
+    model: 'DD_advanced_configuration_model',
+    
+    init: function(options) {
+        this.imgOptions = options.imgOptions;
+        var options = {
+            parent: options.parent,
+            id: this.object_id,
+            tabs: this.getTabs(),
+            isAccordion: true
+        }
+        this._super(options);
+    },
+    
+    getTabs: function() {
+        return [
+            {
+                id: 'dd-photos-configuration',
+                text: this._('photos_configuration')
+            },
+            {
+                id: 'dd-text-configuration',
+                text: this._('text_configuration')
+            },
+            {
+                id: 'dd-lib-configuration',
+                text: this._('add_from_library_configuration')
+            },
+            {
+                id: 'dd-prices-configuration',
+                text: this._('prices_configuration')
+            }
+        ]
+    }
 });
 
 var DD_setup = DD_panel.extend({
@@ -2809,72 +3013,10 @@ var DD_setup_options = DD_panel.extend({
     },
     
     _addElements: function() {
-        this.self
-                .append($('<h3 />').text(this._('configuration')));
-        
-        new DD_checkbox({
-            parent: this.self, 
-            text: this._('enable_photos'), 
-            model: this.setupModel, 
-            view: this,
-            id: 'photos_enabled',
-            checked : (this._('defaultImgEnabled') && this.imgOptions.extra_config.photos_enabled !== false
-                    || this.imgOptions.extra_config.photos_enabled  ? true 
-            : false)
-        });
-        new DD_checkbox({
-            parent: this.self, 
-            text: this._('enable_text'), 
-            model: this.setupModel, 
-            view: this,
-            id: 'text_enabled',
-            checked : (this._('defaultTextEnabled') && this.imgOptions.extra_config.text_enabled !== false 
-                    || this.imgOptions.extra_config.text_enabled ? true 
-            : false)
-        });
-        new DD_checkbox({
-            parent: this.self, 
-            text: this._('enable_add_from_library'), 
-            model: this.setupModel, 
-            view: this,
-            id: 'library_enabled',
-            checked : (this._('defaultLibraryEnabled') && this.imgOptions.extra_config.library_enabled !== false 
-                    || this.imgOptions.extra_config.library_enabled ? true 
-            : false)
-        });
-        
-        this.self.append($('<hr>'));
-        
-        this.self
-                .append($('<h3 />').text(this._('prices_configuration')));
-        
-        this.layerImgPrice = new DD_inputText({
-            parent: this.self, 
-            label: this._('layer_img_price'),
-            value: (typeof(this.imgOptions.extra_config.layer_img_price) !== 'undefined') 
-                ? this.imgOptions.extra_config.layer_img_price 
-                : this._s('defaultImgPrice'),
-            id: 'layer_img_price',
-            'data-type': 'price'
-        });
-        
-        
-        this.layerTxtPrice = new DD_inputText({
-            parent: this.self, 
-            label: this._('layer_txt_price'),
-            value: (typeof(this.imgOptions.extra_config.layer_txt_price) !== 'undefined') 
-                ? this.imgOptions.extra_config.layer_txt_price 
-                :  this._s('defaultTextPrice'),
-            id: 'layer_txt_price',
-            'data-type': 'price'
-        });
-    },
-    
-    _callBackModel: function (model) {
-        this.self.find('input[type="text"]').each(function() {
-            var input = $(this);
-            model.initInputEvents(input);
-        });
+        this.advancedConfiguration = new DD_advanced_configuration({
+            parent: this.self,
+            imgOptions: this.imgOptions
+        });        
     }
     
 });
@@ -2910,12 +3052,6 @@ var DD_setup_tabs = DD_Tabs.extend({
                 id: 'dd-setup-layer-texts',
                 text: this._('texts')
             },
-            /*
-            {
-                id: 'dd-setup-layer-qrcode',
-                text: this._('qr_code')
-            },
-            */
             {
                 id: 'dd-setup-options',
                 text: this._('options')
@@ -3040,7 +3176,10 @@ $.fn.dd_productdesigner = function (options) {
             'enable_add_from_library': 'Enable Add From Library',
             'prices_configuration': 'Prices Configuration',
             'layer_img_price' : 'Image Price',
-            'layer_txt_price': 'Text Price'
+            'layer_txt_price': 'Text Price',
+            'photos_configuration': 'Photos Configuration',
+            'text_configuration': 'Text Configuration',
+            'add_from_library_configuration': 'Library Configuration'
         },
         //'settings': settings,
         'afterLoad': null,
