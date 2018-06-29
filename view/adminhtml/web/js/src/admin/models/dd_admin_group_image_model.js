@@ -64,6 +64,7 @@ var DD_admin_group_image_model = DD_Admin_ImagesSelected_Model.extend({
         var defaultTextPrice = this._s('defaultTextPrice');
         var defaultImgPrice = this._s('defaultImgPrice');
         var libraryPath = this._s('libraryPath');
+        var libraryCategories = this._s('libraryCategories');
 
 
         el.on('click', function () {
@@ -96,7 +97,8 @@ var DD_admin_group_image_model = DD_Admin_ImagesSelected_Model.extend({
                     'defaultLibraryEnabled': defaultLibraryEnabled,
                     'defaultTextPrice': defaultTextPrice,
                     'defaultImgPrice': defaultImgPrice,
-                    'libraryPath': libraryPath
+                    'libraryPath': libraryPath,
+                    'libraryCategories': libraryCategories
                 }
 
             });

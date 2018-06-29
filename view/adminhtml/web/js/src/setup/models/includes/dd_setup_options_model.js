@@ -18,10 +18,12 @@ var DD_setup_options_model = DD_ModelBase.extend({
     
     keyupAction: function(input) {
         var value = this.parseFloat(input);
-        console.log(value);
         this.hoverCanvas.fire('object:extra_config', { key: input.attr('id'), value: value });
     },
     
+    selectAction: function(input){
+        this.hoverCanvas.fire('object:extra_config', { key: input.attr('id'), value: input.val() });
+    },
     
     /*
     initInputEvents: function(input) {

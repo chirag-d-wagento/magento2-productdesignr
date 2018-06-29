@@ -945,6 +945,7 @@ var DD_inputText = DD_Uibase.extend({
     
     mainClass: 'dd-input-text-container',
     labelClass: 'dd-label',
+    commentClass: 'dd-comment',
     defaultType: 'text',
     
     init: function (options) {
@@ -962,7 +963,7 @@ var DD_inputText = DD_Uibase.extend({
         this._label.html(this.options.label);
         this._input = $('<input />', {
             id: this.options.id ? this.options.id : this.createUUID(),
-            class: this.mainClass + ' ' + (this.options.class ? this.options.class : ''),
+            class: ' ' + (this.options.class ? this.options.class : ''),
             type: this.options.type ? this.options.type : this.defaultType
         });
         if(this.options.value) {
@@ -975,6 +976,12 @@ var DD_inputText = DD_Uibase.extend({
         }
         this.self.append(this._label);
         this.self.append(this._input);
+        
+        if(this.options.comment) {
+            this._comment = $('<div />').addClass(this.commentClass);
+            this._comment.text(this.options.comment);
+            this.self.append(this._comment);
+        }
     },
     
     _callBackModel: function (model) {
@@ -1003,6 +1010,84 @@ var DD_panel = DD_Uibase.extend({
     add: function() {
         return this._add();
     }
+});
+
+var DD_select = DD_Uibase.extend({
+    
+    mainClass: 'dd-select-container',
+    labelClass: 'dd-label',
+    commentClass: 'dd-comment',
+    classSelect: 'select',
+    classSelectStyled: 'select-styled',
+    
+    init: function (options) {
+        this.options = $.extend((options ? options : {}), this.options);
+        if (this.options.model) {
+            this.model = this.options.model;
+        }   
+        this._super();
+        this.selfBase();
+        this._add();
+    },
+    
+    
+    _addElements: function () {
+        
+        var self = this;
+        var id = this.options.id ? this.options.id : this.createUUID(); 
+        this._label = $('<label />').addClass(this.labelClass)
+                .attr('for', id);
+        this._label.text(this.options.label);
+        
+        
+        this._select = $('<select />', {
+            id: id,
+            class: this.classSelect + ' ' + (this.options.class ? this.options.class : '')
+        });
+        
+        this.selectConatiner = $('<div />').addClass(this.classSelectStyled + (this.options.type ? '-' + this.options.type : ''));
+        this.selectConatiner.append(this._select);
+        
+        if(this.options.type){
+            this._select.prop(this.options.type, this.options.type);
+        }
+        $.each(this.options.select, function(index, item) {
+            var option = $('<option />').text(item.label)
+                    .attr('value', item.value);
+            
+            if(self.options.values) {
+                
+                if(self.options.values.indexOf(item.value) != -1) {
+                    option.prop('selected', true);
+                }
+            }
+            
+            self._select.append(option);
+        });
+        
+        
+        this.self.append(this._label);
+        this.self.append(this.selectConatiner);
+        
+        if(this.options.comment) {
+            this._comment = $('<div />').addClass(this.commentClass);
+            this._comment.text(this.options.comment);
+            this.self.append(this._comment);
+        }
+        
+    },
+    
+    _callBackModel: function (model) {
+        if (!model || !model.selectAction) {
+            return;
+        }
+    
+        this._select.on('change', function () {
+            model.selectAction.call(model, $(this));
+        });
+    }
+    
+    
 });
 
 var DD_Tabs = DD_Uibase.extend({
@@ -1134,11 +1219,17 @@ var DD_Tabs = DD_Uibase.extend({
                 if ($this.next().hasClass('show')) {
                     $this.next().removeClass('show');
                     $this.next().slideUp(self.accordionAnimation);
+                    $this.parent().removeClass('current');
                 } else {
                     $this.parent().parent().find('li .inner').removeClass('show');
                     $this.parent().parent().find('li .inner').slideUp(self.accordionAnimation);
+                    $this.parent().parent()
+                            .find('.current')
+                            .removeClass('current');
+                    
                     $this.next().toggleClass('show');
                     $this.next().slideToggle(self.accordionAnimation);
+                    $this.parent().addClass('current');
                 }
             });
         }
@@ -2632,7 +2723,7 @@ var DD_setup_model = DD_ModelBase.extend({
 });
 
 var DD_advanced_configuration_model = DD_ModelBase.extend({
-    
+
     mainModel: 'DD_setup_options_model',
 
     init: function (obj) {
@@ -2644,6 +2735,9 @@ var DD_advanced_configuration_model = DD_ModelBase.extend({
         var content = $('#content-' + id + '');
         content.html('');
         switch (id) {
+            case 'dd-setup-info':
+                this.tabInfo(content);
+                break;
             case 'dd-photos-configuration':
                 this.tabPhotos(content);
                 break;
@@ -2661,62 +2755,187 @@ var DD_advanced_configuration_model = DD_ModelBase.extend({
                 break;
         }
     },
+    
+    tabInfo: function(content) {
+        new DD_setup_info(content, this.obj.imgOptions);
+    },
 
     tabPhotos: function (content) {
-        content
-                .append($('<h3 />').text(this._('photos_configuration')));
-        
-        var control= new DD_checkbox({
-            parent: content, 
-            text: this._('enable_photos'), 
-            model: this.mainModel, 
+
+        new DD_checkbox({
+            parent: content,
+            text: this._('enable_photos'),
+            model: this.mainModel,
             view: this,
             id: 'photos_enabled',
-            checked : (this._('defaultImgEnabled') && this.obj.imgOptions.extra_config.photos_enabled !== false
-                    || this.obj.imgOptions.extra_config.photos_enabled  ? true 
-            : false)
+            checked: (this._('defaultImgEnabled') && this.obj.imgOptions.extra_config.photos_enabled !== false
+                    || this.obj.imgOptions.extra_config.photos_enabled ? true
+                    : false)
+        });
+
+        content
+                .append($('<hr>'));
+
+        new DD_checkbox({
+            parent: content,
+            text: this._('resize_disable'),
+            model: this.mainModel,
+            view: this,
+            id: 'disable_photos_resize',
+            checked: (this.obj.imgOptions.extra_config.disable_photos_resize !== false
+                    ? this.obj.imgOptions.extra_config.disable_photos_resize
+                    : false)
+        });
+        new DD_checkbox({
+            parent: content,
+            text: this._('rotate_disable'),
+            model: this.mainModel,
+            view: this,
+            id: 'disable_photos_rotate',
+            checked: (this.obj.imgOptions.extra_config.disable_photos_rotate !== false
+                    ? this.obj.imgOptions.extra_config.disable_photos_rotate
+                    : false)
         });
 
     },
 
     tabText: function (content) {
-        content
-                .append($('<h3 />').text(this._('text_configuration')));
-        
+
         new DD_checkbox({
-            parent: content, 
-            text: this._('enable_text'), 
-            model: this.mainModel, 
+            parent: content,
+            text: this._('enable_text'),
+            model: this.mainModel,
             view: this,
             id: 'text_enabled',
-            checked : (this._('defaultTextEnabled') && this.obj.imgOptions.extra_config.text_enabled !== false 
-                    || this.obj.imgOptions.extra_config.text_enabled ? true 
-            : false)
+            checked: (this._('defaultTextEnabled') && this.obj.imgOptions.extra_config.text_enabled !== false
+                    || this.obj.imgOptions.extra_config.text_enabled ? true
+                    : false)
+        });
+
+        content
+                .append($('<hr>'));
+
+        new DD_checkbox({
+            parent: content,
+            text: this._('resize_disable'),
+            model: this.mainModel,
+            view: this,
+            id: 'disable_text_resize',
+            checked: (this.obj.imgOptions.extra_config.disable_text_resize !== false
+                    ? this.obj.imgOptions.extra_config.disable_text_resize
+                    : false)
+        });
+        new DD_checkbox({
+            parent: content,
+            text: this._('rotate_disable'),
+            model: this.mainModel,
+            view: this,
+            id: 'disable_text_rotate',
+            checked: (this.obj.imgOptions.extra_config.disable_text_rotate !== false
+                    ? this.obj.imgOptions.extra_config.disable_text_rotate
+                    : false)
+        });
+        new DD_checkbox({
+            parent: content,
+            text: this._('background_color_disable'),
+            model: this.mainModel,
+            view: this,
+            id: 'background_color_text_disable',
+            checked: (this.obj.imgOptions.extra_config.background_color_text_disable !== false
+                    ? this.obj.imgOptions.extra_config.background_color_text_disable
+                    : false)
+        });
+        new DD_checkbox({
+            parent: content,
+            text: this._('text_color_disable'),
+            model: this.mainModel,
+            view: this,
+            id: 'text_color_disable',
+            checked: (this.obj.imgOptions.extra_config.text_color_disable !== false
+                    ? this.obj.imgOptions.extra_config.text_color_disable
+                    : false)
+        });
+        new DD_inputText({
+            parent: content,
+            label: this._('max_text_chars'),
+            type: "number",
+            model: this.mainModel,
+            value: (this.obj.imgOptions.extra_config.max_text_chars !== false
+                    ? this.obj.imgOptions.extra_config.max_text_chars
+                    : false),
+            id: 'max_text_chars',
+            'data-type': 'integer',
+            comment: this._('unlimeted_by_default')
+        });
+
+        var fonts = this.getListOfFontsPairs();
+
+        new DD_select({
+            parent: content,
+            label: this._('fonts'),
+            model: this.mainModel,
+            type: 'multiple',
+            comment: this._('all_by_default'),
+            select: fonts,
+            id: 'fonts',
+            values: this.obj.imgOptions.extra_config.fonts
         });
     },
 
     tabLib: function (content) {
-        content
-                .append($('<h3 />').text(this._('add_from_library_configuration')));
-        
+
         new DD_checkbox({
-            parent: content, 
-            text: this._('enable_add_from_library'), 
-            model: this.mainModel, 
+            parent: content,
+            text: this._('enable_add_from_library'),
+            model: this.mainModel,
             view: this,
             id: 'library_enabled',
-            checked : (this._('defaultLibraryEnabled') && this.obj.imgOptions.extra_config.library_enabled !== false 
-                    || this.obj.imgOptions.extra_config.library_enabled ? true 
-            : false)
+            checked: (this._('defaultLibraryEnabled') && this.obj.imgOptions.extra_config.library_enabled !== false
+                    || this.obj.imgOptions.extra_config.library_enabled ? true
+                    : false)
+        });
+
+        content
+                .append($('<hr>'));
+
+        new DD_checkbox({
+            parent: content,
+            text: this._('resize_disable'),
+            model: this.mainModel,
+            view: this,
+            id: 'disable_lib_resize',
+            checked: (this.obj.imgOptions.extra_config.disable_lib_resize !== false
+                    ? this.obj.imgOptions.extra_config.disable_lib_resize
+                    : false)
+        });
+        new DD_checkbox({
+            parent: content,
+            text: this._('rotate_disable'),
+            model: this.mainModel,
+            view: this,
+            id: 'disable_lib_rotate',
+            checked: (this.obj.imgOptions.extra_config.disable_lib_rotate !== false
+                    ? this.obj.imgOptions.extra_config.disable_lib_rotate
+                    : false)
+        });
+
+        var categories = this.getListCatgeoriesPairs();
+
+        new DD_select({
+            parent: content,
+            label: this._('lib_categories'),
+            model: this.mainModel,
+            type: 'multiple',
+            comment: this._('all_by_default'),
+            select: categories,
+            id: 'lib_categories',
+            values: this.obj.imgOptions.extra_config.lib_categories
         });
     },
 
     tabPrices: function (content) {
-        
-        content
-                .append($('<h3 />').text(this._('prices_configuration')));
 
-        this.layerImgPrice = new DD_inputText({
+        new DD_inputText({
             parent: content,
             label: this._('layer_img_price'),
             model: this.mainModel,
@@ -2728,16 +2947,42 @@ var DD_advanced_configuration_model = DD_ModelBase.extend({
         });
 
 
-        this.layerTxtPrice = new DD_inputText({
+        new DD_inputText({
             parent: content,
             label: this._('layer_txt_price'),
             model: this.mainModel,
             value: (typeof (this.obj.imgOptions.extra_config.layer_txt_price) !== 'undefined')
-                    ? this.imgOptions.extra_config.layer_txt_price
+                    ? this.obj.imgOptions.extra_config.layer_txt_price
                     : this.obj._s('defaultTextPrice'),
             id: 'layer_txt_price',
             'data-type': 'price'
         });
+    },
+
+    getListCatgeoriesPairs: function () {
+        var output = [];
+        var cats = this._s('libraryCategories');
+        $.each(cats, function (index, val) {
+            output.push({
+                value: val,
+                label: val
+            });
+        });
+
+        return output;
+    },
+
+    getListOfFontsPairs: function () {
+        var output = [];
+        var fonts = this._s('listFonts');
+        $.each(fonts, function (index, val) {
+            output.push({
+                value: val,
+                label: val
+            });
+        });
+
+        return output;
     }
 });
 
@@ -2802,10 +3047,12 @@ var DD_setup_options_model = DD_ModelBase.extend({
     
     keyupAction: function(input) {
         var value = this.parseFloat(input);
-        console.log(value);
         this.hoverCanvas.fire('object:extra_config', { key: input.attr('id'), value: value });
     },
     
+    selectAction: function(input){
+        this.hoverCanvas.fire('object:extra_config', { key: input.attr('id'), value: input.val() });
+    },
     
     /*
     initInputEvents: function(input) {
@@ -2863,6 +3110,10 @@ var DD_advanced_configuration = DD_Tabs.extend({
     
     getTabs: function() {
         return [
+            {
+                id: 'dd-setup-info',
+                text: this._('info')
+            },
             {
                 id: 'dd-photos-configuration',
                 text: this._('photos_configuration')
@@ -2952,7 +3203,7 @@ var DD_setup_info = DD_panel.extend({
             'class': this.class_name,
             'parent': parent
         });
-        this.add();
+        this._add();
         //this.addElements();
     },
     
@@ -3036,10 +3287,11 @@ var DD_setup_tabs = DD_Tabs.extend({
     },
     getTabs: function() {
         return [
-            {
+            /*{
                 id: 'dd-setup-info',
                 text: this._('info')
             },
+            */
             {
                 id: 'dd-setup-layer-mask',
                 text: this._('layer_mask')
@@ -3179,7 +3431,17 @@ $.fn.dd_productdesigner = function (options) {
             'layer_txt_price': 'Text Price',
             'photos_configuration': 'Photos Configuration',
             'text_configuration': 'Text Configuration',
-            'add_from_library_configuration': 'Library Configuration'
+            'add_from_library_configuration': 'Library Configuration',
+            'resize_disable': 'Disable Resize',
+            'rotate_disable': 'Disable Rotate',
+            'background_color_disable': 'Disable background color selector',
+            'text_color_disable': 'Disable text color selector',
+            'max_text_chars': 'Maximum chars',
+            'unlimeted_by_default': 'Unlimited by default',
+            'fonts': 'Fonts',
+            'all_by_default': 'All by default',
+            'lib_categories': 'Library Categories'
+            
         },
         //'settings': settings,
         'afterLoad': null,

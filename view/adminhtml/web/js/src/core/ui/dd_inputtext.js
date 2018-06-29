@@ -2,6 +2,7 @@ var DD_inputText = DD_Uibase.extend({
     
     mainClass: 'dd-input-text-container',
     labelClass: 'dd-label',
+    commentClass: 'dd-comment',
     defaultType: 'text',
     
     init: function (options) {
@@ -19,7 +20,7 @@ var DD_inputText = DD_Uibase.extend({
         this._label.html(this.options.label);
         this._input = $('<input />', {
             id: this.options.id ? this.options.id : this.createUUID(),
-            class: this.mainClass + ' ' + (this.options.class ? this.options.class : ''),
+            class: ' ' + (this.options.class ? this.options.class : ''),
             type: this.options.type ? this.options.type : this.defaultType
         });
         if(this.options.value) {
@@ -32,6 +33,12 @@ var DD_inputText = DD_Uibase.extend({
         }
         this.self.append(this._label);
         this.self.append(this._input);
+        
+        if(this.options.comment) {
+            this._comment = $('<div />').addClass(this.commentClass);
+            this._comment.text(this.options.comment);
+            this.self.append(this._comment);
+        }
     },
     
     _callBackModel: function (model) {

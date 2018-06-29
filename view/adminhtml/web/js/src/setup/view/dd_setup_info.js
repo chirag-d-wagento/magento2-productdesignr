@@ -8,7 +8,7 @@ var DD_setup_info = DD_panel.extend({
             'class': this.class_name,
             'parent': parent
         });
-        this.add();
+        this._add();
         //this.addElements();
     },
     

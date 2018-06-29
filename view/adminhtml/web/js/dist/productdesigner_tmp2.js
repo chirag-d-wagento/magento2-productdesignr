@@ -875,6 +875,7 @@ var DD_inputText = DD_Uibase.extend({
     
     mainClass: 'dd-input-text-container',
     labelClass: 'dd-label',
+    commentClass: 'dd-comment',
     defaultType: 'text',
     
     init: function (options) {
@@ -892,7 +893,7 @@ var DD_inputText = DD_Uibase.extend({
         this._label.html(this.options.label);
         this._input = $('<input />', {
             id: this.options.id ? this.options.id : this.createUUID(),
-            class: this.mainClass + ' ' + (this.options.class ? this.options.class : ''),
+            class: ' ' + (this.options.class ? this.options.class : ''),
             type: this.options.type ? this.options.type : this.defaultType
         });
         if(this.options.value) {
@@ -905,6 +906,12 @@ var DD_inputText = DD_Uibase.extend({
         }
         this.self.append(this._label);
         this.self.append(this._input);
+        
+        if(this.options.comment) {
+            this._comment = $('<div />').addClass(this.commentClass);
+            this._comment.text(this.options.comment);
+            this.self.append(this._comment);
+        }
     },
     
     _callBackModel: function (model) {
@@ -933,6 +940,84 @@ var DD_panel = DD_Uibase.extend({
     add: function() {
         return this._add();
     }
+});
+
+var DD_select = DD_Uibase.extend({
+    
+    mainClass: 'dd-select-container',
+    labelClass: 'dd-label',
+    commentClass: 'dd-comment',
+    classSelect: 'select',
+    classSelectStyled: 'select-styled',
+    
+    init: function (options) {
+        this.options = $.extend((options ? options : {}), this.options);
+        if (this.options.model) {
+            this.model = this.options.model;
+        }   
+        this._super();
+        this.selfBase();
+        this._add();
+    },
+    
+    
+    _addElements: function () {
+        
+        var self = this;
+        var id = this.options.id ? this.options.id : this.createUUID(); 
+        this._label = $('<label />').addClass(this.labelClass)
+                .attr('for', id);
+        this._label.text(this.options.label);
+        
+        
+        this._select = $('<select />', {
+            id: id,
+            class: this.classSelect + ' ' + (this.options.class ? this.options.class : '')
+        });
+        
+        this.selectConatiner = $('<div />').addClass(this.classSelectStyled + (this.options.type ? '-' + this.options.type : ''));
+        this.selectConatiner.append(this._select);
+        
+        if(this.options.type){
+            this._select.prop(this.options.type, this.options.type);
+        }
+        $.each(this.options.select, function(index, item) {
+            var option = $('<option />').text(item.label)
+                    .attr('value', item.value);
+            
+            if(self.options.values) {
+                
+                if(self.options.values.indexOf(item.value) != -1) {
+                    option.prop('selected', true);
+                }
+            }
+            
+            self._select.append(option);
+        });
+        
+        
+        this.self.append(this._label);
+        this.self.append(this.selectConatiner);
+        
+        if(this.options.comment) {
+            this._comment = $('<div />').addClass(this.commentClass);
+            this._comment.text(this.options.comment);
+            this.self.append(this._comment);
+        }
+        
+    },
+    
+    _callBackModel: function (model) {
+        if (!model || !model.selectAction) {
+            return;
+        }
+    
+        this._select.on('change', function () {
+            model.selectAction.call(model, $(this));
+        });
+    }
+    
+    
 });
 
 var DD_Tabs = DD_Uibase.extend({
@@ -1064,11 +1149,17 @@ var DD_Tabs = DD_Uibase.extend({
                 if ($this.next().hasClass('show')) {
                     $this.next().removeClass('show');
                     $this.next().slideUp(self.accordionAnimation);
+                    $this.parent().removeClass('current');
                 } else {
                     $this.parent().parent().find('li .inner').removeClass('show');
                     $this.parent().parent().find('li .inner').slideUp(self.accordionAnimation);
+                    $this.parent().parent()
+                            .find('.current')
+                            .removeClass('current');
+                    
                     $this.next().toggleClass('show');
                     $this.next().slideToggle(self.accordionAnimation);
+                    $this.parent().addClass('current');
                 }
             });
         }
@@ -1528,6 +1619,7 @@ var DD_admin_group_image_model = DD_Admin_ImagesSelected_Model.extend({
         var defaultTextPrice = this._s('defaultTextPrice');
         var defaultImgPrice = this._s('defaultImgPrice');
         var libraryPath = this._s('libraryPath');
+        var libraryCategories = this._s('libraryCategories');
 
 
         el.on('click', function () {
@@ -1560,7 +1652,8 @@ var DD_admin_group_image_model = DD_Admin_ImagesSelected_Model.extend({
                     'defaultLibraryEnabled': defaultLibraryEnabled,
                     'defaultTextPrice': defaultTextPrice,
                     'defaultImgPrice': defaultImgPrice,
-                    'libraryPath': libraryPath
+                    'libraryPath': libraryPath,
+                    'libraryCategories': libraryCategories
                 }
 
             });

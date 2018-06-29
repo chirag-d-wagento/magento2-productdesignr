@@ -88,7 +88,17 @@ $.fn.dd_productdesigner = function (options) {
             'layer_txt_price': 'Text Price',
             'photos_configuration': 'Photos Configuration',
             'text_configuration': 'Text Configuration',
-            'add_from_library_configuration': 'Library Configuration'
+            'add_from_library_configuration': 'Library Configuration',
+            'resize_disable': 'Disable Resize',
+            'rotate_disable': 'Disable Rotate',
+            'background_color_disable': 'Disable background color selector',
+            'text_color_disable': 'Disable text color selector',
+            'max_text_chars': 'Maximum chars',
+            'unlimeted_by_default': 'Unlimited by default',
+            'fonts': 'Fonts',
+            'all_by_default': 'All by default',
+            'lib_categories': 'Library Categories'
+            
         },
         //'settings': settings,
         'afterLoad': null,

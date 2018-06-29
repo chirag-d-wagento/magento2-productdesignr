@@ -31,16 +31,24 @@ class Designer extends AbstractModifier {
     protected $_assetRepo;
     protected $_designerFonts;
     protected $_designerHelper;
+    
+    protected $_libraryHelper;
 
     public function __construct(
-    LocatorInterface $locator, \Magento\Framework\View\Asset\Repository $assetRepo, \Develodesign\Designer\Helper\Fonts $designerFonts, \Develodesign\Designer\Helper\Data $designerHelper, UrlInterface $urlBuilder
+        LocatorInterface $locator, 
+        \Magento\Framework\View\Asset\Repository $assetRepo, 
+        \Develodesign\Designer\Helper\Fonts $designerFonts, 
+        \Develodesign\Designer\Helper\Data $designerHelper,  
+        \Develodesign\Designer\Helper\Library $libraryHelper, 
+        UrlInterface $urlBuilder
     ) {
-        $this->locator = $locator;
-        $this->urlBuilder = $urlBuilder;
-        $this->_assetRepo = $assetRepo;
+        $this->locator        = $locator;
+        $this->urlBuilder     = $urlBuilder;
+        $this->_assetRepo     = $assetRepo;
         $this->_designerFonts = $designerFonts;
 
         $this->_designerHelper = $designerHelper;
+        $this->_libraryHelper  = $libraryHelper;
     }
 
     public function modifyMeta(array $meta) {
@@ -78,7 +86,8 @@ class Designer extends AbstractModifier {
                                 'defaultLibraryEnabled' => $this->_designerHelper->getIsAddFromLibraryEnabled(),
                                 'defaultTextPrice' => $this->_designerHelper->getLayerTextPrice(),
                                 'defaultImgPrice' => $this->_designerHelper->getLayerImgPrice(),
-                                'libraryPath' => $this->urlBuilder->getUrl('dd_productdesigner/library/index')
+                                'libraryPath' => $this->urlBuilder->getUrl('dd_productdesigner/library/index'),
+                                'libraryCategories' => $this->_libraryHelper->getCategories()
                             ],
                         ],
                     ]

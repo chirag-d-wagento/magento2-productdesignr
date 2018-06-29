@@ -41,6 +41,7 @@ define([
                     'listFonts': data.fonts,
                     'myFilesPath': data.myFilesPath,
                     'percentSizeImage': 30,
+                    'libraryCategories': data.libraryCategories,
                     'percentSizeFromMask': 70,
                     
                     'defaultFont': 'Verdana,Geneva,sans-serif',

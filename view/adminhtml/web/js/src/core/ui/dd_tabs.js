@@ -127,11 +127,17 @@ var DD_Tabs = DD_Uibase.extend({
                 if ($this.next().hasClass('show')) {
                     $this.next().removeClass('show');
                     $this.next().slideUp(self.accordionAnimation);
+                    $this.parent().removeClass('current');
                 } else {
                     $this.parent().parent().find('li .inner').removeClass('show');
                     $this.parent().parent().find('li .inner').slideUp(self.accordionAnimation);
+                    $this.parent().parent()
+                            .find('.current')
+                            .removeClass('current');
+                    
                     $this.next().toggleClass('show');
                     $this.next().slideToggle(self.accordionAnimation);
+                    $this.parent().addClass('current');
                 }
             });
         }

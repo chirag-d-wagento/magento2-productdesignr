@@ -17,6 +17,10 @@ var DD_advanced_configuration = DD_Tabs.extend({
     getTabs: function() {
         return [
             {
+                id: 'dd-setup-info',
+                text: this._('info')
+            },
+            {
                 id: 'dd-photos-configuration',
                 text: this._('photos_configuration')
             },

@@ -13,10 +13,11 @@ var DD_setup_tabs = DD_Tabs.extend({
     },
     getTabs: function() {
         return [
-            {
+            /*{
                 id: 'dd-setup-info',
                 text: this._('info')
             },
+            */
             {
                 id: 'dd-setup-layer-mask',
                 text: this._('layer_mask')

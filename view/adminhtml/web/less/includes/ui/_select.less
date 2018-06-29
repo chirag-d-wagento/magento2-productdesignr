@@ -1,0 +1,66 @@
+.dd-select-container{
+
+
+    .select-styled {
+        position: relative;
+        display: block;
+        max-width: 400px;
+        min-width: 180px;
+        border: 1px solid silver;
+        background-color: 1px solid silver;
+        z-index: 10;
+
+        select{
+            border: none;
+            outline: none;
+            background: transparent;
+            -webkit-appearance: none;
+            -moz-appearance: none;
+            appearance: none;
+            border-radius: 0;
+            margin: 0;
+            display: block;
+            width: 100%;
+            padding: 10px 55px 10px 8px;
+            font-size: 14px;
+        }
+        &:after{
+            content: '\25BC';
+
+            position: absolute;
+            right: 0;
+            top: 0;
+            width: 50px;
+            height: 100%;
+            line-height: 38px;
+            text-align: center;
+            color: #000000;
+            background: #e2e2e2;
+            font-size: 12px;
+            border-left: 1px solid #silver;
+            z-index: -1;
+        }
+        select::-ms-expand {
+            display: none;
+        }
+    }
+    .select-styled-multiple{
+
+        select{
+            border: 1px solid #silver;
+            min-width:180px;
+            min-height:200px;
+
+            option{
+                padding: .5rem 1rem;
+
+                &:checked {
+                    background: #e2e2e2;
+                }
+            }
+        }
+    }
+    .dd-label{
+        font-size:16px;
+    }
+}
