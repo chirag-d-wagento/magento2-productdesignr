@@ -3464,6 +3464,8 @@ ul.tabs > li.current:hover {
 .accordion ul.tabs li {
   padding: 1px;
   border: 0px;
+  display: block;
+  text-align: left;
 }
 .accordion ul.tabs li.current {
   background: transparent;
@@ -3905,8 +3907,14 @@ ul.tabs > li.current:hover {
   float: right;
   padding: 10px;
 }
-.dd-setup-image #dd-setup-tabs ul li {
-  width: 19.5%;
+.dd-setup-image #dd-setup-tabs {
+  /*
+        ul{
+            li{
+                width:19.5%;
+            }
+        }
+        */
 }
 .dd-setup-image #dd-setup-tabs .accordion ul li {
   width: 100%;

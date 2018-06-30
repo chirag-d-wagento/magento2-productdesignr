@@ -1689,7 +1689,7 @@ var DD_Main_Model = DD_ModelBase.extend({
         var self = this;
 
         if (this._s('loadGoogleFonts')) {
-            
+
             var fonts = self.prepareFonts();
             WebFont.load({
                 google: {
@@ -1820,7 +1820,7 @@ var DD_Main_Model = DD_ModelBase.extend({
                 e.target.controlModelCreated.remove();
             }
         });
-        
+
         hoverCanvas.on('object:extra_config', function (e) {
             e.type = 'extra_conf';
             self.obj.options.onUpdate.call(
@@ -1841,11 +1841,15 @@ var DD_Main_Model = DD_ModelBase.extend({
             var last = options.conf.length;
             $(options.conf).each(function (i, obj) {
                 var notSelect = (last - 1) == i ? false : true;
+                console.log(obj.type);
                 if (obj.type === 'image') {
                     new DD_Layer_Img(null, obj, notSelect);
                 }
                 if (obj.type === 'text') {
                     new DD_Layer_Text(null, obj, notSelect);
+                }
+                if (obj.isSvg == true) {
+                    new DD_Layer_Svg(obj);
                 }
             });
         }
@@ -1861,7 +1865,11 @@ var DD_Main_Model = DD_ModelBase.extend({
         if (fabricObj.controlModel) {
             newObject.controlModel = fabricObj.controlModel;
         }
-
+        if (fabricObj.isSvg) {
+            newObject.svgString = fabricObj.toSVG();
+            newObject.src_orig = fabricObj.src_orig;
+            newObject.isSvg = true;
+        }
         if (this.obj.options.onUpdate) {
             this.obj.options.onUpdate.call(
                     null,
@@ -2218,7 +2226,7 @@ var DD_Layer_Img = DD_Layer_Base.extend({
         var src = fullCnfg ? fullCnfg.src : options.src;
         var ext = src.substr(src.lastIndexOf('.') + 1);
 
-        function ___callBack(iImg, isSvg) {
+        function ___callBack(iImg, isSvg, src_orig) {
             var parent = self.getParent()
             if (!fullCnfg) {
                 var conf = {
@@ -2227,6 +2235,7 @@ var DD_Layer_Img = DD_Layer_Base.extend({
                     selectable: options.noselectable ? false : true,
                     controlModel: 'DD_control_image',
                     centeredScaling: true,
+                    src_orig: src_orig,
                     isSvg: isSvg
                 }
                 var mask = self._l().getMask();
@@ -2287,7 +2296,7 @@ var DD_Layer_Img = DD_Layer_Base.extend({
             }, {crossOrigin: 'anonymous'});
         } else {
             fabric.loadSVGFromURL(src, function (svgobject) {
-                ___callBack(svgobject, true);
+                ___callBack(svgobject, true, src);
             });
         }
     }
@@ -2661,67 +2670,6 @@ var DD_windowTextForm = DD_panel.extend({
     }
 });
 
-var DD_setup_model = DD_ModelBase.extend({
-
-    init: function (obj) {
-        this.obj = obj;
-        this.imgOptions = obj.imgOptions;
-        this._super();
-    },
-
-    tabActive: function (id) {
-        var content = $('#content-' + id + '');
-        content.html('');
-        switch (id) {
-            case 'dd-setup-info':
-                    this.tabInfo(content);
-                break;
-            case 'dd-setup-layer-mask':
-                    this.tabLayerMask(content);
-                break;
-            case 'dd-setup-layer-images':
-                    this.tabImages(content);
-                break;
-            case 'dd-setup-layer-texts':
-                    this.tabTexts(content);
-                break;
-            case 'dd-setup-options':
-                    this.tabOptions(content);
-                break;
-                /*
-            case 'dd-setup-layer-qrcode':
-
-                break;
-                */
-            default: //options
-
-                break;
-        }
-    },
-    
-    tabOptions: function(content) {
-        new DD_setup_options(content, this.imgOptions);
-    },
-    
-    tabTexts: function(content) {
-         new DD_setup_texts(content, this.imgOptions);
-    },
-    
-    tabImages: function(content) {
-        new DD_setup_images(content, this.imgOptions);
-    },
-    
-    
-    tabLayerMask: function(content) {
-        new DD_setup_layer(content, this.imgOptions);
-    },
-    
-    tabInfo: function(content) {
-        new DD_setup_info(content, this.imgOptions);
-    }
-
-});
-
 var DD_advanced_configuration_model = DD_ModelBase.extend({
 
     mainModel: 'DD_setup_options_model',
@@ -2738,9 +2686,20 @@ var DD_advanced_configuration_model = DD_ModelBase.extend({
             case 'dd-setup-info':
                 this.tabInfo(content);
                 break;
+            case 'dd-setup-layer-mask':
+                this.tabLayerMask(content);
+                break;
+            case 'dd-setup-layer-images':
+                this.tabImages(content);
+                break;
+            case 'dd-setup-layer-texts':
+                this.tabTexts(content);
+                break;
+
             case 'dd-photos-configuration':
                 this.tabPhotos(content);
                 break;
+
             case 'dd-text-configuration':
                 this.tabText(content);
                 break;
@@ -2756,7 +2715,19 @@ var DD_advanced_configuration_model = DD_ModelBase.extend({
         }
     },
     
-    tabInfo: function(content) {
+    tabTexts: function(content) {
+         new DD_setup_texts(content, this.imgOptions);
+    },
+
+    tabImages: function (content) {
+        new DD_setup_images(content, this.imgOptions);
+    },
+
+    tabLayerMask: function (content) {
+        new DD_setup_layer(content, this.imgOptions);
+    },
+
+    tabInfo: function (content) {
         new DD_setup_info(content, this.obj.imgOptions);
     },
 
@@ -2898,27 +2869,6 @@ var DD_advanced_configuration_model = DD_ModelBase.extend({
         content
                 .append($('<hr>'));
 
-        new DD_checkbox({
-            parent: content,
-            text: this._('resize_disable'),
-            model: this.mainModel,
-            view: this,
-            id: 'disable_lib_resize',
-            checked: (this.obj.imgOptions.extra_config.disable_lib_resize !== false
-                    ? this.obj.imgOptions.extra_config.disable_lib_resize
-                    : false)
-        });
-        new DD_checkbox({
-            parent: content,
-            text: this._('rotate_disable'),
-            model: this.mainModel,
-            view: this,
-            id: 'disable_lib_rotate',
-            checked: (this.obj.imgOptions.extra_config.disable_lib_rotate !== false
-                    ? this.obj.imgOptions.extra_config.disable_lib_rotate
-                    : false)
-        });
-
         var categories = this.getListCatgeoriesPairs();
 
         new DD_select({
@@ -3033,37 +2983,25 @@ var DD_setup_options_model = DD_ModelBase.extend({
 
     init: function (obj) {
         this.obj = obj;
-        this.hoverCanvas = this._l().getHoverCanvas();
         this._super();
     },
     
     checkedAction: function (checkbox) {
-        this.hoverCanvas.fire('object:extra_config', { key: $(checkbox).attr('id'), value: true });
+        this._l().getHoverCanvas().fire('object:extra_config', { key: $(checkbox).attr('id'), value: true });
     },
 
     uncheckedAction: function (checkbox) {
-        this.hoverCanvas.fire('object:extra_config', { key: $(checkbox).attr('id'), value: false });
+        this._l().getHoverCanvas().fire('object:extra_config', { key: $(checkbox).attr('id'), value: false });
     },
     
     keyupAction: function(input) {
         var value = this.parseFloat(input);
-        this.hoverCanvas.fire('object:extra_config', { key: input.attr('id'), value: value });
+        this._l().getHoverCanvas().fire('object:extra_config', { key: input.attr('id'), value: value });
     },
     
     selectAction: function(input){
-        this.hoverCanvas.fire('object:extra_config', { key: input.attr('id'), value: input.val() });
+        this._l().getHoverCanvas().fire('object:extra_config', { key: input.attr('id'), value: input.val() });
     },
-    
-    /*
-    initInputEvents: function(input) {
-        this.parseFloat(input);
-        var self = this;
-        input.on('keyup', function() {
-            var value = self.parseFloat(input);
-            self.hoverCanvas.fire('object:extra_config', { key: input.attr('id'), value: value });
-        });
-    },
-    */
     
     parseFloat: function(input) {
         var val = $(input).val();
@@ -3115,6 +3053,18 @@ var DD_advanced_configuration = DD_Tabs.extend({
                 text: this._('info')
             },
             {
+                id: 'dd-setup-layer-mask',
+                text: this._('layer_mask')
+            },
+            {
+                id: 'dd-setup-layer-images',
+                text: this._('images')
+            },
+            {
+                id: 'dd-setup-layer-texts',
+                text: this._('texts')
+            },
+            {
                 id: 'dd-photos-configuration',
                 text: this._('photos_configuration')
             },
@@ -3137,7 +3087,7 @@ var DD_advanced_configuration = DD_Tabs.extend({
 var DD_setup = DD_panel.extend({
     object_id: 'dd-setup',
     class_name: 'dd-setup-image',
-    model: 'DD_setup_model',
+    //model: 'DD_setup_model',
     
     init: function(parent, imgOptions) {
         this.parent = parent;
@@ -3151,7 +3101,11 @@ var DD_setup = DD_panel.extend({
     },
     
     _addElements: function() {
-        new DD_setup_tabs(this.self, this.imgOptions);
+        var me = this;
+        setTimeout(function() {
+            new DD_setup_options(me.self, me.imgOptions);
+        }, 100);
+        
     }
     
 });
@@ -3272,48 +3226,6 @@ var DD_setup_options = DD_panel.extend({
     
 });
 
-var DD_setup_tabs = DD_Tabs.extend({
-    object_id: 'dd-setup-tabs',
-    model: 'DD_setup_model',
-    
-    init: function(parent, imgOptions) {
-        var options = {
-            parent: parent,
-            id: this.object_id,
-            tabs: this.getTabs()
-        }
-        this.imgOptions = imgOptions;
-        this._super(options);
-    },
-    getTabs: function() {
-        return [
-            /*{
-                id: 'dd-setup-info',
-                text: this._('info')
-            },
-            */
-            {
-                id: 'dd-setup-layer-mask',
-                text: this._('layer_mask')
-            },
-            {
-                id: 'dd-setup-layer-images',
-                text: this._('images')
-            },
-            {
-                id: 'dd-setup-layer-texts',
-                text: this._('texts')
-            },
-            {
-                id: 'dd-setup-options',
-                text: this._('options')
-            }
-        ];
-    }
-});
-
-
-
 var DD_setup_texts = DD_panel.extend({
     class_name: 'dd-setup-texts',
     model: 'DD_setup_texts_model',
@@ -3423,13 +3335,13 @@ $.fn.dd_productdesigner = function (options) {
             'add_image': 'Add Image',
             'add_default_texts': 'Add default texts',
             'configuration': 'Configuration',
-            'enable_photos': 'Enable Photos',
-            'enable_text': 'Enable Texts',
-            'enable_add_from_library': 'Enable Add From Library',
+            'enable_photos': 'Enable Photos Button',
+            'enable_text': 'Enable Texts Button',
+            'enable_add_from_library': 'Enable Add From Library Button',
             'prices_configuration': 'Prices Configuration',
             'layer_img_price' : 'Image Price',
             'layer_txt_price': 'Text Price',
-            'photos_configuration': 'Photos Configuration',
+            'photos_configuration': 'Images Configuration',
             'text_configuration': 'Text Configuration',
             'add_from_library_configuration': 'Library Configuration',
             'resize_disable': 'Disable Resize',

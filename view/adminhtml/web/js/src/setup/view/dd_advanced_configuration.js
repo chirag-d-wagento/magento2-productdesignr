@@ -21,6 +21,18 @@ var DD_advanced_configuration = DD_Tabs.extend({
                 text: this._('info')
             },
             {
+                id: 'dd-setup-layer-mask',
+                text: this._('layer_mask')
+            },
+            {
+                id: 'dd-setup-layer-images',
+                text: this._('images')
+            },
+            {
+                id: 'dd-setup-layer-texts',
+                text: this._('texts')
+            },
+            {
                 id: 'dd-photos-configuration',
                 text: this._('photos_configuration')
             },

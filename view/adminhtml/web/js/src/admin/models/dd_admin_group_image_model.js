@@ -68,6 +68,9 @@ var DD_admin_group_image_model = DD_Admin_ImagesSelected_Model.extend({
 
 
         el.on('click', function () {
+            
+            self._evnt().doCall('before-designer-created');
+            
             $('#dd_designer').html('');
             $('#dd_designer').empty();
             var designer = $('#dd_designer').dd_productdesigner({
@@ -111,6 +114,8 @@ var DD_admin_group_image_model = DD_Admin_ImagesSelected_Model.extend({
 
             self.getObject().designerMediaId = options.media_id;
             self.getObject().designerGroupId = group_index;
+            
+            self._evnt().doCall('designer-created', designer);
         });
     }
 

@@ -14,9 +14,20 @@ var DD_advanced_configuration_model = DD_ModelBase.extend({
             case 'dd-setup-info':
                 this.tabInfo(content);
                 break;
+            case 'dd-setup-layer-mask':
+                this.tabLayerMask(content);
+                break;
+            case 'dd-setup-layer-images':
+                this.tabImages(content);
+                break;
+            case 'dd-setup-layer-texts':
+                this.tabTexts(content);
+                break;
+
             case 'dd-photos-configuration':
                 this.tabPhotos(content);
                 break;
+
             case 'dd-text-configuration':
                 this.tabText(content);
                 break;
@@ -32,7 +43,19 @@ var DD_advanced_configuration_model = DD_ModelBase.extend({
         }
     },
     
-    tabInfo: function(content) {
+    tabTexts: function(content) {
+         new DD_setup_texts(content, this.imgOptions);
+    },
+
+    tabImages: function (content) {
+        new DD_setup_images(content, this.imgOptions);
+    },
+
+    tabLayerMask: function (content) {
+        new DD_setup_layer(content, this.imgOptions);
+    },
+
+    tabInfo: function (content) {
         new DD_setup_info(content, this.obj.imgOptions);
     },
 
@@ -173,27 +196,6 @@ var DD_advanced_configuration_model = DD_ModelBase.extend({
 
         content
                 .append($('<hr>'));
-
-        new DD_checkbox({
-            parent: content,
-            text: this._('resize_disable'),
-            model: this.mainModel,
-            view: this,
-            id: 'disable_lib_resize',
-            checked: (this.obj.imgOptions.extra_config.disable_lib_resize !== false
-                    ? this.obj.imgOptions.extra_config.disable_lib_resize
-                    : false)
-        });
-        new DD_checkbox({
-            parent: content,
-            text: this._('rotate_disable'),
-            model: this.mainModel,
-            view: this,
-            id: 'disable_lib_rotate',
-            checked: (this.obj.imgOptions.extra_config.disable_lib_rotate !== false
-                    ? this.obj.imgOptions.extra_config.disable_lib_rotate
-                    : false)
-        });
 
         var categories = this.getListCatgeoriesPairs();
 

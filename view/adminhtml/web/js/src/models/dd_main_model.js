@@ -10,7 +10,7 @@ var DD_Main_Model = DD_ModelBase.extend({
         var self = this;
 
         if (this._s('loadGoogleFonts')) {
-            
+
             var fonts = self.prepareFonts();
             WebFont.load({
                 google: {
@@ -141,7 +141,7 @@ var DD_Main_Model = DD_ModelBase.extend({
                 e.target.controlModelCreated.remove();
             }
         });
-        
+
         hoverCanvas.on('object:extra_config', function (e) {
             e.type = 'extra_conf';
             self.obj.options.onUpdate.call(
@@ -162,11 +162,15 @@ var DD_Main_Model = DD_ModelBase.extend({
             var last = options.conf.length;
             $(options.conf).each(function (i, obj) {
                 var notSelect = (last - 1) == i ? false : true;
+                console.log(obj.type);
                 if (obj.type === 'image') {
                     new DD_Layer_Img(null, obj, notSelect);
                 }
                 if (obj.type === 'text') {
                     new DD_Layer_Text(null, obj, notSelect);
+                }
+                if (obj.isSvg == true) {
+                    new DD_Layer_Svg(obj);
                 }
             });
         }
@@ -182,7 +186,11 @@ var DD_Main_Model = DD_ModelBase.extend({
         if (fabricObj.controlModel) {
             newObject.controlModel = fabricObj.controlModel;
         }
-
+        if (fabricObj.isSvg) {
+            newObject.svgString = fabricObj.toSVG();
+            newObject.src_orig = fabricObj.src_orig;
+            newObject.isSvg = true;
+        }
         if (this.obj.options.onUpdate) {
             this.obj.options.onUpdate.call(
                     null,

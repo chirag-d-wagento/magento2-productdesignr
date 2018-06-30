@@ -1174,6 +1174,11 @@ var DD_Admin_ImagesSelected_Model = DD_ModelBase.extend({
     addGroupEvent: 'image-group-add',
     removeGroupEvent: 'image-group-remove',
     updateExtraConfEvent: 'image-group-extra-conf',
+    
+    createDesignerEvent: 'designer-created',
+    beforeCreateDesignerEvent: 'before-designer-created',
+    
+    designer: null,
 
     init: function (obj) {
         this.obj = obj;
@@ -1190,6 +1195,9 @@ var DD_Admin_ImagesSelected_Model = DD_ModelBase.extend({
         this._evnt().register(this.groupCancelEvent, this.obj);
         this._evnt().register(this.removeGroupEvent, this.obj);
         this._evnt().register(this.updateExtraConfEvent, this.obj);
+        
+        this._evnt().register(this.createDesignerEvent, this.obj);
+        this._evnt().register(this.beforeCreateDesignerEvent, this.obj);
     },
 
     _registerCalls: function () {
@@ -1197,6 +1205,18 @@ var DD_Admin_ImagesSelected_Model = DD_ModelBase.extend({
             return;
         }
         var self = this;
+        
+        
+        this._evnt().registerCallback(this.createDesignerEvent, function (obj, eventName, designer) {
+            obj.designer = designer;
+        });
+        
+        this._evnt().registerCallback(this.beforeCreateDesignerEvent, function (obj) {
+            if(obj.designer) {
+                obj.designer.destroy();
+                obj.designer = null;
+            }
+        });
         
         this._evnt().registerCallback(this.updateExtraConfEvent, function (obj, eventName, data) {
             if(obj.options.onUpdate) {
@@ -1343,8 +1363,12 @@ var DD_Admin_ImagesSelected_Model = DD_ModelBase.extend({
             this.removeLayer(group_uid, media_id, fabricObj);
             return;
         }
+        console.log(fabricObj.type);
+        console.log(fabricObj);
         if(fabricObj.type === 'image' || fabricObj.type === 'text' || fabricObj.isSvg) {
             this.updateLayer(group_uid, media_id, fabricObj)
+            console.log('fabricObj.isSvg');
+            console.log(fabricObj.isSvg);
         }
         
     },
@@ -1623,6 +1647,9 @@ var DD_admin_group_image_model = DD_Admin_ImagesSelected_Model.extend({
 
 
         el.on('click', function () {
+            
+            self._evnt().doCall('before-designer-created');
+            
             $('#dd_designer').html('');
             $('#dd_designer').empty();
             var designer = $('#dd_designer').dd_productdesigner({
@@ -1666,6 +1693,8 @@ var DD_admin_group_image_model = DD_Admin_ImagesSelected_Model.extend({
 
             self.getObject().designerMediaId = options.media_id;
             self.getObject().designerGroupId = group_index;
+            
+            self._evnt().doCall('designer-created', designer);
         });
     }
 

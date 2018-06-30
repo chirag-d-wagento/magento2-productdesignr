@@ -4,37 +4,25 @@ var DD_setup_options_model = DD_ModelBase.extend({
 
     init: function (obj) {
         this.obj = obj;
-        this.hoverCanvas = this._l().getHoverCanvas();
         this._super();
     },
     
     checkedAction: function (checkbox) {
-        this.hoverCanvas.fire('object:extra_config', { key: $(checkbox).attr('id'), value: true });
+        this._l().getHoverCanvas().fire('object:extra_config', { key: $(checkbox).attr('id'), value: true });
     },
 
     uncheckedAction: function (checkbox) {
-        this.hoverCanvas.fire('object:extra_config', { key: $(checkbox).attr('id'), value: false });
+        this._l().getHoverCanvas().fire('object:extra_config', { key: $(checkbox).attr('id'), value: false });
     },
     
     keyupAction: function(input) {
         var value = this.parseFloat(input);
-        this.hoverCanvas.fire('object:extra_config', { key: input.attr('id'), value: value });
+        this._l().getHoverCanvas().fire('object:extra_config', { key: input.attr('id'), value: value });
     },
     
     selectAction: function(input){
-        this.hoverCanvas.fire('object:extra_config', { key: input.attr('id'), value: input.val() });
+        this._l().getHoverCanvas().fire('object:extra_config', { key: input.attr('id'), value: input.val() });
     },
-    
-    /*
-    initInputEvents: function(input) {
-        this.parseFloat(input);
-        var self = this;
-        input.on('keyup', function() {
-            var value = self.parseFloat(input);
-            self.hoverCanvas.fire('object:extra_config', { key: input.attr('id'), value: value });
-        });
-    },
-    */
     
     parseFloat: function(input) {
         var val = $(input).val();

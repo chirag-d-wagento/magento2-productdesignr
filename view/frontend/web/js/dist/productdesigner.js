@@ -33660,7 +33660,11 @@ var DD_object = Class.extend({
         this.id = id ? id : this.createUUID();
     },
     
-    setGlobal: function () {
+    setGlobal: function (id, value) {
+        if(id && value) {
+            DD_Global[id] = value;
+            return;
+        }
         DD_Global[this.id] = this;
     },
     getId: function () {
@@ -33706,8 +33710,13 @@ var DD_object = Class.extend({
         return this.getGlobal(this.idLayersObject);
     },
     //settings
-    _s: function(settingName) {
+    _s: function(settingName, value) {
         var settingsObject = this.getGlobal(this.idSettingsObject);
+        if( value ) {
+            settingsObject.settings[settingName] = value;
+            this.setGlobal(this.idSettingsObject, value);
+        }
+        
         return settingsObject.settings[settingName];
     },
     //window

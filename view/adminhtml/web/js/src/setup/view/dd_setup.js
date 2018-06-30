@@ -1,7 +1,7 @@
 var DD_setup = DD_panel.extend({
     object_id: 'dd-setup',
     class_name: 'dd-setup-image',
-    model: 'DD_setup_model',
+    //model: 'DD_setup_model',
     
     init: function(parent, imgOptions) {
         this.parent = parent;
@@ -15,7 +15,11 @@ var DD_setup = DD_panel.extend({
     },
     
     _addElements: function() {
-        new DD_setup_tabs(this.self, this.imgOptions);
+        var me = this;
+        setTimeout(function() {
+            new DD_setup_options(me.self, me.imgOptions);
+        }, 100);
+        
     }
     
 });
