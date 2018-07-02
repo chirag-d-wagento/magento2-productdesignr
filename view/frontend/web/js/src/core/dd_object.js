@@ -65,9 +65,9 @@ var DD_object = Class.extend({
         var settingsObject = this.getGlobal(this.idSettingsObject);
         if( value ) {
             settingsObject.settings[settingName] = value;
-            this.setGlobal(this.idSettingsObject, value);
+            this.setGlobal(this.idSettingsObject, settingsObject);
+            return;
         }
-        
         return settingsObject.settings[settingName];
     },
     //window

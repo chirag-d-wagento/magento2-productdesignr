@@ -111,7 +111,7 @@ var DD_control = DD_Uibase.extend({
         this.content.get().append(this.control);
     },
 
-    fontSelector: function (parent, selectedFont, onUpdate, model) {
+    fontSelector: function (parent, selectedFont, onUpdate, model, fonts) {
         var fontSelectorContainer = new DD_panel({
             'parent': parent,
             'class': 'dd-helper-font-selector-container'
@@ -137,7 +137,7 @@ var DD_control = DD_Uibase.extend({
                     onUpdate.call(this, style, model);
                 }
             },
-            'fonts': this._s('listFonts')
+            'fonts': fonts ? fonts : this._s('listFonts')
         });
     },
 

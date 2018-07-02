@@ -4,7 +4,7 @@ var DD_Layer_Text = DD_Layer_Base.extend({
 
         var options = options ? options : {};
         var text = fullCnfg ? fullCnfg.text : options.text;
-        
+
         if (!fullCnfg) {
             var conf = {
                 fontSize: this.calcFontSize(),
@@ -18,10 +18,34 @@ var DD_Layer_Text = DD_Layer_Base.extend({
         }
 
         conf.notSelect = notSelect;
+        if (!this._s('extra_config').max_text_chars) {
+            var text = new fabric.IText(text, conf);
+        } else {
+            var text = new fabric.Text(text, conf);
+        }
+
+        if (this._s('extra_config').disable_text_resize) {
+            text.setControlsVisibility({
+                mt: false,
+                mb: false,
+                ml: false,
+                mr: false,
+                bl: false,
+                br: false,
+                tl: false,
+                tr: false,
+                //mtr: false
+            });
+        }
         
-        var text = new fabric.IText(text, conf);
+        if (this._s('extra_config').disable_text_rotate) {
+            text.setControlsVisibility({
+                mtr: false
+            });
+        }
+
         parent.add(text);
-        
+
         if (!fullCnfg) {
             var coords = this.positionToBase({width: text.getWidth(), height: text.getHeight()});
 
@@ -31,17 +55,17 @@ var DD_Layer_Text = DD_Layer_Base.extend({
             }).setCoords();
 
             this.setObjAngle(text);
-        }else{
+        } else {
             text.setCoords();
         }
-        
+
         this.removeControlsMiddle(text);
 
         parent.renderAll();
         if (!options.noselectable && !conf.notSelect) {
             parent.setActiveObject(text);
         }
-        
+
         this.object = text;
         this.onCreated();
     }

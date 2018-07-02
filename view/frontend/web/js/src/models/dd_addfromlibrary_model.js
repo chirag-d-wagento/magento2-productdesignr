@@ -41,6 +41,8 @@ var DD_AddFromLibrary_Model = DD_ModelBase.extend({
         parent.addClass('dd-window-loading');
         parent.html(this._('loading') + '...');
 
+        var extraConfig = this.getExtraConfig();
+        var categories = extraConfig.lib_categories;
         $.ajax({
             url: this._s('libraryPath'),
             type: 'json',
@@ -61,11 +63,14 @@ var DD_AddFromLibrary_Model = DD_ModelBase.extend({
                     }
                     $.each(response.data, function (i, element) {
                         if (element.directory) {
-                            new DD_Category({
-                                'parent': parent,
-                                'data': element,
-                                'model': self
-                            });
+                            if (!categories || categories.indexOf(element.name) != -1) {
+
+                                new DD_Category({
+                                    'parent': parent,
+                                    'data': element,
+                                    'model': self
+                                });
+                            }
                         }
                         if (element.file) {
                             new DD_ImageLinkAdd({
@@ -81,5 +86,9 @@ var DD_AddFromLibrary_Model = DD_ModelBase.extend({
                 });
 
 
+    },
+
+    getExtraConfig: function () {
+        return this._s('extra_config');
     }
 });

@@ -1,5 +1,6 @@
 var DD_windowTextForm = DD_panel.extend({
     object_id: 'dd-add-text-form',
+    errorPlace: null,
     
     init: function(parent, value) {
         var options = {
@@ -17,10 +18,12 @@ var DD_windowTextForm = DD_panel.extend({
     },
     
     addTextArea: function() {
+        this.errorPlace = $('<div />').attr('class', 'dd-add-text-errors');
         this.textArea = $('<textarea />').attr('class', 'dd-add-text-textarea');
         if(this.value) {
             this.textArea.val(this.value);
         }
+        this.self.append(this.errorPlace);
         this.self.append(this.textArea);
     },
     

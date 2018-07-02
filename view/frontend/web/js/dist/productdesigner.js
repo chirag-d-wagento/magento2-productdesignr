@@ -33714,9 +33714,9 @@ var DD_object = Class.extend({
         var settingsObject = this.getGlobal(this.idSettingsObject);
         if( value ) {
             settingsObject.settings[settingName] = value;
-            this.setGlobal(this.idSettingsObject, value);
+            this.setGlobal(this.idSettingsObject, settingsObject);
+            return;
         }
-        
         return settingsObject.settings[settingName];
     },
     //window
@@ -34516,7 +34516,7 @@ var DD_control = DD_Uibase.extend({
         this.content.get().append(this.control);
     },
 
-    fontSelector: function (parent, selectedFont, onUpdate, model) {
+    fontSelector: function (parent, selectedFont, onUpdate, model, fonts) {
         var fontSelectorContainer = new DD_panel({
             'parent': parent,
             'class': 'dd-helper-font-selector-container'
@@ -34542,7 +34542,7 @@ var DD_control = DD_Uibase.extend({
                     onUpdate.call(this, style, model);
                 }
             },
-            'fonts': this._s('listFonts')
+            'fonts': fonts ? fonts : this._s('listFonts')
         });
     },
 
@@ -35012,6 +35012,8 @@ var DD_AddFromLibrary_Model = DD_ModelBase.extend({
         parent.addClass('dd-window-loading');
         parent.html(this._('loading') + '...');
 
+        var extraConfig = this.getExtraConfig();
+        var categories = extraConfig.lib_categories;
         $.ajax({
             url: this._s('libraryPath'),
             type: 'json',
@@ -35032,11 +35034,14 @@ var DD_AddFromLibrary_Model = DD_ModelBase.extend({
                     }
                     $.each(response.data, function (i, element) {
                         if (element.directory) {
-                            new DD_Category({
-                                'parent': parent,
-                                'data': element,
-                                'model': self
-                            });
+                            if (!categories || categories.indexOf(element.name) != -1) {
+
+                                new DD_Category({
+                                    'parent': parent,
+                                    'data': element,
+                                    'model': self
+                                });
+                            }
                         }
                         if (element.file) {
                             new DD_ImageLinkAdd({
@@ -35052,6 +35057,10 @@ var DD_AddFromLibrary_Model = DD_ModelBase.extend({
                 });
 
 
+    },
+
+    getExtraConfig: function () {
+        return this._s('extra_config');
     }
 });
 
@@ -35214,10 +35223,28 @@ var DD_AddText_Model = DD_ModelBase.extend({
         this.form = new DD_windowTextForm(parent);
         this.setSaveTextEvent();
     },
+    
+    
+    getExtraConfig: function() {
+        return this._s('extra_config');
+    },
 
     setSaveTextEvent: function () {
         var textarea = this.form.get().find('textarea');
         var self = this;
+        var extraConfig = this.getExtraConfig();
+        if(extraConfig.max_text_chars) {
+            var maxChars = extraConfig.max_text_chars;
+            var errorPlace = this.form.get().find('.dd-add-text-errors');
+            textarea.on('keyup', function() {
+                
+                if($(this).val().length > maxChars) {
+                    var val = $(this).val().substring(0, maxChars);
+                    $(this).val(val);
+                    errorPlace.html(self._('maximum_chars_count') + ' ' + maxChars);
+                }
+            });
+        }
 
         this.form.get().find('button').on('click', function () {
             var text = textarea.val();
@@ -35227,7 +35254,7 @@ var DD_AddText_Model = DD_ModelBase.extend({
                 textarea.removeClass('empty');
                 textarea.addClass('valid');
                 new DD_Layer_Text({
-                    text: text.trim()
+                    text: text.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         trim()
                 });
                 self.closeWindow();
             }
@@ -35589,6 +35616,8 @@ var DD_Main_Model = DD_ModelBase.extend({
         this.obj = obj;
         this._super();
         var self = this;
+        //set global extran config
+        this._s('extra_config', this.obj.options.extra_config);
 
         if (this._s('loadGoogleFonts')) {
             var fonts = self.prepareFonts();
@@ -35603,12 +35632,13 @@ var DD_Main_Model = DD_ModelBase.extend({
                             'data': obj.options.help
                         });
                         self.help.show();
-                        
+
                     }
                 }
             });
             return;
         }
+
         this.initLayers();
         if (obj.options.help) {
             self.help = $('body').dd_help({
@@ -35640,7 +35670,7 @@ var DD_Main_Model = DD_ModelBase.extend({
         });
         var width = this.obj.options.width;
         var height = this.obj.options.height;
-        
+
         bgCanvas.attr({
             'width': width,
             'height': height
@@ -35669,7 +35699,7 @@ var DD_Main_Model = DD_ModelBase.extend({
         });
 
         this._canvasEvents(hoverCanvas);
-        
+
         this._addObjects(this.obj.options);
 
         this.resize(width, height);
@@ -35682,8 +35712,8 @@ var DD_Main_Model = DD_ModelBase.extend({
     },
 
     _canvasEvents: function (hoverCanvas) {
-        var self = this; 
-        
+        var self = this;
+
         hoverCanvas.on('object:added', function (e) {
 
             new DD_control({
@@ -35696,6 +35726,7 @@ var DD_Main_Model = DD_ModelBase.extend({
             e.target.uid = self.createUUID();
             e.target.uid.toString();
             self._onUpdate(e.target, 'update');
+            
 
         });
         hoverCanvas.on('object:moving', function (e) {
@@ -35745,17 +35776,17 @@ var DD_Main_Model = DD_ModelBase.extend({
         hoverCanvas.on('object:clear_all', function (e) {
             self.obj.options.onClearAll.call(null, self.obj.options.media_id)
         });
-        
-        fabric.util.addListener(hoverCanvas.upperCanvasEl, 'dblclick', function(e) {
-            
+
+        fabric.util.addListener(hoverCanvas.upperCanvasEl, 'dblclick', function (e) {
+
             if (hoverCanvas.findTarget(e)) {
-               var objType = hoverCanvas.findTarget(e).type;
-               if (objType === 'i-text') {
-                  hoverCanvas.findTarget(e).controlModelCreated.handleActive();
-               }
+                var objType = hoverCanvas.findTarget(e).type;
+                if (objType === 'i-text') {
+                    hoverCanvas.findTarget(e).controlModelCreated.handleActive();
+                }
             }
-         });
-        
+        });
+
     },
 
     _addObjects: function (options) {
@@ -35767,12 +35798,11 @@ var DD_Main_Model = DD_ModelBase.extend({
             var self = this;
             var last = options.conf.length;
             $(options.conf).each(function (i, obj) {
-                var notSelect = (last - 1) == i ? false : true;
                 if (obj.type === 'image') {
-                    new DD_Layer_Img(null, obj, notSelect);
+                    new DD_Layer_Img(null, obj);
                 }
                 if (obj.type === 'text' || obj.type === 'i-text') {
-                    new DD_Layer_Text(null, obj, notSelect);
+                    new DD_Layer_Text(null, obj);
                 }
                 if (obj.isSvg == true) {
                     new DD_Layer_Svg(obj);
@@ -35856,10 +35886,10 @@ var DD_Main_Model = DD_ModelBase.extend({
         this._evnt().unregisterAll();
         this.obj.self.parent().empty();
         this.obj.self.parent().remove();
-        
+
         this._w().close();
         this._evnt().destroyJBoxes();
-        if(this.help) {
+        if (this.help) {
             this.help.destroy();
         }
         delete this;
@@ -36166,9 +36196,16 @@ var DD_control_image = DD_Control_Base_Model.extend({
         this._super(obj);
     },
     _addControls: function () {
+        
+        var extraConfig = this._s('extra_config');
+        
         this.addDelete();
-        this.obj.addRotateBase();
-        this.obj.addSizeBase();
+        if(!extraConfig.disable_photos_rotate) {
+            this.obj.addRotateBase();
+        }
+        if(!extraConfig.disable_photos_resize) {
+            this.obj.addSizeBase();
+        }
         
         this.baseEvents();
         this.addSvgControls();
@@ -36235,10 +36272,19 @@ var DD_control_text = DD_Control_Base_Model.extend({
     },
 
     _addControls: function () {
+
+        var extraConfig = this._s('extra_config');
         this.obj.contentContainer.get().addClass(this.containerClass);
         this.addDelete();
-        this.obj.addRotateBase();
-        this.obj.addSizeBase();
+
+        if (!extraConfig.disable_text_rotate) {
+            this.obj.addRotateBase();
+        }
+
+        if (!extraConfig.disable_text_resize) {
+            this.obj.addSizeBase();
+
+        }
         this.addFontSelector();
         this.addEdit();
 
@@ -36248,14 +36294,14 @@ var DD_control_text = DD_Control_Base_Model.extend({
     addEdit: function () {
         var self = this;
         var edit = this.obj.addEditBase();
-        
+
 
         edit.get().on('click', function () {
             self.showEditForm();
         });
     },
-    
-    showEditForm: function() {
+
+    showEditForm: function () {
         var content = this.obj.content.get();
         content.empty();
         var fabricObject = this.obj.options.fabricObject;
@@ -36268,6 +36314,19 @@ var DD_control_text = DD_Control_Base_Model.extend({
     setEditEvents: function (form) {
         var self = this;
         var textarea = form.get().find('textarea');
+        var extraConfig = this.getExtraConfig();
+        if (extraConfig.max_text_chars) {
+            var maxChars = extraConfig.max_text_chars;
+            var errorPlace = form.get().find('.dd-add-text-errors');
+            textarea.on('keyup', function () {
+
+                if ($(this).val().length > maxChars) {
+                    var val = $(this).val().substring(0, maxChars);
+                    $(this).val(val);
+                    errorPlace.html(self._('maximum_chars_count') + ' ' + maxChars);
+                }
+            });
+        }
         form.get().find('button').on('click', function () {
             var text = textarea.val();
             if (text.trim() == '') {
@@ -36279,10 +36338,14 @@ var DD_control_text = DD_Control_Base_Model.extend({
                 self.obj.contentContainer.get().hide();
             }
         });
-        
+
         setTimeout(function () {
             $(textarea).focus();
         }, 0);
+    },
+    
+    getExtraConfig: function() {
+        return this._s('extra_config');
     },
 
     addFontSelector: function () {
@@ -36313,6 +36376,7 @@ var DD_control_text = DD_Control_Base_Model.extend({
     },
 
     showTextSetting: function () {
+        var extraConfig = this._s('extra_config');
         var fabricObject = this.obj.options.fabricObject;
 
         var color = fabricObject.fill;
@@ -36320,9 +36384,17 @@ var DD_control_text = DD_Control_Base_Model.extend({
         var font = fabricObject.fontFamily;
         var content = this.obj.content.get();
         content.empty();
-        this.obj.colorSelector(content, this._('background_color'), bg, this.setBgColor, this);
-        this.obj.colorSelector(content, this._('text_color'), color, this.setFontColor, this);
-        this.obj.fontSelector(content, font, this.setFont, this);
+        if (!extraConfig.background_color_text_disable) {
+            this.obj.colorSelector(content, this._('background_color'), bg, this.setBgColor, this);
+        }
+        if (!extraConfig.text_color_disable) {
+            this.obj.colorSelector(content, this._('text_color'), color, this.setFontColor, this);
+        }
+        var fonts = null;
+        if (extraConfig.fonts) {
+            fonts = extraConfig.fonts;
+        }
+        this.obj.fontSelector(content, font, this.setFont, this, fonts);
 
         this.obj.contentContainer.get().show();
     },
@@ -36334,8 +36406,8 @@ var DD_control_text = DD_Control_Base_Model.extend({
             self.removeBase();
         });
     },
-    
-    handleActive: function() {
+
+    handleActive: function () {
         this.showEditForm();
     }
 })
@@ -36502,24 +36574,44 @@ var DD_Layer_Img = DD_Layer_Base.extend({
                 iImg
                         .set(conf);
             } else {
-                var _opt =  {
-                    width:options.width, 
-                    height:options.height, 
-                    scaleY: conf.height / options.height, 
+                var _opt = {
+                    width: options.width,
+                    height: options.height,
+                    scaleY: conf.height / options.height,
                     scaleX: conf.width / options.width
                 };
-                
+
                 var object = fabric.util.groupSVGElements(iImg);
                 iImg = new fabric.Group(object.getObjects(), _opt);
-                
+
                 delete conf.width;
                 delete conf.height;
-                
-                iImg.set(conf);    
+
+                iImg.set(conf);
             }
+            
+            if(self._s('extra_config').disable_photos_resize) {
+                iImg.setControlsVisibility({
+                    mt: false,
+                    mb: false,
+                    ml: false,
+                    mr: false,
+                    bl: false,
+                    br: false,
+                    tl: false,
+                    tr: false,
+                    //mtr: false
+                });
+            }
+            if(self._s('extra_config').disable_photos_rotate) {
+                iImg.setControlsVisibility({
+                    mtr: false
+                });
+            }
+            
             parent.add(iImg);
             self.removeControlsMiddle(iImg);
-            
+
             if (!options.noChangeSize) {
                 self.setObjAngle(iImg);
             }
@@ -36530,6 +36622,7 @@ var DD_Layer_Img = DD_Layer_Base.extend({
                 parent.setActiveObject(iImg);
             }
 
+            
             self.object = iImg;
             self.onCreated();
 
@@ -36650,6 +36743,8 @@ var DD_Layer_Svg = DD_Layer_Base.extend({
     
     init: function (conf) {
         
+        var extraConfig = this._s('extra_config');
+        
         var parent = this.getParent();
         var self = this;
         var svgString = conf.svgString;
@@ -36666,11 +36761,36 @@ var DD_Layer_Svg = DD_Layer_Base.extend({
             var object = fabric.util.groupSVGElements(svg);
             var iImg = new fabric.Group(object.getObjects(), opt);
             iImg.set(conf);
+            
+            if(extraConfig.disable_photos_resize) {
+                 iImg.setControlsVisibility({
+                    mt: false,
+                    mb: false,
+                    ml: false,
+                    mr: false,
+                    bl: false,
+                    br: false,
+                    tl: false,
+                    tr: false,
+                    //mtr: false
+                });
+            }
+            
+            if(extraConfig.disable_photos_rotate) {
+                 iImg.setControlsVisibility({
+                    mtr: false
+                });
+            }
+            
             parent.add(iImg);
             self.removeControlsMiddle(iImg);
             parent.calcOffset();
+            
             parent.renderAll();
+            parent.setActiveObject(iImg);
+            
             self.object = iImg;
+            
             self.onCreated();
         });
         
@@ -36684,7 +36804,7 @@ var DD_Layer_Text = DD_Layer_Base.extend({
 
         var options = options ? options : {};
         var text = fullCnfg ? fullCnfg.text : options.text;
-        
+
         if (!fullCnfg) {
             var conf = {
                 fontSize: this.calcFontSize(),
@@ -36698,10 +36818,34 @@ var DD_Layer_Text = DD_Layer_Base.extend({
         }
 
         conf.notSelect = notSelect;
+        if (!this._s('extra_config').max_text_chars) {
+            var text = new fabric.IText(text, conf);
+        } else {
+            var text = new fabric.Text(text, conf);
+        }
+
+        if (this._s('extra_config').disable_text_resize) {
+            text.setControlsVisibility({
+                mt: false,
+                mb: false,
+                ml: false,
+                mr: false,
+                bl: false,
+                br: false,
+                tl: false,
+                tr: false,
+                //mtr: false
+            });
+        }
         
-        var text = new fabric.IText(text, conf);
+        if (this._s('extra_config').disable_text_rotate) {
+            text.setControlsVisibility({
+                mtr: false
+            });
+        }
+
         parent.add(text);
-        
+
         if (!fullCnfg) {
             var coords = this.positionToBase({width: text.getWidth(), height: text.getHeight()});
 
@@ -36711,17 +36855,17 @@ var DD_Layer_Text = DD_Layer_Base.extend({
             }).setCoords();
 
             this.setObjAngle(text);
-        }else{
+        } else {
             text.setCoords();
         }
-        
+
         this.removeControlsMiddle(text);
 
         parent.renderAll();
         if (!options.noselectable && !conf.notSelect) {
             parent.setActiveObject(text);
         }
-        
+
         this.object = text;
         this.onCreated();
     }
@@ -37529,6 +37673,7 @@ var DD_windowPhotoTabs = DD_Tabs.extend({
 
 var DD_windowTextForm = DD_panel.extend({
     object_id: 'dd-add-text-form',
+    errorPlace: null,
     
     init: function(parent, value) {
         var options = {
@@ -37546,10 +37691,12 @@ var DD_windowTextForm = DD_panel.extend({
     },
     
     addTextArea: function() {
+        this.errorPlace = $('<div />').attr('class', 'dd-add-text-errors');
         this.textArea = $('<textarea />').attr('class', 'dd-add-text-textarea');
         if(this.value) {
             this.textArea.val(this.value);
         }
+        this.self.append(this.errorPlace);
         this.self.append(this.textArea);
     },
     
@@ -37736,7 +37883,8 @@ $.fn.dd_productdesigner = function (options) {
             'import_from_instagram': 'Import from Instagram',
             'instagram_load_failed': 'Instagram load images failed',
             'facebook_load_failed': 'Facebook load images failed',
-            'no_design_for_share': 'Create design for share it'
+            'no_design_for_share': 'Create design for share it',
+            'maximum_chars_count': 'Maximum allowed chars'
             
         },
         //'settings': settings,

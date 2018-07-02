@@ -79,7 +79,8 @@ $.fn.dd_productdesigner = function (options) {
             'import_from_instagram': 'Import from Instagram',
             'instagram_load_failed': 'Instagram load images failed',
             'facebook_load_failed': 'Facebook load images failed',
-            'no_design_for_share': 'Create design for share it'
+            'no_design_for_share': 'Create design for share it',
+            'maximum_chars_count': 'Maximum allowed chars'
             
         },
         //'settings': settings,

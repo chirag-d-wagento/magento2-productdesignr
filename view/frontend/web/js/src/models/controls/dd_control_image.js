@@ -3,9 +3,16 @@ var DD_control_image = DD_Control_Base_Model.extend({
         this._super(obj);
     },
     _addControls: function () {
+        
+        var extraConfig = this._s('extra_config');
+        
         this.addDelete();
-        this.obj.addRotateBase();
-        this.obj.addSizeBase();
+        if(!extraConfig.disable_photos_rotate) {
+            this.obj.addRotateBase();
+        }
+        if(!extraConfig.disable_photos_resize) {
+            this.obj.addSizeBase();
+        }
         
         this.baseEvents();
         this.addSvgControls();

@@ -162,7 +162,6 @@ var DD_Main_Model = DD_ModelBase.extend({
             var last = options.conf.length;
             $(options.conf).each(function (i, obj) {
                 var notSelect = (last - 1) == i ? false : true;
-                console.log(obj.type);
                 if (obj.type === 'image') {
                     new DD_Layer_Img(null, obj, notSelect);
                 }

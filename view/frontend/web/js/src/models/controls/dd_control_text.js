@@ -6,10 +6,19 @@ var DD_control_text = DD_Control_Base_Model.extend({
     },
 
     _addControls: function () {
+
+        var extraConfig = this._s('extra_config');
         this.obj.contentContainer.get().addClass(this.containerClass);
         this.addDelete();
-        this.obj.addRotateBase();
-        this.obj.addSizeBase();
+
+        if (!extraConfig.disable_text_rotate) {
+            this.obj.addRotateBase();
+        }
+
+        if (!extraConfig.disable_text_resize) {
+            this.obj.addSizeBase();
+
+        }
         this.addFontSelector();
         this.addEdit();
 
@@ -19,14 +28,14 @@ var DD_control_text = DD_Control_Base_Model.extend({
     addEdit: function () {
         var self = this;
         var edit = this.obj.addEditBase();
-        
+
 
         edit.get().on('click', function () {
             self.showEditForm();
         });
     },
-    
-    showEditForm: function() {
+
+    showEditForm: function () {
         var content = this.obj.content.get();
         content.empty();
         var fabricObject = this.obj.options.fabricObject;
@@ -39,6 +48,19 @@ var DD_control_text = DD_Control_Base_Model.extend({
     setEditEvents: function (form) {
         var self = this;
         var textarea = form.get().find('textarea');
+        var extraConfig = this.getExtraConfig();
+        if (extraConfig.max_text_chars) {
+            var maxChars = extraConfig.max_text_chars;
+            var errorPlace = form.get().find('.dd-add-text-errors');
+            textarea.on('keyup', function () {
+
+                if ($(this).val().length > maxChars) {
+                    var val = $(this).val().substring(0, maxChars);
+                    $(this).val(val);
+                    errorPlace.html(self._('maximum_chars_count') + ' ' + maxChars);
+                }
+            });
+        }
         form.get().find('button').on('click', function () {
             var text = textarea.val();
             if (text.trim() == '') {
@@ -50,10 +72,14 @@ var DD_control_text = DD_Control_Base_Model.extend({
                 self.obj.contentContainer.get().hide();
             }
         });
-        
+
         setTimeout(function () {
             $(textarea).focus();
         }, 0);
+    },
+    
+    getExtraConfig: function() {
+        return this._s('extra_config');
     },
 
     addFontSelector: function () {
@@ -84,6 +110,7 @@ var DD_control_text = DD_Control_Base_Model.extend({
     },
 
     showTextSetting: function () {
+        var extraConfig = this._s('extra_config');
         var fabricObject = this.obj.options.fabricObject;
 
         var color = fabricObject.fill;
@@ -91,9 +118,17 @@ var DD_control_text = DD_Control_Base_Model.extend({
         var font = fabricObject.fontFamily;
         var content = this.obj.content.get();
         content.empty();
-        this.obj.colorSelector(content, this._('background_color'), bg, this.setBgColor, this);
-        this.obj.colorSelector(content, this._('text_color'), color, this.setFontColor, this);
-        this.obj.fontSelector(content, font, this.setFont, this);
+        if (!extraConfig.background_color_text_disable) {
+            this.obj.colorSelector(content, this._('background_color'), bg, this.setBgColor, this);
+        }
+        if (!extraConfig.text_color_disable) {
+            this.obj.colorSelector(content, this._('text_color'), color, this.setFontColor, this);
+        }
+        var fonts = null;
+        if (extraConfig.fonts) {
+            fonts = extraConfig.fonts;
+        }
+        this.obj.fontSelector(content, font, this.setFont, this, fonts);
 
         this.obj.contentContainer.get().show();
     },
@@ -105,8 +140,8 @@ var DD_control_text = DD_Control_Base_Model.extend({
             self.removeBase();
         });
     },
-    
-    handleActive: function() {
+
+    handleActive: function () {
         this.showEditForm();
     }
 })

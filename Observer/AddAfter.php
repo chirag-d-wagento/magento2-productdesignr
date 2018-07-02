@@ -86,7 +86,7 @@ class AddAfter implements ObserverInterface {
             if($_obj->type === 'image' || !empty($_obj->isSvg)) {
                 $price += $this->getLayerImgPrice($extraConf);
             }
-            if($_obj->type === 'text') {
+            if($_obj->type === 'text' || $_obj->type === 'i-text') {
                 $price += $this->getLayerTxtPrice($extraConf);
             }
         }

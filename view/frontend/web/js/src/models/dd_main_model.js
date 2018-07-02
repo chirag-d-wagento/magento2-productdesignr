@@ -9,6 +9,8 @@ var DD_Main_Model = DD_ModelBase.extend({
         this.obj = obj;
         this._super();
         var self = this;
+        //set global extran config
+        this._s('extra_config', this.obj.options.extra_config);
 
         if (this._s('loadGoogleFonts')) {
             var fonts = self.prepareFonts();
@@ -23,12 +25,13 @@ var DD_Main_Model = DD_ModelBase.extend({
                             'data': obj.options.help
                         });
                         self.help.show();
-                        
+
                     }
                 }
             });
             return;
         }
+
         this.initLayers();
         if (obj.options.help) {
             self.help = $('body').dd_help({
@@ -60,7 +63,7 @@ var DD_Main_Model = DD_ModelBase.extend({
         });
         var width = this.obj.options.width;
         var height = this.obj.options.height;
-        
+
         bgCanvas.attr({
             'width': width,
             'height': height
@@ -89,7 +92,7 @@ var DD_Main_Model = DD_ModelBase.extend({
         });
 
         this._canvasEvents(hoverCanvas);
-        
+
         this._addObjects(this.obj.options);
 
         this.resize(width, height);
@@ -102,8 +105,8 @@ var DD_Main_Model = DD_ModelBase.extend({
     },
 
     _canvasEvents: function (hoverCanvas) {
-        var self = this; 
-        
+        var self = this;
+
         hoverCanvas.on('object:added', function (e) {
 
             new DD_control({
@@ -165,17 +168,17 @@ var DD_Main_Model = DD_ModelBase.extend({
         hoverCanvas.on('object:clear_all', function (e) {
             self.obj.options.onClearAll.call(null, self.obj.options.media_id)
         });
-        
-        fabric.util.addListener(hoverCanvas.upperCanvasEl, 'dblclick', function(e) {
-            
+
+        fabric.util.addListener(hoverCanvas.upperCanvasEl, 'dblclick', function (e) {
+
             if (hoverCanvas.findTarget(e)) {
-               var objType = hoverCanvas.findTarget(e).type;
-               if (objType === 'i-text') {
-                  hoverCanvas.findTarget(e).controlModelCreated.handleActive();
-               }
+                var objType = hoverCanvas.findTarget(e).type;
+                if (objType === 'i-text') {
+                    hoverCanvas.findTarget(e).controlModelCreated.handleActive();
+                }
             }
-         });
-        
+        });
+
     },
 
     _addObjects: function (options) {
@@ -187,12 +190,11 @@ var DD_Main_Model = DD_ModelBase.extend({
             var self = this;
             var last = options.conf.length;
             $(options.conf).each(function (i, obj) {
-                var notSelect = (last - 1) == i ? false : true;
                 if (obj.type === 'image') {
-                    new DD_Layer_Img(null, obj, notSelect);
+                    new DD_Layer_Img(null, obj);
                 }
                 if (obj.type === 'text' || obj.type === 'i-text') {
-                    new DD_Layer_Text(null, obj, notSelect);
+                    new DD_Layer_Text(null, obj);
                 }
                 if (obj.isSvg == true) {
                     new DD_Layer_Svg(obj);
@@ -276,10 +278,10 @@ var DD_Main_Model = DD_ModelBase.extend({
         this._evnt().unregisterAll();
         this.obj.self.parent().empty();
         this.obj.self.parent().remove();
-        
+
         this._w().close();
         this._evnt().destroyJBoxes();
-        if(this.help) {
+        if (this.help) {
             this.help.destroy();
         }
         delete this;

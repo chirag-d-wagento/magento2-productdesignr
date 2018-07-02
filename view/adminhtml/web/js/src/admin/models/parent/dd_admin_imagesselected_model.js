@@ -195,12 +195,8 @@ var DD_Admin_ImagesSelected_Model = DD_ModelBase.extend({
             this.removeLayer(group_uid, media_id, fabricObj);
             return;
         }
-        console.log(fabricObj.type);
-        console.log(fabricObj);
         if(fabricObj.type === 'image' || fabricObj.type === 'text' || fabricObj.isSvg) {
-            this.updateLayer(group_uid, media_id, fabricObj)
-            console.log('fabricObj.isSvg');
-            console.log(fabricObj.isSvg);
+            this.updateLayer(group_uid, media_id, fabricObj);
         }
         
     },

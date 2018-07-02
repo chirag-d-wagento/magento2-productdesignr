@@ -40,24 +40,44 @@ var DD_Layer_Img = DD_Layer_Base.extend({
                 iImg
                         .set(conf);
             } else {
-                var _opt =  {
-                    width:options.width, 
-                    height:options.height, 
-                    scaleY: conf.height / options.height, 
+                var _opt = {
+                    width: options.width,
+                    height: options.height,
+                    scaleY: conf.height / options.height,
                     scaleX: conf.width / options.width
                 };
-                
+
                 var object = fabric.util.groupSVGElements(iImg);
                 iImg = new fabric.Group(object.getObjects(), _opt);
-                
+
                 delete conf.width;
                 delete conf.height;
-                
-                iImg.set(conf);    
+
+                iImg.set(conf);
             }
+            
+            if(self._s('extra_config').disable_photos_resize) {
+                iImg.setControlsVisibility({
+                    mt: false,
+                    mb: false,
+                    ml: false,
+                    mr: false,
+                    bl: false,
+                    br: false,
+                    tl: false,
+                    tr: false,
+                    //mtr: false
+                });
+            }
+            if(self._s('extra_config').disable_photos_rotate) {
+                iImg.setControlsVisibility({
+                    mtr: false
+                });
+            }
+            
             parent.add(iImg);
             self.removeControlsMiddle(iImg);
-            
+
             if (!options.noChangeSize) {
                 self.setObjAngle(iImg);
             }
@@ -68,6 +88,7 @@ var DD_Layer_Img = DD_Layer_Base.extend({
                 parent.setActiveObject(iImg);
             }
 
+            
             self.object = iImg;
             self.onCreated();
 
