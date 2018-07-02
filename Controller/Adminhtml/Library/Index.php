@@ -14,7 +14,7 @@ class Index extends \Magento\Backend\App\Action {
     protected $_storeManager;
 
     public function __construct(
-        \Magento\Framework\App\Action\Context $context, 
+        \Magento\Backend\App\Action\Context $context, 
         \Magento\Framework\Filesystem $filesystem, 
         \Magento\Store\Model\StoreManagerInterface $storeManager
     ) {

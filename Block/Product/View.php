@@ -16,7 +16,6 @@ class View extends \Magento\Catalog\Block\Product\AbstractProduct
     protected $_blockFactory;
     protected $_modelShare;
     protected $_modelShareLoaded;
-    protected $_request;
     protected $_confHelpOneBlock = [
         'selector' => '#dd-top-controls',
         'position' => [
@@ -53,7 +52,7 @@ class View extends \Magento\Catalog\Block\Product\AbstractProduct
     public function __construct(
     \Magento\Catalog\Block\Product\Context $context, \Develodesign\Designer\Helper\Data $designerHelper, \Develodesign\Designer\Helper\Url $helperUrl, \Develodesign\Designer\Helper\Fonts $designerFonts,
     //\Magento\Store\Model\StoreManagerInterface $storeManager, 
-            \Magento\Directory\Model\Currency $currency, \Develodesign\Designer\Model\Designer $designerModel, \Magento\Cms\Model\BlockFactory $blockFactory, \Magento\Cms\Model\Template\FilterProvider $filterProvider, \Develodesign\Designer\Model\ShareFactory $modelShare, \Magento\Framework\App\RequestInterface $request, array $data = array()
+            \Magento\Directory\Model\Currency $currency, \Develodesign\Designer\Model\Designer $designerModel, \Magento\Cms\Model\BlockFactory $blockFactory, \Magento\Cms\Model\Template\FilterProvider $filterProvider, \Develodesign\Designer\Model\ShareFactory $modelShare, array $data = array()
     )
     {
         parent::__construct($context, $data);
@@ -69,7 +68,6 @@ class View extends \Magento\Catalog\Block\Product\AbstractProduct
         $this->_blockFactory = $blockFactory;
 
         $this->_modelShare = $modelShare;
-        $this->_request = $request;
     }
 
     public function getShareDesign()

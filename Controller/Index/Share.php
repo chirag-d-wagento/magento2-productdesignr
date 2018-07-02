@@ -21,8 +21,6 @@ class Share extends \Magento\Framework\App\Action\Action
     protected $formKeyValidator;
     protected $_date;
     
-    protected $urlBuilder;
-
     protected $_shareUrlFull;
     
     public function __construct(
@@ -31,7 +29,6 @@ class Share extends \Magento\Framework\App\Action\Action
         \Magento\Store\Model\StoreManagerInterface $storeManager, 
         \Magento\Framework\Filesystem\Io\File $ioAdapter, 
         DateTime $date, 
-        \Magento\Framework\UrlInterface $urlBuilder,
         \Magento\Framework\Data\Form\FormKey\Validator $formKeyValidator, 
         \Develodesign\Designer\Model\ShareFactory $shareModel
     )
@@ -44,8 +41,6 @@ class Share extends \Magento\Framework\App\Action\Action
         $this->_ioAdapter = $ioAdapter;
         $this->_shareModel = $shareModel;
         $this->formKeyValidator = $formKeyValidator;
-        
-        $this->urlBuilder = $urlBuilder;
 
         $this->_date = $date;
     }
@@ -130,7 +125,7 @@ class Share extends \Magento\Framework\App\Action\Action
 
     protected function getShareBaseUrl($productId, $uniqueId, $fileUrl)
     {
-        $this->_shareUrlFull = $this->urlBuilder->getUrl('catalog/product/view', [
+        $this->_shareUrlFull = $this->_url->getUrl('catalog/product/view', [
             'id' => $productId,
             'design_id' => $uniqueId,
           //  'image' => serialize($fileUrl)
