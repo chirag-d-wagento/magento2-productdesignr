@@ -35013,7 +35013,7 @@ var DD_AddFromLibrary_Model = DD_ModelBase.extend({
         parent.html(this._('loading') + '...');
 
         var extraConfig = this.getExtraConfig();
-        var categories = extraConfig.lib_categories;
+        var categories = (extraConfig) ? extraConfig.lib_categories : null;
         $.ajax({
             url: this._s('libraryPath'),
             type: 'json',
@@ -35233,7 +35233,7 @@ var DD_AddText_Model = DD_ModelBase.extend({
         var textarea = this.form.get().find('textarea');
         var self = this;
         var extraConfig = this.getExtraConfig();
-        if(extraConfig.max_text_chars) {
+        if(extraConfig && extraConfig.max_text_chars) {
             var maxChars = extraConfig.max_text_chars;
             var errorPlace = this.form.get().find('.dd-add-text-errors');
             textarea.on('keyup', function() {
@@ -36200,10 +36200,10 @@ var DD_control_image = DD_Control_Base_Model.extend({
         var extraConfig = this._s('extra_config');
         
         this.addDelete();
-        if(!extraConfig.disable_photos_rotate) {
+        if(!extraConfig || !extraConfig.disable_photos_rotate) {
             this.obj.addRotateBase();
         }
-        if(!extraConfig.disable_photos_resize) {
+        if(!extraConfig || !extraConfig.disable_photos_resize) {
             this.obj.addSizeBase();
         }
         
@@ -36571,8 +36571,7 @@ var DD_Layer_Img = DD_Layer_Base.extend({
 
             conf.notSelect = notSelect;
             if (!isSvg) {
-                iImg
-                        .set(conf);
+                iImg.set(conf);
             } else {
                 var _opt = {
                     width: options.width,
@@ -36589,26 +36588,28 @@ var DD_Layer_Img = DD_Layer_Base.extend({
 
                 iImg.set(conf);
             }
-            
-            if(self._s('extra_config').disable_photos_resize) {
-                iImg.setControlsVisibility({
-                    mt: false,
-                    mb: false,
-                    ml: false,
-                    mr: false,
-                    bl: false,
-                    br: false,
-                    tl: false,
-                    tr: false,
-                    //mtr: false
-                });
+
+            if(typeof self._s('extra_config') !== 'undefined') {
+                if (self._s('extra_config').disable_photos_resize) {
+                    iImg.setControlsVisibility({
+                        mt: false,
+                        mb: false,
+                        ml: false,
+                        mr: false,
+                        bl: false,
+                        br: false,
+                        tl: false,
+                        tr: false,
+                        //mtr: false
+                    });
+                }
+                if (self._s('extra_config').disable_photos_rotate) {
+                    iImg.setControlsVisibility({
+                        mtr: false
+                    });
+                }
             }
-            if(self._s('extra_config').disable_photos_rotate) {
-                iImg.setControlsVisibility({
-                    mtr: false
-                });
-            }
-            
+
             parent.add(iImg);
             self.removeControlsMiddle(iImg);
 
@@ -36818,13 +36819,13 @@ var DD_Layer_Text = DD_Layer_Base.extend({
         }
 
         conf.notSelect = notSelect;
-        if (!this._s('extra_config').max_text_chars) {
+        if (!this._s('extra_config') || !this._s('extra_config').max_text_chars) {
             var text = new fabric.IText(text, conf);
         } else {
             var text = new fabric.Text(text, conf);
         }
 
-        if (this._s('extra_config').disable_text_resize) {
+        if (this._s('extra_config') && this._s('extra_config').disable_text_resize) {
             text.setControlsVisibility({
                 mt: false,
                 mb: false,
@@ -36838,7 +36839,7 @@ var DD_Layer_Text = DD_Layer_Base.extend({
             });
         }
         
-        if (this._s('extra_config').disable_text_rotate) {
+        if (this._s('extra_config') && this._s('extra_config').disable_text_rotate) {
             text.setControlsVisibility({
                 mtr: false
             });
