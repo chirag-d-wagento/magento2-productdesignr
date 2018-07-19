@@ -63,7 +63,19 @@ class UpgradeSchema implements UpgradeSchemaInterface
             $this->createShareTable($setup);
         }
 
+         if (version_compare($context->getVersion(), '1.2.2') < 0) {
+            $this->createMediaDirectory($setup);
+        }
+
         $setup->endSetup();
+    }
+
+    protected function createMediaDirectory($setup){
+
+        if(!file_exists($this->_directoryList->getPath('media'). '/dd_library/default')) {
+            $this->_io->mkdir($this->_directoryList->getPath('media') . '/dd_library/default', 0755);
+        }
+
     }
 
     protected function createShareTable($setup)
