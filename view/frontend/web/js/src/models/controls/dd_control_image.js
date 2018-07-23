@@ -7,10 +7,10 @@ var DD_control_image = DD_Control_Base_Model.extend({
         var extraConfig = this._s('extra_config');
         
         this.addDelete();
-        if(!extraConfig.disable_photos_rotate) {
+        if(!extraConfig || !extraConfig.disable_photos_rotate) {
             this.obj.addRotateBase();
         }
-        if(!extraConfig.disable_photos_resize) {
+        if(!extraConfig || !extraConfig.disable_photos_resize) {
             this.obj.addSizeBase();
         }
         

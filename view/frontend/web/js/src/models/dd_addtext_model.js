@@ -23,7 +23,7 @@ var DD_AddText_Model = DD_ModelBase.extend({
         var textarea = this.form.get().find('textarea');
         var self = this;
         var extraConfig = this.getExtraConfig();
-        if(extraConfig.max_text_chars) {
+        if(extraConfig && extraConfig.max_text_chars) {
             var maxChars = extraConfig.max_text_chars;
             var errorPlace = this.form.get().find('.dd-add-text-errors');
             textarea.on('keyup', function() {

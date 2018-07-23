@@ -21,7 +21,7 @@ var DD_Layer_Svg = DD_Layer_Base.extend({
             var iImg = new fabric.Group(object.getObjects(), opt);
             iImg.set(conf);
             
-            if(extraConfig.disable_photos_resize) {
+            if(extraConfig && extraConfig.disable_photos_resize) {
                  iImg.setControlsVisibility({
                     mt: false,
                     mb: false,
@@ -35,7 +35,7 @@ var DD_Layer_Svg = DD_Layer_Base.extend({
                 });
             }
             
-            if(extraConfig.disable_photos_rotate) {
+            if(extraConfig && extraConfig.disable_photos_rotate) {
                  iImg.setControlsVisibility({
                     mtr: false
                 });

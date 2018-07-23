@@ -42,7 +42,7 @@ var DD_AddFromLibrary_Model = DD_ModelBase.extend({
         parent.html(this._('loading') + '...');
 
         var extraConfig = this.getExtraConfig();
-        var categories = extraConfig.lib_categories;
+        var categories = (extraConfig && extraConfig.lib_categories) ? extraConfig.lib_categories : null;
         $.ajax({
             url: this._s('libraryPath'),
             type: 'json',

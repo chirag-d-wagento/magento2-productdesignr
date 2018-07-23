@@ -11,11 +11,11 @@ var DD_control_text = DD_Control_Base_Model.extend({
         this.obj.contentContainer.get().addClass(this.containerClass);
         this.addDelete();
 
-        if (!extraConfig.disable_text_rotate) {
+        if (!extraConfig || !extraConfig.disable_text_rotate) {
             this.obj.addRotateBase();
         }
 
-        if (!extraConfig.disable_text_resize) {
+        if (!extraConfig || !extraConfig.disable_text_resize) {
             this.obj.addSizeBase();
 
         }
@@ -49,7 +49,7 @@ var DD_control_text = DD_Control_Base_Model.extend({
         var self = this;
         var textarea = form.get().find('textarea');
         var extraConfig = this.getExtraConfig();
-        if (extraConfig.max_text_chars) {
+        if (extraConfig && extraConfig.max_text_chars) {
             var maxChars = extraConfig.max_text_chars;
             var errorPlace = form.get().find('.dd-add-text-errors');
             textarea.on('keyup', function () {
@@ -118,14 +118,14 @@ var DD_control_text = DD_Control_Base_Model.extend({
         var font = fabricObject.fontFamily;
         var content = this.obj.content.get();
         content.empty();
-        if (!extraConfig.background_color_text_disable) {
+        if (!extraConfig || !extraConfig.background_color_text_disable) {
             this.obj.colorSelector(content, this._('background_color'), bg, this.setBgColor, this);
         }
-        if (!extraConfig.text_color_disable) {
+        if (!extraConfig || !extraConfig.text_color_disable) {
             this.obj.colorSelector(content, this._('text_color'), color, this.setFontColor, this);
         }
         var fonts = null;
-        if (extraConfig.fonts) {
+        if (extraConfig && extraConfig.fonts) {
             fonts = extraConfig.fonts;
         }
         this.obj.fontSelector(content, font, this.setFont, this, fonts);
