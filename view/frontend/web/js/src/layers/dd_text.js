@@ -18,13 +18,13 @@ var DD_Layer_Text = DD_Layer_Base.extend({
         }
 
         conf.notSelect = notSelect;
-        if (!this._s('extra_config').max_text_chars) {
+        if (!this._s('extra_config') || !this._s('extra_config').max_text_chars) {
             var text = new fabric.IText(text, conf);
         } else {
             var text = new fabric.Text(text, conf);
         }
 
-        if (this._s('extra_config').disable_text_resize) {
+        if (this._s('extra_config') && this._s('extra_config').disable_text_resize) {
             text.setControlsVisibility({
                 mt: false,
                 mb: false,
@@ -38,7 +38,7 @@ var DD_Layer_Text = DD_Layer_Base.extend({
             });
         }
         
-        if (this._s('extra_config').disable_text_rotate) {
+        if (!this._s('extra_config') && this._s('extra_config').disable_text_rotate) {
             text.setControlsVisibility({
                 mtr: false
             });
