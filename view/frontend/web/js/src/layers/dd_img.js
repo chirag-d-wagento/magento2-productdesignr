@@ -55,8 +55,10 @@ var DD_Layer_Img = DD_Layer_Base.extend({
 
                 iImg.set(conf);
             }
-            
-            if(self._s('extra_config').disable_photos_resize) {
+
+            var extraconfig = self._s('extra_config');
+
+            if(extraconfig && extraconfig.disable_photos_resize) {
                 iImg.setControlsVisibility({
                     mt: false,
                     mb: false,
@@ -69,7 +71,7 @@ var DD_Layer_Img = DD_Layer_Base.extend({
                     //mtr: false
                 });
             }
-            if(self._s('extra_config').disable_photos_rotate) {
+            if(extraconfig && extraconfig.disable_photos_rotate) {
                 iImg.setControlsVisibility({
                     mtr: false
                 });
@@ -88,7 +90,6 @@ var DD_Layer_Img = DD_Layer_Base.extend({
                 parent.setActiveObject(iImg);
             }
 
-            
             self.object = iImg;
             self.onCreated();
 
