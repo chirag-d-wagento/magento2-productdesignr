@@ -15,6 +15,7 @@ class UpgradeSchema implements UpgradeSchemaInterface
     const LONG_BLOB_TYPE = 'longblob';
 
     public function __construct(
+	    \Magento\Framework\Filesystem\DirectoryList $dirList,
         \Magento\Store\Model\StoreManagerInterface $storeManager, 
         \Magento\Framework\App\Config\ScopeConfigInterface $scopeConfig, 
         EavSetupFactory $eavSetupFactory
@@ -23,6 +24,7 @@ class UpgradeSchema implements UpgradeSchemaInterface
         $this->_storeManager = $storeManager;
         $this->_scopeConfig = $scopeConfig;
         $this->eavSetupFactory = $eavSetupFactory;
+        $this->_directoryList = $dirList;
     }
 
     public function upgrade(SchemaSetupInterface $setup, ModuleContextInterface $context)
