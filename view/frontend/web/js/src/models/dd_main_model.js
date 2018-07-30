@@ -10,7 +10,7 @@ var DD_Main_Model = DD_ModelBase.extend({
         this._super();
         var self = this;
         //set global extran config
-        this._s('extra_config', this.obj.options.extra_config);
+        this._s('extra_config', (this.obj.options.extra_config ? this.obj.options.extra_config : {}));
 
         if (this._s('loadGoogleFonts')) {
             var fonts = self.prepareFonts();

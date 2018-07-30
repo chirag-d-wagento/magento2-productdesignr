@@ -117,4 +117,5 @@ var DD_Layer_Base = DD_object.extend({
         this.setDeselectEvent();
         //this.removeControlsMiddle();
     }
+    
 });

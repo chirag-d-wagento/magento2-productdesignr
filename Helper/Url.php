@@ -27,6 +27,14 @@ class Url extends \Magento\Framework\App\Helper\AbstractHelper{
                     '?' . self::PRODUCT_ID_VAR_NAME . '=' . $_product->getId();
     }
     
+    public function getBaseSiteUrl(){
+        return $this->_storeManager->getStore(1)->getBaseUrl();
+    }
+    
+    public function getStoreUrl(){
+        return $this->getBaseUrl();
+    }
+    
     protected function getBaseUrl() {
         return $this->_storeManager
                 ->getStore()

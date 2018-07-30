@@ -1364,7 +1364,7 @@ var DD_AddFromLibrary_Model = DD_ModelBase.extend({
         parent.html(this._('loading') + '...');
 
         var extraConfig = this.getExtraConfig();
-        var categories = extraConfig.lib_categories;
+        var categories = (extraConfig && extraConfig.lib_categories) ? extraConfig.lib_categories : null;
         $.ajax({
             url: this._s('libraryPath'),
             type: 'json',
@@ -1584,7 +1584,7 @@ var DD_AddText_Model = DD_ModelBase.extend({
         var textarea = this.form.get().find('textarea');
         var self = this;
         var extraConfig = this.getExtraConfig();
-        if(extraConfig.max_text_chars) {
+        if(extraConfig && extraConfig.max_text_chars) {
             var maxChars = extraConfig.max_text_chars;
             var errorPlace = this.form.get().find('.dd-add-text-errors');
             textarea.on('keyup', function() {
@@ -1968,7 +1968,7 @@ var DD_Main_Model = DD_ModelBase.extend({
         this._super();
         var self = this;
         //set global extran config
-        this._s('extra_config', this.obj.options.extra_config);
+        this._s('extra_config', (this.obj.options.extra_config ? this.obj.options.extra_config : {}));
 
         if (this._s('loadGoogleFonts')) {
             var fonts = self.prepareFonts();
@@ -2550,10 +2550,10 @@ var DD_control_image = DD_Control_Base_Model.extend({
         var extraConfig = this._s('extra_config');
         
         this.addDelete();
-        if(!extraConfig.disable_photos_rotate) {
+        if(!extraConfig || !extraConfig.disable_photos_rotate) {
             this.obj.addRotateBase();
         }
-        if(!extraConfig.disable_photos_resize) {
+        if(!extraConfig || !extraConfig.disable_photos_resize) {
             this.obj.addSizeBase();
         }
         
@@ -2627,11 +2627,11 @@ var DD_control_text = DD_Control_Base_Model.extend({
         this.obj.contentContainer.get().addClass(this.containerClass);
         this.addDelete();
 
-        if (!extraConfig.disable_text_rotate) {
+        if (!extraConfig || !extraConfig.disable_text_rotate) {
             this.obj.addRotateBase();
         }
 
-        if (!extraConfig.disable_text_resize) {
+        if (!extraConfig || !extraConfig.disable_text_resize) {
             this.obj.addSizeBase();
 
         }
@@ -2665,7 +2665,7 @@ var DD_control_text = DD_Control_Base_Model.extend({
         var self = this;
         var textarea = form.get().find('textarea');
         var extraConfig = this.getExtraConfig();
-        if (extraConfig.max_text_chars) {
+        if (extraConfig && extraConfig.max_text_chars) {
             var maxChars = extraConfig.max_text_chars;
             var errorPlace = form.get().find('.dd-add-text-errors');
             textarea.on('keyup', function () {
@@ -2734,14 +2734,14 @@ var DD_control_text = DD_Control_Base_Model.extend({
         var font = fabricObject.fontFamily;
         var content = this.obj.content.get();
         content.empty();
-        if (!extraConfig.background_color_text_disable) {
+        if (!extraConfig || !extraConfig.background_color_text_disable) {
             this.obj.colorSelector(content, this._('background_color'), bg, this.setBgColor, this);
         }
-        if (!extraConfig.text_color_disable) {
+        if (!extraConfig || !extraConfig.text_color_disable) {
             this.obj.colorSelector(content, this._('text_color'), color, this.setFontColor, this);
         }
         var fonts = null;
-        if (extraConfig.fonts) {
+        if (extraConfig && extraConfig.fonts) {
             fonts = extraConfig.fonts;
         }
         this.obj.fontSelector(content, font, this.setFont, this, fonts);
@@ -2881,6 +2881,7 @@ var DD_Layer_Base = DD_object.extend({
         this.setDeselectEvent();
         //this.removeControlsMiddle();
     }
+    
 });
 var DD_Layer_Img = DD_Layer_Base.extend({
     init: function (options, fullCnfg, notSelect) {
@@ -2939,8 +2940,10 @@ var DD_Layer_Img = DD_Layer_Base.extend({
 
                 iImg.set(conf);
             }
-            
-            if(self._s('extra_config').disable_photos_resize) {
+
+            var extraconfig = self._s('extra_config');
+
+            if(extraconfig && extraconfig.disable_photos_resize) {
                 iImg.setControlsVisibility({
                     mt: false,
                     mb: false,
@@ -2953,7 +2956,7 @@ var DD_Layer_Img = DD_Layer_Base.extend({
                     //mtr: false
                 });
             }
-            if(self._s('extra_config').disable_photos_rotate) {
+            if(extraconfig && extraconfig.disable_photos_rotate) {
                 iImg.setControlsVisibility({
                     mtr: false
                 });
@@ -2972,7 +2975,6 @@ var DD_Layer_Img = DD_Layer_Base.extend({
                 parent.setActiveObject(iImg);
             }
 
-            
             self.object = iImg;
             self.onCreated();
 
@@ -3112,7 +3114,7 @@ var DD_Layer_Svg = DD_Layer_Base.extend({
             var iImg = new fabric.Group(object.getObjects(), opt);
             iImg.set(conf);
             
-            if(extraConfig.disable_photos_resize) {
+            if(extraConfig && extraConfig.disable_photos_resize) {
                  iImg.setControlsVisibility({
                     mt: false,
                     mb: false,
@@ -3126,7 +3128,7 @@ var DD_Layer_Svg = DD_Layer_Base.extend({
                 });
             }
             
-            if(extraConfig.disable_photos_rotate) {
+            if(extraConfig && extraConfig.disable_photos_rotate) {
                  iImg.setControlsVisibility({
                     mtr: false
                 });
@@ -3168,13 +3170,13 @@ var DD_Layer_Text = DD_Layer_Base.extend({
         }
 
         conf.notSelect = notSelect;
-        if (!this._s('extra_config').max_text_chars) {
+        if (!this._s('extra_config') || !this._s('extra_config').max_text_chars) {
             var text = new fabric.IText(text, conf);
         } else {
             var text = new fabric.Text(text, conf);
         }
 
-        if (this._s('extra_config').disable_text_resize) {
+        if (this._s('extra_config') && this._s('extra_config').disable_text_resize) {
             text.setControlsVisibility({
                 mt: false,
                 mb: false,
@@ -3188,7 +3190,7 @@ var DD_Layer_Text = DD_Layer_Base.extend({
             });
         }
         
-        if (this._s('extra_config').disable_text_rotate) {
+        if (!this._s('extra_config') && this._s('extra_config').disable_text_rotate) {
             text.setControlsVisibility({
                 mtr: false
             });

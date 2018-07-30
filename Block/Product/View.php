@@ -91,6 +91,16 @@ class View extends \Magento\Catalog\Block\Product\AbstractProduct
         $product = $this->getProduct();
         return $this->_designerHelper->getIsActiveOnProductView($product);
     }
+    
+    public function getBaseSiteUrl()
+    {
+        return $this->_helperUrl->getBaseSiteUrl();
+    }
+    
+    public function getStoreUrl()
+    {
+        return $this->_helperUrl->getStoreUrl();
+    }
 
     public function getCustomizeUrl()
     {

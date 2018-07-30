@@ -17,12 +17,16 @@ class UpgradeSchema implements UpgradeSchemaInterface
     public function __construct(
         \Magento\Store\Model\StoreManagerInterface $storeManager, 
         \Magento\Framework\App\Config\ScopeConfigInterface $scopeConfig, 
-        EavSetupFactory $eavSetupFactory
+        EavSetupFactory $eavSetupFactory,
+        \Magento\Framework\App\Filesystem\DirectoryList $directoryList,
+        \Magento\Framework\Filesystem\Io\File $io    
     )
     {
         $this->_storeManager = $storeManager;
         $this->_scopeConfig = $scopeConfig;
         $this->eavSetupFactory = $eavSetupFactory;
+        $this->_directoryList = $directoryList;
+        $this->_io = $io;
     }
 
     public function upgrade(SchemaSetupInterface $setup, ModuleContextInterface $context)

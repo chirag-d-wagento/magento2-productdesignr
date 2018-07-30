@@ -358,6 +358,7 @@
                         'importFbEnabled': <?php echo $block->getIsImportFromFbEnabled() ? 'true' : 'false' ?>,
                         'importInstagramEnabled': <?php echo $block->getIsInstagramImportEnabled() ? 'true' : 'false' ?>,
                         'instagramClientId': '<?php echo $block->getInstagramClientId() ?>'
+                
                     }
                     <?php if($helpConf = $block->getHelpDesigner()): ?>
                     ,help: <?php echo json_encode($helpConf); ?>
