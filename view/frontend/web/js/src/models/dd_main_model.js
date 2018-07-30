@@ -305,7 +305,11 @@ var DD_Main_Model = DD_ModelBase.extend({
     },
 
     getJsonImg: function () {
-        return this._mergeCanvases(true);
+        return this._mergeCanvases('json');
+    },
+
+    getSvgText: function () {
+        return this._mergeCanvases('svg');
     },
 
     unselectAll: function () {
@@ -327,32 +331,63 @@ var DD_Main_Model = DD_ModelBase.extend({
 
     },
 
-    _mergeCanvases: function (json) {
+    _mergeCanvases: function (type) {
 
         var _bgCanvas = this.layersObj.getBgCanvas();
-        var _hoverCanvas = this.layersObj.getHoverCanvas()
-        var bgCanvas = $('#' + this.idBgCanvas).get(0);
-        var hoverCanvas = $('#' + this.idCanvasHover).get(0);
+        var _hoverCanvas = this.layersObj.getHoverCanvas();
 
-        var sourceBgWidth = _bgCanvas.lowerCanvasEl.width;
-        var sourceBgHeight = _bgCanvas.lowerCanvasEl.height;
-        var sourceHoverWidth = _hoverCanvas.lowerCanvasEl.width;
-        var sourceHoverHeight = _hoverCanvas.lowerCanvasEl.height;
-        var output = $('<canvas />')
-                .attr({
-                    'width': this._l().getWidth(),
-                    'height': this._l().getHeight()
-                })
-                .get(0);
+        switch(type){
+            case 'json':
+                var mergedObjs = _bgCanvas.toJSON();
+                var hoverObjs = _hoverCanvas.toJSON();
+                for(var object in hoverObjs.objects) {
+                    mergedObjs['objects'].push(hoverObjs.objects[object]);
+                }
+                return mergedObjs;
+                break;
+            case 'svg':
 
-        var octx = output.getContext('2d');
+                /*var tmpCanvas = _bgCanvas;
+                 var canvasObjects = _hoverCanvas.toJSON();
 
-        octx.drawImage(bgCanvas, 0, 0, sourceBgWidth, sourceBgHeight, 0, 0, output.width, output.height);
-        octx.drawImage(hoverCanvas, 0, 0, sourceHoverWidth, sourceHoverHeight, 0, 0, output.width, output.height);
-        if (!json) {
-            return output.toDataURL('png');
+                 for (var i = 0; i < canvasObjects.objects.length; i++) {
+                 var klass = fabric.util.getKlass(objects[i].type);
+                 if (klass.async) {
+                 klass.fromObject(objects[i], function (img) {
+                 tmpCanvas.add(img);
+                 });
+                 } else {
+                 tmpCanvas.add(klass.fromObject(objects[i]));
+                 }
+                 }*/
+
+                return _hoverCanvas.toSVG();
+
+                break;
+            default:
+
+                var bgCanvas = $('#' + this.idBgCanvas).get(0);
+                var hoverCanvas = $('#' + this.idCanvasHover).get(0);
+
+                var sourceBgWidth = _bgCanvas.lowerCanvasEl.width;
+                var sourceBgHeight = _bgCanvas.lowerCanvasEl.height;
+                var sourceHoverWidth = _hoverCanvas.lowerCanvasEl.width;
+                var sourceHoverHeight = _hoverCanvas.lowerCanvasEl.height;
+                var output = $('<canvas />')
+                    .attr({
+                        'width': this._l().getWidth(),
+                        'height': this._l().getHeight()
+                    })
+                    .get(0);
+
+                var octx = output.getContext('2d');
+
+                octx.drawImage(bgCanvas, 0, 0, sourceBgWidth, sourceBgHeight, 0, 0, output.width, output.height);
+                octx.drawImage(hoverCanvas, 0, 0, sourceHoverWidth, sourceHoverHeight, 0, 0, output.width, output.height);
+
+                return output.toDataURL('png');
         }
 
-        return []; //skip this for now!
     }
+
 });

@@ -277,7 +277,8 @@
                 return container;
             }
 
-            function saveDesignedImage(media_id, data, json, obj) {
+            function saveDesignedImage(media_id, data, json, svgText, obj) {
+
                 var conf = configuredMediaProducts[media_id] ? configuredMediaProducts[media_id] : {};
                 var json = json ? json : {};
                 $.ajax({
@@ -287,6 +288,7 @@
                         'conf': JSON.stringify(conf),
                         'data': data,
                         'json': JSON.stringify(json),
+                        'svg' : JSON.stringify(svgText),
                         'unique_id': mediaUniqueIds[media_id],
                         'media_id': media_id
                     },
@@ -389,8 +391,9 @@
                     var media_id = designer.getMediaId();
                     var product_id = designer.getProductId();
                     var json = designer.getJson();
+                    var svgText = designer.getSvgText();
                     saveImage(media_id, product_id, data);
-                    saveDesignedImage(media_id, data, json, this);
+                    saveDesignedImage(media_id, data, json, svgText, this);
                     /// close designer ///
                     callClose();
                 });

@@ -9,19 +9,27 @@ class Save extends \Magento\Framework\App\Action\Action{
 
     protected $_tmpDesignModel;
     protected $_date;
+    protected $_ddHelper;
+    protected $_logger;
 
     public function __construct(
-    \Magento\Framework\App\Action\Context $context, DateTime $date, \Develodesign\Designer\Model\TmpdesignFactory $tmpDesignModel
+        \Magento\Framework\App\Action\Context $context,
+        DateTime $date,
+        \Develodesign\Designer\Model\TmpdesignFactory $tmpDesignModel,
+        \Develodesign\Designer\Helper\Data $ddHelper,
+        \Psr\Log\LoggerInterface $logger
     ) {
+        $this->_ddHelper        = $ddHelper;
+        $this->_tmpDesignModel  = $tmpDesignModel;
+        $this->_date            = $date;
+        $this->_logger          = $logger;
 
-        $this->_tmpDesignModel = $tmpDesignModel;
-        $this->_date = $date;
         parent::__construct($context);
     }
 
     public function execute() {
         $post = $this->getRequest()->getParams();
-        if (!$post || empty($post['json']) || empty($post['data']) || empty($post['conf'])
+        if (!$post || empty($post['json']) || empty($post['data']) || empty($post['conf'] || empty($post['svg']) )
         ) {
             return $this->sendError(__('Not correct data sent!'));
         }
@@ -37,7 +45,9 @@ class Save extends \Magento\Framework\App\Action\Action{
                 
                 $model->setUpdatedTime($this->_date->gmtDate());
             }
+
             $model->setJsonText($post['json']);
+            $model->setSvgText(json_decode($post['svg']));
             $model->setPngBlob($post['data']);
             $model->setConf($post['conf']);
             $model->setMediaId($post['media_id']);
@@ -48,6 +58,7 @@ class Save extends \Magento\Framework\App\Action\Action{
                 'success' => true,
                 'design_id' => $model->getUniqueId() 
             ]);
+
         } catch (\Exception $ex) {
             return $this->sendError(__('Error') . ': ' . $ex->getMessage());
         }

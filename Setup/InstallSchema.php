@@ -33,10 +33,8 @@ class InstallSchema implements InstallSchemaInterface {
                 )
                 ->addColumn(
                         'updated_time', \Magento\Framework\DB\Ddl\Table::TYPE_DATETIME, null, ['nullable' => true, 'default' => null], 'Time of last update'
-                )
+                );
 
-
-        ;
         $installer->getConnection()->createTable($table_image_groups);
         
         /* table images */

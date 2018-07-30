@@ -144,7 +144,11 @@ $.fn.dd_productdesigner = function (options) {
         this.getJson = function () {
             return app.getJsonImg();
         }
-        
+
+        this.getSvgText = function () {
+            return app.getSvgText();
+        }
+
         this.setMainConfig = function(_config) {
             app.mainConfig = _config;
         }

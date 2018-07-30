@@ -1,18 +1,17 @@
 <?php
 $designs = $block->getDesignerData();
-if (!$designs->getSize()):
-    ?>
+if (!$designs->getSize()): ?>
     <div class="dd-dessigner-no-data">
         <?php echo __('No Data Found!') ?>
     </div>
-<?php else: ?>
+<?php else:?>
     <div class="dd-dessigner-order-container">
-        <?php foreach ($designs as $design): ?>
-            <?php
+        <?php foreach ($designs as $design):
             $_product = $block->getProduct($design->getMagentoProductId());
             if (!$_product->getId()) {
                 return;
             }
+            $design_pdf_ajax_url = $this->getUrl('dd_productdesigner/design/pdf',array('item_id'=>$design->getData('_item_id')));
             $_designElements = $block->prepareConf($design->getConf());
             ?>
             <div class="dd-dessigner-order">
@@ -28,11 +27,16 @@ if (!$designs->getSize()):
                                 <?php echo __('Print product Image'); ?>
                             </span>
                         </button>
-                        <button class="dd-download">
-                            <span>
-                                <?php echo __('Download'); ?>
-                            </span>
-                        </button>
+                        <a class="dd-download" target="_blank" href="<?php echo $design_pdf_ajax_url;?>">
+                            <button class="dd-pdf-download">
+                                <span>
+                                    <?php echo __('Download PDF'); ?>
+                                </span>
+                            </button>
+                        </a>
+                        <?php /*
+                        <input type="hidden" name="designer_pdf_ajax_url" id="designer_pdf_ajax_url" value="<?php echo $this->getUrl('dd_designer/design/pdf');?>" />
+                        */?>
                     </div>
                     <img src="<?php echo $design->getPngBlob() ?>" />
 
@@ -41,7 +45,7 @@ if (!$designs->getSize()):
                     <?php foreach ($_designElements as $_designElement): ?>
 
                         <div class="dd-designer-order-design-element">
-                            <?php if ($_designElement->type == 'text'): ?>
+                            <?php if ($_designElement->type == 'i-text'): ?>
                                 <h4><?php echo __('Text'); ?></h4>
                                 <div class="dd-designer-order-design-element-details">
                                     <ul>
@@ -63,7 +67,7 @@ if (!$designs->getSize()):
                                     </div>
                                 </div>
 
-                            <?php elseif ($_designElement->isSvg == true): ?>
+                            <?php elseif (!enpty($_designElement->isSvg)): ?>
                                 <h4><?php echo __('SVG Image'); ?></h4>
                                 <div class="dd-designer-order-design-element-details">
                                     <div class="dd-designer-order-design-element-details-image">
@@ -75,7 +79,7 @@ if (!$designs->getSize()):
                                         <a href="javascript:void(0)" class="dd-print"><?php echo __('Print') ?></a>
                                     </div>
                                 </div>
-                            <?php endif; ?>
+                            <?php  endif; ?>
                         </div>
 
                     <?php endforeach; ?>
@@ -86,17 +90,24 @@ if (!$designs->getSize()):
 
     <script type="text/javascript">
         require([
-            'jquery'
+            'jquery',
+            'mage/template',
+            'jquery/ui',
+            'mage/translate'
         ], function ($) {
 
             $('.dd-dessigner-order-img button.dd-print').on('click', function () {
                 var source = $(this).parents('.dd-dessigner-order-img').find('img').attr('src');
                 __imgPrint(source);
             });
+            <?php /*
             $('.dd-dessigner-order-img button.dd-download').on('click', function () {
-                var img = $(this).parents('.dd-dessigner-order-img').find('img');
-                __downloadImageBlob(img.get(0));
+                //var img = $(this).parents('.dd-dessigner-order-img').find('img');
+                //__downloadImageBlob(img.get(0));
+                var item_id = $(this).attr('data-item-id');
+                __downloadPdf(item_id);
             });
+            */?>
             $('.dd-designer-order-design-element-details-controls .dd-download').on('click', function () {
                 var svg = $(this).parents('.dd-designer-order-design-element-details').find('svg');
                 if (svg.get(0)) {
@@ -116,6 +127,39 @@ if (!$designs->getSize()):
                 var img = $(this).parents('.dd-designer-order-design-element-details').find('img');
                 __imgPrint(img.attr('src'));
             });
+
+            <?php /*
+            function __downloadPdf(item_id){
+
+                try {
+
+                    var quoteId = <?php echo $order->getQuoteId(); ?>;
+                    var url = $('#designer_pdf_ajax_url').val();
+                    var params = {isAjax: 1,form_key: window.FORM_KEY,quote_id : quoteId,item_id: item_id};
+
+                    jQuery.ajax({
+                        url: url,
+                        type: 'get',
+                        data: params,
+                        dataType: 'json',
+                        showLoader:true,
+                        success: function(response) {
+                            alert('done');
+                            var filename = response.filename;
+                            var blob = new Blob([response.pdfdata]);
+                            var link = document.createElement('a');
+                            link.href=window.URL.createObjectURL(blob);
+                            link.download=filename;
+                            link.click();
+                        }
+                    });
+
+                }catch(e){
+                    alert(e);
+                }
+
+            }
+            */ ?>
 
             function __downloadImageBlob(img) {
                 var image_data = atob(img.src.split(',')[1]);

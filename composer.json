@@ -1,21 +1,28 @@
 {
-    "name": "develodesign/designer",
-    "description": "Magento 2 Design products frontent, backend",
-    "type": "magento2-module",
-    "version": "1.2.1",
-    "authors": [
-        {
-            "name": "www.develodesign.co.uk",
-            "email": "info@develodesign.co.uk"
-        }
-    ],
-    "license": [
-        "OSL-3.0"
-    ],
-    "autoload": {
-        "files": ["registration.php"],
-        "psr-4": {
-            "Develodesign\\Designer\\": ""
-        }
-    }
+
+            "name": "develodesign/designer",
+            "description": "Magento 2 Design products frontent, backend",
+            "type": "magento2-module",
+            "version": "1.2.2",
+            "authors": [
+                {
+                    "name": "www.develodesign.co.uk",
+                    "email": "info@develodesign.co.uk"
+                }
+            ],
+            "license": [
+                "OSL-3.0"
+            ],
+            "require": {
+                "develodesign/designerassets": "~1.0.0",
+                "tecnickcom/tcpdf": "*"
+            },
+            "autoload": {
+                "files": [
+                    "registration.php"
+                ],
+                "psr-4": {
+                    "Develodesign\\Designer\\": ""
+                }
+            }
 }

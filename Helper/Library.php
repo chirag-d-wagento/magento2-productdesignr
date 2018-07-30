@@ -22,6 +22,8 @@ class Library extends \Magento\Framework\App\Helper\AbstractHelper {
     
     public function getCategories()
     {
+        $out = array();
+
         $path = $this->getAbsolutePath();
         foreach (new \DirectoryIterator($path) as $fileInfo) {
             if ($fileInfo->isDot()) {

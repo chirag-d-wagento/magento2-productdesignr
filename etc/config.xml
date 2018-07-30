@@ -9,6 +9,8 @@
         <develo_productdesigner>
             <general>
                 <enable>1</enable>
+                <enablepdf>1</enablepdf>
+                <pdfsavepath>dd_pdfs</pdfsavepath>
             </general>
             <frontend>
                 <enable_all>1</enable_all>

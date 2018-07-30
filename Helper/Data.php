@@ -4,42 +4,63 @@ namespace Develodesign\Designer\Helper;
 
 class Data extends \Magento\Framework\App\Helper\AbstractHelper {
 
-    const DESIGNER_GENERAL_ENABLED = 'develo_productdesigner/general/enable';
-    const DESIGNER_GENERAL_FRONT_ROUTE = 'develo_productdesigner/general/product_designer_route';
-    const DESIGNER_FRONT_ENABLE_FOR_ALL = 'develo_productdesigner/frontend/enable_all';
-    const DESIGNER_FRONT_PRODUCT_ATTR_SETS = 'develo_productdesigner/frontend/attributes_sets';
-    const DESIGNER_FRONT_ENABLE_ADD_IMAGE = 'develo_productdesigner/frontend/enable_add_image';
-    const DESIGNER_FRONT_ENABLE_ADD_TEXT = 'develo_productdesigner/frontend/enable_add_text';
+    const DESIGNER_GENERAL_ENABLED          = 'develo_productdesigner/general/enable';
+    const DESIGNER_GENERAL_ENABLEPDF        = 'develo_productdesigner/general/enablepdf';
+    const DESIGNER_GENERAL_PDFPATH          = 'develo_productdesigner/general/pdfsavepath';
+    const DESIGNER_GENERAL_FRONT_ROUTE      = 'develo_productdesigner/general/product_designer_route';
+
+    const DESIGNER_FRONT_ENABLE_FOR_ALL     = 'develo_productdesigner/frontend/enable_all';
+    const DESIGNER_FRONT_PRODUCT_ATTR_SETS  = 'develo_productdesigner/frontend/attributes_sets';
+    const DESIGNER_FRONT_ENABLE_ADD_IMAGE   = 'develo_productdesigner/frontend/enable_add_image';
+    const DESIGNER_FRONT_ENABLE_ADD_TEXT    = 'develo_productdesigner/frontend/enable_add_text';
     const DESIGNER_FRONT_ENABLE_ADD_FROM_LIB = 'develo_productdesigner/frontend/enable_add_from_library';
     /* const DESIGNER_FRONT_PRODUCT_LAYER_POSITION = 'develo_productdesigner/frontend/layer_position'; */
     const DESIGNER_FRONT_PRODUCT_GOOGLE_FONTS = 'develo_productdesigner/frontend/google_fonts';
-    const DESIGNER_PRICE_LAYER_IMAGE = 'develo_productdesigner/prices/layer_image_price';
-    const DESIGNER_PRICE_LAYER_TEXT = 'develo_productdesigner/prices/layer_text_price';
-    
-    const DESIGNER_HELP_CUSTOMIZE_BUTTON = 'develo_productdesigner/help/customize_button_block';
-    const DESIGNER_HELP_FIRST_BLOCK = 'develo_productdesigner/help/designer_control_main_block';
-    const DESIGNER_HELP_SECOND_BLOCK = 'develo_productdesigner/help/designer_control_second_block';
-    const DESIGNER_HELP_THIRD_BLOCK = 'develo_productdesigner/help/designer_control_third_block';
-    const DESIGNER_HELP_SWITCH_BLOCK = 'develo_productdesigner/help/designer_control_switch_images_block';
-    
-    const DESIGNER_SOCIAL_SHARE_PINTEREST = 'develo_productdesigner/social/enable_pinterest_share';
-    const DESIGNER_SOCIAL_SHARE_TWITTER   = 'develo_productdesigner/social/enable_twitter_share';
-    const DESIGNER_SOCIAL_SHARE_FACEBOOK  = 'develo_productdesigner/social/enable_facebook_share';
-    
-    
-    const DESIGNER_SOCIAL_FACEBOOK_IMPORT = 'develo_productdesigner/social/enable_facebook_my_photos';
-    const DESIGNER_SOCIAL_FACEBOOK_APP_ID  = 'develo_productdesigner/social/facebook_app_id';
-    const DESIGNER_SOCIAL_FACEBOOK_APP_SECRET  = 'develo_productdesigner/social/facebook_app_secret';
-    
-    const DESIGNER_SOCIAL_INSTAGRAM_IMPORT = 'develo_productdesigner/social/enable_instagram_my_photos';
-    const DESIGNER_SOCIAL_INSTAGRAM_CLIENT_ID = 'develo_productdesigner/social/instagram_client_id';
-    const DESIGNER_SOCIAL_INSTAGRAM_SECRET = 'develo_productdesigner/social/instagram_client_secret';
-    
 
-    public function __construct(\Magento\Framework\App\Helper\Context $context) {
+    const DESIGNER_PRICE_LAYER_IMAGE        = 'develo_productdesigner/prices/layer_image_price';
+    const DESIGNER_PRICE_LAYER_TEXT         = 'develo_productdesigner/prices/layer_text_price';
+    
+    const DESIGNER_HELP_CUSTOMIZE_BUTTON    = 'develo_productdesigner/help/customize_button_block';
+    const DESIGNER_HELP_FIRST_BLOCK         = 'develo_productdesigner/help/designer_control_main_block';
+    const DESIGNER_HELP_SECOND_BLOCK        = 'develo_productdesigner/help/designer_control_second_block';
+    const DESIGNER_HELP_THIRD_BLOCK         = 'develo_productdesigner/help/designer_control_third_block';
+    const DESIGNER_HELP_SWITCH_BLOCK        = 'develo_productdesigner/help/designer_control_switch_images_block';
+    
+    const DESIGNER_SOCIAL_SHARE_PINTEREST   = 'develo_productdesigner/social/enable_pinterest_share';
+    const DESIGNER_SOCIAL_SHARE_TWITTER     = 'develo_productdesigner/social/enable_twitter_share';
+    const DESIGNER_SOCIAL_SHARE_FACEBOOK    = 'develo_productdesigner/social/enable_facebook_share';
+    const DESIGNER_SOCIAL_FACEBOOK_IMPORT   = 'develo_productdesigner/social/enable_facebook_my_photos';
+    const DESIGNER_SOCIAL_FACEBOOK_APP_ID   = 'develo_productdesigner/social/facebook_app_id';
+    const DESIGNER_SOCIAL_FACEBOOK_APP_SECRET  = 'develo_productdesigner/social/facebook_app_secret';
+    const DESIGNER_SOCIAL_INSTAGRAM_IMPORT  = 'develo_productdesigner/social/enable_instagram_my_photos';
+    const DESIGNER_SOCIAL_INSTAGRAM_CLIENT_ID = 'develo_productdesigner/social/instagram_client_id';
+    const DESIGNER_SOCIAL_INSTAGRAM_SECRET  = 'develo_productdesigner/social/instagram_client_secret';
+
+    protected $_fileFactory;
+
+    public function __construct(
+        \Magento\Framework\App\Helper\Context $context,
+        \Magento\Framework\App\Response\Http\FileFactory $fileFactory
+    ) {
+        $this->_fileFactory = $fileFactory;
         parent::__construct($context);
     }
-    
+
+    public function getIsDesignerEnabled() {
+        return $this->scopeConfig->getValue(self::DESIGNER_GENERAL_ENABLED, \Magento\Store\Model\ScopeInterface::SCOPE_STORE);
+    }
+
+    public function getEnablePdfs() {
+        if(!$this->getIsDesignerEnabled()){ return false; }
+        return $this->scopeConfig->getValue(self::DESIGNER_GENERAL_ENABLEPDF , \Magento\Store\Model\ScopeInterface::SCOPE_STORE);
+    }
+
+    public function getPdfSavePath() {
+        $defaultPath = 'dd_pdfs';
+        $customPath = $this->scopeConfig->getValue(self::DESIGNER_GENERAL_PDFPATH , \Magento\Store\Model\ScopeInterface::SCOPE_STORE);
+        return  (!empty($customPath)) ? $customPath : $defaultPath;
+    }
+
     public function getInstagramClientSecret() {
         return $this->scopeConfig->getValue(self::DESIGNER_SOCIAL_INSTAGRAM_SECRET , \Magento\Store\Model\ScopeInterface::SCOPE_STORE);
     }
@@ -98,10 +119,6 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper {
     
     public function getHelpCustomizeButton() {
         return $this->scopeConfig->getValue(self::DESIGNER_HELP_CUSTOMIZE_BUTTON, \Magento\Store\Model\ScopeInterface::SCOPE_STORE);
-    }
-
-    public function getIsDesignerEnabled() {
-        return $this->scopeConfig->getValue(self::DESIGNER_GENERAL_ENABLED, \Magento\Store\Model\ScopeInterface::SCOPE_STORE);
     }
 
     public function getIsAddImageEnabled() {

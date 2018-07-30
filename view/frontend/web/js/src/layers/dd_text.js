@@ -38,7 +38,7 @@ var DD_Layer_Text = DD_Layer_Base.extend({
             });
         }
         
-        if (!this._s('extra_config') && this._s('extra_config').disable_text_rotate) {
+        if (this._s('extra_config') && this._s('extra_config').disable_text_rotate) {
             text.setControlsVisibility({
                 mtr: false
             });

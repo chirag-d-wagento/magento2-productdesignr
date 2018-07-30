@@ -34722,253 +34722,6 @@ var DD_Tabs = DD_Uibase.extend({
     }
 });
 
-var DD_ImportFb_Model = DD_ModelBase.extend({
-
-    init: function (obj) {
-        this.obj = obj;
-    },
-
-    setClickEvents: function () {
-        var self = this;
-        this.obj.self.on('click', function () {
-            try {
-                self.obj.content.addClass('tab-loading');
-                self.obj.contentImages.html(self._('loading') + '...');
-                FB.login(function (response) {
-                    if (response.authResponse) {
-                        self.getImagesFromServer(response.authResponse.signedRequest, response.authResponse.accessToken);
-
-                    } else {
-                        self.obj.contentImages.html(self._('facebook_load_failed') + '...');
-                    }
-                });
-
-            } catch (e) {
-
-            }
-
-        });
-    },
-
-    getImagesFromServer: function (code, accessToken) {
-
-        var self = this;
-        $.ajax({
-            url: this._s('fbImagesPath'),
-            type: 'json',
-            method: 'post',
-            data: {
-                'code': code,
-                'token': accessToken
-            }
-        })
-                .done(function (data) {
-                    if (!data || data.length == 0) {
-                        self.obj.contentImages.html(self._('no_data'))
-                        self.obj.content.addClass('tab-no-data');
-                        return;
-                    }
-                    self.obj.content.removeClass('tab-no-data');
-                    self.obj.contentImages.html('');
-
-                    $.each(data, function (a, img) {
-                        new DD_ImageLinkAdd({
-                            'parent': self.obj.contentImages,
-                            'src': img.src,
-                            'width': img.width,
-                            'height': img.height
-
-                        });
-                    });
-                });
-    }
-
-
-});
-
-var DD_ImportInstagram_Model = DD_ModelBase.extend({
-
-    urlMyImages: 'https://api.instagram.com/v1/users/self/media/recent/',
-
-    interval: null,
-    popupWindow: null,
-    processInterval: 50,
-    error: null,
-    token: null,
-
-    init: function (obj) {
-        this.obj = obj;
-    },
-
-    setClickEvents: function () {
-        var self = this;
-        this.obj.self.on('click', function () {
-            self.obj.content.addClass('tab-loading');
-            self.obj.contentImages.html(self._('loading') + '...');
-
-            self.process();
-
-            //window.InstAuth.init('5f3c220152ee4ff08586908d1766f71b');
-            //window.InstAuth.startAuthFlow();
-        });
-    },
-
-    process: function () {
-        this.processAuth();
-    },
-
-    getWidth: function () {
-        return ($(window).width() / 2) > 400 ? 400 : ($(window).width() / 2 < 400 ? 300 : $(window).width() / 2);
-    },
-
-    getHeight: function () {
-        return $(window).height() / 2 < 400 ? 300 : $(window).height() / 2;
-    },
-
-    getTop: function () {
-        return (($(window).height() / 2) - (this.getHeight() / 2));
-    },
-
-    getLeft: function () {
-        return (($(window).width() / 2) - (this.getWidth() / 2));
-    },
-
-    processAuth: function () {
-        if (this.popupWindow) {
-            this.popupWindow.focus();
-            return;
-        }
-        var authUrl = this.getAuthUrl();
-        this.popupWindow = window.open(authUrl, '', 'width=' + this.getWidth() + ',height=' + this.getHeight() + ',top=' + this.getTop() + ',left=' + this.getLeft());
-        var self = this;
-        this.interval = setInterval(function () {
-            var location = self.popupWindow.location;
-
-            try {
-                if (typeof (location.href) == 'undefined' || !location.href) {
-                    self.unRegisterWindow();
-                    return;
-                }
-
-                if (location.hash.search("access_token") > -1) {
-                    var access_token = location.hash.substr(14).split("&")[0];
-                    self.registerAccessToken(access_token);
-                    //window.opener.postMessage(JSON.stringify({access_token: window.location.hash.substr(14).split("&")[0]}), window.opener.location.href)
-                }
-                if (location.href.search("error_reason=user_denied") > -1) {
-                    self.setError('unauthorized');
-                    self.unRegisterWindow();
-                    return;
-                }
-            } catch (error) {
-
-            }
-        }, self.processInterval);
-    },
-
-    setError: function (error) {
-        this.error = error;
-    },
-
-    unRegisterWindow: function () {
-        if (this.popupWindow) {
-            //this.popupWindow.stop();
-            this.popupWindow.close();
-            this.popupWindow = null;
-        }
-        if (this.interval) {
-            clearInterval(this.interval);
-            this.interval = null;
-        }
-
-        if (this.error || !this.token) {
-            this.error = 'unauthorized';
-            this.processError();
-            return;
-        }
-
-        this.loadImages();
-
-    },
-
-    loadImages: function () {
-        var self = this;
-        var url = this.urlMyImages + '?access_token=' + this.token;
-        $.getJSON(url, function (dataInstagram) {
-
-            var data = dataInstagram.data;
-            if (!data || data.length == 0) {
-                self.obj.contentImages.html(self._('no_data'))
-                self.obj.content.addClass('tab-no-data');
-                return;
-            }
-
-            self.obj.content.removeClass('tab-no-data');
-            self.obj.contentImages.html('');
-
-            $.each(data, function (a, imgDetail) {
-                var img = imgDetail.images;
-                new DD_ImageLinkAdd({
-                    'parent': self.obj.contentImages,
-                    'src': img.standard_resolution.url,
-                    'width': img.standard_resolution.width,
-                    'height': img.standard_resolution.height
-
-                });
-            });
-
-            //console.log( "suatroot" );
-            //console.log( data );
-            /*
-             var suatroot = data.data;
-             
-             console.log(suatroot);
-             $.each(suatroot, function (key, val) {
-             console.log("item");
-             var itemobj = val.images.low_resolution.url;
-             var hrefobj = val.link;
-             var captobj = val.caption.text;
-             console.log(captobj);
-             console.log(itemobj);
-             var suatpaket = "<a target='_blank' href='" + hrefobj + "'><img src='" + itemobj + "'/><br>" + captobj + "<br></a>";
-             $(".instagram").append(suatpaket);
-             });
-             */
-
-        });
-    },
-
-    registerAccessToken: function (token) {
-
-        this.token = token;
-        this.error = null;
-        this.unRegisterWindow();
-    },
-
-    processError: function () {
-        switch (this.error) {
-            case 'unauthorized':
-                this.obj.contentImages.html(this._('instagram_load_failed') + '...');
-                break;
-        }
-    },
-
-    getAuthUrl: function () {
-        return "https://api.instagram.com/oauth/authorize/?client_id="
-                + this.instagramClientId()
-                + "&response_type=token&redirect_uri="
-                + this.redirectUri();
-    },
-
-    instagramClientId: function () {
-        return this._s('instagramClientId');
-    },
-
-    redirectUri: function () {
-        return window.location.origin;
-    }
-});
-
 var DD_AddFromLibrary_Model = DD_ModelBase.extend({
 
     currentCategory: null,
@@ -35013,7 +34766,7 @@ var DD_AddFromLibrary_Model = DD_ModelBase.extend({
         parent.html(this._('loading') + '...');
 
         var extraConfig = this.getExtraConfig();
-        var categories = (extraConfig) ? extraConfig.lib_categories : null;
+        var categories = (extraConfig && extraConfig.lib_categories) ? extraConfig.lib_categories : null;
         $.ajax({
             url: this._s('libraryPath'),
             type: 'json',
@@ -35494,6 +35247,253 @@ var DD_ImageLink_Model = DD_ModelBase.extend({
     }
 });
 
+var DD_ImportFb_Model = DD_ModelBase.extend({
+
+    init: function (obj) {
+        this.obj = obj;
+    },
+
+    setClickEvents: function () {
+        var self = this;
+        this.obj.self.on('click', function () {
+            try {
+                self.obj.content.addClass('tab-loading');
+                self.obj.contentImages.html(self._('loading') + '...');
+                FB.login(function (response) {
+                    if (response.authResponse) {
+                        self.getImagesFromServer(response.authResponse.signedRequest, response.authResponse.accessToken);
+
+                    } else {
+                        self.obj.contentImages.html(self._('facebook_load_failed') + '...');
+                    }
+                });
+
+            } catch (e) {
+
+            }
+
+        });
+    },
+
+    getImagesFromServer: function (code, accessToken) {
+
+        var self = this;
+        $.ajax({
+            url: this._s('fbImagesPath'),
+            type: 'json',
+            method: 'post',
+            data: {
+                'code': code,
+                'token': accessToken
+            }
+        })
+                .done(function (data) {
+                    if (!data || data.length == 0) {
+                        self.obj.contentImages.html(self._('no_data'))
+                        self.obj.content.addClass('tab-no-data');
+                        return;
+                    }
+                    self.obj.content.removeClass('tab-no-data');
+                    self.obj.contentImages.html('');
+
+                    $.each(data, function (a, img) {
+                        new DD_ImageLinkAdd({
+                            'parent': self.obj.contentImages,
+                            'src': img.src,
+                            'width': img.width,
+                            'height': img.height
+
+                        });
+                    });
+                });
+    }
+
+
+});
+
+var DD_ImportInstagram_Model = DD_ModelBase.extend({
+
+    urlMyImages: 'https://api.instagram.com/v1/users/self/media/recent/',
+
+    interval: null,
+    popupWindow: null,
+    processInterval: 50,
+    error: null,
+    token: null,
+
+    init: function (obj) {
+        this.obj = obj;
+    },
+
+    setClickEvents: function () {
+        var self = this;
+        this.obj.self.on('click', function () {
+            self.obj.content.addClass('tab-loading');
+            self.obj.contentImages.html(self._('loading') + '...');
+
+            self.process();
+
+            //window.InstAuth.init('5f3c220152ee4ff08586908d1766f71b');
+            //window.InstAuth.startAuthFlow();
+        });
+    },
+
+    process: function () {
+        this.processAuth();
+    },
+
+    getWidth: function () {
+        return ($(window).width() / 2) > 400 ? 400 : ($(window).width() / 2 < 400 ? 300 : $(window).width() / 2);
+    },
+
+    getHeight: function () {
+        return $(window).height() / 2 < 400 ? 300 : $(window).height() / 2;
+    },
+
+    getTop: function () {
+        return (($(window).height() / 2) - (this.getHeight() / 2));
+    },
+
+    getLeft: function () {
+        return (($(window).width() / 2) - (this.getWidth() / 2));
+    },
+
+    processAuth: function () {
+        if (this.popupWindow) {
+            this.popupWindow.focus();
+            return;
+        }
+        var authUrl = this.getAuthUrl();
+        this.popupWindow = window.open(authUrl, '', 'width=' + this.getWidth() + ',height=' + this.getHeight() + ',top=' + this.getTop() + ',left=' + this.getLeft());
+        var self = this;
+        this.interval = setInterval(function () {
+            var location = self.popupWindow.location;
+
+            try {
+                if (typeof (location.href) == 'undefined' || !location.href) {
+                    self.unRegisterWindow();
+                    return;
+                }
+
+                if (location.hash.search("access_token") > -1) {
+                    var access_token = location.hash.substr(14).split("&")[0];
+                    self.registerAccessToken(access_token);
+                    //window.opener.postMessage(JSON.stringify({access_token: window.location.hash.substr(14).split("&")[0]}), window.opener.location.href)
+                }
+                if (location.href.search("error_reason=user_denied") > -1) {
+                    self.setError('unauthorized');
+                    self.unRegisterWindow();
+                    return;
+                }
+            } catch (error) {
+
+            }
+        }, self.processInterval);
+    },
+
+    setError: function (error) {
+        this.error = error;
+    },
+
+    unRegisterWindow: function () {
+        if (this.popupWindow) {
+            //this.popupWindow.stop();
+            this.popupWindow.close();
+            this.popupWindow = null;
+        }
+        if (this.interval) {
+            clearInterval(this.interval);
+            this.interval = null;
+        }
+
+        if (this.error || !this.token) {
+            this.error = 'unauthorized';
+            this.processError();
+            return;
+        }
+
+        this.loadImages();
+
+    },
+
+    loadImages: function () {
+        var self = this;
+        var url = this.urlMyImages + '?access_token=' + this.token;
+        $.getJSON(url, function (dataInstagram) {
+
+            var data = dataInstagram.data;
+            if (!data || data.length == 0) {
+                self.obj.contentImages.html(self._('no_data'))
+                self.obj.content.addClass('tab-no-data');
+                return;
+            }
+
+            self.obj.content.removeClass('tab-no-data');
+            self.obj.contentImages.html('');
+
+            $.each(data, function (a, imgDetail) {
+                var img = imgDetail.images;
+                new DD_ImageLinkAdd({
+                    'parent': self.obj.contentImages,
+                    'src': img.standard_resolution.url,
+                    'width': img.standard_resolution.width,
+                    'height': img.standard_resolution.height
+
+                });
+            });
+
+            //console.log( "suatroot" );
+            //console.log( data );
+            /*
+             var suatroot = data.data;
+             
+             console.log(suatroot);
+             $.each(suatroot, function (key, val) {
+             console.log("item");
+             var itemobj = val.images.low_resolution.url;
+             var hrefobj = val.link;
+             var captobj = val.caption.text;
+             console.log(captobj);
+             console.log(itemobj);
+             var suatpaket = "<a target='_blank' href='" + hrefobj + "'><img src='" + itemobj + "'/><br>" + captobj + "<br></a>";
+             $(".instagram").append(suatpaket);
+             });
+             */
+
+        });
+    },
+
+    registerAccessToken: function (token) {
+
+        this.token = token;
+        this.error = null;
+        this.unRegisterWindow();
+    },
+
+    processError: function () {
+        switch (this.error) {
+            case 'unauthorized':
+                this.obj.contentImages.html(this._('instagram_load_failed') + '...');
+                break;
+        }
+    },
+
+    getAuthUrl: function () {
+        return "https://api.instagram.com/oauth/authorize/?client_id="
+                + this.instagramClientId()
+                + "&response_type=token&redirect_uri="
+                + this.redirectUri();
+    },
+
+    instagramClientId: function () {
+        return this._s('instagramClientId');
+    },
+
+    redirectUri: function () {
+        return window.location.origin;
+    }
+});
+
 var DD_Layers_Model = DD_ModelBase.extend({
 
     count: 0,
@@ -35726,7 +35726,6 @@ var DD_Main_Model = DD_ModelBase.extend({
             e.target.uid = self.createUUID();
             e.target.uid.toString();
             self._onUpdate(e.target, 'update');
-            
 
         });
         hoverCanvas.on('object:moving', function (e) {
@@ -35913,7 +35912,11 @@ var DD_Main_Model = DD_ModelBase.extend({
     },
 
     getJsonImg: function () {
-        return this._mergeCanvases(true);
+        return this._mergeCanvases('json');
+    },
+
+    getSvgText: function () {
+        return this._mergeCanvases('svg');
     },
 
     unselectAll: function () {
@@ -35935,34 +35938,65 @@ var DD_Main_Model = DD_ModelBase.extend({
 
     },
 
-    _mergeCanvases: function (json) {
+    _mergeCanvases: function (type) {
 
         var _bgCanvas = this.layersObj.getBgCanvas();
-        var _hoverCanvas = this.layersObj.getHoverCanvas()
-        var bgCanvas = $('#' + this.idBgCanvas).get(0);
-        var hoverCanvas = $('#' + this.idCanvasHover).get(0);
+        var _hoverCanvas = this.layersObj.getHoverCanvas();
 
-        var sourceBgWidth = _bgCanvas.lowerCanvasEl.width;
-        var sourceBgHeight = _bgCanvas.lowerCanvasEl.height;
-        var sourceHoverWidth = _hoverCanvas.lowerCanvasEl.width;
-        var sourceHoverHeight = _hoverCanvas.lowerCanvasEl.height;
-        var output = $('<canvas />')
-                .attr({
-                    'width': this._l().getWidth(),
-                    'height': this._l().getHeight()
-                })
-                .get(0);
+        switch(type){
+            case 'json':
+                var mergedObjs = _bgCanvas.toJSON();
+                var hoverObjs = _hoverCanvas.toJSON();
+                for(var object in hoverObjs.objects) {
+                    mergedObjs['objects'].push(hoverObjs.objects[object]);
+                }
+                return mergedObjs;
+                break;
+            case 'svg':
 
-        var octx = output.getContext('2d');
+                /*var tmpCanvas = _bgCanvas;
+                 var canvasObjects = _hoverCanvas.toJSON();
 
-        octx.drawImage(bgCanvas, 0, 0, sourceBgWidth, sourceBgHeight, 0, 0, output.width, output.height);
-        octx.drawImage(hoverCanvas, 0, 0, sourceHoverWidth, sourceHoverHeight, 0, 0, output.width, output.height);
-        if (!json) {
-            return output.toDataURL('png');
+                 for (var i = 0; i < canvasObjects.objects.length; i++) {
+                 var klass = fabric.util.getKlass(objects[i].type);
+                 if (klass.async) {
+                 klass.fromObject(objects[i], function (img) {
+                 tmpCanvas.add(img);
+                 });
+                 } else {
+                 tmpCanvas.add(klass.fromObject(objects[i]));
+                 }
+                 }*/
+
+                return _hoverCanvas.toSVG();
+
+                break;
+            default:
+
+                var bgCanvas = $('#' + this.idBgCanvas).get(0);
+                var hoverCanvas = $('#' + this.idCanvasHover).get(0);
+
+                var sourceBgWidth = _bgCanvas.lowerCanvasEl.width;
+                var sourceBgHeight = _bgCanvas.lowerCanvasEl.height;
+                var sourceHoverWidth = _hoverCanvas.lowerCanvasEl.width;
+                var sourceHoverHeight = _hoverCanvas.lowerCanvasEl.height;
+                var output = $('<canvas />')
+                    .attr({
+                        'width': this._l().getWidth(),
+                        'height': this._l().getHeight()
+                    })
+                    .get(0);
+
+                var octx = output.getContext('2d');
+
+                octx.drawImage(bgCanvas, 0, 0, sourceBgWidth, sourceBgHeight, 0, 0, output.width, output.height);
+                octx.drawImage(hoverCanvas, 0, 0, sourceHoverWidth, sourceHoverHeight, 0, 0, output.width, output.height);
+
+                return output.toDataURL('png');
         }
 
-        return []; //skip this for now!
     }
+
 });
 
 var DD_Privew_Model = DD_ModelBase.extend({
@@ -36206,7 +36240,6 @@ var DD_control_image = DD_Control_Base_Model.extend({
         if(!extraConfig || !extraConfig.disable_photos_resize) {
             this.obj.addSizeBase();
         }
-        
         this.baseEvents();
         this.addSvgControls();
     },
@@ -36277,11 +36310,11 @@ var DD_control_text = DD_Control_Base_Model.extend({
         this.obj.contentContainer.get().addClass(this.containerClass);
         this.addDelete();
 
-        if (!extraConfig.disable_text_rotate) {
+        if (!extraConfig || !extraConfig.disable_text_rotate) {
             this.obj.addRotateBase();
         }
 
-        if (!extraConfig.disable_text_resize) {
+        if (!extraConfig || !extraConfig.disable_text_resize) {
             this.obj.addSizeBase();
 
         }
@@ -36315,7 +36348,7 @@ var DD_control_text = DD_Control_Base_Model.extend({
         var self = this;
         var textarea = form.get().find('textarea');
         var extraConfig = this.getExtraConfig();
-        if (extraConfig.max_text_chars) {
+        if (extraConfig && extraConfig.max_text_chars) {
             var maxChars = extraConfig.max_text_chars;
             var errorPlace = form.get().find('.dd-add-text-errors');
             textarea.on('keyup', function () {
@@ -36384,14 +36417,14 @@ var DD_control_text = DD_Control_Base_Model.extend({
         var font = fabricObject.fontFamily;
         var content = this.obj.content.get();
         content.empty();
-        if (!extraConfig.background_color_text_disable) {
+        if (!extraConfig || !extraConfig.background_color_text_disable) {
             this.obj.colorSelector(content, this._('background_color'), bg, this.setBgColor, this);
         }
-        if (!extraConfig.text_color_disable) {
+        if (!extraConfig || !extraConfig.text_color_disable) {
             this.obj.colorSelector(content, this._('text_color'), color, this.setFontColor, this);
         }
         var fonts = null;
-        if (extraConfig.fonts) {
+        if (extraConfig && extraConfig.fonts) {
             fonts = extraConfig.fonts;
         }
         this.obj.fontSelector(content, font, this.setFont, this, fonts);
@@ -36571,7 +36604,8 @@ var DD_Layer_Img = DD_Layer_Base.extend({
 
             conf.notSelect = notSelect;
             if (!isSvg) {
-                iImg.set(conf);
+                iImg
+                        .set(conf);
             } else {
                 var _opt = {
                     width: options.width,
@@ -36589,27 +36623,27 @@ var DD_Layer_Img = DD_Layer_Base.extend({
                 iImg.set(conf);
             }
 
-            if(typeof self._s('extra_config') !== 'undefined') {
-                if (self._s('extra_config').disable_photos_resize) {
-                    iImg.setControlsVisibility({
-                        mt: false,
-                        mb: false,
-                        ml: false,
-                        mr: false,
-                        bl: false,
-                        br: false,
-                        tl: false,
-                        tr: false,
-                        //mtr: false
-                    });
-                }
-                if (self._s('extra_config').disable_photos_rotate) {
-                    iImg.setControlsVisibility({
-                        mtr: false
-                    });
-                }
-            }
+            var extraconfig = self._s('extra_config');
 
+            if(extraconfig && extraconfig.disable_photos_resize) {
+                iImg.setControlsVisibility({
+                    mt: false,
+                    mb: false,
+                    ml: false,
+                    mr: false,
+                    bl: false,
+                    br: false,
+                    tl: false,
+                    tr: false,
+                    //mtr: false
+                });
+            }
+            if(extraconfig && extraconfig.disable_photos_rotate) {
+                iImg.setControlsVisibility({
+                    mtr: false
+                });
+            }
+            
             parent.add(iImg);
             self.removeControlsMiddle(iImg);
 
@@ -36623,7 +36657,6 @@ var DD_Layer_Img = DD_Layer_Base.extend({
                 parent.setActiveObject(iImg);
             }
 
-            
             self.object = iImg;
             self.onCreated();
 
@@ -36763,7 +36796,7 @@ var DD_Layer_Svg = DD_Layer_Base.extend({
             var iImg = new fabric.Group(object.getObjects(), opt);
             iImg.set(conf);
             
-            if(extraConfig.disable_photos_resize) {
+            if(extraConfig && extraConfig.disable_photos_resize) {
                  iImg.setControlsVisibility({
                     mt: false,
                     mb: false,
@@ -36777,7 +36810,7 @@ var DD_Layer_Svg = DD_Layer_Base.extend({
                 });
             }
             
-            if(extraConfig.disable_photos_rotate) {
+            if(extraConfig && extraConfig.disable_photos_rotate) {
                  iImg.setControlsVisibility({
                     mtr: false
                 });
@@ -37949,7 +37982,11 @@ $.fn.dd_productdesigner = function (options) {
         this.getJson = function () {
             return app.getJsonImg();
         }
-        
+
+        this.getSvgText = function () {
+            return app.getSvgText();
+        }
+
         this.setMainConfig = function(_config) {
             app.mainConfig = _config;
         }

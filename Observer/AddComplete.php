@@ -78,6 +78,7 @@ class AddComplete implements ObserverInterface {
                         ->setCartItemId($quoteData['cart_item_id'])
                         ->setCreatedTime($this->_date->gmtDate())
                         ->setJsonText($tmpDesign->getJsonText())
+                        ->setSvgText($tmpDesign->getSvgText())
                         ->setPngBlob($tmpDesign->getPngBlob())
                         ->setMagentoProductId($product->getId())
                         ->setConf($tmpDesign->getConf());

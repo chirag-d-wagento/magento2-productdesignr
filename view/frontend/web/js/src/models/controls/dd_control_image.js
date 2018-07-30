@@ -13,7 +13,6 @@ var DD_control_image = DD_Control_Base_Model.extend({
         if(!extraConfig || !extraConfig.disable_photos_resize) {
             this.obj.addSizeBase();
         }
-        
         this.baseEvents();
         this.addSvgControls();
     },

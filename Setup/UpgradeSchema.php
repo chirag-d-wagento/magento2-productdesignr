@@ -8,21 +8,37 @@ use Magento\Framework\Setup\SchemaSetupInterface;
 use Magento\Eav\Setup\EavSetup;
 use Magento\Eav\Setup\EavSetupFactory;
 use Magento\Framework\Setup\ModuleDataSetupInterface;
+use Magento\Framework\Filesystem\Io\File;
+use Magento\Framework\App\Filesystem\DirectoryList;
 
 class UpgradeSchema implements UpgradeSchemaInterface
 {
 
     const LONG_BLOB_TYPE = 'longblob';
 
+    /**
+     * @var Magento\Framework\Filesystem\Io\File
+     */
+    protected $_io;
+
+    /**
+     * @var Magento\Framework\App\Filesystem\DirectoryList
+     */
+    protected $_directoryList;
+
     public function __construct(
         \Magento\Store\Model\StoreManagerInterface $storeManager, 
         \Magento\Framework\App\Config\ScopeConfigInterface $scopeConfig, 
-        EavSetupFactory $eavSetupFactory
+        EavSetupFactory $eavSetupFactory,
+        File $io,
+        DirectoryList $directoryList
     )
     {
         $this->_storeManager = $storeManager;
         $this->_scopeConfig = $scopeConfig;
         $this->eavSetupFactory = $eavSetupFactory;
+        $this->_io = $io;
+        $this->_directoryList = $directoryList;
     }
 
     public function upgrade(SchemaSetupInterface $setup, ModuleContextInterface $context)
@@ -63,8 +79,12 @@ class UpgradeSchema implements UpgradeSchemaInterface
             $this->createShareTable($setup);
         }
 
-         if (version_compare($context->getVersion(), '1.2.2') < 0) {
+        if (version_compare($context->getVersion(), '1.2.3') < 0) {
             $this->createMediaDirectory($setup);
+        }
+
+        if (version_compare($context->getVersion(), '1.2.4') < 0) {
+            $this->addSvgColumn($setup);
         }
 
         $setup->endSetup();
@@ -72,8 +92,14 @@ class UpgradeSchema implements UpgradeSchemaInterface
 
     protected function createMediaDirectory($setup){
 
+        // Designer assets directory
         if(!file_exists($this->_directoryList->getPath('media'). '/dd_library/default')) {
             $this->_io->mkdir($this->_directoryList->getPath('media') . '/dd_library/default', 0755);
+        }
+
+        //Designer design PDF's directory
+        if(!file_exists($this->_directoryList->getPath('media'). '/dd_pdfs')) {
+            $this->_io->mkdir($this->_directoryList->getPath('media') . '/dd_pdfs/tmp', 0755);
         }
 
     }
@@ -122,6 +148,25 @@ class UpgradeSchema implements UpgradeSchemaInterface
             'type' => \Magento\Framework\DB\Ddl\Table::TYPE_BLOB,
             'length' => 10485760,
                 ]
+        );
+    }
+
+    protected function addSvgColumn($setup)
+    {
+        $setup->getConnection()->addColumn(
+            $setup->getTable('dd_productdesigner_tmp_designs'), 'svg_text', [
+                'type' => \Magento\Framework\DB\Ddl\Table::TYPE_TEXT,
+                'nullable' => false,
+                'comment' => 'Canvas SVG data'
+            ]
+        );
+
+        $setup->getConnection()->addColumn(
+            $setup->getTable('dd_productdesigner_cart_items'), 'svg_text', [
+                'type' => \Magento\Framework\DB\Ddl\Table::TYPE_TEXT,
+                'nullable' => false,
+                'comment' => 'Canvas SVG data'
+            ]
         );
     }
 
