@@ -29,6 +29,11 @@
                     <label>PDF Save path</label>
                     <comment>Relative to the media directory. No starting or trailing slash. Default 'dd_pdfs'. EG: 'subdir1/subdir2/subdir3'</comment>
                 </field>
+                <field id="printtypes" translate="label comment" type="multiselect" sortOrder="35" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Enabled Print Types</label>
+                    <source_model>Develodesign\Designer\Model\Config\Source\PrintTypes</source_model>
+                    <comment>If no selection, defaults to Vinyl only.</comment>
+                </field>
             </group>
             <group id="frontend" translate="label" type="text" sortOrder="20" showInDefault="1" showInWebsite="0" showInStore="1">
                 <label>Frontend</label>
@@ -57,6 +62,11 @@
                 <field id="enable_add_from_library" translate="label comment" type="select" sortOrder="80" showInDefault="1" showInWebsite="1" showInStore="1">
                     <label>Enable Add From Library</label>
                     <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                </field>
+                <field id="multiple_addtocart_attribute" translate="label comment" type="select" sortOrder="85" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Multiple Product Add To Cart Attribute</label>
+                    <source_model>Develodesign\Designer\Model\Config\Source\ProductAttributes</source_model>
+                    <comment>Select the configurable 'size' attribute</comment>
                 </field>
             </group>
             <group id="prices" translate="label" type="text" sortOrder="30" showInDefault="1" showInWebsite="0"

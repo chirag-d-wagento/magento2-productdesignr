@@ -16,4 +16,6 @@
             </argument>
         </arguments>
     </type>
+    <preference for="Magento\Checkout\Controller\Cart\Add" type="Develodesign\Designer\Controller\Cart\Add" />
+    <preference for="Magento\Swatches\Block\Product\Renderer\Configurable" type="Develodesign\Designer\Block\Product\Renderer\Configurable" />
 </config>

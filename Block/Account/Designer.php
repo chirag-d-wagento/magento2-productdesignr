@@ -37,7 +37,7 @@ class Designer extends \Magento\Framework\View\Element\Template {
         $collection = $this->_designCartItemModel->create()
                 ->getCollection();
 
-        $collection->getSelect()->where('cart_quote_id=?', $order->getQuoteId());
+        $collection->getSelect()->group('json_text')->where('cart_quote_id=?', $order->getQuoteId());
         return $collection;
     }
 

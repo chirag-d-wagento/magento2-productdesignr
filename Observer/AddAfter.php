@@ -16,8 +16,10 @@ class AddAfter implements ObserverInterface {
     protected $_currency;
     protected $_imageDesign;
     protected $_request;
+    protected $_logger;
 
-    const CURRENT_REGISTRATED_PRODUCT = 'dd_designer_added_to_cart';
+    const CURRENT_ADD_CART_PRODUCT_ID = 'dd_designer_added_to_cart';
+    const CURRENT_QUOTE_ITEM_ID = 'dd_designer_added_quote_id';
 
     public function __construct(
         \Magento\Catalog\Api\ProductRepositoryInterface $productRepo, 
@@ -27,12 +29,13 @@ class AddAfter implements ObserverInterface {
         \Magento\Store\Model\StoreManagerInterface $storeManager, 
         \Magento\Directory\Model\Currency $currency,
         \Magento\Framework\App\RequestInterface $request,    
-        \Magento\Framework\Registry $registry
+        \Magento\Framework\Registry $registry,
+        \Psr\Log\LoggerInterface $logger
     ) {
         $this->_productRepo = $productRepo;
         $this->_registry = $registry;
         $this->_designerHelper = $designerHelper;
-
+        $this->_logger = $logger;
         $this->_tmpDesignModel = $tmpDesignModel;
         $this->_currency = $currency;
         $this->_storeManager = $storeManager;
@@ -41,23 +44,16 @@ class AddAfter implements ObserverInterface {
     }
 
     public function execute(Observer $observer) {
-        if(!$this->_designerHelper->getIsDesignerEnabled()) {
+
+        $designsIds = $this->_request->getParam('dd_design',null);
+        if(!$this->_designerHelper->getIsDesignerEnabled() || empty($designsIds)) {
             return;
         }
-        
-        $quoteItem = $observer->getQuoteItem();
-        $product = $this->_productRepo->get($quoteItem->getProduct()->getSku());
-        $this->_registry->register(self::CURRENT_REGISTRATED_PRODUCT, $product);
 
-        $this->updatePrice($observer);
+        $this->updatePrice($observer,$designsIds);
     }
 
-    protected function updatePrice($observer) {
-        $designsIds = $this->_request->getParam('dd_design');
-
-        if (empty($designsIds) || !is_array($designsIds)) {
-            return;
-        }
+    protected function updatePrice($observer,$designsIds) {
 
         $priceUpdate = 0;
 
@@ -66,6 +62,7 @@ class AddAfter implements ObserverInterface {
                     ->load($designsId, 'unique_id');
 
             if (!$tmpDesign->getId()) {
+                $this->_logger->error('tmpdesign id not found');
                 continue;
             }
             

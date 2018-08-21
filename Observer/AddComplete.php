@@ -31,66 +31,45 @@ class AddComplete implements ObserverInterface {
         $this->_logger = $logger;
         $this->_date = $date;
         $this->_registry = $registry;
-        
         $this->_designerHelper = $designerHelper;
     }
 
     public function execute(Observer $observer) {
-        if(!$this->_designerHelper->getIsDesignerEnabled()) {
-            return;
-        }
-        
         $request = $observer->getRequest();
-        $designsIds = $request->getParam('dd_design');
-        $product = $this->_registry->registry(\Develodesign\Designer\Observer\AddAfter::CURRENT_REGISTRATED_PRODUCT);
-        $quoteData = $this->getQuoteData($product);
-        if (!empty($quoteData['cart_quote_id'])) {
-            $this->removeOldDesigns($quoteData['cart_item_id']);
+        $designsIds = $request->getParam('dd_design',null);
+        if(!empty($designsIds) && $this->_designerHelper->getIsDesignerEnabled()) {
+            if($quoteItem = $this->getLastQuoteItem()) {
+                $this->removeOldDesigns($quoteItem->getId());
+                $this->run($designsIds, $quoteItem);
+            } else {
+                $this->_logger->critical('Unknown quote dd_designer add complete!');
+            }
         }
-        if (!$designsIds || !is_array($designsIds)) {
-            return;
-        }
-
-        $this->run($designsIds, $quoteData);
     }
     
-    public function run($designsIds, $quoteData = null) {
-        
-        if (!empty($quoteData['cart_quote_id'])) {
-            
-        $product = $this->_registry->registry(\Develodesign\Designer\Observer\AddAfter::CURRENT_REGISTRATED_PRODUCT);
-        
-            foreach ($designsIds as $designId) {
-                $modelCartItem = $this->_cartItem->create()
-                        ->load(null); //new one!
+    public function run($designsIds, $quoteItem) {
 
-                $tmpDesign = $this->_tmpDesignModel->create()
-                        ->load($designId, 'unique_id');
+            foreach ($designsIds as $designId) {
+                $modelCartItem = $this->_cartItem->create()->load(null); //new one!
+                $tmpDesign = $this->_tmpDesignModel->create()->load($designId, 'unique_id');
 
                 if (!$tmpDesign->getId()) {
-                    $this->_logger->critical('Unknow tmp design for product id: '
-                            . $product->getId()
-                            . ' add complete!');
+                    $this->_logger->critical('Unknown tmpdesign for product id: ' . $productId . ' - Cart addcomplete event!');
                     continue;
                 }
 
-                $modelCartItem->setCartQuoteId($quoteData['cart_quote_id'])
-                        ->setCartItemId($quoteData['cart_item_id'])
-                        ->setCreatedTime($this->_date->gmtDate())
-                        ->setJsonText($tmpDesign->getJsonText())
-                        ->setSvgText($tmpDesign->getSvgText())
-                        ->setPngBlob($tmpDesign->getPngBlob())
-                        ->setMagentoProductId($product->getId())
-                        ->setConf($tmpDesign->getConf());
+                $modelCartItem->setCartQuoteId($quoteItem->getQuote()->getId())
+                    ->setCartItemId($quoteItem->getId())
+                    ->setCreatedTime($this->_date->gmtDate())
+                    ->setJsonText($tmpDesign->getJsonText())
+                    ->setSvgText($tmpDesign->getSvgText())
+                    ->setPngBlob($tmpDesign->getPngBlob())
+                    ->setMagentoProductId($quoteItem->getProduct()->getId())
+                    ->setConf($tmpDesign->getConf())
+                    ->save();
 
-                $modelCartItem->save();
-
-                $tmpDesign->delete();
             }
-        } else {
-            //error handler
-            $this->_logger->critical('Unknow quote dd_designer add complete!');
-        }
+
     }
 
     protected function removeOldDesigns($cartItemId) {
@@ -100,34 +79,19 @@ class AddComplete implements ObserverInterface {
         $collection->walk('delete');
     }
 
-    protected function getQuoteData($product, $quoteItemId = null) {
-        $out = [
-        ];
-        $productId = $product->getId();
-        $cartItems = $this->_cart->getQuote()
-                ->getAllItems();
-        if (!$cartItems || !is_array($cartItems)) {
-            return;
-        }
-        foreach ($cartItems as $cartItem) {
-            if ($cartItem->getProductId() == $productId) {
-                if(!$cartItem->getParentItemId()) {
-                    return [
-                        'cart_quote_id' => $cartItem->getQuote()->getId(),
-                        'cart_item_id' => $cartItem->getId()
-                    ];
+    protected function getLastQuoteItem(){
+        $cartItems = $this->_cart->getQuote()->getAllItems();
+        $cartItem = end($cartItems);
+        if($parentId = $cartItem->getParentItemId()) {
+            foreach ($cartItems as $_cartItem) {
+                if($parentId == $_cartItem->getId()) {
+                    return $_cartItem;
                 }
-                return $this->getQuoteData($product, $cartItem->getParentItemId());
-            }
-            if($quoteItemId !== null && $quoteItemId == $cartItem->getId()) {
-                return [
-                        'cart_quote_id' => $cartItem->getQuote()->getId(),
-                        'cart_item_id' => $cartItem->getId()
-                    ];
-            }
-        }
 
-        return $out;
+            }
+            return false;
+        }
+        return $cartItem;
     }
 
 }

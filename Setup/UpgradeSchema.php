@@ -87,6 +87,10 @@ class UpgradeSchema implements UpgradeSchemaInterface
             $this->addSvgColumn($setup);
         }
 
+        if (version_compare($context->getVersion(), '1.2.5') < 0) {
+            $this->addPrintType($setup);
+        }
+
         $setup->endSetup();
     }
 
@@ -168,6 +172,11 @@ class UpgradeSchema implements UpgradeSchemaInterface
                 'comment' => 'Canvas SVG data'
             ]
         );
+    }
+
+    protected function addPrintType($setup)
+    {
+       //???
     }
 
     protected function initMediaIdField($setup)

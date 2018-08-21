@@ -7,6 +7,7 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper {
     const DESIGNER_GENERAL_ENABLED          = 'develo_productdesigner/general/enable';
     const DESIGNER_GENERAL_ENABLEPDF        = 'develo_productdesigner/general/enablepdf';
     const DESIGNER_GENERAL_PDFPATH          = 'develo_productdesigner/general/pdfsavepath';
+    const DESIGNER_GENERAL_PRINTTYPES       = 'develo_productdesigner/general/printtypes';
     const DESIGNER_GENERAL_FRONT_ROUTE      = 'develo_productdesigner/general/product_designer_route';
 
     const DESIGNER_FRONT_ENABLE_FOR_ALL     = 'develo_productdesigner/frontend/enable_all';
@@ -16,6 +17,7 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper {
     const DESIGNER_FRONT_ENABLE_ADD_FROM_LIB = 'develo_productdesigner/frontend/enable_add_from_library';
     /* const DESIGNER_FRONT_PRODUCT_LAYER_POSITION = 'develo_productdesigner/frontend/layer_position'; */
     const DESIGNER_FRONT_PRODUCT_GOOGLE_FONTS = 'develo_productdesigner/frontend/google_fonts';
+    const DESIGNER_FRONT_PRODUCT_MULTIPLE_ATTRIBUTE = 'develo_productdesigner/frontend/multiple_addtocart_attribute';
 
     const DESIGNER_PRICE_LAYER_IMAGE        = 'develo_productdesigner/prices/layer_image_price';
     const DESIGNER_PRICE_LAYER_TEXT         = 'develo_productdesigner/prices/layer_text_price';
@@ -60,6 +62,13 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper {
         $customPath = $this->scopeConfig->getValue(self::DESIGNER_GENERAL_PDFPATH , \Magento\Store\Model\ScopeInterface::SCOPE_STORE);
         return  (!empty($customPath)) ? $customPath : $defaultPath;
     }
+
+    public function getPrintTypes() {
+        if(!$this->getIsDesignerEnabled()){ return false; }
+        $value = $this->scopeConfig->getValue(self::DESIGNER_GENERAL_PRINTTYPES , \Magento\Store\Model\ScopeInterface::SCOPE_STORE);
+        return ($value) ? explode(',',$value) : array('vinyl');
+    }
+
 
     public function getInstagramClientSecret() {
         return $this->scopeConfig->getValue(self::DESIGNER_SOCIAL_INSTAGRAM_SECRET , \Magento\Store\Model\ScopeInterface::SCOPE_STORE);
@@ -132,6 +141,20 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper {
     public function getIsAddFromLibraryEnabled() {
         return $this->scopeConfig->getValue(self::DESIGNER_FRONT_ENABLE_ADD_FROM_LIB, \Magento\Store\Model\ScopeInterface::SCOPE_STORE);
     }
+
+    public function getMultipleAddtocartAttribute() {
+        if(!$this->getIsDesignerEnabled()){ return false; }
+        return $this->scopeConfig->getValue(self::DESIGNER_FRONT_PRODUCT_MULTIPLE_ATTRIBUTE, \Magento\Store\Model\ScopeInterface::SCOPE_STORE);
+    }
+
+    public function disableQuantityField(){
+        return ($this->getMultipleAddtocartAttribute());
+    }
+
+    public function shouldRenderQuantity(){
+        return (!$this->getMultipleAddtocartAttribute());
+    }
+
 
     public function getDesignerFrontEndRoute() {
         return $this->scopeConfig->getValue(self::DESIGNER_GENERAL_FRONT_ROUTE, \Magento\Store\Model\ScopeInterface::SCOPE_STORE);
