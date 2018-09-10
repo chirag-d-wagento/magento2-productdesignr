@@ -84,6 +84,7 @@ class AddComplete implements ObserverInterface {
     protected function getLastQuoteItem(){
       $cartItems = $this->_cart->getQuote()->getAllItems();
       $productDesigns = $this->_registry->registry(\Develodesign\Designer\Observer\AddAfter::CURRENT_REGISTRATED_PRODUCT_DESIGNS);
+      $cartItems = array_reverse($cartItems);
       foreach ($cartItems as $cartItem) {
           if ($cartItem->getDesignId() == $productDesigns) {
                 return $cartItem;
