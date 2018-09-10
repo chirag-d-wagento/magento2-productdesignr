@@ -18,17 +18,16 @@ class AddAfter implements ObserverInterface {
     protected $_request;
     protected $_logger;
 
-    const CURRENT_ADD_CART_PRODUCT_ID = 'dd_designer_added_to_cart';
-    const CURRENT_QUOTE_ITEM_ID = 'dd_designer_added_quote_id';
+    const CURRENT_REGISTRATED_PRODUCT_DESIGNS = 'dd_designer_added_to_cart_designs';
 
     public function __construct(
-        \Magento\Catalog\Api\ProductRepositoryInterface $productRepo, 
-        \Develodesign\Designer\Helper\Data $designerHelper, 
-        \Develodesign\Designer\Model\TmpdesignFactory $tmpDesignModel, 
-        \Develodesign\Designer\Model\ImageFactory $imageDesign, 
-        \Magento\Store\Model\StoreManagerInterface $storeManager, 
+        \Magento\Catalog\Api\ProductRepositoryInterface $productRepo,
+        \Develodesign\Designer\Helper\Data $designerHelper,
+        \Develodesign\Designer\Model\TmpdesignFactory $tmpDesignModel,
+        \Develodesign\Designer\Model\ImageFactory $imageDesign,
+        \Magento\Store\Model\StoreManagerInterface $storeManager,
         \Magento\Directory\Model\Currency $currency,
-        \Magento\Framework\App\RequestInterface $request,    
+        \Magento\Framework\App\RequestInterface $request,
         \Magento\Framework\Registry $registry,
         \Psr\Log\LoggerInterface $logger
     ) {
@@ -50,6 +49,12 @@ class AddAfter implements ObserverInterface {
             return;
         }
 
+        $designsIdsStr = implode(',', $designsIds);
+
+        $quoteItem = $observer->getQuoteItem();
+        $quoteItem->setDesignId($designsIdsStr);
+        $this->_registry->register(self::CURRENT_REGISTRATED_PRODUCT_DESIGNS, $designsIdsStr);
+
         $this->updatePrice($observer,$designsIds);
     }
 
@@ -65,17 +70,17 @@ class AddAfter implements ObserverInterface {
                 $this->_logger->error('tmpdesign id not found');
                 continue;
             }
-            
+
             $conf = json_decode($tmpDesign->getConf());
             $mediaId = $tmpDesign->getMediaId();
             $priceUpdate += $this->getPriceByConf($conf, $mediaId);
-            
+
         }
         if ($priceUpdate > 0) {
             $this->changeItemQuotePrice($observer, $priceUpdate);
         }
     }
-    
+
     protected function getPriceByConf($conf, $mediaId) {
         $price = 0;
         $extraConf = $this->loadImageExtraConfiguration($mediaId);
@@ -87,28 +92,28 @@ class AddAfter implements ObserverInterface {
                 $price += $this->getLayerTxtPrice($extraConf);
             }
         }
-        
+
         return $price;
     }
-    
+
     protected function loadImageExtraConfiguration($mediaId) {
         $model = $this->_imageDesign->create()
                 ->load($mediaId, 'media_id');
-        
-        $extraConfigStr = $model->getExtraConfig(); 
+
+        $extraConfigStr = $model->getExtraConfig();
         return ($extraConfigStr ? json_decode($extraConfigStr) : []);
     }
 
     protected function changeItemQuotePrice($observer, $changePrice) {
-        
+
         $item = $observer->getEvent()->getData('quote_item');
         $item = ( $item->getParentItem() ? $item->getParentItem() : $item );
-        
-        $price = $item->getProduct()->getFinalPrice() + $changePrice; 
+
+        $price = $item->getProduct()->getFinalPrice() + $changePrice;
         $item->setCustomPrice($price);
         $item->setOriginalCustomPrice($price);
         $item->getProduct()->setIsSuperMode(true);
-        
+
     }
 
     protected function convertPrice($basePrice = null) {

@@ -27,8 +27,8 @@ class UpgradeSchema implements UpgradeSchemaInterface
     protected $_directoryList;
 
     public function __construct(
-        \Magento\Store\Model\StoreManagerInterface $storeManager, 
-        \Magento\Framework\App\Config\ScopeConfigInterface $scopeConfig, 
+        \Magento\Store\Model\StoreManagerInterface $storeManager,
+        \Magento\Framework\App\Config\ScopeConfigInterface $scopeConfig,
         EavSetupFactory $eavSetupFactory,
         File $io,
         DirectoryList $directoryList
@@ -88,10 +88,25 @@ class UpgradeSchema implements UpgradeSchemaInterface
         }
 
         if (version_compare($context->getVersion(), '1.2.5') < 0) {
-            $this->addPrintType($setup);
+            //$this->addPrintType($setup);???
+        }
+
+        if (version_compare($context->getVersion(), '1.2.6') < 0) {
+            $this->addDesignIdQuoteItemField($setup);
         }
 
         $setup->endSetup();
+    }
+
+
+    protected function addDesignIdQuoteItemField($setup) {
+      $setup->getConnection()->addColumn(
+              $setup->getTable('quote_item'), 'design_id', [
+          'type' => \Magento\Framework\DB\Ddl\Table::TYPE_TEXT,
+          'nullable' => true,
+          'comment' => 'Develodesign_Designer Unique ID'
+              ]
+      );
     }
 
     protected function createMediaDirectory($setup){

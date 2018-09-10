@@ -17,12 +17,12 @@ class AddComplete implements ObserverInterface {
     protected $_designerHelper;
 
     public function __construct(
-        \Magento\Checkout\Model\Cart $cart, 
-        \Develodesign\Designer\Model\TmpdesignFactory $tmpDesignModel, 
-        \Develodesign\Designer\Model\CartitemFactory $cartItem, 
-        \Develodesign\Designer\Helper\Data $designerHelper,     
-        DateTime $date, 
-        \Psr\Log\LoggerInterface $logger, 
+        \Magento\Checkout\Model\Cart $cart,
+        \Develodesign\Designer\Model\TmpdesignFactory $tmpDesignModel,
+        \Develodesign\Designer\Model\CartitemFactory $cartItem,
+        \Develodesign\Designer\Helper\Data $designerHelper,
+        DateTime $date,
+        \Psr\Log\LoggerInterface $logger,
         \Magento\Framework\Registry $registry
     ) {
         $this->_cart = $cart;
@@ -38,15 +38,17 @@ class AddComplete implements ObserverInterface {
         $request = $observer->getRequest();
         $designsIds = $request->getParam('dd_design',null);
         if(!empty($designsIds) && $this->_designerHelper->getIsDesignerEnabled()) {
+
             if($quoteItem = $this->getLastQuoteItem()) {
                 $this->removeOldDesigns($quoteItem->getId());
                 $this->run($designsIds, $quoteItem);
             } else {
                 $this->_logger->critical('Unknown quote dd_designer add complete!');
             }
+
         }
     }
-    
+
     public function run($designsIds, $quoteItem) {
 
             foreach ($designsIds as $designId) {
@@ -80,6 +82,16 @@ class AddComplete implements ObserverInterface {
     }
 
     protected function getLastQuoteItem(){
+      $cartItems = $this->_cart->getQuote()->getAllItems();
+      $productDesigns = $this->_registry->registry(\Develodesign\Designer\Observer\AddAfter::CURRENT_REGISTRATED_PRODUCT_DESIGNS);
+      foreach ($cartItems as $cartItem) {
+          if ($cartItem->getDesignId() == $productDesigns) {
+                return $cartItem;
+          }
+      }
+
+
+       /*
         $cartItems = $this->_cart->getQuote()->getAllItems();
         $cartItem = end($cartItems);
         if($parentId = $cartItem->getParentItemId()) {
@@ -92,6 +104,7 @@ class AddComplete implements ObserverInterface {
             return false;
         }
         return $cartItem;
+        */
     }
 
 }

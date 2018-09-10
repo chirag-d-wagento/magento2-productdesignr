@@ -1,0 +1,11 @@
+<?xml version="1.0"?>
+<!--
+-->
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:ObjectManager/etc/config.xsd">
+
+  <!-- rewrite magento quote -->
+  <type name="Magento\Quote\Model\Quote">
+      <plugin name="dd-designer-override-quote" type="Develodesign\Designer\Core\Quote\Model\Quote" />
+  </type>
+
+</config>
