@@ -53,7 +53,9 @@ class AddAfter implements ObserverInterface {
 
         $quoteItem = $observer->getQuoteItem();
         $quoteItem->setDesignId($designsIdsStr);
-        $this->_registry->register(self::CURRENT_REGISTRATED_PRODUCT_DESIGNS, $designsIdsStr);
+        if(!$this->_registry->registry(self::CURRENT_REGISTRATED_PRODUCT_DESIGNS)) {
+          $this->_registry->register(self::CURRENT_REGISTRATED_PRODUCT_DESIGNS, $designsIdsStr);
+        }
 
         $this->updatePrice($observer,$designsIds);
     }
