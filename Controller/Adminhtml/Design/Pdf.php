@@ -5,21 +5,32 @@ namespace Develodesign\Designer\Controller\Adminhtml\Design;
 use Magento\Framework\Stdlib\DateTime\DateTime;
 use Magento\Framework\Controller\ResultFactory;
 
+use Magento\Framework\App\Filesystem\DirectoryList;
+
+
 class Pdf extends \Magento\Framework\App\Action\Action{
 
     protected $_cartDesignModel;
     protected $_ddHelper;
     protected $_logger;
 
+    protected $_filesystem;
+    protected $fileFactory;
+
     public function __construct(
         \Magento\Framework\App\Action\Context $context,
         \Develodesign\Designer\Model\CartitemFactory $cartDesignModel,
         \Develodesign\Designer\Helper\Data $ddHelper,
-        \Psr\Log\LoggerInterface $logger
+        \Psr\Log\LoggerInterface $logger,
+        \Magento\Framework\Filesystem $filesystem,
+        \Magento\Framework\App\Response\Http\FileFactory $fileFactory
     ) {
         $this->_ddHelper         = $ddHelper;
         $this->_cartDesignModel  = $cartDesignModel;
         $this->_logger           = $logger;
+        $this->_filesystem       = $filesystem;
+
+        $this->fileFactory           = $fileFactory;
 
         parent::__construct($context);
     }
@@ -30,9 +41,9 @@ class Pdf extends \Magento\Framework\App\Action\Action{
 
         if (!$params || empty($params['item_id'])) {
             $errorMessage =  __('Invalid parameters. No design item id.');
-            echo $errorMessage;
+            $this->messageManager->addErrorMessage($errorMessage);
             $this->_logger->critical($errorMessage);
-            exit;
+            return $this->_redirect('adminhtml/*/*');
         }
 
 
@@ -40,32 +51,28 @@ class Pdf extends \Magento\Framework\App\Action\Action{
 
         if (!$model || !$model->getSvgText()) {
             $errorMessage =  __('Design data not found or incomplete. [item_id:'.$params['item_id'].']');
-            echo $errorMessage;
-            $this->_logger->critical($errorMessage);
-            exit;
-        }
 
+            $this->messageManager->addErrorMessage($errorMessage);
+            $this->_logger->critical($errorMessage);
+
+            $this->_logger->critical($errorMessage);
+            return $this->_redirect('adminhtml/*/*');
+        }
         $pdf = new \TCPDF(PDF_PAGE_ORIENTATION, PDF_UNIT, PDF_PAGE_FORMAT, true, 'UTF-8', false);
         $pdf->SetPrintHeader(false);
         $pdf->SetPrintFooter(false);
+
         $pdf->AddPage();
 
-        $pdf->ImageSVG('@' . $model->getSvgText(), $x=15, $y=30, $w='', $h='', $link='http://www.tcpdf.org', $align='', $palign='', $border=1, $fitonpage=false);
+        $pdf->ImageSVG('@' . $model->getSvgText(), $x=5, $y=5, $w='', $h='', $link='', $align='', $palign='', $border=0, $fitonpage=false);
 
-        $filename = 'dd_designer_item_'.$params['item_id'].'.pdf';
-
-        /*header('Content-Type: application/pdf');
-        header('Content-Length: '.strlen( $pdf ));
-        header('Content-disposition: inline; filename="' . $filename . '"');
-        header('Cache-Control: public, must-revalidate, max-age=0');
-        header('Pragma: public');
-        header('Expires: Sat, 26 Jul 1997 05:00:00 GMT');
-        header('Last-Modified: '.gmdate('D, d M Y H:i:s').' GMT');*/
-
-        echo $pdf->Output($filename, 'I');
-        exit;
+        $fileName = 'dd_designer_item_' . intval($params['item_id']) . '.pdf';
+        return $this->fileFactory->create(
+            $fileName,
+            $pdf->Output($fileName, 'I'),
+            DirectoryList::VAR_DIR,
+            'application/pdf'
+        );
 
     }
-
-
 }
