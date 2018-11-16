@@ -1,4 +1,4 @@
-![Magento 2 Product DesignR](https://marketplace.magento.com/media/catalog/product/cache/c687aa7517cf01e65c009f6943c2b1e9/c/u/customtext_1.jpg)
+![Magento 2 Product DesignR](https://designr.develo.design/designer-demo.png)
 
 # Magento 2 - Product Designer
 
