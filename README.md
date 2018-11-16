@@ -7,6 +7,7 @@ A product designer tool for Magento 2, this extension allows you to sell persona
 ## Demo
 
 [Demo Bag](https://designr.develo.design/rival-field-messenger.html)
+
 [Demo Photoframe](https://designr.develo.design/oak-frame-for-wife.html)
 
 ## Getting Started
@@ -16,10 +17,6 @@ These instructions will get you a copy of the project up and running on your loc
 ### Prerequisites
 
 Has been tested with Magento 2.1 & 2.2
-
-```
-Give examples
-```
 
 ### Installing
 
