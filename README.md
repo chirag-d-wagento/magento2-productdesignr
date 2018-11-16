@@ -25,13 +25,13 @@ $ composer require develodesign/designer
 ```
 
 ## Deployment
-
+```bash
 php bin/magento module:enable Develodesign_Designer
 
 php bin/magento setup:upgrade
 
 php bin/magento setup:di:compile
-
+```
 
 ## Built With
 
