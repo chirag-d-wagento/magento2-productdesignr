@@ -13,6 +13,10 @@ A product designer tool for Magento 2, this extension allows you to sell persona
 [Demo Photoframe](https://designr.develo.design/oak-frame-for-wife.html)
 
 
+## Demo
+![Magento 2 Product DesignR Demo](https://designr.develo.design/designer-demo-gif.gif)
+
+
 ## Getting Started
 
 These instructions will get you a copy of the project up and running on your local machine for development and testing purposes. See deployment for notes on how to deploy the project on a live system.
