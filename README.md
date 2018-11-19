@@ -53,7 +53,8 @@ php bin/magento setup:di:compile
 
 ## Contributing
 
-Please read [CONTRIBUTING.md]
+Please read /Product-Designer.docx
+
 
 ## Documentation
 TODO
