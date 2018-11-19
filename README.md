@@ -6,9 +6,12 @@ A product designer tool for Magento 2, this extension allows you to sell persona
 
 ## Demo
 
+[Demo TShirt](https://designr.develo.design/t-shirt.html)
+
 [Demo Bag](https://designr.develo.design/rival-field-messenger.html)
 
 [Demo Photoframe](https://designr.develo.design/oak-frame-for-wife.html)
+
 
 ## Getting Started
 
@@ -48,8 +51,10 @@ TODO
 
 ## Authors
 
-* **Yaroslav Trokhlibov** - (https://www.develodesign.co.uk)
+* **Yaroslav Trokhlibov** - (yaroslav@develodesign.co.uk)
 
 ## License
 
 This project is licensed under the OSL-3.0 License
+
+https://www.develodesign.co.uk
