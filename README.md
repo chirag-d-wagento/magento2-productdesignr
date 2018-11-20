@@ -1,10 +1,3 @@
-![Magento 2 Product DesignR Customise](https://designr.develo.design/designer-customise.png)
-
-![Magento 2 Product DesignR](https://designr.develo.design/designer-demo.png)
-
-
-
-
 # Magento 2 - Product Designer
 
 A product designer tool for Magento 2, this extension allows you to sell personalised products on your Magento store. A new 'Customize' button will appear on products, which then allows the site user to customise on top of the product image. Customers can add Text, Graphics, and Images,  personalising it as they need.  The Customize button can be turned on for all products or only certain attribute sets.  
@@ -18,7 +11,13 @@ A product designer tool for Magento 2, this extension allows you to sell persona
 [Demo Photoframe](https://designr.develo.design/oak-frame-for-wife.html)
 
 
+
 ## Demo
+
+![Magento 2 Product DesignR Customise](https://designr.develo.design/designer-customise.png)
+
+![Magento 2 Product DesignR](https://designr.develo.design/designer-demo.png)
+
 ![Magento 2 Product DesignR Demo](https://designr.develo.design/designer-demo-gif.gif)
 
 
@@ -53,11 +52,13 @@ php bin/magento setup:di:compile
 
 ## Contributing
 
-Please read /Product-Designer.docx
+[Contributing](CONTRIBUTING.md)
 
 
 ## Documentation
-TODO
+
+TODO : For now [Product-Designer.docx](Product-Designer.docx)
+
 
 ## Authors
 
@@ -65,6 +66,6 @@ TODO
 
 ## License
 
-This project is licensed under the OSL-3.0 License
+This project is licensed under the Open Software License ("OSL") v. 3.0
 
 https://www.develodesign.co.uk
